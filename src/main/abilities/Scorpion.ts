@@ -18,24 +18,6 @@ const damageCoefficient = 1;
 const stunDuration = 1;
 const range = 10;
 
-const _findTargetUnit = (unit: Unit, direction: Direction): Unit | null => {
-  const map = unit.getMap();
-  let coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
-  for (let i = 0; i < range; i++) {
-    if (!map.contains(coordinates)) {
-      return null;
-    }
-    const targetUnit = map.getUnit(coordinates);
-    if (targetUnit) {
-      return targetUnit;
-    } else if (isBlocked(map, coordinates)) {
-      return null;
-    }
-    coordinates = Coordinates.plusDirection(coordinates, direction);
-  }
-  return null;
-};
-
 const attack: Attack = {
   sound: Sounds.PLAYER_HITS_ENEMY,
   calculateAttackResult: (unit: Unit): AttackResult => {
@@ -57,6 +39,10 @@ export const Scorpion: UnitAbility = {
   icon: 'scorpion_icon',
   innate: false,
   isEnabled: unit => unit.getMana() >= manaCost,
+  isLegal: (unit: Unit, coordinates: Coordinates) => {
+    const direction = pointAt(unit.getCoordinates(), coordinates);
+    return _findTargetUnit(unit, direction) !== null;
+  },
   use: async (
     unit: Unit,
     coordinates: Coordinates,
@@ -79,7 +65,7 @@ export const Scorpion: UnitAbility = {
         dx: dx * i,
         dy: dy * i
       });
-      if (map.contains(currentCoordinates) && !isBlocked(map, currentCoordinates)) {
+      if (map.contains(currentCoordinates) && !isBlocked(currentCoordinates, map)) {
         projectile.setCoordinates(currentCoordinates);
         await sleep(sleepDuration);
       } else {
@@ -115,4 +101,22 @@ export const Scorpion: UnitAbility = {
       targetUnit.setStunned(stunDuration);
     }
   }
+};
+
+const _findTargetUnit = (unit: Unit, direction: Direction): Unit | null => {
+  const map = unit.getMap();
+  let coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
+  for (let i = 0; i < range; i++) {
+    if (!map.contains(coordinates)) {
+      return null;
+    }
+    const targetUnit = map.getUnit(coordinates);
+    if (targetUnit) {
+      return targetUnit;
+    } else if (isBlocked(coordinates, map)) {
+      return null;
+    }
+    coordinates = Coordinates.plusDirection(coordinates, direction);
+  }
+  return null;
 };

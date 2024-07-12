@@ -1,4 +1,4 @@
-import AttackNearestEnemyBehavior from './AttackNearestEnemyBehavior';
+import { AttackNearestEnemyBehavior } from './AttackNearestEnemyBehavior';
 import { UnitBehavior } from './UnitBehavior';
 import { UnitOrder } from '../orders/UnitOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
@@ -19,7 +19,7 @@ import {
 } from '@main/units/controllers/ControllerUtils';
 import { StayOrder } from '@main/units/orders/StayOrder';
 
-export default class ShootNearestEnemyBehavior implements UnitBehavior {
+export class ShootNearestEnemyBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (unit: Unit): UnitOrder => {
     const targetUnit = getNearestEnemyUnit(unit);

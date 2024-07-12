@@ -23,19 +23,17 @@ export const shootFrostbolt = async (
   session: Session,
   state: GameState
 ) => {
-  const { dx, dy } = Direction.getOffsets(direction);
   unit.setDirection(direction);
 
   const map = session.getMap();
   const coordinatesList = [];
-  let { x, y } = Coordinates.plusDirection(unit.getCoordinates(), direction);
-  while (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
-    coordinatesList.push({ x, y });
-    x += dx;
-    y += dy;
+  let coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
+  while (map.contains(coordinates) && !isBlocked(coordinates, map)) {
+    coordinatesList.push(coordinates);
+    coordinates = Coordinates.plusDirection(coordinates, direction);
   }
 
-  const targetUnit = map.getUnit({ x, y });
+  const targetUnit = map.getUnit(coordinates);
   if (targetUnit) {
     state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
     await playFrostboltAnimation(unit, direction, coordinatesList, targetUnit, state);

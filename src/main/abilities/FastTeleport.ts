@@ -18,27 +18,24 @@ export const FastTeleport: UnitAbility = {
   manaCost,
   innate: false,
   isEnabled: unit => unit.getMana() >= manaCost,
+  /**
+   * Note: We don't check range here, it's currently only controlled
+   * by the Behavior
+   */
+  isLegal: (unit, coordinates) => {
+    const map = unit.getMap();
+    return map.contains(coordinates) && !isBlocked(coordinates, map);
+  },
   use: async (
     unit: Unit,
-    coordinates: Coordinates | null,
+    coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
-    if (!coordinates) {
-      throw new Error('FastTeleport requires a target!');
-    }
-
-    const map = unit.getMap();
-
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
-
-    if (map.contains(coordinates) && !isBlocked(map, coordinates)) {
-      unit.spendMana(manaCost);
-      await moveUnit(unit, coordinates, session, state);
-      unit.setActivity(Activity.STANDING, 1, unit.getDirection());
-      state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
-    } else {
-      state.getSoundPlayer().playSound(Sounds.BLOCKED);
-    }
+    unit.spendMana(manaCost);
+    await moveUnit(unit, coordinates, session, state);
+    unit.setActivity(Activity.STANDING, 1, unit.getDirection());
+    state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
   }
 };

@@ -10,7 +10,7 @@ import { FastTeleport } from '@main/abilities/FastTeleport';
 import { UnitOrder } from '@main/units/orders/UnitOrder';
 import { StayOrder } from '@main/units/orders/StayOrder';
 
-export default class KnightMoveBehavior implements UnitBehavior {
+export class KnightMoveBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (unit: Unit): UnitOrder => {
     const canTeleport = unit.getMana() >= FastTeleport.manaCost;
@@ -47,7 +47,7 @@ const _getKnightMoveTargets = (unit: Unit): Coordinates[] => {
     for (const direction of path) {
       coordinates = Coordinates.plusDirection(coordinates, direction);
     }
-    if (!isBlocked(map, coordinates)) {
+    if (!isBlocked(coordinates, map)) {
       targets.push(coordinates);
     }
   }

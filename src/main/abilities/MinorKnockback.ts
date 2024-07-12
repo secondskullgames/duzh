@@ -10,6 +10,7 @@ import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
+import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 
 const manaCost = 8;
 const damageCoefficient = 0.5;
@@ -20,6 +21,9 @@ export const MinorKnockback: UnitAbility = {
   icon: 'icon6',
   innate: false,
   isEnabled: unit => unit.getMana() >= manaCost,
+  isLegal: (unit: Unit, coordinates: Coordinates) => {
+    return hasEnemyUnit(unit, coordinates);
+  },
   use: async (
     unit: Unit,
     coordinates: Coordinates,
@@ -56,7 +60,7 @@ export const MinorKnockback: UnitAbility = {
 
       if (targetUnit.getLife() > 0) {
         const first = Coordinates.plusDirection(targetUnit.getCoordinates(), direction);
-        if (map.contains(first) && !isBlocked(map, first)) {
+        if (map.contains(first) && !isBlocked(first, map)) {
           await moveUnit(targetUnit, first, session, state);
         }
       }

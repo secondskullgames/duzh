@@ -14,7 +14,7 @@ export default class MusicController {
     @inject(AssetLoader)
     private readonly assetLoader: AssetLoader
   ) {
-    this.soundPlayer = new SoundPlayer({ polyphony: 4, gain: 0.06 });
+    this.soundPlayer = SoundPlayer.forMusic();
   }
 
   playSuite = (suite: Suite) => {

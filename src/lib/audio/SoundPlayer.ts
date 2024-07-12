@@ -11,7 +11,7 @@ export default class SoundPlayer {
   private readonly gainNode: GainNode;
   private oscillators: CustomOscillator[];
 
-  constructor({ gain }: Props) {
+  private constructor({ gain }: Props) {
     this.context = new AudioContext();
     this.gainNode = this.context.createGain();
     this.gainNode.gain.value = gain * 0.2; // sounds can be VERY loud
@@ -19,6 +19,14 @@ export default class SoundPlayer {
 
     this.oscillators = [];
   }
+
+  static forSounds = (): SoundPlayer => {
+    return new SoundPlayer({ polyphony: 1, gain: 0.15 });
+  };
+
+  static forMusic = (): SoundPlayer => {
+    return new SoundPlayer({ polyphony: 4, gain: 0.06 });
+  };
 
   stop = () => {
     try {

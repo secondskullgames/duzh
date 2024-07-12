@@ -38,7 +38,7 @@ const BoltSwordScript: EquipmentScript = {
 
     const direction = unit.getDirection();
     let coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
-    while (map.contains(coordinates) && !isBlocked(map, coordinates)) {
+    while (map.contains(coordinates) && !isBlocked(coordinates, map)) {
       coordinates = Coordinates.plusDirection(coordinates, direction);
     }
 

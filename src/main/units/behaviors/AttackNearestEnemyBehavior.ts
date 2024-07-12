@@ -29,7 +29,7 @@ const allowedSpecialAbilityNames = [
  * A behavior in which the unit attacks the nearest enemy unit.  The unit will move
  * towards the target unit and use abilities as appropriate.
  */
-export default class AttackNearestEnemyBehavior implements UnitBehavior {
+export class AttackNearestEnemyBehavior implements UnitBehavior {
   /** @override */
   issueOrder = (unit: Unit): UnitOrder => {
     const targetUnit = getNearestEnemyUnit(unit);

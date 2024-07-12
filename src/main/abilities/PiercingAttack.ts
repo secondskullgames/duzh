@@ -10,6 +10,7 @@ import { attackObject } from '@main/actions/attackObject';
 import { getSpawner } from '@main/maps/MapUtils';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
+import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 
 const manaCost = 0;
 const damageCoefficient = 1;
@@ -20,6 +21,9 @@ export const PiercingAttack: UnitAbility = {
   icon: 'icon1', // TODO
   innate: false,
   isEnabled: unit => unit.getMana() >= manaCost,
+  isLegal: (unit: Unit, coordinates: Coordinates) => {
+    return hasEnemyUnit(unit, coordinates);
+  },
   use: async (
     unit: Unit,
     coordinates: Coordinates,

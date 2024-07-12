@@ -4,13 +4,14 @@ import Tile from '@main/tiles/Tile';
 import Unit from '@main/units/Unit';
 import GameObject from '@main/objects/GameObject';
 
+const origin = { x: 0, y: 0 };
 const _emptyMap = (): MapInstance => {
   return new MapInstance({
     id: 'test',
     width: 10,
     height: 10,
     levelNumber: 1,
-    startingCoordinates: { x: 0, y: 0 },
+    startingCoordinates: origin,
     music: null,
     fogParams: {
       enabled: false
@@ -23,55 +24,55 @@ describe('MapUtils', () => {
     test('unblocked', () => {
       const map = _emptyMap();
       const tile = {
-        getCoordinates: () => ({ x: 0, y: 0 }),
+        getCoordinates: () => origin,
         isBlocking: () => false
       } as unknown as Tile;
       map.addTile(tile);
-      expect(isBlocked(map, { x: 0, y: 0 })).toBe(false);
+      expect(isBlocked(origin, map)).toBe(false);
     });
 
     test('invalid', () => {
       const map = _emptyMap();
-      expect(isBlocked(map, { x: 20, y: 20 })).toBe(true);
+      expect(isBlocked({ x: 20, y: 20 }, map)).toBe(true);
     });
 
     test('blocked by wall', () => {
       const map = _emptyMap();
       const tile = {
-        getCoordinates: () => ({ x: 0, y: 0 }),
+        getCoordinates: () => origin,
         isBlocking: () => true
       } as unknown as Tile;
       map.addTile(tile);
-      expect(isBlocked(map, { x: 0, y: 0 })).toBe(true);
+      expect(isBlocked(origin, map)).toBe(true);
     });
 
     test('blocked by unit', () => {
       const map = _emptyMap();
       const tile = {
-        getCoordinates: () => ({ x: 0, y: 0 }),
+        getCoordinates: () => origin,
         isBlocking: () => false
       } as unknown as Tile;
       map.addTile(tile);
       const unit = {
-        getCoordinates: () => ({ x: 0, y: 0 })
+        getCoordinates: () => origin
       } as unknown as Unit;
       map.addUnit(unit);
-      expect(isBlocked(map, { x: 0, y: 0 })).toBe(true);
+      expect(isBlocked(origin, map)).toBe(true);
     });
 
     test('blocked by object', () => {
       const map = _emptyMap();
       const tile = {
-        getCoordinates: () => ({ x: 0, y: 0 }),
+        getCoordinates: () => origin,
         isBlocking: () => false
       } as unknown as Tile;
       map.addTile(tile);
       const object = {
-        getCoordinates: () => ({ x: 0, y: 0 }),
+        getCoordinates: () => origin,
         isBlocking: () => true
       } as unknown as GameObject;
       map.addObject(object);
-      expect(isBlocked(map, { x: 0, y: 0 })).toBe(true);
+      expect(isBlocked(origin, map)).toBe(true);
     });
   });
 });

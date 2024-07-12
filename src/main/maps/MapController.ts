@@ -102,7 +102,7 @@ export class MapControllerImpl implements MapController {
     const { engine, musicController, mapFactory, unitFactory } = this;
     const session = engine.getSession();
 
-    const map = await mapFactory.loadMap({ type: MapType.GENERATED, id: 'test' });
+    const map = await mapFactory.loadMap({ type: MapType.PREDEFINED, id: 'test' });
     session.setMap(map);
     const playerUnit = await unitFactory.createPlayerUnit(
       map.getStartingCoordinates(),

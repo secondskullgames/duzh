@@ -78,8 +78,8 @@ export const canDash = (
     return (
       map.contains(plusOne) &&
       map.contains(plusTwo) &&
-      !isBlocked(map, plusOne) &&
-      !isBlocked(map, plusTwo) &&
+      !isBlocked(plusOne, map) &&
+      !isBlocked(plusTwo, map) &&
       Coordinates.equals(coordinates, plusTwo)
     );
   }
@@ -91,4 +91,10 @@ export const isInVisionRange = (unit: Unit, target: Unit): boolean => {
   const { visionRange } = aiParameters;
   const distanceToTarget = hypotenuse(unit.getCoordinates(), target.getCoordinates());
   return distanceToTarget <= visionRange;
+};
+
+export const hasEnemyUnit = (unit: Unit, coordinates: Coordinates): boolean => {
+  const map = unit.getMap();
+  const targetUnit = map.getUnit(coordinates);
+  return !!targetUnit && targetUnit.getFaction() !== unit.getFaction();
 };

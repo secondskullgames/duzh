@@ -45,6 +45,7 @@ import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Color } from '@lib/graphics/Color';
 import { Direction } from '@lib/geometry/Direction';
 import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
+import SoundPlayer from '@lib/audio/SoundPlayer';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -65,12 +66,13 @@ export class GameScene implements Scene {
     @inject(HUDRenderer)
     private readonly hudRenderer: Renderer,
     @inject(TopMenuRenderer)
-    private readonly topMenuRenderer: Renderer
+    private readonly topMenuRenderer: Renderer,
+    @inject(SoundPlayer)
+    private readonly soundPlayer: SoundPlayer
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
     const { engine } = this;
-    const state = engine.getState();
     const session = engine.getSession();
     const { key, modifiers } = command;
 
@@ -86,7 +88,7 @@ export class GameScene implements Scene {
     } else if (isModifierKey(key)) {
       await this._handleModifierKeyDown(key as ModifierKey);
     } else if (key === 'SPACEBAR') {
-      state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
+      this.soundPlayer.playSound(Sounds.FOOTSTEP);
       await engine.playTurn();
     } else if (key === 'TAB') {
       session.prepareInventoryScreen(session.getPlayerUnit());
@@ -130,7 +132,11 @@ export class GameScene implements Scene {
       for (const abilityName of possibleAbilities) {
         if (playerUnit.hasAbility(abilityName)) {
           const ability = UnitAbility.abilityForName(abilityName);
-          if (ability.isEnabled(playerUnit)) {
+          const coordinates = Coordinates.plusDirection(
+            playerUnit.getCoordinates(),
+            direction
+          );
+          if (ability.isEnabled(playerUnit) && ability.isLegal(playerUnit, coordinates)) {
             order = AbilityOrder.create({ direction, ability });
           }
         }
@@ -146,14 +152,24 @@ export class GameScene implements Scene {
       modifiers.includes(ModifierKey.ALT) &&
       Feature.isEnabled(Feature.ALT_DASH)
     ) {
-      if (Dash.isEnabled(playerUnit)) {
+      const coordinates = Coordinates.plusDirection(
+        playerUnit.getCoordinates(),
+        direction
+      );
+      if (Dash.isEnabled(playerUnit) && Dash.isLegal(playerUnit, coordinates)) {
         order = AbilityOrder.create({ direction, ability: Dash });
       }
     } else {
       const ability = session.getQueuedAbility();
       session.setQueuedAbility(null);
       if (ability) {
-        order = AbilityOrder.create({ ability, direction });
+        const coordinates = Coordinates.plusDirection(
+          playerUnit.getCoordinates(),
+          direction
+        );
+        if (ability.isEnabled(playerUnit) && ability.isLegal(playerUnit, coordinates)) {
+          order = AbilityOrder.create({ ability, direction });
+        }
       } else {
         order = getMoveOrAttackOrder(playerUnit, direction);
       }
@@ -163,6 +179,9 @@ export class GameScene implements Scene {
       const playerController = playerUnit.getController() as PlayerUnitController;
       playerController.queueOrder(order);
       await engine.playTurn();
+    } else {
+      playerUnit.setDirection(direction);
+      this.soundPlayer.playSound(Sounds.BLOCKED);
     }
   };
 
@@ -207,10 +226,10 @@ export class GameScene implements Scene {
       pickupItem(playerUnit, item, session, state);
       map.removeObject(item);
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_DOWN) {
-      state.getSoundPlayer().playSound(Sounds.DESCEND_STAIRS);
+      this.soundPlayer.playSound(Sounds.DESCEND_STAIRS);
       await mapController.loadNextMap();
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_UP) {
-      state.getSoundPlayer().playSound(Sounds.DESCEND_STAIRS); // TODO
+      this.soundPlayer.playSound(Sounds.DESCEND_STAIRS); // TODO
       await mapController.loadPreviousMap();
     } else if (shrine) {
       shrine.use(state, session);

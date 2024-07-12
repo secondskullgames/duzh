@@ -48,6 +48,11 @@ export type UnitAbility = Readonly<{
   innate: boolean;
 
   isEnabled: (unit: Unit) => boolean;
+  /**
+   * Note - this doesn't check the ability's mana cost, you need to check
+   * isEnabled in addition to this
+   */
+  isLegal: (unit: Unit, coordinates: Coordinates) => boolean;
 
   use: (
     unit: Unit,

@@ -1,14 +1,14 @@
 import { UnitController } from './UnitController';
 import { canMove, canSee, getNearestEnemyUnit } from './ControllerUtils';
 import { UnitOrder } from '../orders/UnitOrder';
-import AvoidNearestEnemyBehavior from '../behaviors/AvoidNearestEnemyBehavior';
-import AttackNearestEnemyBehavior from '../behaviors/AttackNearestEnemyBehavior';
-import WanderBehavior from '../behaviors/WanderBehavior';
+import { AvoidNearestEnemyBehavior } from '../behaviors/AvoidNearestEnemyBehavior';
+import { AttackNearestEnemyBehavior } from '../behaviors/AttackNearestEnemyBehavior';
+import { WanderBehavior } from '../behaviors/WanderBehavior';
 import Unit from '@main/units/Unit';
 import { randBoolean, randChance } from '@lib/utils/random';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { UnitBehavior } from '@main/units/behaviors/UnitBehavior';
-import StayBehavior from '@main/units/behaviors/StayBehavior';
+import { StayBehavior } from '@main/units/behaviors/StayBehavior';
 
 enum Action {
   ATTACK = 'ATTACK',

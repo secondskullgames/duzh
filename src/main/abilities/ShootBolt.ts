@@ -25,6 +25,7 @@ export const ShootBolt: UnitAbility = {
   manaCost: 0,
   innate: false,
   isEnabled: () => true,
+  isLegal: () => true, // TODO
   use: async (
     unit: Unit,
     coordinates: Coordinates,
@@ -34,19 +35,17 @@ export const ShootBolt: UnitAbility = {
     const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
-    const { dx, dy } = Direction.getOffsets(direction);
 
     // unit.spendMana(0); // TODO
 
     const coordinatesList = [];
-    let { x, y } = Coordinates.plusDirection(unit.getCoordinates(), direction);
-    while (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
-      coordinatesList.push({ x, y });
-      x += dx;
-      y += dy;
+    let nextCoordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
+    while (map.contains(nextCoordinates) && !isBlocked(nextCoordinates, map)) {
+      coordinatesList.push(nextCoordinates);
+      nextCoordinates = Coordinates.plusDirection(nextCoordinates, direction);
     }
 
-    const targetUnit = map.getUnit({ x, y });
+    const targetUnit = map.getUnit(nextCoordinates);
     if (targetUnit) {
       const damage = getMeleeDamage(unit);
       const adjustedDamage = await dealDamage(damage, {

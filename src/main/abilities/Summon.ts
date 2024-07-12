@@ -7,6 +7,7 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
+import { isBlocked } from '@main/maps/MapUtils';
 
 const manaCost = 25;
 
@@ -16,16 +17,13 @@ export const Summon: UnitAbility = {
   icon: null,
   innate: false,
   isEnabled: unit => unit.getMana() >= manaCost,
+  isLegal: (unit, coordinates) => !isBlocked(coordinates, unit.getMap()),
   use: async (
     unit: Unit,
-    coordinates: Coordinates | null,
+    coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
-    if (!coordinates) {
-      throw new Error('Summon requires a target!');
-    }
-
     const map = session.getMap();
     const unitClass = checkNotNull(unit.getSummonedUnitClass());
 

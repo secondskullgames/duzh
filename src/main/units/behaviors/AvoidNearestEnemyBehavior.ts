@@ -16,7 +16,7 @@ import {
   isInVisionRange
 } from '@main/units/controllers/ControllerUtils';
 
-export default class AvoidNearestEnemyBehavior implements UnitBehavior {
+export class AvoidNearestEnemyBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (unit: Unit): UnitOrder => {
     const targetUnit = getNearestEnemyUnit(unit);
@@ -28,7 +28,7 @@ export default class AvoidNearestEnemyBehavior implements UnitBehavior {
       return StayOrder.create();
     }
 
-    if (_canTeleport(unit)) {
+    if (this._canTeleport(unit)) {
       const targetCoordinates = this._getTargetTeleportCoordinates(unit, targetUnit);
       if (targetCoordinates) {
         const direction = pointAt(unit.getCoordinates(), targetCoordinates);
@@ -39,7 +39,8 @@ export default class AvoidNearestEnemyBehavior implements UnitBehavior {
     const targetCoordinates = this._getTargetWalkCoordinates(unit, targetUnit);
     if (targetCoordinates) {
       const direction = pointAt(unit.getCoordinates(), targetCoordinates);
-      return getMoveOrAttackOrder(unit, direction);
+      // TODO
+      return getMoveOrAttackOrder(unit, direction) ?? StayOrder.create();
     }
     return StayOrder.create();
   };
@@ -51,7 +52,7 @@ export default class AvoidNearestEnemyBehavior implements UnitBehavior {
     for (const direction of Direction.values()) {
       const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
       if (map.contains(coordinates)) {
-        if (!isBlocked(map, coordinates)) {
+        if (!isBlocked(coordinates, map)) {
           tiles.push(coordinates);
         }
       }
@@ -80,7 +81,7 @@ export default class AvoidNearestEnemyBehavior implements UnitBehavior {
     for (const direction of Direction.values()) {
       const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
       if (map.contains(coordinates)) {
-        if (!isBlocked(map, coordinates)) {
+        if (!isBlocked(coordinates, map)) {
           tiles.push(coordinates);
         }
       }
@@ -93,8 +94,8 @@ export default class AvoidNearestEnemyBehavior implements UnitBehavior {
       manhattanDistance(coordinates, targetUnit.getCoordinates())
     );
   };
-}
 
-const _canTeleport = (unit: Unit): boolean => {
-  return unit.hasAbility(AbilityName.TELEPORT) && unit.getMana() >= Teleport.manaCost;
-};
+  private _canTeleport = (unit: Unit): boolean => {
+    return unit.hasAbility(AbilityName.TELEPORT) && unit.getMana() >= Teleport.manaCost;
+  };
+}

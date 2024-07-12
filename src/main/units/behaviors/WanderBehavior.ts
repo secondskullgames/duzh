@@ -8,7 +8,7 @@ import { UnitOrder } from '@main/units/orders/UnitOrder';
 import { StayOrder } from '@main/units/orders/StayOrder';
 import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
 
-export default class WanderBehavior implements UnitBehavior {
+export class WanderBehavior implements UnitBehavior {
   /** @override */
   issueOrder = (unit: Unit): UnitOrder => {
     const map = unit.getMap();
@@ -16,14 +16,15 @@ export default class WanderBehavior implements UnitBehavior {
 
     for (const direction of Direction.values()) {
       const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
-      if (map.contains(coordinates) && !isBlocked(map, coordinates)) {
+      if (map.contains(coordinates) && !isBlocked(coordinates, map)) {
         possibleDirections.push(direction);
       }
     }
 
     if (possibleDirections.length > 0) {
       const direction = randChoice(possibleDirections);
-      return getMoveOrAttackOrder(unit, direction);
+      // TODO
+      return getMoveOrAttackOrder(unit, direction) ?? StayOrder.create();
     }
     return StayOrder.create();
   };

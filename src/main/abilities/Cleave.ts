@@ -33,6 +33,10 @@ export const Cleave: UnitAbility = {
   icon: 'icon7',
   innate: false,
   isEnabled: unit => unit.getMana() >= manaCost,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  isLegal: (unit: Unit, coordinates: Coordinates) => {
+    return _getTargetUnits(unit).length > 0;
+  },
   use: async (
     unit: Unit,
     coordinates: Coordinates,

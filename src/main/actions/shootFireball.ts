@@ -28,7 +28,7 @@ export const shootFireball = async (
   const map = session.getMap();
   const coordinatesList = [];
   let { x, y } = Coordinates.plusDirection(unit.getCoordinates(), direction);
-  while (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
+  while (map.contains({ x, y }) && !isBlocked({ x, y }, map)) {
     coordinatesList.push({ x, y });
     x += dx;
     y += dy;

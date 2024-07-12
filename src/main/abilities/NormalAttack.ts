@@ -8,6 +8,7 @@ import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Session } from '@main/core/Session';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { GameState } from '@main/core/GameState';
+import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 
 // Note that you gain 1 passively, so this is really 3 mana per hit
 // TODO should enemy units gain mana?
@@ -32,6 +33,9 @@ export const NormalAttack: UnitAbility = {
   manaCost: 0,
   innate: true,
   isEnabled: () => true,
+  isLegal: (unit: Unit, coordinates: Coordinates) => {
+    return hasEnemyUnit(unit, coordinates);
+  },
   use: async (
     unit: Unit,
     coordinates: Coordinates,
