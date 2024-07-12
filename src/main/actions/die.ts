@@ -4,14 +4,13 @@ import Sounds from '@main/sounds/Sounds';
 import { random, weightedRandom } from '@lib/utils/random';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
-import { UnitType } from '@models/UnitType';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import MapInstance from '@main/maps/MapInstance';
 import GameObject from '@main/objects/GameObject';
 import { ItemType } from '@main/items/ItemFactory';
 
 // TODO this should be enemy-specific? add loot tables
-const ITEM_DROP_CHANCE = 0.1;
+const ITEM_DROP_CHANCE = 0.05;
 const GLOBE_DROP_CHANCE = 0.2;
 const HEALTH_GLOBE_DROP_CHANCE = 1;
 const MANA_GLOBE_DROP_CHANCE = 0;
@@ -30,23 +29,17 @@ export const die = async (unit: Unit, state: GameState, session: Session) => {
     state.getSoundPlayer().playSound(Sounds.ENEMY_DIES);
     session.getTicker().log(`${unit.getName()} dies!`, { turn: session.getTurn() });
 
-    // TODO make this more systematic
-    if (unit.getUnitType() === UnitType.WIZARD) {
-      const key = await state.getItemFactory().createMapItem('key', coordinates, map);
-      map.addObject(key);
-    } else {
-      if (_canDropItems(unit)) {
-        const randomRoll = random();
-        if (randomRoll < GLOBE_DROP_CHANCE) {
-          const globe = await _createGlobe(coordinates, map, state);
-          map.addObject(globe);
-        } else if (randomRoll < GLOBE_DROP_CHANCE + ITEM_DROP_CHANCE) {
-          const item = await _createItem(coordinates, map, state);
-          map.addObject(item);
-          session.getTicker().log(`${unit.getName()} dropped a ${item.getName()}.`, {
-            turn: session.getTurn()
-          });
-        }
+    if (_canDropItems(unit)) {
+      const randomRoll = random();
+      if (randomRoll < GLOBE_DROP_CHANCE) {
+        const globe = await _createGlobe(coordinates, map, state);
+        map.addObject(globe);
+      } else if (randomRoll < GLOBE_DROP_CHANCE + ITEM_DROP_CHANCE) {
+        const item = await _createItem(coordinates, map, state);
+        map.addObject(item);
+        session.getTicker().log(`${unit.getName()} dropped a ${item.getName()}.`, {
+          turn: session.getTurn()
+        });
       }
     }
   }
