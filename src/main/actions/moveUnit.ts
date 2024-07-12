@@ -4,6 +4,7 @@ import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { GameState } from '@main/core/GameState';
 import { getBonus } from '@main/maps/MapUtils';
 import { Session } from '@main/core/Session';
+import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 
 export const moveUnit = async (
   unit: Unit,
@@ -16,6 +17,9 @@ export const moveUnit = async (
 
   unit.setCoordinates(coordinates);
   map.addUnit(unit);
+  if (unit === session.getPlayerUnit()) {
+    updateRevealedTiles(map, unit);
+  }
 
   for (const equipment of unit.getEquipment().getAll()) {
     if (equipment.script) {
