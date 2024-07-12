@@ -16,7 +16,7 @@ import {
   isInVisionRange
 } from '@main/units/controllers/ControllerUtils';
 
-export default class AvoidNearestEnemyBehavior implements UnitBehavior {
+export class AvoidNearestEnemyBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (unit: Unit): UnitOrder => {
     const targetUnit = getNearestEnemyUnit(unit);
@@ -28,7 +28,7 @@ export default class AvoidNearestEnemyBehavior implements UnitBehavior {
       return StayOrder.create();
     }
 
-    if (_canTeleport(unit)) {
+    if (this._canTeleport(unit)) {
       const targetCoordinates = this._getTargetTeleportCoordinates(unit, targetUnit);
       if (targetCoordinates) {
         const direction = pointAt(unit.getCoordinates(), targetCoordinates);
@@ -93,8 +93,8 @@ export default class AvoidNearestEnemyBehavior implements UnitBehavior {
       manhattanDistance(coordinates, targetUnit.getCoordinates())
     );
   };
-}
 
-const _canTeleport = (unit: Unit): boolean => {
-  return unit.hasAbility(AbilityName.TELEPORT) && unit.getMana() >= Teleport.manaCost;
-};
+  private _canTeleport = (unit: Unit): boolean => {
+    return unit.hasAbility(AbilityName.TELEPORT) && unit.getMana() >= Teleport.manaCost;
+  };
+}

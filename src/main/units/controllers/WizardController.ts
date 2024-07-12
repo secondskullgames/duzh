@@ -1,7 +1,7 @@
 import { UnitController } from './UnitController';
 import { canMove, getNearestEnemyUnit } from './ControllerUtils';
-import AvoidNearestEnemyBehavior from '../behaviors/AvoidNearestEnemyBehavior';
-import WanderBehavior from '../behaviors/WanderBehavior';
+import { AvoidNearestEnemyBehavior } from '../behaviors/AvoidNearestEnemyBehavior';
+import { WanderBehavior } from '../behaviors/WanderBehavior';
 import { SpellOrder } from '../orders/SpellOrder';
 import MapInstance from '@main/maps/MapInstance';
 import { AbilityName } from '@main/abilities/AbilityName';

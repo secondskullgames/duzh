@@ -8,9 +8,12 @@ import Unit from '@main/units/Unit';
 import { isInStraightLine, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { UnitAbility } from '@main/abilities/UnitAbility';
-import { getNearestEnemyUnit } from '@main/units/controllers/ControllerUtils';
+import {
+  getNearestEnemyUnit,
+  isInVisionRange
+} from '@main/units/controllers/ControllerUtils';
 
-export default class ShootUnitStationaryBehavior implements UnitBehavior {
+export class ShootUnitStationaryBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (unit: Unit): UnitOrder => {
     const targetUnit = getNearestEnemyUnit(unit);
@@ -20,7 +23,7 @@ export default class ShootUnitStationaryBehavior implements UnitBehavior {
 
     // TODO check vision
 
-    const canShoot = _canShoot(unit, targetUnit);
+    const canShoot = this._canShoot(unit, targetUnit);
     if (canShoot) {
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
       return AbilityOrder.create({
@@ -31,17 +34,18 @@ export default class ShootUnitStationaryBehavior implements UnitBehavior {
 
     return StayOrder.create();
   };
-}
 
-const _canShoot = (unit: Unit, targetUnit: Unit): boolean => {
-  const ability = UnitAbility.abilityForName(AbilityName.SHOOT_TURRET_ARROW);
-  return (
-    unit.getMana() >= ability.manaCost &&
-    isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&
-    hasUnblockedStraightLineBetween(
-      unit.getMap(),
-      unit.getCoordinates(),
-      targetUnit.getCoordinates()
-    )
-  );
-};
+  _canShoot = (unit: Unit, targetUnit: Unit): boolean => {
+    const ability = UnitAbility.abilityForName(AbilityName.SHOOT_TURRET_ARROW);
+    return (
+      unit.getMana() >= ability.manaCost &&
+      isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&
+      isInVisionRange(unit, targetUnit) &&
+      hasUnblockedStraightLineBetween(
+        unit.getMap(),
+        unit.getCoordinates(),
+        targetUnit.getCoordinates()
+      )
+    );
+  };
+}

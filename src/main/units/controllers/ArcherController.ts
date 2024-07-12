@@ -1,10 +1,10 @@
 import { UnitController } from './UnitController';
 import { canMove, getNearestEnemyUnit, isInVisionRange } from './ControllerUtils';
 import { UnitOrder } from '../orders/UnitOrder';
-import AvoidNearestEnemyBehavior from '../behaviors/AvoidNearestEnemyBehavior';
-import WanderBehavior from '../behaviors/WanderBehavior';
-import StayBehavior from '../behaviors/StayBehavior';
-import ShootNearestEnemyBehavior from '../behaviors/ShootNearestEnemyBehavior';
+import { AvoidNearestEnemyBehavior } from '../behaviors/AvoidNearestEnemyBehavior';
+import { WanderBehavior } from '../behaviors/WanderBehavior';
+import { StayBehavior } from '../behaviors/StayBehavior';
+import { ShootNearestEnemyBehavior } from '../behaviors/ShootNearestEnemyBehavior';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
 import Unit from '@main/units/Unit';
 import { randBoolean, randChance } from '@lib/utils/random';

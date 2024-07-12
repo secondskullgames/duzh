@@ -1,22 +1,22 @@
 import { UnitController } from './UnitController';
 import { UnitOrder } from '../orders/UnitOrder';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
-import ShootUnitStationaryBehavior from '../behaviors/ShootUnitStationaryBehavior';
+import { ShootUnitStationaryBehavior } from '../behaviors/ShootUnitStationaryBehavior';
 import { ShootTurretArrow } from '@main/abilities/ShootTurretArrow';
 import Unit from '@main/units/Unit';
 import { isInStraightLine } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { randChance } from '@lib/utils/random';
-import KnightMoveBehavior from '@main/units/behaviors/KnightMoveBehavior';
-import AvoidNearestEnemyBehavior from '@main/units/behaviors/AvoidNearestEnemyBehavior';
-import WanderBehavior from '@main/units/behaviors/WanderBehavior';
+import { KnightMoveBehavior } from '@main/units/behaviors/KnightMoveBehavior';
+import { AvoidNearestEnemyBehavior } from '@main/units/behaviors/AvoidNearestEnemyBehavior';
+import { WanderBehavior } from '@main/units/behaviors/WanderBehavior';
 import { FastTeleport } from '@main/abilities/FastTeleport';
 import { AbilityName } from '@main/abilities/AbilityName';
 import {
   getNearestEnemyUnit,
   isInVisionRange
 } from '@main/units/controllers/ControllerUtils';
-import StayBehavior from '@main/units/behaviors/StayBehavior';
+import { StayBehavior } from '@main/units/behaviors/StayBehavior';
 
 const teleportChance = 0.2;
 const shootChance = 0.5;

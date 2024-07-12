@@ -1,14 +1,14 @@
 import { UnitController } from './UnitController';
 import { UnitOrder } from '../orders/UnitOrder';
-import StayBehavior from '../behaviors/StayBehavior';
+import { StayBehavior } from '../behaviors/StayBehavior';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
-import ShootUnitStationaryBehavior from '../behaviors/ShootUnitStationaryBehavior';
+import { ShootUnitStationaryBehavior } from '../behaviors/ShootUnitStationaryBehavior';
 import { ShootTurretArrow } from '@main/abilities/ShootTurretArrow';
 import Unit from '@main/units/Unit';
 import { hypotenuse, isInStraightLine } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { randChance } from '@lib/utils/random';
-import KnightMoveBehavior from '@main/units/behaviors/KnightMoveBehavior';
+import { KnightMoveBehavior } from '@main/units/behaviors/KnightMoveBehavior';
 import {
   getNearestEnemyUnit,
   isInVisionRange

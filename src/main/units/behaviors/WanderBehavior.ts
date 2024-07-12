@@ -8,7 +8,7 @@ import { UnitOrder } from '@main/units/orders/UnitOrder';
 import { StayOrder } from '@main/units/orders/StayOrder';
 import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
 
-export default class WanderBehavior implements UnitBehavior {
+export class WanderBehavior implements UnitBehavior {
   /** @override */
   issueOrder = (unit: Unit): UnitOrder => {
     const map = unit.getMap();
