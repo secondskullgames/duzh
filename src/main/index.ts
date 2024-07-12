@@ -28,6 +28,7 @@ import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
 import { MapScene } from '@main/scenes/MapScene';
 import { OrderExecutor } from '@main/units/orders/OrderExecutor';
+import SoundPlayer from '@lib/audio/SoundPlayer';
 import { Container } from 'inversify';
 
 type Props = Readonly<{
@@ -47,6 +48,9 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
   });
   container.bind(AssetLoader).to(AssetLoaderImpl);
   container.bind(MapController).to(MapControllerImpl);
+  container
+    .bind(SoundPlayer)
+    .toConstantValue(new SoundPlayer({ polyphony: 1, gain: 0.15 }));
   const session = new SessionImpl();
   const state = await container.getAsync(GameStateImpl);
   const orderExecutor = await container.getAsync(OrderExecutor);

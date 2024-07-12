@@ -39,7 +39,6 @@ export interface GameState {
 export class GameStateImpl implements GameState {
   private readonly maps: Record<number, MapInstance>;
   private readonly generatedEquipmentIds: string[];
-  private readonly soundPlayer: SoundPlayer;
 
   constructor(
     @inject(ItemFactory)
@@ -53,11 +52,12 @@ export class GameStateImpl implements GameState {
     @inject(ProjectileFactory)
     private readonly projectileFactory: ProjectileFactory,
     @inject(ModelLoader)
-    private readonly modelLoader: ModelLoader
+    private readonly modelLoader: ModelLoader,
+    @inject(SoundPlayer)
+    private readonly soundPlayer: SoundPlayer
   ) {
     this.maps = [];
     this.generatedEquipmentIds = [];
-    this.soundPlayer = new SoundPlayer({ polyphony: 1, gain: 0.15 });
   }
 
   getGeneratedEquipmentIds = (): string[] => this.generatedEquipmentIds;

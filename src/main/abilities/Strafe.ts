@@ -13,6 +13,9 @@ export const Strafe: UnitAbility = {
   icon: null,
   innate: true,
   isEnabled: () => true,
+  isLegal: (unit, coordinates) => {
+    return !isBlocked(coordinates, unit.getMap());
+  },
   use: async (
     unit: Unit,
     coordinates: Coordinates,
@@ -20,7 +23,7 @@ export const Strafe: UnitAbility = {
     state: GameState
   ) => {
     const map = session.getMap();
-    if (map.contains(coordinates) && !isBlocked(map, coordinates)) {
+    if (map.contains(coordinates) && !isBlocked(coordinates, map)) {
       await moveUnit(unit, coordinates, session, state);
     }
   }

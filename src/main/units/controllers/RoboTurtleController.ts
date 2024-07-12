@@ -24,7 +24,7 @@ export class RoboTurtleController implements UnitController {
         unit.getCoordinates(),
         unit.getDirection()
       );
-      if (!isBlocked(unit.getMap(), nextCoordinates)) {
+      if (!isBlocked(nextCoordinates, unit.getMap())) {
         return MoveOrder.create({ coordinates: nextCoordinates });
       }
       const targetUnit = unit.getMap().getUnit(nextCoordinates);

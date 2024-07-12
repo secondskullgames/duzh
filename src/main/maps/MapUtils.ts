@@ -8,6 +8,7 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { ObjectType } from '@main/objects/GameObject';
 import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
 import Shrine from '@main/objects/Shrine';
+import Unit from '@main/units/Unit';
 
 export const getSpawner = (
   map: MapInstance,
@@ -80,7 +81,7 @@ export const getAllCoordinates = (map: MapInstance): Coordinates[] => {
   return allCoordinates;
 };
 
-export const isBlocked = (map: MapInstance, coordinates: Coordinates): boolean => {
+export const isBlocked = (coordinates: Coordinates, map: MapInstance): boolean => {
   return (
     !map.contains(coordinates) ||
     map.getTile(coordinates).isBlocking() ||
@@ -107,7 +108,7 @@ export const findPath = (
       const coordinates = { x, y };
       if (Coordinates.equals(coordinates, end)) {
         unblockedCoordinatesList.push(coordinates);
-      } else if (!isBlocked(map, coordinates)) {
+      } else if (!isBlocked(coordinates, map)) {
         unblockedCoordinatesList.push(coordinates);
       } else {
         // blocked
@@ -132,7 +133,7 @@ export const hasUnblockedStraightLineBetween = (
   y += dy;
 
   while (x !== targetX || y !== targetY) {
-    if (isBlocked(map, { x, y })) {
+    if (isBlocked({ x, y }, map)) {
       return false;
     }
     x += dx;
@@ -147,4 +148,16 @@ export const getUnitsOfClass = (map: MapInstance, unitClass: string) => {
 
 export const isOccupied = (map: MapInstance, coordinates: Coordinates) => {
   return map.getObjects(coordinates).length > 0 || map.getUnit(coordinates) !== null;
+};
+
+export const getEnemyUnit = (
+  unit: Unit,
+  coordinates: Coordinates,
+  map: MapInstance
+): Unit | null => {
+  const targetUnit = map.getUnit(coordinates);
+  if (targetUnit && targetUnit.getFaction() !== unit.getFaction()) {
+    return targetUnit;
+  }
+  return null;
 };

@@ -8,6 +8,7 @@ import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
+import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 
 const manaCost = 8;
 const damageCoefficient = 1;
@@ -19,16 +20,15 @@ export const StunAttack: UnitAbility = {
   icon: 'icon2',
   innate: false,
   isEnabled: unit => unit.getMana() >= manaCost,
+  isLegal: (unit: Unit, coordinates: Coordinates) => {
+    return hasEnemyUnit(unit, coordinates);
+  },
   use: async (
     unit: Unit,
-    coordinates: Coordinates | null,
+    coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
-    if (!coordinates) {
-      throw new Error('StunAttack requires a target!');
-    }
-
     const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);

@@ -75,7 +75,7 @@ const _getTargetSummonCoordinates = (unit: Unit): Coordinates | null => {
   const map = unit.getMap();
   const targetCoordinates = Direction.values()
     .map(direction => Coordinates.plusDirection(unit.getCoordinates(), direction))
-    .find(coordinates => map.contains(coordinates) && !isBlocked(map, coordinates));
+    .find(coordinates => map.contains(coordinates) && !isBlocked(coordinates, map));
   return targetCoordinates ?? null;
 };
 
@@ -104,9 +104,10 @@ const _getTargetTeleportCoordinates = (unit: Unit): Coordinates | null => {
   const tiles: Coordinates[] = [];
   for (let y = 0; y < map.height; y++) {
     for (let x = 0; x < map.width; x++) {
-      if (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
-        if (hypotenuse(unit.getCoordinates(), { x, y }) <= TELEPORT_RANGE) {
-          tiles.push({ x, y });
+      const coordinates = { x, y };
+      if (map.contains(coordinates) && !isBlocked(coordinates, map)) {
+        if (hypotenuse(unit.getCoordinates(), coordinates) <= TELEPORT_RANGE) {
+          tiles.push(coordinates);
         }
       }
     }

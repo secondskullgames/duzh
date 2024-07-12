@@ -24,6 +24,10 @@ export const isInStraightLine = (first: Coordinates, second: Coordinates): boole
   return (dx === 0 && dy !== 0) || (dy === 0 && dx !== 0);
 };
 
+/**
+ * Returns the *nearest* direction between two points.  The two points
+ * need not be exactly in line.
+ */
 export const pointAt = (first: Coordinates, second: Coordinates): Direction => {
   checkState(!Coordinates.equals(first, second));
   return offsetsToDirection(Coordinates.difference(first, second));

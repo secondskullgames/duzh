@@ -11,7 +11,7 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { sleep } from '@lib/utils/promises';
-import { isBlocked } from '@main/maps/MapUtils';
+import { getEnemyUnit, isBlocked } from '@main/maps/MapUtils';
 
 const manaCost = 10;
 const damageCoefficient = 1;
@@ -31,25 +31,31 @@ const attack: Attack = {
   }
 };
 
-const _doKnockback = async (
-  targetUnit: Unit,
-  direction: Direction,
-  session: Session,
-  state: GameState
-) => {
-  const targetCoordinates = Coordinates.plusDirection(
-    targetUnit.getCoordinates(),
-    direction
-  );
-  await moveUnit(targetUnit, targetCoordinates, session, state);
-};
-
 export const DashAttack: UnitAbility = {
   name: AbilityName.DASH_ATTACK,
   manaCost,
   icon: 'icon5',
   innate: false,
   isEnabled: unit => unit.getMana() >= manaCost,
+  /**
+   * It's legal if:
+   * a) there's a unit one tile away, and the next tile is unblocked
+   * b) there's a unit two tiles away
+   * c) both tiles are unblocked
+   */
+  isLegal: (unit, coordinates) => {
+    const map = unit.getMap();
+    const direction = pointAt(unit.getCoordinates(), coordinates);
+    const onePlus = Coordinates.plusDirection(unit.getCoordinates(), direction);
+    const twoPlus = Coordinates.plusDirection(onePlus, direction);
+    if (getEnemyUnit(unit, onePlus, map) && !isBlocked(twoPlus, map)) {
+      return true;
+    }
+    if (getEnemyUnit(unit, twoPlus, map)) {
+      return true;
+    }
+    return !isBlocked(onePlus, map) && !isBlocked(twoPlus, map);
+  },
   use: async (
     unit: Unit,
     coordinates: Coordinates,
@@ -65,7 +71,7 @@ export const DashAttack: UnitAbility = {
     {
       const targetCoordinates = Coordinates.plus(unit.getCoordinates(), { dx, dy });
       const isValid = map.contains(targetCoordinates);
-      const blocked = isBlocked(map, targetCoordinates);
+      const blocked = isBlocked(targetCoordinates, map);
       const hasUnit = map.getUnit(targetCoordinates);
       if (!isValid || (blocked && !hasUnit)) {
         return;
@@ -83,7 +89,7 @@ export const DashAttack: UnitAbility = {
         const targetUnit = map.getUnit(targetCoordinates);
         if (targetUnit) {
           const behindCoordinates = Coordinates.plus(targetCoordinates, { dx, dy });
-          if (!isBlocked(map, behindCoordinates)) {
+          if (!isBlocked(behindCoordinates, map)) {
             const direction = offsetsToDirection({ dx, dy });
             await _doKnockback(targetUnit, direction, session, state);
             await moveUnit(unit, targetCoordinates, session, state);
@@ -92,11 +98,24 @@ export const DashAttack: UnitAbility = {
             await attackUnit(unit, targetUnit, attack, session, state);
             targetUnit.setStunned(stunDuration);
           }
-        } else if (!isBlocked(map, targetCoordinates)) {
+        } else if (!isBlocked(targetCoordinates, map)) {
           await moveUnit(unit, targetCoordinates, session, state);
         }
         await sleep(100);
       }
     }
   }
+};
+
+const _doKnockback = async (
+  targetUnit: Unit,
+  direction: Direction,
+  session: Session,
+  state: GameState
+) => {
+  const targetCoordinates = Coordinates.plusDirection(
+    targetUnit.getCoordinates(),
+    direction
+  );
+  await moveUnit(targetUnit, targetCoordinates, session, state);
 };

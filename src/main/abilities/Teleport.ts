@@ -20,21 +20,19 @@ export const Teleport: UnitAbility = {
   manaCost,
   innate: false,
   isEnabled: unit => unit.getMana() >= manaCost,
+  isLegal: (unit, coordinates) => {
+    return (
+      !isBlocked(coordinates, unit.getMap()) &&
+      hypotenuse(unit.getCoordinates(), coordinates) <= range
+    );
+  },
   use: async (
     unit: Unit,
-    coordinates: Coordinates | null,
+    coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
-    if (!coordinates) {
-      throw new Error('Teleport requires a target!');
-    }
-
-    if (hypotenuse(unit.getCoordinates(), coordinates) > range) {
-      throw new Error(`Can't teleport more than ${range} units`);
-    }
-
-    const map = session.getMap();
+    const map = unit.getMap();
 
     const maybeSleep = async () => {
       if (map.isTileRevealed(coordinates)) {
@@ -44,7 +42,7 @@ export const Teleport: UnitAbility = {
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
-    if (map.contains(coordinates) && !isBlocked(map, coordinates)) {
+    if (map.contains(coordinates) && !isBlocked(coordinates, map)) {
       unit.spendMana(manaCost);
       state.getSoundPlayer().playSound(Sounds.WIZARD_VANISH);
 

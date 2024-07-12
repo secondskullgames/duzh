@@ -19,6 +19,12 @@ export const Dash: UnitAbility = {
   icon: 'icon5',
   innate: true,
   isEnabled: unit => unit.getMana() >= manaCost,
+  isLegal: (unit: Unit, coordinates: Coordinates) => {
+    const map = unit.getMap();
+    const direction = pointAt(unit.getCoordinates(), coordinates);
+    const onePlus = Coordinates.plusDirection(unit.getCoordinates(), direction);
+    return !isBlocked(onePlus, map) && !isBlocked(coordinates, map);
+  },
   use: async (
     unit: Unit,
     coordinates: Coordinates,
@@ -36,7 +42,7 @@ export const Dash: UnitAbility = {
     for (let i = 0; i < distance; i++) {
       x += dx;
       y += dy;
-      if (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
+      if (map.contains({ x, y }) && !isBlocked({ x, y }, map)) {
         await moveUnit(unit, { x, y }, session, state);
         moved = true;
         if (map.isTileRevealed({ x, y })) {

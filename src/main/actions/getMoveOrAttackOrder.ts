@@ -15,7 +15,7 @@ export const getMoveOrAttackOrder = (unit: Unit, direction: Direction): UnitOrde
   if (!map.contains(coordinates)) {
     return StayOrder.create();
   } else {
-    if (!isBlocked(map, coordinates)) {
+    if (!isBlocked(coordinates, map)) {
       return MoveOrder.create({ coordinates });
     } else {
       const door = getDoor(map, coordinates);

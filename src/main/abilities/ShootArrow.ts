@@ -31,6 +31,8 @@ export const ShootArrow: UnitAbility = {
   isEnabled: unit =>
     unit.getMana() >= manaCost &&
     unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON) !== null,
+  /** TODO */
+  isLegal: () => true,
   use: async (
     unit: Unit,
     coordinates: Coordinates,
@@ -48,15 +50,13 @@ export const ShootArrow: UnitAbility = {
     unit.spendMana(manaCost);
 
     const coordinatesList = [];
-    let { x, y } = Coordinates.plusDirection(unit.getCoordinates(), direction);
-    const { dx, dy } = Direction.getOffsets(direction);
-    while (map.contains({ x, y }) && !isBlocked(map, { x, y })) {
-      coordinatesList.push({ x, y });
-      x += dx;
-      y += dy;
+    let targetCoordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
+    while (map.contains(targetCoordinates) && !isBlocked(targetCoordinates, map)) {
+      coordinatesList.push(targetCoordinates);
+      targetCoordinates = Coordinates.plusDirection(targetCoordinates, direction);
     }
 
-    const targetUnit = map.getUnit({ x, y });
+    const targetUnit = map.getUnit(targetCoordinates);
     if (targetUnit) {
       const damage = getRangedDamage(unit);
       await playArrowAnimation(unit, direction, coordinatesList, targetUnit, state);

@@ -8,6 +8,7 @@ import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
+import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 
 const manaCost = 10;
 const damageCoefficient = 1;
@@ -21,6 +22,9 @@ export const MinorStunAttack: UnitAbility = {
   icon: 'icon2',
   innate: false,
   isEnabled: unit => unit.getMana() >= manaCost,
+  isLegal: (unit: Unit, coordinates: Coordinates) => {
+    return hasEnemyUnit(unit, coordinates);
+  },
   use: async (
     unit: Unit,
     coordinates: Coordinates,

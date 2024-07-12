@@ -16,7 +16,7 @@ export const walk = async (
   const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
 
   const map = unit.getMap();
-  if (!map.contains(coordinates) || isBlocked(map, coordinates)) {
+  if (!map.contains(coordinates) || isBlocked(coordinates, map)) {
     // do nothing
   } else {
     await moveUnit(unit, coordinates, session, state);

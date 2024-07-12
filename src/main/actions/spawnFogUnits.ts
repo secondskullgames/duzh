@@ -59,13 +59,13 @@ const _getFogSpawnCoordinates = (
         .filter(
           coordinates =>
             hypotenuse(coordinates, playerUnit.getCoordinates()) >= minDistanceWaway &&
-            !isBlocked(map, coordinates)
+            !isBlocked(coordinates, map)
         );
     } else {
       return allTiles
         .map(tile => tile.getCoordinates())
         .filter(
-          coordinates => !map.isTileRevealed(coordinates) && !isBlocked(map, coordinates)
+          coordinates => !map.isTileRevealed(coordinates) && !isBlocked(coordinates, map)
         );
     }
   })();

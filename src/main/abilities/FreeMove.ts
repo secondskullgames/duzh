@@ -8,6 +8,7 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
+import { Direction } from '@lib/geometry/Direction';
 
 const manaCost = 4;
 
@@ -17,6 +18,9 @@ export const FreeMove: UnitAbility = {
   icon: 'icon5',
   innate: false,
   isEnabled: unit => unit.getMana() >= manaCost,
+  isLegal: (unit, coordinates) => {
+    return !isBlocked(coordinates, unit.getMap());
+  },
   use: async (
     unit: Unit,
     coordinates: Coordinates,
@@ -24,13 +28,10 @@ export const FreeMove: UnitAbility = {
     state: GameState
   ) => {
     const map = session.getMap();
-    let { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
-    dx = Math.sign(dx);
-    dy = Math.sign(dy);
-
-    unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
-    const targetCoordinates = Coordinates.plus(unit.getCoordinates(), { dx, dy });
-    if (!isBlocked(map, targetCoordinates)) {
+    const direction = Direction.between(unit.getCoordinates(), coordinates);
+    unit.setDirection(direction);
+    const targetCoordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
+    if (!isBlocked(targetCoordinates, map)) {
       await moveUnit(unit, targetCoordinates, session, state);
       unit.spendMana(manaCost);
     } else {

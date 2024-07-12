@@ -15,7 +15,8 @@ export const ShootFireball: UnitAbility = {
   icon: 'icon6',
   manaCost,
   innate: false,
-  isEnabled: () => true,
+  isEnabled: unit => unit.getMana() >= manaCost,
+  isLegal: () => true, // TODO
   use: async (
     unit: Unit,
     coordinates: Coordinates,

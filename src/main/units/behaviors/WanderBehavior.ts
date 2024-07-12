@@ -16,7 +16,7 @@ export class WanderBehavior implements UnitBehavior {
 
     for (const direction of Direction.values()) {
       const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
-      if (map.contains(coordinates) && !isBlocked(map, coordinates)) {
+      if (map.contains(coordinates) && !isBlocked(coordinates, map)) {
         possibleDirections.push(direction);
       }
     }

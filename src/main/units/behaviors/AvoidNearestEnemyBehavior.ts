@@ -51,7 +51,7 @@ export class AvoidNearestEnemyBehavior implements UnitBehavior {
     for (const direction of Direction.values()) {
       const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
       if (map.contains(coordinates)) {
-        if (!isBlocked(map, coordinates)) {
+        if (!isBlocked(coordinates, map)) {
           tiles.push(coordinates);
         }
       }
@@ -80,7 +80,7 @@ export class AvoidNearestEnemyBehavior implements UnitBehavior {
     for (const direction of Direction.values()) {
       const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
       if (map.contains(coordinates)) {
-        if (!isBlocked(map, coordinates)) {
+        if (!isBlocked(coordinates, map)) {
           tiles.push(coordinates);
         }
       }

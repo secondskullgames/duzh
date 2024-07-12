@@ -17,6 +17,7 @@ export const ShootFrostbolt: UnitAbility = {
   manaCost: manaCost,
   innate: false,
   isEnabled: unit => unit.getMana() >= manaCost,
+  isLegal: () => true, // TODO
   use: async (
     unit: Unit,
     coordinates: Coordinates,

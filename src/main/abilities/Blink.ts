@@ -1,7 +1,6 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
-import Sounds from '@main/sounds/Sounds';
 import MapInstance from '@main/maps/MapInstance';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
@@ -10,6 +9,7 @@ import { Feature } from '@main/utils/features';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
+import { checkState } from '@lib/utils/preconditions';
 
 const manaCost = 10;
 
@@ -19,6 +19,10 @@ export const Blink: UnitAbility = {
   icon: 'blink_icon',
   innate: false,
   isEnabled: unit => unit.getMana() >= manaCost,
+  isLegal: (unit: Unit, coordinates: Coordinates) => {
+    const map = unit.getMap();
+    return !_isBlocked(unit.getCoordinates(), coordinates, map);
+  },
   use: async (
     unit: Unit,
     coordinates: Coordinates,
@@ -42,13 +46,10 @@ export const Blink: UnitAbility = {
       y: y + dy * distance
     };
     const blocked = _isBlocked(unit.getCoordinates(), targetCoordinates, map);
+    checkState(!blocked);
 
-    if (blocked) {
-      state.getSoundPlayer().playSound(Sounds.BLOCKED);
-    } else {
-      await moveUnit(unit, targetCoordinates, session, state);
-      unit.spendMana(manaCost);
-    }
+    await moveUnit(unit, targetCoordinates, session, state);
+    unit.spendMana(manaCost);
   }
 };
 
@@ -58,7 +59,7 @@ const _isBlocked = (start: Coordinates, end: Coordinates, map: MapInstance): boo
   while (!Coordinates.equals(coordinates, end)) {
     coordinates = Coordinates.plusDirection(coordinates, direction);
     if (Coordinates.equals(coordinates, end)) {
-      return isBlocked(map, coordinates);
+      return isBlocked(coordinates, map);
     } else if (Feature.isEnabled(Feature.BLINK_THROUGH_WALLS)) {
       // do nothing
     } else {

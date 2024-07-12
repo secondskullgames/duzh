@@ -93,7 +93,7 @@ export class OrderExecutor {
     unit.setDirection(direction);
 
     check(map.contains(coordinates));
-    if (!isBlocked(map, coordinates)) {
+    if (!isBlocked(coordinates, map)) {
       await walk(unit, direction, session, state);
       return;
     } else {
