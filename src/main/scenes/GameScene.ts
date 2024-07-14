@@ -225,6 +225,7 @@ export class GameScene implements Scene {
     if (item) {
       pickupItem(playerUnit, item, session, state);
       map.removeObject(item);
+      await engine.playTurn();
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_DOWN) {
       this.soundPlayer.playSound(Sounds.DESCEND_STAIRS);
       await mapController.loadNextMap();
@@ -234,7 +235,6 @@ export class GameScene implements Scene {
     } else if (shrine) {
       shrine.use(state, session);
     }
-    await engine.playTurn();
   };
 
   private _handleModifierKeyDown = async (key: ModifierKey) => {
