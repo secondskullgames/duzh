@@ -89,7 +89,7 @@ export class GameScene implements Scene {
       await this._handleModifierKeyDown(key as ModifierKey);
     } else if (key === 'SPACEBAR') {
       this.soundPlayer.playSound(Sounds.FOOTSTEP);
-      await engine.playTurn();
+      await engine.playTurnCycle();
     } else if (key === 'TAB') {
       session.prepareInventoryScreen(session.getPlayerUnit());
       session.setScene(SceneName.INVENTORY);
@@ -178,7 +178,7 @@ export class GameScene implements Scene {
     if (order) {
       const playerController = playerUnit.getController() as PlayerUnitController;
       playerController.queueOrder(order);
-      await engine.playTurn();
+      await engine.playTurnCycle();
     } else {
       playerUnit.setDirection(direction);
       this.soundPlayer.playSound(Sounds.BLOCKED);
@@ -225,7 +225,7 @@ export class GameScene implements Scene {
     if (item) {
       pickupItem(playerUnit, item, session, state);
       map.removeObject(item);
-      await engine.playTurn();
+      await engine.playTurnCycle();
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_DOWN) {
       this.soundPlayer.playSound(Sounds.DESCEND_STAIRS);
       await mapController.loadNextMap();

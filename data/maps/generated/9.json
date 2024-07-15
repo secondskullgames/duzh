@@ -10,23 +10,27 @@
     "types": [
       {
         "type": "goblin_archer",
-        "chance": 0.25
+        "chance": 0.2
       },
       {
         "type": "golem",
-        "chance": 0.25
+        "chance": 0.2
       },
       {
         "type": "fire_golem",
-        "chance": 0.25
+        "chance": 0.2
       },
       {
         "type": "green_blob",
-        "chance": 0.25
+        "chance": 0.2
+      },
+      {
+        "type": "fire_snake",
+        "chance": 0.2
       }
     ],
-    "min": 11,
-    "max": 13
+    "min": 13,
+    "max": 15
   },
   "items": {
     "min": 1,

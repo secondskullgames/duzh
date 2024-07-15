@@ -25,8 +25,8 @@
         "chance": 0.2
       }
     ],
-    "min": 9,
-    "max": 10
+    "min": 10,
+    "max": 12
   },
   "items": {
     "min": 1,

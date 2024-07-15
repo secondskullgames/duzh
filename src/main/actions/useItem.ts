@@ -9,6 +9,6 @@ export const useItem = async (unit: Unit, item: InventoryItem, engine: Engine) =
   await item.use(unit, state, session);
   unit.getInventory().remove(item);
   if (item.category === ItemCategory.SCROLL) {
-    await engine.playTurn();
+    await engine.playTurnCycle();
   }
 };

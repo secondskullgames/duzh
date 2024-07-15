@@ -13,7 +13,7 @@ import { injectable } from 'inversify';
 export interface Engine {
   getState: () => GameState;
   getSession: () => Session;
-  playTurn: () => Promise<void>;
+  playTurnCycle: () => Promise<void>;
 }
 
 export const Engine = Symbol('Engine');
@@ -30,7 +30,7 @@ export class EngineImpl implements Engine {
   getState = (): GameState => this.state;
   getSession = (): Session => this.session;
 
-  playTurn = async () => {
+  playTurnCycle = async () => {
     const { state, session } = this;
     const map = session.getMap();
     session.setTurnInProgress(true);
