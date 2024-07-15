@@ -96,13 +96,12 @@ export class InventoryScene implements Scene {
   private _handleEnter = async () => {
     const { engine } = this;
     const session = engine.getSession();
-    const state = engine.getState();
     const playerUnit = session.getPlayerUnit();
     const inventory = session.getInventoryState();
     const selectedItem = inventory.getSelectedItem();
 
     if (selectedItem) {
-      await useItem(playerUnit, selectedItem, state, session);
+      await useItem(playerUnit, selectedItem, engine);
       session.prepareInventoryScreen(playerUnit);
     }
   };
@@ -111,7 +110,6 @@ export class InventoryScene implements Scene {
   handleClick = async ({ pixel }: ClickCommand) => {
     const { engine } = this;
     const session = engine.getSession();
-    const state = engine.getState();
     const playerUnit = session.getPlayerUnit();
     const inventoryState = session.getInventoryState();
 
@@ -127,7 +125,7 @@ export class InventoryScene implements Scene {
     for (const [item, rect] of itemRects) {
       if (Rect.containsPoint(rect, pixel)) {
         if (inventoryState.getSelectedItem() == item) {
-          await useItem(playerUnit, item, state, session);
+          await useItem(playerUnit, item, engine);
           session.prepareInventoryScreen(playerUnit);
         } else {
           inventoryState.selectItem(session.getPlayerUnit(), item);
