@@ -8,12 +8,14 @@ import { Faction } from '@main/units/Faction';
 import { OrderExecutor } from '@main/units/orders/OrderExecutor';
 import GameObject, { ObjectType } from '@main/objects/GameObject';
 import Spawner from '@main/objects/Spawner';
+import { Graphics } from '@lib/graphics/Graphics';
 import { injectable } from 'inversify';
 
 export interface Engine {
   getState: () => GameState;
   getSession: () => Session;
   playTurn: () => Promise<void>;
+  render: (graphics: Graphics) => Promise<void>;
 }
 
 export const Engine = Symbol('Engine');
@@ -54,6 +56,12 @@ export class EngineImpl implements Engine {
 
     session.nextTurn();
     session.setTurnInProgress(false);
+  };
+
+  render = async (graphics: Graphics) => {
+    const { session } = this;
+    const scene = session.getCurrentScene();
+    scene?.render(graphics);
   };
 
   private _playUnitTurnAction = async (

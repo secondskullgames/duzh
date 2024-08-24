@@ -102,12 +102,11 @@ const init = async ({ rootElement, gameConfig }: Props) => {
   inputHandler.addEventListener(canvas);
 
   await showSplashScreen(state, session);
-  setInterval(async () => {
-    const currentScene = session.getCurrentScene();
-    if (currentScene) {
-      await currentScene.render(canvasGraphics);
-    }
-  }, 20);
+  const frameHandler = async () => {
+    await engine.render(canvasGraphics);
+    window.requestAnimationFrame(frameHandler);
+  };
+  window.requestAnimationFrame(frameHandler);
 };
 
 const main = async () => {
