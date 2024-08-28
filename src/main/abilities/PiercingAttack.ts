@@ -12,19 +12,21 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 
-const manaCost = 0;
-const damageCoefficient = 1;
+export class PiercingAttack implements UnitAbility {
+  static readonly MANA_COST = 0;
+  static readonly DAMAGE_COEFFICIENT = 1;
+  readonly name = AbilityName.PIERCE;
+  manaCost = PiercingAttack.MANA_COST;
+  readonly icon = 'icon1';
+  readonly innate = false;
 
-export const PiercingAttack: UnitAbility = {
-  name: AbilityName.PIERCE,
-  manaCost,
-  icon: 'icon1', // TODO
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  isLegal: (unit: Unit, coordinates: Coordinates) => {
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  isLegal = (unit: Unit, coordinates: Coordinates) => {
     return hasEnemyUnit(unit, coordinates);
-  },
-  use: async (
+  };
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -39,7 +41,9 @@ export const PiercingAttack: UnitAbility = {
       const attack: Attack = {
         sound: Sounds.SPECIAL_ATTACK,
         calculateAttackResult: (unit: Unit): AttackResult => {
-          const damage = Math.round(getMeleeDamage(unit) * damageCoefficient);
+          const damage = Math.round(
+            getMeleeDamage(unit) * PiercingAttack.DAMAGE_COEFFICIENT
+          );
           return { damage };
         },
         getDamageLogMessage: (
@@ -62,7 +66,9 @@ export const PiercingAttack: UnitAbility = {
       const attack: Attack = {
         sound: Sounds.SPECIAL_ATTACK,
         calculateAttackResult: (unit: Unit): AttackResult => {
-          const damage = Math.round(getMeleeDamage(unit) * damageCoefficient);
+          const damage = Math.round(
+            getMeleeDamage(unit) * PiercingAttack.DAMAGE_COEFFICIENT
+          );
           return { damage };
         },
         getDamageLogMessage: (
@@ -88,5 +94,5 @@ export const PiercingAttack: UnitAbility = {
     if (nextSpawner && nextSpawner.isBlocking()) {
       await attackObject(unit, nextSpawner, state);
     }
-  }
-};
+  };
+}

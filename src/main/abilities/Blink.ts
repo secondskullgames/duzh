@@ -12,20 +12,22 @@ import { isBlocked } from '@main/maps/MapUtils';
 import { checkState } from '@lib/utils/preconditions';
 import { Direction } from '@lib/geometry/Direction';
 
-const manaCost = 10;
-const distance = 2;
+export class Blink implements UnitAbility {
+  static readonly MANA_COST = 10;
+  static readonly DISTANCE = 2;
+  readonly name = AbilityName.BLINK;
+  manaCost = Blink.MANA_COST;
+  readonly icon = 'blink_icon';
+  readonly innate = false;
 
-export const Blink: UnitAbility = {
-  name: AbilityName.BLINK,
-  manaCost,
-  icon: 'blink_icon',
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  isLegal: (unit: Unit, coordinates: Coordinates) => {
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  isLegal = (unit: Unit, coordinates: Coordinates) => {
     const map = unit.getMap();
     return !_isBlocked(unit.getCoordinates(), coordinates, map);
-  },
-  use: async (
+  };
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -38,16 +40,16 @@ export const Blink: UnitAbility = {
 
     const { dx, dy } = Direction.getOffsets(direction);
     const targetCoordinates = Coordinates.plus(unit.getCoordinates(), {
-      dx: distance * dx,
-      dy: distance * dy
+      dx: Blink.DISTANCE * dx,
+      dy: Blink.DISTANCE * dy
     });
     const blocked = _isBlocked(unit.getCoordinates(), targetCoordinates, map);
     checkState(!blocked);
 
     await moveUnit(unit, targetCoordinates, session, state);
-    unit.spendMana(manaCost);
-  }
-};
+    unit.spendMana(this.manaCost);
+  };
+}
 
 const _isBlocked = (start: Coordinates, end: Coordinates, map: MapInstance): boolean => {
   const direction = pointAt(start, end);

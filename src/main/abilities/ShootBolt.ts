@@ -15,18 +15,18 @@ import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 
-const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
-  return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
-};
+export class ShootBolt implements UnitAbility {
+  static readonly MANA_COST = 0;
+  readonly name = AbilityName.BOLT;
+  readonly icon = null;
+  manaCost = ShootBolt.MANA_COST;
+  readonly innate = false;
 
-export const ShootBolt: UnitAbility = {
-  name: AbilityName.BOLT,
-  icon: null,
-  manaCost: 0,
-  innate: false,
-  isEnabled: () => true,
-  isLegal: () => true, // TODO
-  use: async (
+  isEnabled = () => true;
+
+  isLegal = () => true; // TODO
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -52,8 +52,8 @@ export const ShootBolt: UnitAbility = {
         sourceUnit: unit,
         targetUnit
       });
-      const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      await playBoltAnimation(unit, direction, coordinatesList, targetUnit, state);
+      const message = this._getDamageLogMessage(unit, targetUnit, adjustedDamage);
+      await this._playBoltAnimation(unit, direction, coordinatesList, targetUnit, state);
       state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
       session.getTicker().log(message, { turn: session.getTurn() });
       if (targetUnit.getLife() <= 0) {
@@ -61,54 +61,57 @@ export const ShootBolt: UnitAbility = {
         await die(targetUnit, state, session);
       }
     } else {
-      await playBoltAnimation(unit, direction, coordinatesList, null, state);
+      await this._playBoltAnimation(unit, direction, coordinatesList, null, state);
     }
-  }
-};
+  };
 
-/**
- * TODO: fully copy-pasted from ShootArrow
- * Probably want to extract a shared `shootArrow` action
- * Still better than using AnimationFactory
- */
-const playBoltAnimation = async (
-  source: Unit,
-  direction: Direction,
-  coordinatesList: Coordinates[],
-  target: Unit | null,
-  state: GameState
-) => {
-  const map = source.getMap();
+  private _getDamageLogMessage = (
+    unit: Unit,
+    target: Unit,
+    damageTaken: number
+  ): string => {
+    return `${unit.getName()}'s bolt hit ${target.getName()} for ${damageTaken} damage!`;
+  };
 
-  // first frame
-  source.setActivity(Activity.SHOOTING, 1, source.getDirection());
-  if (target) {
-    target.setActivity(Activity.STANDING, 1, target.getDirection());
-  }
-  await sleep(100);
+  private _playBoltAnimation = async (
+    source: Unit,
+    direction: Direction,
+    coordinatesList: Coordinates[],
+    target: Unit | null,
+    state: GameState
+  ) => {
+    const map = source.getMap();
 
-  const visibleCoordinatesList = coordinatesList.filter(coordinates =>
-    map.isTileRevealed(coordinates)
-  );
-
-  // arrow movement frames
-  for (const coordinates of visibleCoordinatesList) {
-    const projectile = await state
-      .getProjectileFactory()
-      .createArrow(coordinates, map, direction);
-    map.addProjectile(projectile);
-    await sleep(50);
-    map.removeProjectile(projectile);
-  }
-
-  // last frames
-  if (target) {
-    target.getEffects().addEffect(StatusEffect.DAMAGED, 1);
+    // first frame
+    source.setActivity(Activity.SHOOTING, 1, source.getDirection());
+    if (target) {
+      target.setActivity(Activity.STANDING, 1, target.getDirection());
+    }
     await sleep(100);
-  }
-  source.setActivity(Activity.STANDING, 1, source.getDirection());
-  if (target) {
-    target.setActivity(Activity.STANDING, 1, target.getDirection());
-    target.getEffects().removeEffect(StatusEffect.DAMAGED);
-  }
-};
+
+    const visibleCoordinatesList = coordinatesList.filter(coordinates =>
+      map.isTileRevealed(coordinates)
+    );
+
+    // arrow movement frames
+    for (const coordinates of visibleCoordinatesList) {
+      const projectile = await state
+        .getProjectileFactory()
+        .createArrow(coordinates, map, direction);
+      map.addProjectile(projectile);
+      await sleep(50);
+      map.removeProjectile(projectile);
+    }
+
+    // last frames
+    if (target) {
+      target.getEffects().addEffect(StatusEffect.DAMAGED, 1);
+      await sleep(100);
+    }
+    source.setActivity(Activity.STANDING, 1, source.getDirection());
+    if (target) {
+      target.setActivity(Activity.STANDING, 1, target.getDirection());
+      target.getEffects().removeEffect(StatusEffect.DAMAGED);
+    }
+  };
+}

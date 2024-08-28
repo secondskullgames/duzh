@@ -10,22 +10,24 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 
-const manaCost = 10;
-const damageCoefficient = 1;
-
 /**
  * A one-turn variant of {@link StunAttack}
  */
-export const MinorStunAttack: UnitAbility = {
-  name: AbilityName.MINOR_STUN_ATTACK,
-  manaCost,
-  icon: 'icon2',
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  isLegal: (unit: Unit, coordinates: Coordinates) => {
+export class MinorStunAttack implements UnitAbility {
+  static readonly MANA_COST = 10;
+  static readonly DAMAGE_COEFFICIENT = 1;
+  readonly name = AbilityName.MINOR_STUN_ATTACK;
+  manaCost = MinorStunAttack.MANA_COST;
+  readonly icon = 'icon2';
+  readonly innate = false;
+
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  isLegal = (unit: Unit, coordinates: Coordinates) => {
     return hasEnemyUnit(unit, coordinates);
-  },
-  use: async (
+  };
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -38,12 +40,14 @@ export const MinorStunAttack: UnitAbility = {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
 
       const attack: Attack = {
         sound: Sounds.SPECIAL_ATTACK,
         calculateAttackResult: (unit: Unit): AttackResult => {
-          const damage = Math.round(getMeleeDamage(unit) * damageCoefficient);
+          const damage = Math.round(
+            getMeleeDamage(unit) * MinorStunAttack.DAMAGE_COEFFICIENT
+          );
           return { damage };
         },
         getDamageLogMessage: (
@@ -60,5 +64,5 @@ export const MinorStunAttack: UnitAbility = {
       await attackUnit(unit, targetUnit, attack, session, state);
       targetUnit.setStunned(1);
     }
-  }
-};
+  };
+}

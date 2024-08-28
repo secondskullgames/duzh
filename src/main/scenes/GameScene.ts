@@ -19,8 +19,6 @@ import { AbilityName } from '@main/abilities/AbilityName';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
 import { Feature } from '@main/utils/features';
-import { Strafe } from '@main/abilities/Strafe';
-import { Dash } from '@main/abilities/Dash';
 import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Coordinates } from '@lib/geometry/Coordinates';
@@ -131,7 +129,7 @@ export class GameScene implements Scene {
       ];
       for (const abilityName of possibleAbilities) {
         if (playerUnit.hasAbility(abilityName)) {
-          const ability = UnitAbility.abilityForName(abilityName);
+          const ability = playerUnit.getAbilityForName(abilityName);
           const coordinates = Coordinates.plusDirection(
             playerUnit.getCoordinates(),
             direction
@@ -145,8 +143,15 @@ export class GameScene implements Scene {
       modifiers.includes(ModifierKey.ALT) &&
       Feature.isEnabled(Feature.ALT_STRAFE)
     ) {
-      if (Strafe.isEnabled(playerUnit)) {
-        order = AbilityOrder.create({ direction, ability: Strafe });
+      if (playerUnit.hasAbility(AbilityName.STRAFE)) {
+        const ability = playerUnit.getAbilityForName(AbilityName.STRAFE);
+        const coordinates = Coordinates.plusDirection(
+          playerUnit.getCoordinates(),
+          direction
+        );
+        if (ability.isEnabled(playerUnit) && ability.isLegal(playerUnit, coordinates)) {
+          order = AbilityOrder.create({ direction, ability });
+        }
       }
     } else if (
       modifiers.includes(ModifierKey.ALT) &&
@@ -156,8 +161,11 @@ export class GameScene implements Scene {
         playerUnit.getCoordinates(),
         direction
       );
-      if (Dash.isEnabled(playerUnit) && Dash.isLegal(playerUnit, coordinates)) {
-        order = AbilityOrder.create({ direction, ability: Dash });
+      if (playerUnit.hasAbility(AbilityName.DASH)) {
+        const ability = playerUnit.getAbilityForName(AbilityName.DASH);
+        if (ability.isEnabled(playerUnit) && ability.isLegal(playerUnit, coordinates)) {
+          order = AbilityOrder.create({ direction, ability });
+        }
       }
     } else {
       const ability = session.getQueuedAbility();
@@ -248,15 +256,17 @@ export class GameScene implements Scene {
           // TODO why not SHOOT_FIREBOLT?
           AbilityName.SHOOT_FROSTBOLT
         ]) {
-          const ability = UnitAbility.abilityForName(abilityName);
-          if (playerUnit.hasAbility(abilityName) && ability?.isEnabled(playerUnit)) {
-            session.setQueuedAbility(ability);
+          if (playerUnit.hasAbility(abilityName)) {
+            const ability = playerUnit.getAbilityForName(abilityName);
+            if (ability?.isEnabled(playerUnit)) {
+              session.setQueuedAbility(ability);
+            }
           }
         }
         break;
       }
       case ModifierKey.ALT: {
-        const ability = UnitAbility.abilityForName(AbilityName.DASH);
+        const ability = playerUnit.getAbilityForName(AbilityName.DASH);
         if (ability?.isEnabled(playerUnit)) {
           session.setQueuedAbility(ability);
         }
@@ -326,7 +336,7 @@ export class GameScene implements Scene {
     const abilityRects = this._getAbilityRects(playerUnit);
     for (const [abilityName, rect] of abilityRects) {
       if (Rect.containsPoint(rect, pixel)) {
-        const ability = UnitAbility.abilityForName(abilityName);
+        const ability = playerUnit.getAbilityForName(abilityName);
         await this._handleAbility(ability);
         return;
       }

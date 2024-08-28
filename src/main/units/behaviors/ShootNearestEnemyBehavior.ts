@@ -2,7 +2,6 @@ import { AttackNearestEnemyBehavior } from './AttackNearestEnemyBehavior';
 import { UnitBehavior } from './UnitBehavior';
 import { UnitOrder } from '../orders/UnitOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
-import { ShootArrow } from '@main/abilities/ShootArrow';
 import { AbilityName } from '@main/abilities/AbilityName';
 import Unit from '@main/units/Unit';
 import {
@@ -12,7 +11,6 @@ import {
 } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { EquipmentSlot } from '@models/EquipmentSlot';
-import { UnitAbility } from '@main/abilities/UnitAbility';
 import {
   getNearestEnemyUnit,
   isInVisionRange
@@ -34,8 +32,9 @@ export class ShootNearestEnemyBehavior implements UnitBehavior {
     const atLeastOneTileAway =
       manhattanDistance(unit.getCoordinates(), targetUnit.getCoordinates()) > 1;
     if (atLeastOneTileAway && canShoot(unit, targetUnit)) {
+      const ability = unit.getAbilityForName(AbilityName.SHOOT_ARROW);
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
-      return AbilityOrder.create({ direction, ability: ShootArrow });
+      return AbilityOrder.create({ direction, ability });
     }
 
     // TODO - instantiating this here is a hack
@@ -45,7 +44,7 @@ export class ShootNearestEnemyBehavior implements UnitBehavior {
 }
 
 const canShoot = (unit: Unit, targetUnit: Unit): boolean => {
-  const ability = UnitAbility.abilityForName(AbilityName.SHOOT_ARROW);
+  const ability = unit.getAbilityForName(AbilityName.SHOOT_ARROW);
   return (
     unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON) !== null &&
     unit.getMana() >= ability.manaCost &&

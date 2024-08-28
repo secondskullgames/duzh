@@ -13,14 +13,10 @@ import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { sleep } from '@lib/utils/promises';
 import { getEnemyUnit, isBlocked } from '@main/maps/MapUtils';
 
-const manaCost = 10;
-const damageCoefficient = 1;
-const stunDuration = 1;
-
 const attack: Attack = {
   sound: Sounds.SPECIAL_ATTACK,
   calculateAttackResult: (unit: Unit): AttackResult => {
-    const damage = Math.round(getMeleeDamage(unit) * damageCoefficient);
+    const damage = Math.round(getMeleeDamage(unit) * DashAttack.DAMAGE_COEFFICIENT);
     return { damage };
   },
   getDamageLogMessage: (attacker: Unit, defender: Unit, result: DefendResult): string => {
@@ -31,19 +27,23 @@ const attack: Attack = {
   }
 };
 
-export const DashAttack: UnitAbility = {
-  name: AbilityName.DASH_ATTACK,
-  manaCost,
-  icon: 'icon5',
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
+export class DashAttack implements UnitAbility {
+  static readonly MANA_COST = 10;
+  static readonly DAMAGE_COEFFICIENT = 1;
+  static readonly STUN_DURATION = 1;
+  readonly name = AbilityName.DASH_ATTACK;
+  manaCost = DashAttack.MANA_COST;
+  readonly icon = 'icon5';
+  readonly innate = false;
+  readonly isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
   /**
    * It's legal if:
    * a) there's a unit one tile away, and the next tile is unblocked
    * b) there's a unit two tiles away
    * c) both tiles are unblocked
    */
-  isLegal: (unit, coordinates) => {
+  isLegal = (unit: Unit, coordinates: Coordinates) => {
     const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     const onePlus = Coordinates.plusDirection(unit.getCoordinates(), direction);
@@ -55,8 +55,9 @@ export const DashAttack: UnitAbility = {
       return true;
     }
     return !isBlocked(onePlus, map) && !isBlocked(twoPlus, map);
-  },
-  use: async (
+  };
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -79,7 +80,7 @@ export const DashAttack: UnitAbility = {
     }
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
-    unit.spendMana(manaCost);
+    unit.spendMana(this.manaCost);
 
     const numTiles = 2;
     for (let i = 0; i < 2; i++) {
@@ -96,7 +97,7 @@ export const DashAttack: UnitAbility = {
           }
           if (i === numTiles - 1) {
             await attackUnit(unit, targetUnit, attack, session, state);
-            targetUnit.setStunned(stunDuration);
+            targetUnit.setStunned(DashAttack.STUN_DURATION);
           }
         } else if (!isBlocked(targetCoordinates, map)) {
           await moveUnit(unit, targetCoordinates, session, state);
@@ -104,8 +105,8 @@ export const DashAttack: UnitAbility = {
         await sleep(100);
       }
     }
-  }
-};
+  };
+}
 
 const _doKnockback = async (
   targetUnit: Unit,

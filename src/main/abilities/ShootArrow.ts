@@ -17,23 +17,28 @@ import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { EquipmentSlot } from '@models/EquipmentSlot';
 
-const manaCost = 5;
+export class ShootArrow implements UnitAbility {
+  static readonly MANA_COST = 5;
+  readonly name = AbilityName.SHOOT_ARROW;
+  readonly icon = 'harpoon_icon';
+  manaCost = ShootArrow.MANA_COST;
+  readonly innate = true;
 
-const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
-  return `${unit.getName()}'s arrow hit ${target.getName()} for ${damageTaken} damage!`;
-};
+  isEnabled = (unit: Unit) =>
+    unit.getMana() >= this.manaCost &&
+    unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON) !== null;
 
-export const ShootArrow: UnitAbility = {
-  name: AbilityName.SHOOT_ARROW,
-  icon: 'harpoon_icon',
-  manaCost,
-  innate: true,
-  isEnabled: unit =>
-    unit.getMana() >= manaCost &&
-    unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON) !== null,
-  /** TODO */
-  isLegal: () => true,
-  use: async (
+  isLegal = (unit: Unit, coordinates: Coordinates) => {
+    const map = unit.getMap();
+    const direction = pointAt(unit.getCoordinates(), coordinates);
+    let targetCoordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
+    while (map.contains(targetCoordinates) && !isBlocked(targetCoordinates, map)) {
+      targetCoordinates = Coordinates.plusDirection(targetCoordinates, direction);
+    }
+    return map.getUnit(targetCoordinates) !== null;
+  };
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -47,7 +52,7 @@ export const ShootArrow: UnitAbility = {
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
-    unit.spendMana(manaCost);
+    unit.spendMana(this.manaCost);
 
     const coordinatesList = [];
     let targetCoordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
@@ -59,13 +64,13 @@ export const ShootArrow: UnitAbility = {
     const targetUnit = map.getUnit(targetCoordinates);
     if (targetUnit) {
       const damage = getRangedDamage(unit);
-      await playArrowAnimation(unit, direction, coordinatesList, targetUnit, state);
+      await this._playArrowAnimation(unit, direction, coordinatesList, targetUnit, state);
       state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
         targetUnit
       });
-      const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
+      const message = this._getDamageLogMessage(unit, targetUnit, adjustedDamage);
       session.getTicker().log(message, { turn: session.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
@@ -83,49 +88,57 @@ export const ShootArrow: UnitAbility = {
         }
       }
     } else {
-      await playArrowAnimation(unit, direction, coordinatesList, null, state);
+      await this._playArrowAnimation(unit, direction, coordinatesList, null, state);
     }
-  }
-};
+  };
 
-const playArrowAnimation = async (
-  source: Unit,
-  direction: Direction,
-  coordinatesList: Coordinates[],
-  target: Unit | null,
-  state: GameState
-) => {
-  const map = source.getMap();
+  private _getDamageLogMessage = (
+    unit: Unit,
+    target: Unit,
+    damageTaken: number
+  ): string => {
+    return `${unit.getName()}'s arrow hit ${target.getName()} for ${damageTaken} damage!`;
+  };
 
-  // first frame
-  source.setActivity(Activity.SHOOTING, 1, source.getDirection());
-  if (target) {
-    target.setActivity(Activity.STANDING, 1, target.getDirection());
-  }
-  await sleep(100);
+  private _playArrowAnimation = async (
+    source: Unit,
+    direction: Direction,
+    coordinatesList: Coordinates[],
+    target: Unit | null,
+    state: GameState
+  ) => {
+    const map = source.getMap();
 
-  const visibleCoordinatesList = coordinatesList.filter(coordinates =>
-    map.isTileRevealed(coordinates)
-  );
-
-  // arrow movement frames
-  for (const coordinates of visibleCoordinatesList) {
-    const projectile = await state
-      .getProjectileFactory()
-      .createArrow(coordinates, map, direction);
-    map.addProjectile(projectile);
-    await sleep(50);
-    map.removeProjectile(projectile);
-  }
-
-  // last frames
-  if (target) {
-    target.getEffects().addEffect(StatusEffect.DAMAGED, 1);
+    // first frame
+    source.setActivity(Activity.SHOOTING, 1, source.getDirection());
+    if (target) {
+      target.setActivity(Activity.STANDING, 1, target.getDirection());
+    }
     await sleep(100);
-  }
-  source.setActivity(Activity.STANDING, 1, source.getDirection());
-  if (target) {
-    target.setActivity(Activity.STANDING, 1, target.getDirection());
-    target.getEffects().removeEffect(StatusEffect.DAMAGED);
-  }
-};
+
+    const visibleCoordinatesList = coordinatesList.filter(coordinates =>
+      map.isTileRevealed(coordinates)
+    );
+
+    // arrow movement frames
+    for (const coordinates of visibleCoordinatesList) {
+      const projectile = await state
+        .getProjectileFactory()
+        .createArrow(coordinates, map, direction);
+      map.addProjectile(projectile);
+      await sleep(50);
+      map.removeProjectile(projectile);
+    }
+
+    // last frames
+    if (target) {
+      target.getEffects().addEffect(StatusEffect.DAMAGED, 1);
+      await sleep(100);
+    }
+    source.setActivity(Activity.STANDING, 1, source.getDirection());
+    if (target) {
+      target.setActivity(Activity.STANDING, 1, target.getDirection());
+      target.getEffects().removeEffect(StatusEffect.DAMAGED);
+    }
+  };
+}

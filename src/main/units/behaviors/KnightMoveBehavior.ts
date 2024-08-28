@@ -9,19 +9,18 @@ import { UnitBehavior } from '@main/units/behaviors/UnitBehavior';
 import { FastTeleport } from '@main/abilities/FastTeleport';
 import { UnitOrder } from '@main/units/orders/UnitOrder';
 import { StayOrder } from '@main/units/orders/StayOrder';
+import { AbilityName } from '@main/abilities/AbilityName';
 
 export class KnightMoveBehavior implements UnitBehavior {
   /** @override {@link UnitBehavior#issueOrder} */
   issueOrder = (unit: Unit): UnitOrder => {
-    const canTeleport = unit.getMana() >= FastTeleport.manaCost;
+    const ability = unit.getAbilityForName(AbilityName.FAST_TELEPORT);
+    const canTeleport = unit.getMana() >= ability.manaCost;
     if (canTeleport) {
       const targets = _getKnightMoveTargets(unit);
       if (!isEmpty(targets)) {
         const target = randChoice(targets);
-        return SpellOrder.create({
-          coordinates: target,
-          ability: FastTeleport
-        });
+        return SpellOrder.create({ coordinates: target, ability });
       }
     }
     return StayOrder.create();

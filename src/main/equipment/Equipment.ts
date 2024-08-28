@@ -38,7 +38,7 @@ export default class Equipment {
     this.blockAmount = model.stats.blockAmount ?? 0;
     this.sprite = sprite;
     this.ability = model.ability
-      ? UnitAbility.abilityForName(model.ability as AbilityName)
+      ? UnitAbility.createAbilityForName(model.ability as AbilityName)
       : null;
     this.script = model.script ? (model.script as EquipmentScriptName) : null;
     this.tooltip = getEquipmentTooltip(model);

@@ -63,12 +63,18 @@ export const chooseUnitController = (unitClass: string): UnitController => {
   }
 };
 
+/** TODO this looks unnecessary, we should replace with just `dash.isLegal()` */
 export const canDash = (
   unit: Unit,
   coordinates: Coordinates | undefined,
   map: MapInstance
 ) => {
-  if (!unit.hasAbility(AbilityName.DASH) || Dash.isEnabled(unit)) {
+  if (!unit.hasAbility(AbilityName.DASH)) {
+    return false;
+  }
+
+  const ability = unit.getAbilityForName(AbilityName.DASH);
+  if (!ability.isEnabled(unit)) {
     return false;
   }
 

@@ -5,8 +5,6 @@ import { WanderBehavior } from '../behaviors/WanderBehavior';
 import { SpellOrder } from '../orders/SpellOrder';
 import MapInstance from '@main/maps/MapInstance';
 import { AbilityName } from '@main/abilities/AbilityName';
-import { Summon } from '@main/abilities/Summon';
-import { range as TELEPORT_RANGE, Teleport } from '@main/abilities/Teleport';
 import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
@@ -17,6 +15,7 @@ import { maxBy } from '@lib/utils/arrays';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { UnitOrder } from '@main/units/orders/UnitOrder';
 import { StayOrder } from '@main/units/orders/StayOrder';
+import { Teleport } from '@main/abilities/Teleport';
 
 const maxSummonedUnits = 3;
 const summonChance = 0.2;
@@ -38,16 +37,18 @@ export default class WizardController implements UnitController {
     const map = unit.getMap();
 
     if (_canSummon(unit, map) && _wantsToSummon()) {
+      const ability = unit.getAbilityForName(AbilityName.SUMMON);
       const coordinates = _getTargetSummonCoordinates(unit);
       if (coordinates) {
-        return SpellOrder.create({ ability: Summon, coordinates });
+        return SpellOrder.create({ ability, coordinates });
       }
     }
 
     if (_canTeleport(unit) && _wantsToTeleport(unit, closestEnemyUnit)) {
+      const ability = unit.getAbilityForName(AbilityName.TELEPORT);
       const coordinates = _getTargetTeleportCoordinates(unit);
       if (coordinates) {
-        return SpellOrder.create({ ability: Teleport, coordinates });
+        return SpellOrder.create({ ability, coordinates });
       }
     }
 
@@ -64,11 +65,14 @@ export default class WizardController implements UnitController {
 
 const _canSummon = (unit: Unit, map: MapInstance): boolean => {
   const summonedUnitClass = checkNotNull(unit.getSummonedUnitClass());
-  return (
-    unit.hasAbility(AbilityName.SUMMON) &&
-    unit.getMana() >= Summon.manaCost &&
-    getUnitsOfClass(map, summonedUnitClass).length <= maxSummonedUnits
-  );
+  if (unit.hasAbility(AbilityName.SUMMON)) {
+    const ability = unit.getAbilityForName(AbilityName.SUMMON);
+    return (
+      unit.getMana() >= ability.manaCost &&
+      getUnitsOfClass(map, summonedUnitClass).length <= maxSummonedUnits
+    );
+  }
+  return false;
 };
 
 const _getTargetSummonCoordinates = (unit: Unit): Coordinates | null => {
@@ -88,7 +92,11 @@ const _wantsToTeleport = (unit: Unit, closestEnemyUnit: Unit) => {
 };
 
 const _canTeleport = (unit: Unit) => {
-  return unit.hasAbility(AbilityName.TELEPORT) && unit.getMana() >= Teleport.manaCost;
+  if (unit.hasAbility(AbilityName.TELEPORT)) {
+    const ability = unit.getAbilityForName(AbilityName.TELEPORT);
+    return unit.getMana() >= ability.manaCost;
+  }
+  return false;
 };
 
 const _wantsToSummon = () => {
@@ -106,7 +114,7 @@ const _getTargetTeleportCoordinates = (unit: Unit): Coordinates | null => {
     for (let x = 0; x < map.width; x++) {
       const coordinates = { x, y };
       if (map.contains(coordinates) && !isBlocked(coordinates, map)) {
-        if (hypotenuse(unit.getCoordinates(), coordinates) <= TELEPORT_RANGE) {
+        if (hypotenuse(unit.getCoordinates(), coordinates) <= Teleport.RANGE) {
           tiles.push(coordinates);
         }
       }

@@ -35,6 +35,8 @@ const BoltSwordScript: EquipmentScript = {
   ) => {
     const map = session.getMap();
     const unit = checkNotNull(equipment.getUnit());
+    // TODO need to store this somewhere, on the equipment maybe?
+    const ability = new ShootBolt();
 
     const direction = unit.getDirection();
     let coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
@@ -47,7 +49,7 @@ const BoltSwordScript: EquipmentScript = {
       map.isTileRevealed(coordinates) &&
       map.getUnit(coordinates)
     ) {
-      await ShootBolt.use(unit, target, session, state);
+      await ability.use(unit, target, session, state);
     }
   }
 };

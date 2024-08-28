@@ -15,6 +15,7 @@ import { walk } from '@main/actions/walk';
 import { openDoor } from '@main/actions/openDoor';
 import { pushBlock } from '@main/actions/pushBlock';
 import { SpellOrder } from '@main/units/orders/SpellOrder';
+import { AbilityName } from '@main/abilities/AbilityName';
 import { injectable } from 'inversify';
 
 @injectable()
@@ -72,7 +73,8 @@ export class OrderExecutor {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      await NormalAttack.use(unit, coordinates, session, state);
+      const normalAttack = targetUnit.getAbilityForName(AbilityName.ATTACK);
+      await normalAttack.use(unit, coordinates, session, state);
     } else {
       const spawner = getSpawner(map, coordinates);
       if (spawner && spawner.isBlocking()) {

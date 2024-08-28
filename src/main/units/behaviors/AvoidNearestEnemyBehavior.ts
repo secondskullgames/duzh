@@ -3,7 +3,7 @@ import { UnitOrder } from '../orders/UnitOrder';
 import { StayOrder } from '../orders/StayOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { AbilityName } from '@main/abilities/AbilityName';
-import { range as teleportRange, Teleport } from '@main/abilities/Teleport';
+import { Teleport } from '@main/abilities/Teleport';
 import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
@@ -29,10 +29,11 @@ export class AvoidNearestEnemyBehavior implements UnitBehavior {
     }
 
     if (this._canTeleport(unit)) {
+      const ability = unit.getAbilityForName(AbilityName.TELEPORT);
       const targetCoordinates = this._getTargetTeleportCoordinates(unit, targetUnit);
       if (targetCoordinates) {
         const direction = pointAt(unit.getCoordinates(), targetCoordinates);
-        return AbilityOrder.create({ direction, ability: Teleport });
+        return AbilityOrder.create({ direction, ability });
       }
     }
 
@@ -61,7 +62,7 @@ export class AvoidNearestEnemyBehavior implements UnitBehavior {
       .filter(coordinates => manhattanDistance(unit.getCoordinates(), coordinates) >= 3)
       .filter(
         coordinates =>
-          manhattanDistance(unit.getCoordinates(), coordinates) <= teleportRange
+          manhattanDistance(unit.getCoordinates(), coordinates) <= Teleport.RANGE
       );
     if (possibleCoordinates.length > 0) {
       return maxBy(possibleCoordinates, coordinates =>
@@ -96,6 +97,10 @@ export class AvoidNearestEnemyBehavior implements UnitBehavior {
   };
 
   private _canTeleport = (unit: Unit): boolean => {
-    return unit.hasAbility(AbilityName.TELEPORT) && unit.getMana() >= Teleport.manaCost;
+    if (unit.hasAbility(AbilityName.TELEPORT)) {
+      const ability = unit.getAbilityForName(AbilityName.TELEPORT);
+      return unit.getMana() >= ability.manaCost;
+    }
+    return false;
   };
 }

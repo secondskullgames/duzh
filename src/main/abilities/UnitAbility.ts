@@ -38,14 +38,14 @@ import { ShootFirebolt } from '@main/abilities/ShootFirebolt';
  *
  * Arguably we should decouple these
  */
-export type UnitAbility = Readonly<{
-  name: AbilityName;
+export interface UnitAbility {
+  readonly name: AbilityName;
   manaCost: number;
-  icon: string | null;
+  readonly icon: string | null;
   /**
    * True if the ability does not show up on the player's action bar
    */
-  innate: boolean;
+  readonly innate: boolean;
 
   isEnabled: (unit: Unit) => boolean;
   /**
@@ -60,37 +60,37 @@ export type UnitAbility = Readonly<{
     session: Session,
     state: GameState
   ) => Promise<void>;
-}>;
+}
 
 export namespace UnitAbility {
   const _map: Record<AbilityName, UnitAbility> = {
-    [AbilityName.ATTACK]: NormalAttack,
-    [AbilityName.BLINK]: Blink,
-    [AbilityName.BOLT]: ShootBolt,
-    [AbilityName.BURNING_ATTACK]: BurningAttack,
-    [AbilityName.CLEAVE]: Cleave,
-    [AbilityName.DASH]: Dash,
-    [AbilityName.DASH_ATTACK]: DashAttack,
-    [AbilityName.FAST_TELEPORT]: FastTeleport,
-    [AbilityName.FREE_MOVE]: FreeMove,
-    [AbilityName.HEAVY_ATTACK]: HeavyAttack,
-    [AbilityName.KNOCKBACK_ATTACK]: KnockbackAttack,
-    [AbilityName.MINOR_KNOCKBACK]: MinorKnockback,
-    [AbilityName.MINOR_STUN_ATTACK]: MinorStunAttack,
-    [AbilityName.PIERCE]: PiercingAttack,
-    [AbilityName.SCORPION]: Scorpion,
-    [AbilityName.SHOOT_ARROW]: ShootArrow,
-    [AbilityName.SHOOT_FIREBALL]: ShootFireball,
-    [AbilityName.SHOOT_FIREBOLT]: ShootFirebolt,
-    [AbilityName.SHOOT_FROSTBOLT]: ShootFrostbolt,
-    [AbilityName.SHOOT_TURRET_ARROW]: ShootTurretArrow,
-    [AbilityName.STRAFE]: Strafe,
-    [AbilityName.STUN_ATTACK]: StunAttack,
-    [AbilityName.SUMMON]: Summon,
-    [AbilityName.TELEPORT]: Teleport
+    [AbilityName.ATTACK]: new NormalAttack(),
+    [AbilityName.BLINK]: new Blink(),
+    [AbilityName.BOLT]: new ShootBolt(),
+    [AbilityName.BURNING_ATTACK]: new BurningAttack(),
+    [AbilityName.CLEAVE]: new Cleave(),
+    [AbilityName.DASH]: new Dash(),
+    [AbilityName.DASH_ATTACK]: new DashAttack(),
+    [AbilityName.FAST_TELEPORT]: new FastTeleport(),
+    [AbilityName.FREE_MOVE]: new FreeMove(),
+    [AbilityName.HEAVY_ATTACK]: new HeavyAttack(),
+    [AbilityName.KNOCKBACK_ATTACK]: new KnockbackAttack(),
+    [AbilityName.MINOR_KNOCKBACK]: new MinorKnockback(),
+    [AbilityName.MINOR_STUN_ATTACK]: new MinorStunAttack(),
+    [AbilityName.PIERCE]: new PiercingAttack(),
+    [AbilityName.SCORPION]: new Scorpion(),
+    [AbilityName.SHOOT_ARROW]: new ShootArrow(),
+    [AbilityName.SHOOT_FIREBALL]: new ShootFireball(),
+    [AbilityName.SHOOT_FIREBOLT]: new ShootFirebolt(),
+    [AbilityName.SHOOT_FROSTBOLT]: new ShootFrostbolt(),
+    [AbilityName.SHOOT_TURRET_ARROW]: new ShootTurretArrow(),
+    [AbilityName.STRAFE]: new Strafe(),
+    [AbilityName.STUN_ATTACK]: new StunAttack(),
+    [AbilityName.SUMMON]: new Summon(),
+    [AbilityName.TELEPORT]: new Teleport()
   };
 
-  export const abilityForName = (name: AbilityName): UnitAbility => {
+  export const createAbilityForName = (name: AbilityName): UnitAbility => {
     const ability = _map[name];
     checkNotNull(ability, `Unknown ability ${name}`);
     return ability;

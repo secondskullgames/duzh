@@ -7,25 +7,33 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { shootFrostbolt } from '@main/actions/shootFrostbolt';
 
-const manaCost = 10;
-const damage = 10;
-const freezeDuration = 5;
+export class ShootFrostbolt implements UnitAbility {
+  static readonly DAMAGE = 10;
+  static readonly FREEZE_DURATION = 5;
+  readonly name = AbilityName.SHOOT_FROSTBOLT;
+  readonly icon = 'harpoon_icon';
+  manaCost = 10;
+  readonly innate = false;
 
-export const ShootFrostbolt: UnitAbility = {
-  name: AbilityName.SHOOT_FROSTBOLT,
-  icon: 'harpoon_icon',
-  manaCost: manaCost,
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  isLegal: () => true, // TODO
-  use: async (
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  isLegal = () => true; // TODO
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
     const direction = pointAt(unit.getCoordinates(), coordinates);
-    unit.spendMana(manaCost);
-    await shootFrostbolt(unit, direction, damage, freezeDuration, session, state);
-  }
-};
+    unit.spendMana(this.manaCost);
+    await shootFrostbolt(
+      unit,
+      direction,
+      ShootFrostbolt.DAMAGE,
+      ShootFrostbolt.FREEZE_DURATION,
+      session,
+      state
+    );
+  };
+}
