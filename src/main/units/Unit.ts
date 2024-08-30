@@ -157,6 +157,9 @@ export default class Unit implements Entity {
     for (const eq of props.equipment) {
       this.equipment.add(eq);
       eq.attach(this);
+      if (eq.ability) {
+        this.learnAbility(eq.ability);
+      }
     }
 
     this.effects = new UnitStatusEffects();
