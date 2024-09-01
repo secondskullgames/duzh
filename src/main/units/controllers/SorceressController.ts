@@ -2,7 +2,6 @@ import { UnitController } from './UnitController';
 import { UnitOrder } from '../orders/UnitOrder';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
 import { ShootUnitStationaryBehavior } from '../behaviors/ShootUnitStationaryBehavior';
-import { ShootTurretArrow } from '@main/abilities/ShootTurretArrow';
 import Unit from '@main/units/Unit';
 import { isInStraightLine } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
@@ -10,7 +9,6 @@ import { randChance } from '@lib/utils/random';
 import { KnightMoveBehavior } from '@main/units/behaviors/KnightMoveBehavior';
 import { AvoidNearestEnemyBehavior } from '@main/units/behaviors/AvoidNearestEnemyBehavior';
 import { WanderBehavior } from '@main/units/behaviors/WanderBehavior';
-import { FastTeleport } from '@main/abilities/FastTeleport';
 import { AbilityName } from '@main/abilities/AbilityName';
 import {
   getNearestEnemyUnit,
@@ -35,9 +33,7 @@ export class SorceressController implements UnitController {
     if (!nearestEnemyUnit) {
       return new StayBehavior();
     }
-    const canTeleport =
-      unit.hasAbility(AbilityName.FAST_TELEPORT) &&
-      unit.getMana() >= FastTeleport.manaCost;
+    const canTeleport = this._canTeleport(unit);
     const _isInVisionRange = isInVisionRange(unit, nearestEnemyUnit);
     const wantsToTeleport = _isInVisionRange && randChance(teleportChance);
     const canShoot = this._canShoot(unit, nearestEnemyUnit);
@@ -55,15 +51,26 @@ export class SorceressController implements UnitController {
   };
 
   private _canShoot = (unit: Unit, targetUnit: Unit): boolean => {
-    return (
-      unit.getMana() >= ShootTurretArrow.manaCost &&
-      isInVisionRange(unit, targetUnit) &&
-      isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&
-      hasUnblockedStraightLineBetween(
-        unit.getMap(),
-        unit.getCoordinates(),
-        targetUnit.getCoordinates()
-      )
-    );
+    if (unit.hasAbility(AbilityName.SHOOT_TURRET_ARROW)) {
+      const ability = unit.getAbilityForName(AbilityName.SHOOT_TURRET_ARROW);
+      return (
+        unit.getMana() >= ability.manaCost &&
+        isInVisionRange(unit, targetUnit) &&
+        isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&
+        hasUnblockedStraightLineBetween(
+          unit.getMap(),
+          unit.getCoordinates(),
+          targetUnit.getCoordinates()
+        )
+      );
+    }
+    return false;
+  };
+
+  private _canTeleport = (unit: Unit) => {
+    if (unit.hasAbility(AbilityName.FAST_TELEPORT)) {
+      const ability = unit.getAbilityForName(AbilityName.FAST_TELEPORT);
+      return unit.getMana() >= ability.manaCost;
+    }
   };
 }

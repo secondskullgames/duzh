@@ -11,21 +11,23 @@ import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Direction } from '@lib/geometry/Direction';
 
-const manaCost = 4;
+export class Dash implements UnitAbility {
+  static readonly MANA_COST = 4;
+  readonly name = AbilityName.DASH;
+  manaCost = Dash.MANA_COST;
+  readonly icon = 'icon5';
+  readonly innate = true;
 
-export const Dash: UnitAbility = {
-  name: AbilityName.DASH,
-  manaCost,
-  icon: 'icon5',
-  innate: true,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  isLegal: (unit: Unit, coordinates: Coordinates) => {
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  isLegal = (unit: Unit, coordinates: Coordinates) => {
     const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     const onePlus = Coordinates.plusDirection(unit.getCoordinates(), direction);
     return !isBlocked(onePlus, map) && !isBlocked(coordinates, map);
-  },
-  use: async (
+  };
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -55,9 +57,9 @@ export const Dash: UnitAbility = {
 
     if (moved) {
       state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
     } else {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);
     }
-  }
-};
+  };
+}

@@ -16,7 +16,7 @@ export const levelUp = (unit: Unit, session: Session) => {
         unit.getLevel()
       );
       for (const abilityName of abilitiesToLearn) {
-        unit.learnAbility(UnitAbility.abilityForName(abilityName));
+        unit.learnAbility(UnitAbility.createAbilityForName(abilityName));
       }
     } else {
       unit.increaseMaxLife(playerUnitClass.lifePerLevel);
@@ -27,7 +27,7 @@ export const levelUp = (unit: Unit, session: Session) => {
         unit.getLevel()
       );
       for (const abilityName of abilitiesToLearn) {
-        unit.learnAbility(UnitAbility.abilityForName(abilityName));
+        unit.learnAbility(UnitAbility.createAbilityForName(abilityName));
       }
     }
   }

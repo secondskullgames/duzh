@@ -10,10 +10,6 @@ import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { GameState } from '@main/core/GameState';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 
-// Note that you gain 1 passively, so this is really 3 mana per hit
-// TODO should enemy units gain mana?
-const MANA_RETURNED = 1;
-
 const attack: Attack = {
   sound: Sounds.PLAYER_HITS_ENEMY,
   calculateAttackResult: (unit: Unit): AttackResult => {
@@ -27,16 +23,22 @@ const attack: Attack = {
   }
 };
 
-export const NormalAttack: UnitAbility = {
-  name: AbilityName.ATTACK,
-  icon: null,
-  manaCost: 0,
-  innate: true,
-  isEnabled: () => true,
-  isLegal: (unit: Unit, coordinates: Coordinates) => {
+export class NormalAttack implements UnitAbility {
+  // Note that you gain 1 passively, so this is really 2 mana per hit
+  // TODO should enemy units gain mana?
+  static readonly MANA_RETURNED = 1;
+  readonly name = AbilityName.ATTACK;
+  readonly icon = null;
+  readonly manaCost = 0;
+  readonly innate = true;
+
+  isEnabled = () => true;
+
+  isLegal = (unit: Unit, coordinates: Coordinates) => {
     return hasEnemyUnit(unit, coordinates);
-  },
-  use: async (
+  };
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -50,7 +52,7 @@ export const NormalAttack: UnitAbility = {
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
       await attackUnit(unit, targetUnit, attack, session, state);
-      unit.gainMana(MANA_RETURNED);
+      unit.gainMana(NormalAttack.MANA_RETURNED);
     }
-  }
-};
+  };
+}

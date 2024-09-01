@@ -1,10 +1,9 @@
-import { UnitOrder, OrderType } from '@main/units/orders/UnitOrder';
+import { OrderType, UnitOrder } from '@main/units/orders/UnitOrder';
 import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { check } from '@lib/utils/preconditions';
-import { NormalAttack } from '@main/abilities/NormalAttack';
 import { getDoor, getMovableBlock, getSpawner, isBlocked } from '@main/maps/MapUtils';
 import { attackObject } from '@main/actions/attackObject';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
@@ -15,6 +14,7 @@ import { walk } from '@main/actions/walk';
 import { openDoor } from '@main/actions/openDoor';
 import { pushBlock } from '@main/actions/pushBlock';
 import { SpellOrder } from '@main/units/orders/SpellOrder';
+import { AbilityName } from '@main/abilities/AbilityName';
 import { injectable } from 'inversify';
 
 @injectable()
@@ -72,7 +72,8 @@ export class OrderExecutor {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      await NormalAttack.use(unit, coordinates, session, state);
+      const normalAttack = targetUnit.getAbilityForName(AbilityName.ATTACK);
+      await normalAttack.use(unit, coordinates, session, state);
     } else {
       const spawner = getSpawner(map, coordinates);
       if (spawner && spawner.isBlocking()) {

@@ -7,24 +7,26 @@ import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 
-const manaCost = 25;
-const damage = 20;
+export class ShootFireball implements UnitAbility {
+  static readonly MANA_COST = 25;
+  static readonly DAMAGE = 20;
+  readonly name = AbilityName.SHOOT_FIREBALL;
+  readonly icon = 'icon6';
+  manaCost = ShootFireball.MANA_COST;
+  readonly innate = false;
 
-export const ShootFireball: UnitAbility = {
-  name: AbilityName.SHOOT_FIREBALL,
-  icon: 'icon6',
-  manaCost,
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  isLegal: () => true, // TODO
-  use: async (
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  isLegal = () => true; // TODO
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
     const direction = pointAt(unit.getCoordinates(), coordinates);
-    unit.spendMana(manaCost);
-    await shootFireball(unit, direction, damage, session, state);
-  }
-};
+    unit.spendMana(this.manaCost);
+    await shootFireball(unit, direction, ShootFireball.DAMAGE, session, state);
+  };
+}

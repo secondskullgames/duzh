@@ -20,7 +20,7 @@ import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
-import { check, checkArgument } from '@lib/utils/preconditions';
+import { check, checkArgument, checkNotNull } from '@lib/utils/preconditions';
 import { die } from '@main/actions/die';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { UnitStatusEffects } from '@main/units/effects/UnitStatusEffects';
@@ -146,7 +146,7 @@ export default class Unit implements Entity {
     this.direction = Direction.getDefaultUnitDirection();
     this.frameNumber = 1;
     this.abilities = model.abilities.map(abilityName =>
-      UnitAbility.abilityForName(abilityName as AbilityName)
+      UnitAbility.createAbilityForName(abilityName as AbilityName)
     );
     this.turnsSinceCombatAction = null;
 
@@ -157,6 +157,9 @@ export default class Unit implements Entity {
     for (const eq of props.equipment) {
       this.equipment.add(eq);
       eq.attach(this);
+      if (eq.ability) {
+        this.learnAbility(eq.ability);
+      }
     }
 
     this.effects = new UnitStatusEffects();
@@ -203,6 +206,9 @@ export default class Unit implements Entity {
   getAbilities = () => this.abilities;
   hasAbility = (abilityName: AbilityName): boolean =>
     this.abilities.some(ability => ability.name === abilityName);
+
+  getAbilityForName = (abilityName: AbilityName): UnitAbility =>
+    checkNotNull(this.abilities.find(ability => ability.name === abilityName));
 
   /**
    * @override

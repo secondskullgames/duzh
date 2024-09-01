@@ -23,7 +23,6 @@ import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
-import { checkNotNull } from '@lib/utils/preconditions';
 import { BurningAttack } from '@main/abilities/BurningAttack';
 import { FastTeleport } from '@main/abilities/FastTeleport';
 import { ShootFrostbolt } from '@main/abilities/ShootFrostbolt';
@@ -38,14 +37,14 @@ import { ShootFirebolt } from '@main/abilities/ShootFirebolt';
  *
  * Arguably we should decouple these
  */
-export type UnitAbility = Readonly<{
-  name: AbilityName;
+export interface UnitAbility {
+  readonly name: AbilityName;
   manaCost: number;
-  icon: string | null;
+  readonly icon: string | null;
   /**
    * True if the ability does not show up on the player's action bar
    */
-  innate: boolean;
+  readonly innate: boolean;
 
   isEnabled: (unit: Unit) => boolean;
   /**
@@ -60,39 +59,61 @@ export type UnitAbility = Readonly<{
     session: Session,
     state: GameState
   ) => Promise<void>;
-}>;
+}
 
 export namespace UnitAbility {
-  const _map: Record<AbilityName, UnitAbility> = {
-    [AbilityName.ATTACK]: NormalAttack,
-    [AbilityName.BLINK]: Blink,
-    [AbilityName.BOLT]: ShootBolt,
-    [AbilityName.BURNING_ATTACK]: BurningAttack,
-    [AbilityName.CLEAVE]: Cleave,
-    [AbilityName.DASH]: Dash,
-    [AbilityName.DASH_ATTACK]: DashAttack,
-    [AbilityName.FAST_TELEPORT]: FastTeleport,
-    [AbilityName.FREE_MOVE]: FreeMove,
-    [AbilityName.HEAVY_ATTACK]: HeavyAttack,
-    [AbilityName.KNOCKBACK_ATTACK]: KnockbackAttack,
-    [AbilityName.MINOR_KNOCKBACK]: MinorKnockback,
-    [AbilityName.MINOR_STUN_ATTACK]: MinorStunAttack,
-    [AbilityName.PIERCE]: PiercingAttack,
-    [AbilityName.SCORPION]: Scorpion,
-    [AbilityName.SHOOT_ARROW]: ShootArrow,
-    [AbilityName.SHOOT_FIREBALL]: ShootFireball,
-    [AbilityName.SHOOT_FIREBOLT]: ShootFirebolt,
-    [AbilityName.SHOOT_FROSTBOLT]: ShootFrostbolt,
-    [AbilityName.SHOOT_TURRET_ARROW]: ShootTurretArrow,
-    [AbilityName.STRAFE]: Strafe,
-    [AbilityName.STUN_ATTACK]: StunAttack,
-    [AbilityName.SUMMON]: Summon,
-    [AbilityName.TELEPORT]: Teleport
-  };
-
-  export const abilityForName = (name: AbilityName): UnitAbility => {
-    const ability = _map[name];
-    checkNotNull(ability, `Unknown ability ${name}`);
-    return ability;
+  export const createAbilityForName = (name: AbilityName): UnitAbility => {
+    switch (name) {
+      case AbilityName.ATTACK:
+        return new NormalAttack();
+      case AbilityName.BLINK:
+        return new Blink();
+      case AbilityName.BOLT:
+        return new ShootBolt();
+      case AbilityName.BURNING_ATTACK:
+        return new BurningAttack();
+      case AbilityName.CLEAVE:
+        return new Cleave();
+      case AbilityName.DASH:
+        return new Dash();
+      case AbilityName.DASH_ATTACK:
+        return new DashAttack();
+      case AbilityName.FAST_TELEPORT:
+        return new FastTeleport();
+      case AbilityName.FREE_MOVE:
+        return new FreeMove();
+      case AbilityName.HEAVY_ATTACK:
+        return new HeavyAttack();
+      case AbilityName.KNOCKBACK_ATTACK:
+        return new KnockbackAttack();
+      case AbilityName.MINOR_KNOCKBACK:
+        return new MinorKnockback();
+      case AbilityName.MINOR_STUN_ATTACK:
+        return new MinorStunAttack();
+      case AbilityName.PIERCE:
+        return new PiercingAttack();
+      case AbilityName.SCORPION:
+        return new Scorpion();
+      case AbilityName.SHOOT_ARROW:
+        return new ShootArrow();
+      case AbilityName.SHOOT_FIREBALL:
+        return new ShootFireball();
+      case AbilityName.SHOOT_FIREBOLT:
+        return new ShootFirebolt();
+      case AbilityName.SHOOT_FROSTBOLT:
+        return new ShootFrostbolt();
+      case AbilityName.SHOOT_TURRET_ARROW:
+        return new ShootTurretArrow();
+      case AbilityName.STRAFE:
+        return new Strafe();
+      case AbilityName.STUN_ATTACK:
+        return new StunAttack();
+      case AbilityName.SUMMON:
+        return new Summon();
+      case AbilityName.TELEPORT:
+        return new Teleport();
+      default:
+        throw new Error(`Unknown ability ${name}`);
+    }
   };
 }

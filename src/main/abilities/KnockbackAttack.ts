@@ -13,21 +13,24 @@ import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 
-const manaCost = 6;
-const damageCoefficient = 1;
-const stunDuration = 1;
 const TWO_TILES = false;
 
-export const KnockbackAttack: UnitAbility = {
-  name: AbilityName.KNOCKBACK_ATTACK,
-  manaCost,
-  icon: 'icon6',
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  isLegal: (unit: Unit, coordinates: Coordinates) => {
+export class KnockbackAttack implements UnitAbility {
+  static readonly MANA_COST = 6;
+  static readonly DAMAGE_COEFFICIENT = 1;
+  static readonly STUN_DURATION = 1;
+  readonly name = AbilityName.KNOCKBACK_ATTACK;
+  manaCost = KnockbackAttack.MANA_COST;
+  readonly icon = 'icon6';
+  readonly innate = false;
+
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  isLegal = (unit: Unit, coordinates: Coordinates) => {
     return hasEnemyUnit(unit, coordinates);
-  },
-  use: async (
+  };
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -39,12 +42,14 @@ export const KnockbackAttack: UnitAbility = {
 
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
 
       const attack: Attack = {
         sound: Sounds.SPECIAL_ATTACK,
         calculateAttackResult: (unit: Unit): AttackResult => {
-          const damage = Math.round(getMeleeDamage(unit) * damageCoefficient);
+          const damage = Math.round(
+            getMeleeDamage(unit) * KnockbackAttack.DAMAGE_COEFFICIENT
+          );
           return { damage };
         },
         getDamageLogMessage: (
@@ -60,7 +65,7 @@ export const KnockbackAttack: UnitAbility = {
       };
       await attackUnit(unit, targetUnit, attack, session, state);
 
-      targetUnit.setStunned(stunDuration);
+      targetUnit.setStunned(KnockbackAttack.STUN_DURATION);
       if (targetUnit.getLife() > 0) {
         const first = Coordinates.plusDirection(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !isBlocked(first, map)) {
@@ -77,5 +82,5 @@ export const KnockbackAttack: UnitAbility = {
         }
       }
     }
-  }
-};
+  };
+}

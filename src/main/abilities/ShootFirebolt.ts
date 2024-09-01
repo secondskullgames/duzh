@@ -7,25 +7,33 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { shootFirebolt } from '@main/actions/shootFirebolt';
 
-const manaCost = 10;
-const damage = 10;
-const burnDuration = 5;
+export class ShootFirebolt implements UnitAbility {
+  static readonly DAMAGE = 10;
+  static readonly BURN_DURATION = 5;
+  readonly name = AbilityName.SHOOT_FIREBOLT;
+  readonly icon = 'harpoon_icon';
+  manaCost = 10;
+  readonly innate = false;
 
-export const ShootFirebolt: UnitAbility = {
-  name: AbilityName.SHOOT_FIREBOLT,
-  icon: 'harpoon_icon',
-  manaCost: manaCost,
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  isLegal: () => true, // TODO
-  use: async (
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  isLegal = () => true; // TODO
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
     const direction = pointAt(unit.getCoordinates(), coordinates);
-    unit.spendMana(manaCost);
-    await shootFirebolt(unit, direction, damage, burnDuration, session, state);
-  }
-};
+    unit.spendMana(this.manaCost);
+    await shootFirebolt(
+      unit,
+      direction,
+      ShootFirebolt.DAMAGE,
+      ShootFirebolt.BURN_DURATION,
+      session,
+      state
+    );
+  };
+}

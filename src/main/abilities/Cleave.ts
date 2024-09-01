@@ -10,13 +10,10 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import type { UnitAbility } from './UnitAbility';
 
-const manaCost = 8;
-const damageCoefficient = 2;
-
 const attack: Attack = {
   sound: Sounds.SPECIAL_ATTACK,
   calculateAttackResult: (unit: Unit): AttackResult => {
-    const damage = Math.round(getMeleeDamage(unit) * damageCoefficient);
+    const damage = Math.round(getMeleeDamage(unit) * Cleave.DAMAGE_COEFFICIENT);
     return { damage };
   },
   getDamageLogMessage: (attacker: Unit, defender: Unit, result: DefendResult): string => {
@@ -27,17 +24,21 @@ const attack: Attack = {
   }
 };
 
-export const Cleave: UnitAbility = {
-  name: AbilityName.CLEAVE,
-  manaCost,
-  icon: 'icon7',
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
+export class Cleave implements UnitAbility {
+  static readonly MANA_COST = 8;
+  static readonly DAMAGE_COEFFICIENT = 2;
+  readonly name = AbilityName.CLEAVE;
+  manaCost = Cleave.MANA_COST;
+  readonly icon = 'icon7';
+  readonly innate = false;
+
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  isLegal: (unit: Unit, coordinates: Coordinates) => {
+  isLegal = (unit: Unit, coordinates: Coordinates) => {
     return _getTargetUnits(unit).length > 0;
-  },
-  use: async (
+  };
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -48,7 +49,7 @@ export const Cleave: UnitAbility = {
 
     const targetUnits = _getTargetUnits(unit);
     if (targetUnits.length > 0) {
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
     }
 
     // TODO: consider making this simultaneous
@@ -58,8 +59,8 @@ export const Cleave: UnitAbility = {
       await attackUnit(unit, targetUnit, attack, session, state);
     }
     unit.setDirection(initialDirection);
-  }
-};
+  };
+}
 
 /**
  * Returns the units that will be affected by a cleave attack.

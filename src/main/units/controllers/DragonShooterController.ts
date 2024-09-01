@@ -3,7 +3,6 @@ import { UnitOrder } from '../orders/UnitOrder';
 import { StayBehavior } from '../behaviors/StayBehavior';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
 import { ShootUnitStationaryBehavior } from '../behaviors/ShootUnitStationaryBehavior';
-import { ShootTurretArrow } from '@main/abilities/ShootTurretArrow';
 import Unit from '@main/units/Unit';
 import { hypotenuse, isInStraightLine } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
@@ -13,6 +12,7 @@ import {
   getNearestEnemyUnit,
   isInVisionRange
 } from '@main/units/controllers/ControllerUtils';
+import { AbilityName } from '@main/abilities/AbilityName';
 
 const teleportChance = 0.25;
 const shootChance = 0.9;
@@ -49,15 +49,19 @@ export default class DragonShooterController implements UnitController {
   };
 
   private _canShoot = (unit: Unit, targetUnit: Unit): boolean => {
-    return (
-      unit.getMana() >= ShootTurretArrow.manaCost &&
-      isInVisionRange(unit, targetUnit) &&
-      isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&
-      hasUnblockedStraightLineBetween(
-        unit.getMap(),
-        unit.getCoordinates(),
-        targetUnit.getCoordinates()
-      )
-    );
+    if (unit.hasAbility(AbilityName.SHOOT_TURRET_ARROW)) {
+      const ability = unit.getAbilityForName(AbilityName.SHOOT_TURRET_ARROW);
+      return (
+        unit.getMana() >= ability.manaCost &&
+        isInVisionRange(unit, targetUnit) &&
+        isInStraightLine(unit.getCoordinates(), targetUnit.getCoordinates()) &&
+        hasUnblockedStraightLineBetween(
+          unit.getMap(),
+          unit.getCoordinates(),
+          targetUnit.getCoordinates()
+        )
+      );
+    }
+    return false;
   };
 }

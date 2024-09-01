@@ -11,22 +11,24 @@ import { GameState } from '@main/core/GameState';
 import { hypotenuse, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 
-export const range = 3;
-const manaCost = 20;
+export class Teleport implements UnitAbility {
+  static readonly RANGE = 3;
+  static readonly MANA_COST = 20;
+  readonly name = AbilityName.TELEPORT;
+  manaCost = Teleport.MANA_COST;
+  readonly icon = null;
+  readonly innate = false;
 
-export const Teleport: UnitAbility = {
-  name: AbilityName.TELEPORT,
-  icon: null,
-  manaCost,
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
-  isLegal: (unit, coordinates) => {
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  isLegal = (unit: Unit, coordinates: Coordinates) => {
     return (
       !isBlocked(coordinates, unit.getMap()) &&
-      hypotenuse(unit.getCoordinates(), coordinates) <= range
+      hypotenuse(unit.getCoordinates(), coordinates) <= Teleport.RANGE
     );
-  },
-  use: async (
+  };
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
@@ -43,7 +45,7 @@ export const Teleport: UnitAbility = {
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
 
     if (map.contains(coordinates) && !isBlocked(coordinates, map)) {
-      unit.spendMana(manaCost);
+      unit.spendMana(this.manaCost);
       state.getSoundPlayer().playSound(Sounds.WIZARD_VANISH);
 
       for (let i = 1; i <= 4; i++) {
@@ -67,5 +69,5 @@ export const Teleport: UnitAbility = {
     } else {
       state.getSoundPlayer().playSound(Sounds.BLOCKED);
     }
-  }
-};
+  };
+}

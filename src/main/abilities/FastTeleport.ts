@@ -10,32 +10,33 @@ import { GameState } from '@main/core/GameState';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 
-const manaCost = 4;
+export class FastTeleport implements UnitAbility {
+  static readonly MANA_COST = 4;
+  readonly name = AbilityName.FAST_TELEPORT;
+  readonly icon = null;
+  manaCost = FastTeleport.MANA_COST;
+  readonly innate = false;
+  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
 
-export const FastTeleport: UnitAbility = {
-  name: AbilityName.FAST_TELEPORT,
-  icon: null,
-  manaCost,
-  innate: false,
-  isEnabled: unit => unit.getMana() >= manaCost,
   /**
    * Note: We don't check range here, it's currently only controlled
    * by the Behavior
    */
-  isLegal: (unit, coordinates) => {
+  isLegal = (unit: Unit, coordinates: Coordinates) => {
     const map = unit.getMap();
     return map.contains(coordinates) && !isBlocked(coordinates, map);
-  },
-  use: async (
+  };
+
+  use = async (
     unit: Unit,
     coordinates: Coordinates,
     session: Session,
     state: GameState
   ) => {
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
-    unit.spendMana(manaCost);
+    unit.spendMana(this.manaCost);
     await moveUnit(unit, coordinates, session, state);
     unit.setActivity(Activity.STANDING, 1, unit.getDirection());
     state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
-  }
-};
+  };
+}

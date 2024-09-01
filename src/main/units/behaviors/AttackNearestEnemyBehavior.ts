@@ -9,7 +9,6 @@ import {
   isInVisionRange
 } from '../controllers/ControllerUtils';
 import { AbilityName } from '@main/abilities/AbilityName';
-import { NormalAttack } from '@main/abilities/NormalAttack';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import Unit from '@main/units/Unit';
 import { randChoice } from '@lib/utils/random';
@@ -53,7 +52,7 @@ export class AttackNearestEnemyBehavior implements UnitBehavior {
       const direction = pointAt(unit.getCoordinates(), second);
       if (canDash(unit, second, map)) {
         return AbilityOrder.create({
-          ability: UnitAbility.abilityForName(AbilityName.DASH),
+          ability: unit.getAbilityForName(AbilityName.DASH),
           direction
         });
       }
@@ -82,6 +81,6 @@ export class AttackNearestEnemyBehavior implements UnitBehavior {
     if (possibleAbilities.length > 0) {
       return randChoice(possibleAbilities);
     }
-    return NormalAttack;
+    return unit.getAbilityForName(AbilityName.ATTACK);
   };
 }
