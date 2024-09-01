@@ -6,7 +6,6 @@ import { isEmpty } from '@lib/utils/arrays';
 import { randChoice } from '@lib/utils/random';
 import { SpellOrder } from '@main/units/orders/SpellOrder';
 import { UnitBehavior } from '@main/units/behaviors/UnitBehavior';
-import { FastTeleport } from '@main/abilities/FastTeleport';
 import { UnitOrder } from '@main/units/orders/UnitOrder';
 import { StayOrder } from '@main/units/orders/StayOrder';
 import { AbilityName } from '@main/abilities/AbilityName';

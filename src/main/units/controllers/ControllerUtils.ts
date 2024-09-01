@@ -5,7 +5,6 @@ import DragonShooterController from './DragonShooterController';
 import { UnitController } from './UnitController';
 import MapInstance from '@main/maps/MapInstance';
 import { AbilityName } from '@main/abilities/AbilityName';
-import { Dash } from '@main/abilities/Dash';
 import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { hypotenuse, manhattanDistance } from '@lib/geometry/CoordinatesUtils';

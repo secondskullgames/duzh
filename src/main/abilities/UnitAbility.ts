@@ -23,7 +23,6 @@ import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
-import { checkNotNull } from '@lib/utils/preconditions';
 import { BurningAttack } from '@main/abilities/BurningAttack';
 import { FastTeleport } from '@main/abilities/FastTeleport';
 import { ShootFrostbolt } from '@main/abilities/ShootFrostbolt';
@@ -63,36 +62,58 @@ export interface UnitAbility {
 }
 
 export namespace UnitAbility {
-  const _map: Record<AbilityName, UnitAbility> = {
-    [AbilityName.ATTACK]: new NormalAttack(),
-    [AbilityName.BLINK]: new Blink(),
-    [AbilityName.BOLT]: new ShootBolt(),
-    [AbilityName.BURNING_ATTACK]: new BurningAttack(),
-    [AbilityName.CLEAVE]: new Cleave(),
-    [AbilityName.DASH]: new Dash(),
-    [AbilityName.DASH_ATTACK]: new DashAttack(),
-    [AbilityName.FAST_TELEPORT]: new FastTeleport(),
-    [AbilityName.FREE_MOVE]: new FreeMove(),
-    [AbilityName.HEAVY_ATTACK]: new HeavyAttack(),
-    [AbilityName.KNOCKBACK_ATTACK]: new KnockbackAttack(),
-    [AbilityName.MINOR_KNOCKBACK]: new MinorKnockback(),
-    [AbilityName.MINOR_STUN_ATTACK]: new MinorStunAttack(),
-    [AbilityName.PIERCE]: new PiercingAttack(),
-    [AbilityName.SCORPION]: new Scorpion(),
-    [AbilityName.SHOOT_ARROW]: new ShootArrow(),
-    [AbilityName.SHOOT_FIREBALL]: new ShootFireball(),
-    [AbilityName.SHOOT_FIREBOLT]: new ShootFirebolt(),
-    [AbilityName.SHOOT_FROSTBOLT]: new ShootFrostbolt(),
-    [AbilityName.SHOOT_TURRET_ARROW]: new ShootTurretArrow(),
-    [AbilityName.STRAFE]: new Strafe(),
-    [AbilityName.STUN_ATTACK]: new StunAttack(),
-    [AbilityName.SUMMON]: new Summon(),
-    [AbilityName.TELEPORT]: new Teleport()
-  };
-
   export const createAbilityForName = (name: AbilityName): UnitAbility => {
-    const ability = _map[name];
-    checkNotNull(ability, `Unknown ability ${name}`);
-    return ability;
+    switch (name) {
+      case AbilityName.ATTACK:
+        return new NormalAttack();
+      case AbilityName.BLINK:
+        return new Blink();
+      case AbilityName.BOLT:
+        return new ShootBolt();
+      case AbilityName.BURNING_ATTACK:
+        return new BurningAttack();
+      case AbilityName.CLEAVE:
+        return new Cleave();
+      case AbilityName.DASH:
+        return new Dash();
+      case AbilityName.DASH_ATTACK:
+        return new DashAttack();
+      case AbilityName.FAST_TELEPORT:
+        return new FastTeleport();
+      case AbilityName.FREE_MOVE:
+        return new FreeMove();
+      case AbilityName.HEAVY_ATTACK:
+        return new HeavyAttack();
+      case AbilityName.KNOCKBACK_ATTACK:
+        return new KnockbackAttack();
+      case AbilityName.MINOR_KNOCKBACK:
+        return new MinorKnockback();
+      case AbilityName.MINOR_STUN_ATTACK:
+        return new MinorStunAttack();
+      case AbilityName.PIERCE:
+        return new PiercingAttack();
+      case AbilityName.SCORPION:
+        return new Scorpion();
+      case AbilityName.SHOOT_ARROW:
+        return new ShootArrow();
+      case AbilityName.SHOOT_FIREBALL:
+        return new ShootFireball();
+      case AbilityName.SHOOT_FIREBOLT:
+        return new ShootFirebolt();
+      case AbilityName.SHOOT_FROSTBOLT:
+        return new ShootFrostbolt();
+      case AbilityName.SHOOT_TURRET_ARROW:
+        return new ShootTurretArrow();
+      case AbilityName.STRAFE:
+        return new Strafe();
+      case AbilityName.STUN_ATTACK:
+        return new StunAttack();
+      case AbilityName.SUMMON:
+        return new Summon();
+      case AbilityName.TELEPORT:
+        return new Teleport();
+      default:
+        throw new Error(`Unknown ability ${name}`);
+    }
   };
 }

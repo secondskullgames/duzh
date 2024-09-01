@@ -1,10 +1,9 @@
-import { UnitOrder, OrderType } from '@main/units/orders/UnitOrder';
+import { OrderType, UnitOrder } from '@main/units/orders/UnitOrder';
 import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { check } from '@lib/utils/preconditions';
-import { NormalAttack } from '@main/abilities/NormalAttack';
 import { getDoor, getMovableBlock, getSpawner, isBlocked } from '@main/maps/MapUtils';
 import { attackObject } from '@main/actions/attackObject';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
