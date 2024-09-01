@@ -20,6 +20,7 @@ import { randChoice, sample } from '@lib/utils/random';
 import { checkNotNull } from '@lib/utils/preconditions';
 import Door, { DoorState } from '@main/objects/Door';
 import { DoorDirection } from '@models/DoorDirection';
+import { Feature } from '@main/utils/features';
 import { inject, injectable } from 'inversify';
 
 @injectable()
@@ -282,6 +283,10 @@ export default class ObjectFactory {
           }
         ]
       };
+
+      if (Feature.isEnabled(Feature.NEGATIVE_REGEN)) {
+        delete possibleStatOptions.lifePerTurn;
+      }
 
       const selectedOptions = sample(Object.values(possibleStatOptions), 3).map(options =>
         randChoice(options)

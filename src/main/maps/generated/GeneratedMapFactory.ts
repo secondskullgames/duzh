@@ -223,6 +223,17 @@ export class GeneratedMapFactory {
       }
     }
 
+    /** one every 20x20 tiles? */
+    if (Feature.isEnabled(Feature.NEGATIVE_REGEN)) {
+      const numHealthGlobes = Math.round((mapModel.width * map.height) / 400);
+      for (let i = 0; i < numHealthGlobes; i++) {
+        const coordinates = randChoice(candidateLocations);
+        const healthGlobe = await this.objectFactory.createHealthGlobe(coordinates, map);
+        objects.push(healthGlobe);
+        candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
+      }
+    }
+
     return objects;
   };
 

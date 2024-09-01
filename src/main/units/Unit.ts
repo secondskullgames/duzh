@@ -25,12 +25,8 @@ import { die } from '@main/actions/die';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { UnitStatusEffects } from '@main/units/effects/UnitStatusEffects';
 import { dealDamage } from '@main/actions/dealDamage';
+import { Feature } from '@main/utils/features';
 
-/**
- * Regenerate this raw amount of health each turn
- * (can be decimal)
- */
-const STARTING_LIFE_PER_TURN = 0.5;
 /**
  * Regenerate this raw amount of mana each turn
  * (can be decimal)
@@ -134,7 +130,7 @@ export default class Unit implements Entity {
     this.maxMana = model.mana;
     this.lifeRemainder = 0;
     this.manaRemainder = 0;
-    this.lifePerTurn = STARTING_LIFE_PER_TURN; // TODO move to model?
+    this.lifePerTurn = Unit._getStartingLifePerTurn(props);
     this.manaPerTurn = STARTING_MANA_PER_TURN; // TODO move to model?
     this.meleeDamage = model.meleeDamage;
     this.rangedDamge = model.rangedDamage;
@@ -164,6 +160,14 @@ export default class Unit implements Entity {
 
     this.effects = new UnitStatusEffects();
   }
+
+  private static _getStartingLifePerTurn = (props: Props): number => {
+    if (Feature.isEnabled(Feature.NEGATIVE_REGEN)) {
+      return props.playerUnitClass ? -0.25 : 0;
+    } else {
+      return 0.5;
+    }
+  };
 
   getId = (): number => this.id;
   getAiParameters = (): AIParameters | null => this.aiParameters;

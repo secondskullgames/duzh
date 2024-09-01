@@ -8,10 +8,11 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import MapInstance from '@main/maps/MapInstance';
 import GameObject from '@main/objects/GameObject';
 import { ItemType } from '@main/items/ItemFactory';
+import { Feature } from '@main/utils/features';
 
 // TODO this should be enemy-specific? add loot tables
 const ITEM_DROP_CHANCE = 0.05;
-const GLOBE_DROP_CHANCE = 0.2;
+const GLOBE_DROP_CHANCE = Feature.isEnabled(Feature.NEGATIVE_REGEN) ? 0.5 : 0.2;
 const HEALTH_GLOBE_DROP_CHANCE = 1;
 const MANA_GLOBE_DROP_CHANCE = 0;
 const VISION_GLOBE_DROP_CHANCE = 0;
