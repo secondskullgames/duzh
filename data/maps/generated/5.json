@@ -4,8 +4,8 @@
   "levelNumber": 5,
   "algorithm": "PATH",
   "tileSet": "dungeon_brown",
-  "width": 28,
-  "height": 28,
+  "width": 30,
+  "height": 30,
   "enemies": {
     "types": [
       {

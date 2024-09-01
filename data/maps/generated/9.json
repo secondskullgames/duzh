@@ -4,8 +4,8 @@
   "levelNumber": 9,
   "algorithm": "BLOB",
   "tileSet": "cave_blue",
-  "width": 36,
-  "height": 36,
+  "width": 38,
+  "height": 38,
   "enemies": {
     "types": [
       {

@@ -4,8 +4,8 @@
   "levelNumber": 8,
   "algorithm": "DEFAULT",
   "tileSet": "cave_red",
-  "width": 34,
-  "height": 34,
+  "width": 36,
+  "height": 36,
   "enemies": {
     "types": [
       {

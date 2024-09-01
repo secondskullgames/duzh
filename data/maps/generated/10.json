@@ -4,8 +4,8 @@
   "levelNumber": 9,
   "algorithm": "PATH",
   "tileSet": "dungeon_cga",
-  "width": 38,
-  "height": 38,
+  "width": 40,
+  "height": 40,
   "enemies": {
     "types": [
       {

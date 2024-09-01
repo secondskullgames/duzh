@@ -4,8 +4,8 @@
   "levelNumber": 7,
   "algorithm": "BLOB",
   "tileSet": "zzt",
-  "width": 32,
-  "height": 32,
+  "width": 34,
+  "height": 34,
   "enemies": {
     "types": [
       {
