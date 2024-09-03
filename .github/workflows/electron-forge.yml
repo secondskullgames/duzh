@@ -85,13 +85,13 @@ jobs:
     ### Download executables
     - id: download-windows-executable
       name: Download Windows executable
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: windows-executable
         path: windows
     - id: download-osx-executable
       name: Download OSX executable
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4.1.7
       with:
         name: osx-executable
         path: osx
