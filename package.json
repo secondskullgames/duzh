@@ -11,7 +11,7 @@
   },
   "engines": {
     "npm": ">=7.0.0",
-    "node": ">=16.0.0 <19.0.0"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "gen-schema": "node --loader ts-node/esm scripts/gen-schema.ts",
@@ -26,38 +26,43 @@
     "lint:fix": "eslint '{src,scripts}/**/*.ts' --fix --max-warnings 0 && prettier --check '{src,scripts}/**/*.ts'"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.12",
-    "@types/node": "^20.11.28",
+    "@types/jest": "^29.5.13",
+    "@types/node": "^22.7.4",
     "@types/pathfinding": "^0.0.9",
-    "@types/webpack-env": "^1.18.4",
-    "@typescript-eslint/eslint-plugin": "^7.2.0",
-    "@typescript-eslint/parser": "^7.2.0",
-    "ajv": "^8.12.0",
+    "@types/webpack-env": "^1.18.5",
+    "@typescript-eslint/eslint-plugin": "^8.8.0",
+    "@typescript-eslint/parser": "^8.8.0",
+    "ajv": "^8.17.1",
     "copy-webpack-plugin": "^12.0.2",
-    "css-loader": "^6.10.0",
-    "eslint": "^8.57.0",
-    "eslint-import-resolver-typescript": "^3.6.1",
-    "eslint-import-resolver-webpack": "^0.13.8",
-    "eslint-plugin-import": "^2.29.1",
+    "css-loader": "^7.1.2",
+    "eslint": "^9.12.0",
+    "eslint-import-resolver-typescript": "^3.6.3",
+    "eslint-import-resolver-webpack": "^0.13.9",
+    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "file-loader": "^6.2.0",
-    "glob": "^10.3.10",
+    "glob": "^11.0.0",
     "glob-import-loader": "^1.2.0",
     "inversify": "^6.0.2",
     "jest": "^29.7.0",
-    "prettier": "^3.2.5",
-    "reflect-metadata": "^0.2.1",
-    "rimraf": "^5.0.5",
-    "ts-jest": "^29.1.2",
+    "prettier": "^3.3.3",
+    "reflect-metadata": "^0.2.2",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.2.5",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.2",
-    "typescript-json-schema": "^0.62.0",
-    "webpack": "^5.94.0",
+    "typescript": "^5.6.2",
+    "typescript-json-schema": "^0.65.1",
+    "webpack": "^5.95.0",
     "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^5.0.3"
+    "webpack-dev-server": "^5.1.0"
   },
   "dependencies": {
     "pathfinding": "^0.4.18"
+  },
+  "overrides": {
+    "express": {
+      "cookie": "^0.7.1"
+    }
   }
 }
