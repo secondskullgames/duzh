@@ -22,8 +22,8 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "electron": "cd electron && npm i && npm run make && npx electron .",
-    "lint": "eslint '{src,scripts}/**/*.ts' --max-warnings 0 && prettier --check '{src,scripts}/**/*.ts'",
-    "lint:fix": "eslint '{src,scripts}/**/*.ts' --fix --max-warnings 0 && prettier --check '{src,scripts}/**/*.ts'"
+    "lint": "eslint '{src,scripts}/**/*.ts' --max-warnings 0",
+    "lint:fix": "eslint '{src,scripts}/**/*.ts' --fix --max-warnings 0"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.0",
@@ -39,10 +39,12 @@
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^7.1.2",
     "eslint": "^9.12.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.3",
     "eslint-import-resolver-webpack": "^0.13.9",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-prettier": "^5.2.1",
     "file-loader": "^6.2.0",
     "glob": "^11.0.0",
     "glob-import-loader": "^1.2.0",

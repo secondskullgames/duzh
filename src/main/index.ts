@@ -123,6 +123,6 @@ const main = async () => {
 
 main().catch(e => {
   console.error(e);
-  // eslint-disable-next-line no-alert
+
   alert(e);
 });
