@@ -19,7 +19,7 @@ export const recordKill = (
 
   const playerUnitClass = attacker.getPlayerUnitClass();
   if (playerUnitClass) {
-    // eslint-disable-next-line no-constant-condition
+     
     while (true) {
       const killsToNextLevel = playerUnitClass.getCumulativeKillsToNextLevel(
         attacker.getLevel()

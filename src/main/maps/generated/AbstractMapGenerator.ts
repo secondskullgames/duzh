@@ -80,14 +80,13 @@ export abstract class AbstractMapGenerator {
       let tiles;
       try {
         tiles = this.generateTiles(width, height);
-      } catch (e) {
+      } catch {
         continue;
       }
       const isValid = this._validateTiles(tiles);
       if (isValid) {
         return tiles;
       } else {
-        // eslint-disable-next-line no-console
         console.error(
           `Generated invalid tiles for level ${level}, regenerating (iteration=${iteration})`
         );
@@ -126,7 +125,7 @@ export abstract class AbstractMapGenerator {
         if (floorTypes.includes(tileType)) {
           if (y < 2) {
             // can't place a wall at the top of the map because... reasons
-            // eslint-disable-next-line no-console
+
             console.warn("Invalid map: can't place a wall at the top of the map");
             return false;
           }
@@ -137,7 +136,6 @@ export abstract class AbstractMapGenerator {
             // (because we have to show the top of the wall above it)
           } else if (wallTypes.includes(oneUp)) {
             if (twoUp !== TileType.WALL_TOP && twoUp !== TileType.NONE) {
-              // eslint-disable-next-line no-console
               console.warn("Invalid map: can't show a wall without a tile for its top");
               return false;
             }

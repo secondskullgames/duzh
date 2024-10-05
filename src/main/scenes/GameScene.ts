@@ -319,7 +319,7 @@ export class GameScene implements Scene {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   handleClick = async ({ pixel }: ClickCommand) => {
     const { engine } = this;
     const state = engine.getState();
