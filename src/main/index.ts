@@ -121,7 +121,12 @@ const main = async () => {
   await init({ rootElement, gameConfig });
 };
 
+function what() {
+  console.log('ok');
+}
+
 main().catch(e => {
+  what();
   console.error(e);
 
   alert(e);
