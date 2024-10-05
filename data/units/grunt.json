@@ -17,7 +17,7 @@
   },
   "meleeDamage": 3,
   "rangedDamage": 0,
-  "life": 30,
+  "life": 25,
   "mana": 0,
   "equipment": [
     "bronze_chain_mail",
