@@ -12,6 +12,7 @@ import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { showSplashScreen } from '@main/actions/showSplashScreen';
 import { Engine } from '@main/core/Engine';
+import { formatTimestamp } from '@lib/utils/time';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'gameover';
@@ -30,21 +31,34 @@ export class GameOverScene implements Scene {
   ) {}
 
   render = async (graphics: Graphics): Promise<void> => {
-    const image = await this.imageFactory.getImage({ filename: BACKGROUND_FILENAME });
+    const { engine, imageFactory } = this;
+    const session = engine.getSession();
+    const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
       top: 0,
       width: graphics.getWidth(),
       height: graphics.getHeight()
     });
-    this._drawText(
-      'PRESS ENTER TO PLAY AGAIN',
-      FontName.APPLE_II,
-      { x: 320, y: 300 },
-      Colors.WHITE,
-      Alignment.CENTER,
-      graphics
-    );
+    const elapsedTurns = session.getTurn();
+    const elapsedTime = formatTimestamp(session.getElapsedTime());
+    const lines = [
+      `Died on level ${session.getMap().levelNumber}`,
+      `in ${elapsedTurns} turns (${elapsedTime})`,
+      'PRESS ENTER TO PLAY AGAIN'
+    ];
+    let y = 300;
+    for (const line of lines) {
+      this._drawText(
+        line,
+        FontName.APPLE_II,
+        { x: 320, y },
+        Colors.WHITE,
+        Alignment.CENTER,
+        graphics
+      );
+      y += 20;
+    }
   };
 
   private _drawText = (

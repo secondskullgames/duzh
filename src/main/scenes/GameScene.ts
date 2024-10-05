@@ -116,8 +116,9 @@ export class GameScene implements Scene {
   private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
     const { engine } = this;
     const session = engine.getSession();
-    const direction = getDirection(key);
     const playerUnit = session.getPlayerUnit();
+    const direction = getDirection(key);
+    const coordinates = Coordinates.plusDirection(playerUnit.getCoordinates(), direction);
 
     let order: UnitOrder | null = null;
     if (modifiers.includes(ModifierKey.SHIFT)) {
@@ -145,10 +146,6 @@ export class GameScene implements Scene {
     ) {
       if (playerUnit.hasAbility(AbilityName.STRAFE)) {
         const ability = playerUnit.getAbilityForName(AbilityName.STRAFE);
-        const coordinates = Coordinates.plusDirection(
-          playerUnit.getCoordinates(),
-          direction
-        );
         if (ability.isEnabled(playerUnit) && ability.isLegal(playerUnit, coordinates)) {
           order = AbilityOrder.create({ direction, ability });
         }
@@ -157,10 +154,6 @@ export class GameScene implements Scene {
       modifiers.includes(ModifierKey.ALT) &&
       Feature.isEnabled(Feature.ALT_DASH)
     ) {
-      const coordinates = Coordinates.plusDirection(
-        playerUnit.getCoordinates(),
-        direction
-      );
       if (playerUnit.hasAbility(AbilityName.DASH)) {
         const ability = playerUnit.getAbilityForName(AbilityName.DASH);
         if (ability.isEnabled(playerUnit) && ability.isLegal(playerUnit, coordinates)) {
@@ -171,10 +164,6 @@ export class GameScene implements Scene {
       const ability = session.getQueuedAbility();
       session.setQueuedAbility(null);
       if (ability) {
-        const coordinates = Coordinates.plusDirection(
-          playerUnit.getCoordinates(),
-          direction
-        );
         if (ability.isEnabled(playerUnit) && ability.isLegal(playerUnit, coordinates)) {
           order = AbilityOrder.create({ ability, direction });
         }
@@ -242,6 +231,10 @@ export class GameScene implements Scene {
       await mapController.loadPreviousMap();
     } else if (shrine) {
       shrine.use(state, session);
+    } else {
+      // this is mostly a hack to support clicks
+      this.soundPlayer.playSound(Sounds.FOOTSTEP);
+      await engine.playTurn();
     }
   };
 
