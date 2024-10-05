@@ -319,7 +319,6 @@ export class GameScene implements Scene {
     }
   };
 
-   
   handleClick = async ({ pixel }: ClickCommand) => {
     const { engine } = this;
     const state = engine.getState();

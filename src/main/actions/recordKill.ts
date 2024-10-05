@@ -19,7 +19,6 @@ export const recordKill = (
 
   const playerUnitClass = attacker.getPlayerUnitClass();
   if (playerUnitClass) {
-     
     while (true) {
       const killsToNextLevel = playerUnitClass.getCumulativeKillsToNextLevel(
         attacker.getLevel()

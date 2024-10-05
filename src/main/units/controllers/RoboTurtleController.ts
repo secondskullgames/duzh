@@ -18,7 +18,6 @@ export class RoboTurtleController implements UnitController {
 
     const initialDirection = unit.getDirection();
 
-     
     while (true) {
       const nextCoordinates = Coordinates.plusDirection(
         unit.getCoordinates(),

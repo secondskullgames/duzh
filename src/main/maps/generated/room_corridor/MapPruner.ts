@@ -32,7 +32,6 @@ export default class MapPruner {
     externalConnections: Connection[],
     emptyRegionConnections: EmptyRegionConnection[]
   ) => {
-     
     while (true) {
       const orphanedConnections = externalConnections.filter(connection => {
         return this._isOrphanedConnection(connection, emptyRegionConnections);
@@ -51,7 +50,7 @@ export default class MapPruner {
 
       const removedAnyConnections =
         orphanedConnections.length > 0 || orphanedEmptyRegionConnections.length > 0;
-       
+
       console.debug(
         `stripping: ${orphanedConnections.length}, ${orphanedEmptyRegionConnections.length}`
       );

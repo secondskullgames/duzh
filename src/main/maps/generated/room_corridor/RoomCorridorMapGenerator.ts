@@ -89,7 +89,6 @@ export class RoomCorridorMapGenerator extends AbstractMapGenerator {
         .join('; ')}
     `;
 
-     
     console.debug(debugOutput);
 
     // Compute the actual tiles based on region/connection specifications.

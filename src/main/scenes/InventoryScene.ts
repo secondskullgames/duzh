@@ -106,7 +106,6 @@ export class InventoryScene implements Scene {
     }
   };
 
-   
   handleClick = async ({ pixel }: ClickCommand) => {
     const { engine } = this;
     const session = engine.getSession();

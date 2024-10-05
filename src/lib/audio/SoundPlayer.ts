@@ -34,7 +34,6 @@ export default class SoundPlayer {
         oscillator.stop();
       }
     } catch (e) {
-       
       console.error(e);
     }
   };

@@ -37,7 +37,6 @@ export const radialChainLightning = async (
   const alreadyDamagedEnemies: Unit[] = [];
   const queue: Unit[] = getAdjacentEnemies(unit, map);
 
-   
   while (true) {
     const targetUnit = queue.shift();
     if (!targetUnit) {

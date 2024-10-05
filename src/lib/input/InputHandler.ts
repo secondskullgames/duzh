@@ -37,7 +37,6 @@ export default class InputHandler {
         try {
           await handler(event);
         } catch (e) {
-           
           console.error(e);
           // eslint-disable-next-line no-alert
           alert(e);
