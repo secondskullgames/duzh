@@ -61,7 +61,7 @@ const checkForFileUpdates = async (filenames: string[]): Promise<boolean> => {
     } else {
       console.log('Hash file does not match content, regenerating schema');
     }
-  } catch (e) {
+  } catch {
     console.log('Hash file does not exist, regenerating schema');
   }
 

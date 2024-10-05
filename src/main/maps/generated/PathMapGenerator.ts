@@ -40,7 +40,6 @@ export class PathMapGenerator extends AbstractMapGenerator {
 
     let lastPoint = firstPoint;
     for (let i = 1; i < this.numPoints; i++) {
-      // eslint-disable-next-line no-constant-condition
       while (true) {
         const nextPoint = _randomEmptyTile(tiles);
         const allCoordinates: Coordinates[] = range(2, height - 2).flatMap(y =>
@@ -52,7 +51,6 @@ export class PathMapGenerator extends AbstractMapGenerator {
           allCoordinates
         );
         if (path.length === 0) {
-          // eslint-disable-next-line no-console
           console.debug(
             `No path from ${JSON.stringify(lastPoint)} to ${JSON.stringify(nextPoint)}`
           );
@@ -79,7 +77,6 @@ const _randomEmptyTile = (tiles: TileType[][]): Coordinates => {
   const right = width - 1;
   const bottom = height - 1;
 
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     const x = randInt(1, right - 1);
     const y = randInt(2, bottom - 1);

@@ -122,7 +122,6 @@ const main = async () => {
 };
 
 main().catch(e => {
-  // eslint-disable-next-line no-console
   console.error(e);
   // eslint-disable-next-line no-alert
   alert(e);

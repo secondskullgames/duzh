@@ -18,7 +18,6 @@ export class RoboTurtleController implements UnitController {
 
     const initialDirection = unit.getDirection();
 
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       const nextCoordinates = Coordinates.plusDirection(
         unit.getCoordinates(),

@@ -106,7 +106,6 @@ export class InventoryScene implements Scene {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async ({ pixel }: ClickCommand) => {
     const { engine } = this;
     const session = engine.getSession();
