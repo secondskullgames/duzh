@@ -99,13 +99,12 @@ const _addTilesForEmptyRegionConnections = (
         ) || null;
 
       if (firstConnection === null || secondConnection === null) {
-         
         console.error('Failed to find connection');
         console.log(connections.map(Connection.toString).join(', '));
         console.log(neighbors.join(' '));
         console.log(firstNeighbor.rect);
         console.log(secondNeighbor.rect);
-         
+
         return;
       }
 

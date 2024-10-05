@@ -1,5 +1,5 @@
 import eslintJs from '@eslint/js';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import eslintPluginPrettier from 'eslint-plugin-prettier';
 import eslintConfigPrettier from 'eslint-config-prettier';
 import typescriptEslintParser from '@typescript-eslint/parser';
 import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin';
@@ -21,13 +21,14 @@ export default [
     },
     plugins: {
       '@typescript-eslint': typescriptEslintPlugin,
-      prettier: eslintPluginPrettierRecommended
+      prettier: eslintPluginPrettier
     },
     rules: {
       ...eslintJs.configs.recommended.rules,
       ...typescriptEslintPlugin.configs.recommended.rules,
       '@typescript-eslint/no-namespace': 'off',
-      'no-redeclare': 'off'
+      'no-redeclare': 'off',
+      'prettier/prettier': 'error'
     }
   },
   eslintConfigPrettier
