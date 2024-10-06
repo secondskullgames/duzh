@@ -38,6 +38,7 @@ export default class InputHandler {
           await handler(event);
         } catch (e) {
           console.error(e);
+          // eslint-disable-next-line no-alert
           alert(e);
         }
         this.busy = false;
