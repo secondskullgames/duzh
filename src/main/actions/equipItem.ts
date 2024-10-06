@@ -4,7 +4,7 @@ import Sounds from '../sounds/Sounds';
 import { Globals } from '@main/core/globals';
 
 export const equipItem = async (equipment: Equipment, unit: Unit) => {
-  const { session, soundPlayer } = Globals;
+  const { ticker, soundPlayer } = Globals;
   const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
   if (currentEquipment) {
     _unequipItem(currentEquipment, unit);
@@ -14,9 +14,7 @@ export const equipItem = async (equipment: Equipment, unit: Unit) => {
     unit.learnAbility(equipment.ability);
   }
   equipment.attach(unit);
-  session
-    .getTicker()
-    .log(`Equipped ${equipment.getName()}.`, { turn: session.getTurn() });
+  ticker.log(`Equipped ${equipment.getName()}.`);
   soundPlayer.playSound(Sounds.BLOCKED);
 };
 

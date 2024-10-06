@@ -4,7 +4,7 @@ import Sounds from '../sounds/Sounds';
 import { Globals } from '@main/core/globals';
 
 export const recordKill = (attacker: Unit, defender: Unit) => {
-  const { session, soundPlayer } = Globals;
+  const { soundPlayer } = Globals;
   const experience = defender.getExperienceRewarded();
   if (!experience || experience <= 0) {
     return;
@@ -19,7 +19,7 @@ export const recordKill = (attacker: Unit, defender: Unit) => {
         attacker.getLevel()
       );
       if (killsToNextLevel !== null && attacker.getLifetimeKills() >= killsToNextLevel) {
-        levelUp(attacker, session);
+        levelUp(attacker);
         soundPlayer.playSound(Sounds.LEVEL_UP);
       } else {
         break;

@@ -1,8 +1,6 @@
 import GameObject, { ObjectType } from './GameObject';
 import MapInstance from '@main/maps/MapInstance';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import DynamicSprite from '@main/graphics/sprites/DynamicSprite';
 
 type Props = Readonly<{

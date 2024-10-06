@@ -1,5 +1,4 @@
 import { AbstractMapGenerator } from './AbstractMapGenerator';
-import TileFactory from '../../tiles/TileFactory';
 import { TileType } from '@models/TileType';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { comparing, range } from '@lib/utils/arrays';

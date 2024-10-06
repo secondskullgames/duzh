@@ -16,7 +16,7 @@ const MANA_GLOBE_DROP_CHANCE = 0;
 const VISION_GLOBE_DROP_CHANCE = 0;
 
 export const die = async (unit: Unit) => {
-  const { session, soundPlayer } = Globals;
+  const { ticker, session, soundPlayer } = Globals;
   const playerUnit = session.getPlayerUnit();
   const coordinates = unit.getCoordinates();
   const map = unit.getMap();
@@ -27,7 +27,7 @@ export const die = async (unit: Unit) => {
     return;
   } else {
     soundPlayer.playSound(Sounds.ENEMY_DIES);
-    session.getTicker().log(`${unit.getName()} dies!`, { turn: session.getTurn() });
+    ticker.log(`${unit.getName()} dies!`);
 
     if (_canDropItems(unit)) {
       const randomRoll = random();
@@ -37,9 +37,7 @@ export const die = async (unit: Unit) => {
       } else if (randomRoll < GLOBE_DROP_CHANCE + ITEM_DROP_CHANCE) {
         const item = await _createItem(coordinates, map);
         map.addObject(item);
-        session.getTicker().log(`${unit.getName()} dropped a ${item.getName()}.`, {
-          turn: session.getTurn()
-        });
+        ticker.log(`${unit.getName()} dropped a ${item.getName()}.`);
       }
     }
   }

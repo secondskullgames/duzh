@@ -7,8 +7,6 @@ import { Faction } from '@main/units/Faction';
 import Sounds from '@main/sounds/Sounds';
 import Unit from '@main/units/Unit';
 import MapInstance from '@main/maps/MapInstance';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { getBonus } from '@main/maps/MapUtils';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { Coordinates } from '@lib/geometry/Coordinates';
@@ -84,7 +82,7 @@ export default class ObjectFactory {
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<GameObject> => {
-    const { session, spriteFactory, soundPlayer } = Globals;
+    const { session, spriteFactory, soundPlayer, ticker } = Globals;
     const sprite = await spriteFactory.createStaticSprite('map_health_globe');
 
     const lifeToGain = 10;
@@ -94,11 +92,9 @@ export default class ObjectFactory {
         if (unit.getLife() < unit.getMaxLife()) {
           const lifeGained = unit.gainLife(lifeToGain);
           soundPlayer.playSound(Sounds.HEALTH_GLOBE);
-          session
-            .getTicker()
-            .log(`${unit.getName()} used a health globe and gained ${lifeGained} life.`, {
-              turn: session.getTurn()
-            });
+          ticker.log(
+            `${unit.getName()} used a health globe and gained ${lifeGained} life.`
+          );
           const map = unit.getMap();
           const _this = getBonus(map, unit.getCoordinates())!;
           map.removeObject(_this);
@@ -119,7 +115,7 @@ export default class ObjectFactory {
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<GameObject> => {
-    const { session, spriteFactory } = Globals;
+    const { session, spriteFactory, ticker, soundPlayer } = Globals;
     const sprite = await spriteFactory.createStaticSprite(
       'map_health_globe',
       loadPaletteSwaps({
@@ -131,16 +127,13 @@ export default class ObjectFactory {
     const manaToGain = 10;
 
     const onUse = async (unit: Unit) => {
-      const { soundPlayer } = Globals;
       if (unit === session.getPlayerUnit()) {
         if (unit.getMana() < unit.getMaxMana()) {
           const manaGained = unit.gainMana(manaToGain);
           soundPlayer.playSound(Sounds.HEALTH_GLOBE);
-          session
-            .getTicker()
-            .log(`${unit.getName()} used a mana globe and gained ${manaGained} mana.`, {
-              turn: session.getTurn()
-            });
+          ticker.log(
+            `${unit.getName()} used a mana globe and gained ${manaGained} mana.`
+          );
           const map = unit.getMap();
           const _this = getBonus(map, unit.getCoordinates())!;
           map.removeObject(_this);
@@ -161,7 +154,7 @@ export default class ObjectFactory {
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<GameObject> => {
-    const { session, spriteFactory, soundPlayer } = Globals;
+    const { session, spriteFactory, soundPlayer, ticker } = Globals;
     // TODO same colors as mana globe
     const sprite = await spriteFactory.createStaticSprite(
       'map_health_globe',
@@ -187,11 +180,7 @@ export default class ObjectFactory {
           }
         }
         soundPlayer.playSound(Sounds.HEALTH_GLOBE);
-        session
-          .getTicker()
-          .log(`${unit.getName()} used a vision globe and revealed nearby tiles.`, {
-            turn: session.getTurn()
-          });
+        ticker.log(`${unit.getName()} used a vision globe and revealed nearby tiles.`);
         const _this = getBonus(map, unit.getCoordinates())!;
         map.removeObject(_this);
       }
@@ -210,9 +199,9 @@ export default class ObjectFactory {
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<GameObject> => {
-    const { spriteFactory, soundPlayer } = Globals;
+    const { spriteFactory, soundPlayer, session } = Globals;
     const sprite = await spriteFactory.createShrineSprite();
-    const onUse = (state: GameState, session: Session) => {
+    const onUse = () => {
       const options = [];
       const playerUnit = checkNotNull(session.getPlayerUnit());
 

@@ -17,7 +17,7 @@ export class TitleScene implements Scene {
   readonly name = SceneName.TITLE;
 
   private _handleStartGame = async () => {
-    const { session, mapController } = Globals;
+    const { session, mapController, ticker } = Globals;
     if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
       await mapController.loadDebugMap();
     } else {
@@ -25,15 +25,11 @@ export class TitleScene implements Scene {
     }
     session.startGameTimer();
     session.setScene(SceneName.GAME);
-    session
-      .getTicker()
-      .log('Welcome to the Dungeons of Duzh!', { turn: session.getTurn() });
+    ticker.log('Welcome to the Dungeons of Duzh!');
     if (isMobileDevice()) {
-      session.getTicker().log('Press the ? icon in the upper-right for instructions.', {
-        turn: session.getTurn()
-      });
+      ticker.log('Press the ? icon in the upper-right for instructions.');
     } else {
-      session.getTicker().log('Press F1 for instructions.', { turn: session.getTurn() });
+      ticker.log('Press F1 for instructions.');
     }
   };
 

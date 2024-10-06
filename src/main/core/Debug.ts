@@ -27,18 +27,18 @@ export class Debug {
   levelUp = async () => {
     const { session } = Globals;
     const playerUnit = session.getPlayerUnit();
-    _levelUp(playerUnit, session);
+    _levelUp(playerUnit);
   };
 
   awardEquipment = async () => {
-    const { session, itemFactory, soundPlayer } = Globals;
+    const { session, itemFactory, soundPlayer, ticker } = Globals;
 
     // eslint-disable-next-line no-alert
     const id = prompt('Enter a valid equipment_id')!;
     const item = await itemFactory.createInventoryEquipment(id);
     const playerUnit = session.getPlayerUnit();
     playerUnit.getInventory().add(item);
-    session.getTicker().log(`Picked up a ${item.name}.`, { turn: session.getTurn() });
+    ticker.log(`Picked up a ${item.name}.`);
     soundPlayer.playSound(Sounds.PICK_UP_ITEM);
   };
 

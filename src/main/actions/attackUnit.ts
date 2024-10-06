@@ -20,7 +20,7 @@ export type Attack = Readonly<{
 }>;
 
 export const attackUnit = async (attacker: Unit, defender: Unit, attack: Attack) => {
-  const { session, soundPlayer } = Globals;
+  const { ticker, soundPlayer } = Globals;
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).beforeAttack?.(
@@ -43,7 +43,7 @@ export const attackUnit = async (attacker: Unit, defender: Unit, attack: Attack)
   attacker.recordDamageDealt(defendResult.damageTaken);
   soundPlayer.playSound(attack.sound);
   const message = attack.getDamageLogMessage(attacker, defender, defendResult);
-  session.getTicker().log(message, { turn: session.getTurn() });
+  ticker.log(message);
 
   attacker.refreshCombat();
   defender.refreshCombat();

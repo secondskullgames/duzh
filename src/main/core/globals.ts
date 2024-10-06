@@ -24,6 +24,7 @@ import { OrderExecutor } from '@main/units/orders/OrderExecutor';
 import { Debug } from '@main/core/Debug';
 import { TextRenderer } from '@main/graphics/TextRenderer';
 import ProjectileFactory from '@main/objects/ProjectileFactory';
+import Ticker from '@main/core/Ticker';
 
 export interface IGlobals {
   assetLoader: AssetLoader;
@@ -45,6 +46,7 @@ export interface IGlobals {
   spriteFactory: SpriteFactory;
   state: GameState;
   textRenderer: TextRenderer;
+  ticker: Ticker;
   tileFactory: TileFactory;
   unitFactory: UnitFactory;
 }
@@ -79,6 +81,7 @@ const tileFactory = new TileFactory();
 
 const state = new GameStateImpl();
 const session = new SessionImpl();
+const ticker = new Ticker();
 const orderExecutor = new OrderExecutor();
 const engine = new EngineImpl();
 const mapController = new MapControllerImpl();
@@ -104,6 +107,7 @@ export const Globals: IGlobals = {
   spriteFactory,
   state,
   textRenderer,
+  ticker,
   tileFactory,
   unitFactory
 };

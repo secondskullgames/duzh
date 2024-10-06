@@ -26,7 +26,7 @@ export class ShootTurretArrow implements UnitAbility {
   isLegal = () => true; // TODO
 
   use = async (unit: Unit, coordinates: Coordinates) => {
-    const { session, soundPlayer } = Globals;
+    const { ticker, soundPlayer } = Globals;
     const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -50,7 +50,7 @@ export class ShootTurretArrow implements UnitAbility {
         targetUnit
       });
       const message = this._getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      session.getTicker().log(message, { turn: session.getTurn() });
+      ticker.log(message);
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
         await die(targetUnit);

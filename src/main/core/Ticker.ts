@@ -1,4 +1,5 @@
 import { clear, tail } from '@lib/utils/arrays';
+import { Globals } from '@main/core/globals';
 
 const maxTurnsAgo = 8;
 const maxMessages = 2;
@@ -8,14 +9,12 @@ type Message = Readonly<{
   turn: number;
 }>;
 
-type Context = Readonly<{
-  turn: number;
-}>;
-
 export default class Ticker {
   private readonly messages: Message[] = [];
 
-  log = (message: string, { turn }: Context) => {
+  log = (message: string) => {
+    const { session } = Globals;
+    const turn = session.getTurn();
     this.messages.push({ message, turn });
   };
 

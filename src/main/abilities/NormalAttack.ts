@@ -5,9 +5,7 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import Unit, { DefendResult } from '@main/units/Unit';
 import { getMeleeDamage } from '@main/units/UnitUtils';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { Session } from '@main/core/Session';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import { GameState } from '@main/core/GameState';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 
 const attack: Attack = {

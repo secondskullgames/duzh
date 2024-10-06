@@ -36,16 +36,12 @@ export type ItemSpec = Readonly<{
 
 export class ItemFactory {
   createLifePotion = (lifeRestored: number): InventoryItem => {
-    const { session, soundPlayer } = Globals;
+    const { soundPlayer, ticker } = Globals;
 
     const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
       soundPlayer.playSound(Sounds.USE_POTION);
       const lifeGained = unit.gainLife(lifeRestored);
-      session
-        .getTicker()
-        .log(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`, {
-          turn: session.getTurn()
-        });
+      ticker.log(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`);
     };
 
     return new InventoryItem({
@@ -57,15 +53,12 @@ export class ItemFactory {
   };
 
   createManaPotion = (name: string, manaRestored: number): InventoryItem => {
+    const { soundPlayer, ticker } = Globals;
+
     const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
-      const { session, soundPlayer } = Globals;
       soundPlayer.playSound(Sounds.USE_POTION);
       const manaGained = unit.gainMana(manaRestored);
-      session
-        .getTicker()
-        .log(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`, {
-          turn: session.getTurn()
-        });
+      ticker.log(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`);
     };
 
     return new InventoryItem({

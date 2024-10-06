@@ -8,13 +8,13 @@ const getLogMessage = (unit: Unit, target: Unit, duration: number): string => {
 };
 
 export const castFreeze = async (unit: Unit, radius: number, duration: number) => {
-  const { session, soundPlayer } = Globals;
+  const { ticker, soundPlayer } = Globals;
   const targetUnits = _getTargetUnits(unit, radius);
   for (const targetUnit of targetUnits) {
     targetUnit.setFrozen(duration);
     soundPlayer.playSound(Sounds.SPECIAL_ATTACK); // TODO
     const message = getLogMessage(unit, targetUnit, duration);
-    session.getTicker().log(message, { turn: session.getTurn() });
+    ticker.log(message);
   }
 };
 

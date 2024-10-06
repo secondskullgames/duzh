@@ -467,8 +467,8 @@ export class GameScene implements Scene {
   };
 
   private _renderTicker = async (graphics: Graphics) => {
-    const { session } = Globals;
-    const messages = session.getTicker().getRecentMessages(session.getTurn());
+    const { session, ticker } = Globals;
+    const messages = ticker.getRecentMessages(session.getTurn());
 
     const left = 0;
     const top = 0;

@@ -4,12 +4,9 @@ import Unit from './Unit';
 import { PlayerUnitClass } from './PlayerUnitClass';
 import { Faction } from './Faction';
 import Equipment from '@main/equipment/Equipment';
-import { ItemFactory } from '@main/items/ItemFactory';
-import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
 import MapInstance from '@main/maps/MapInstance';
 import { UnitModel } from '@models/UnitModel';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import ModelLoader from '@main/assets/ModelLoader';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { Globals } from '@main/core/globals';
 

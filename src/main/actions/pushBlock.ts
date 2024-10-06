@@ -5,7 +5,6 @@ import Block from '@main/objects/Block';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Direction } from '@lib/geometry/Direction';
-import { Globals } from '@main/core/globals';
 
 export const pushBlock = async (unit: Unit, block: Block) => {
   const coordinates = block.getCoordinates();

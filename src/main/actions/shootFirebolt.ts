@@ -20,7 +20,7 @@ export const shootFirebolt = async (
   damage: number,
   burnDuration: number
 ) => {
-  const { session, soundPlayer } = Globals;
+  const { ticker, session, soundPlayer } = Globals;
   unit.setDirection(direction);
 
   const map = session.getMap();
@@ -40,15 +40,13 @@ export const shootFirebolt = async (
       targetUnit
     });
     const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-    session.getTicker().log(message, { turn: session.getTurn() });
+    ticker.log(message);
     if (targetUnit.getLife() <= 0) {
       await sleep(100);
       await die(targetUnit);
     } else {
       targetUnit.setBurning(burnDuration);
-      session
-        .getTicker()
-        .log(`${targetUnit.getName()} is burned!`, { turn: session.getTurn() });
+      ticker.log(`${targetUnit.getName()} is burned!`);
     }
   } else {
     await playFireboltAnimation(unit, direction, coordinatesList, null);
