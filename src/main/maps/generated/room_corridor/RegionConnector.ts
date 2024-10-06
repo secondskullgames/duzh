@@ -118,8 +118,8 @@ const generateMinimalSpanningTree = (regions: RoomRegion[]): Connection[] => {
       connectedRegions.forEach(x => console.log(x));
       console.log('unconnected:');
       unconnectedRegions.forEach(x => console.log(x));
-      throw new Error('Failed to generate minimal spanning tree');
       /* eslint-enable no-console */
+      throw new Error('Failed to generate minimal spanning tree');
     }
   }
 

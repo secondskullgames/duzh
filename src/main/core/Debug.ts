@@ -48,6 +48,7 @@ export class Debug {
     const { engine, itemFactory } = this;
     const session = engine.getSession();
     const state = engine.getState();
+
     // eslint-disable-next-line no-alert
     const id = prompt('Enter a valid equipment_id')!;
     const item = await itemFactory.createInventoryEquipment(id);

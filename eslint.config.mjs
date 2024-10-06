@@ -1,96 +1,38 @@
-import { fixupConfigRules, fixupPluginRules } from '@eslint/compat';
-import typescriptEslint from '@typescript-eslint/eslint-plugin';
-import preferArrow from 'eslint-plugin-prefer-arrow';
+import eslintJs from '@eslint/js';
+import eslintPluginPrettier from 'eslint-plugin-prettier';
+import eslintConfigPrettier from 'eslint-config-prettier';
+import typescriptEslintParser from '@typescript-eslint/parser';
+import typescriptEslintPlugin from '@typescript-eslint/eslint-plugin';
 import globals from 'globals';
-import tsParser from '@typescript-eslint/parser';
-import js from '@eslint/js';
-import { FlatCompat } from '@eslint/eslintrc';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all
-});
 
 export default [
-  ...fixupConfigRules(
-    compat.extends(
-      'eslint:recommended',
-      'plugin:@typescript-eslint/recommended',
-      'plugin:import/recommended'
-    )
-  ),
   {
-    plugins: {
-      '@typescript-eslint': fixupPluginRules(typescriptEslint),
-      'prefer-arrow': preferArrow
-    },
-
+    files: ['src/**/*.ts', 'scripts/**/*.ts'],
     languageOptions: {
-      globals: {
-        ...globals.browser
-      },
-
-      parser: tsParser,
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-
+      parser: typescriptEslintParser,
       parserOptions: {
         project: './tsconfig.json'
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.jest,
+        ...globals.node
       }
     },
-
-    settings: {
-      'import/resolver': {
-        webpack: {
-          config: './webpack.config.cjs'
-        }
-      }
+    plugins: {
+      '@typescript-eslint': typescriptEslintPlugin,
+      prettier: eslintPluginPrettier,
     },
-
     rules: {
+      ...eslintJs.configs.recommended.rules,
+      ...typescriptEslintPlugin.configs.recommended.rules,
       '@typescript-eslint/no-namespace': 'off',
-      '@typescript-eslint/no-unsafe-enum-comparison': 'warn',
-      '@typescript-eslint/no-unused-vars': 'warn',
       'no-alert': 'warn',
-
-      'no-console': [
-        'warn',
-        {
-          allow: ['debug', 'warn', 'error']
-        }
-      ],
-
-      'no-throw-literal': 'warn',
-
-      'prefer-arrow/prefer-arrow-functions': [
-        'warn',
-        {
-          disallowPrototype: true,
-          singleReturnOnly: false,
-          classPropertiesAllowed: true
-        }
-      ],
-
-      'import/order': [
-        'warn',
-        {
-          groups: [
-            'index',
-            'sibling',
-            'parent',
-            'internal',
-            'external',
-            'builtin',
-            'object',
-            'type'
-          ]
-        }
-      ]
+      'no-console': ['warn', { 'allow': ['debug', 'warn', 'error'] }],
+      'no-redeclare': 'off',
+      'prefer-arrow-callback': 'warn',
+      'prettier/prettier': 'warn'
     }
-  }
+  },
+  eslintConfigPrettier
 ];

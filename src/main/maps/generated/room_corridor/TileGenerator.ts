@@ -99,13 +99,14 @@ const _addTilesForEmptyRegionConnections = (
         ) || null;
 
       if (firstConnection === null || secondConnection === null) {
-        /* eslint-disable no-console */
         console.error('Failed to find connection');
+        /* eslint-disable no-console */
         console.log(connections.map(Connection.toString).join(', '));
         console.log(neighbors.join(' '));
         console.log(firstNeighbor.rect);
         console.log(secondNeighbor.rect);
         /* eslint-enable no-console */
+
         return;
       }
 
