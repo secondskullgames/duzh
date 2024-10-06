@@ -4,6 +4,8 @@ import { Definition } from 'typescript-json-schema';
 import { writeFile, mkdir, stat, readFile } from 'fs/promises';
 import { createHash } from 'crypto';
 
+/* eslint-disable no-console */
+
 const modelsDir = 'src/models';
 const outDir = 'src/gen-schema';
 const hashFilename = `${outDir}/HASH`;

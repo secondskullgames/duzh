@@ -100,10 +100,12 @@ const _addTilesForEmptyRegionConnections = (
 
       if (firstConnection === null || secondConnection === null) {
         console.error('Failed to find connection');
+        /* eslint-disable no-console */
         console.log(connections.map(Connection.toString).join(', '));
         console.log(neighbors.join(' '));
         console.log(firstNeighbor.rect);
         console.log(secondNeighbor.rect);
+        /* eslint-enable no-console */
 
         return;
       }

@@ -23,5 +23,14 @@
     "types": ["reflect-metadata", "jest", "webpack-env"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
-  }
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "compilerOptions": {
+    },
+    "moduleTypes": {
+      "webpack.config.cjs": "cjs",
+      "eslint.config.mjs": "mjs"
+    }
+  },
 }
