@@ -8,7 +8,7 @@
       "@main/*": ["src/main/*"],
       "@lib/*": ["src/lib/*"],
       "@models/*": ["src/models/*"],
-      "@png/*": ["png/*"],
+      "@png/*": ["png/*"]
     },
     "lib": ["dom", "esnext"],
     "target": "esnext",
@@ -20,7 +20,7 @@
     "sourceMap": true,
     "strict": true,
     "plugins": [],
-    "types": ["reflect-metadata", "jest", "webpack-env"],
+    "types": ["jest", "webpack-env"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   }

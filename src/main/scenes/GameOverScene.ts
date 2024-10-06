@@ -1,7 +1,5 @@
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
-import { TextRenderer } from '@main/graphics/TextRenderer';
 import { Graphics } from '@lib/graphics/Graphics';
 import { FontName } from '@main/graphics/Fonts';
 import Colors from '@main/graphics/Colors';
@@ -10,29 +8,17 @@ import { Pixel } from '@lib/geometry/Pixel';
 import { Color } from '@lib/graphics/Color';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
-import { showSplashScreen } from '@main/actions/showSplashScreen';
-import { Engine } from '@main/core/Engine';
+import { showTitleScreen } from '@main/actions/showTitleScreen';
 import { formatTimestamp } from '@lib/utils/time';
-import { inject, injectable } from 'inversify';
+import { Globals } from '@main/core/globals';
 
 const BACKGROUND_FILENAME = 'gameover';
 
-@injectable()
 export class GameOverScene implements Scene {
   readonly name = SceneName.GAME_OVER;
 
-  constructor(
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory,
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer,
-    @inject(Engine)
-    private readonly engine: Engine
-  ) {}
-
   render = async (graphics: Graphics): Promise<void> => {
-    const { engine, imageFactory } = this;
-    const session = engine.getSession();
+    const { session, imageFactory } = Globals;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
@@ -69,7 +55,8 @@ export class GameOverScene implements Scene {
     textAlign: Alignment,
     graphics: Graphics
   ) => {
-    const imageData = this.textRenderer.renderText({
+    const { textRenderer } = Globals;
+    const imageData = textRenderer.renderText({
       text,
       fontName,
       color,
@@ -79,9 +66,7 @@ export class GameOverScene implements Scene {
   };
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { engine } = this;
-    const session = engine.getSession();
-    const state = engine.getState();
+    const { state, session } = Globals;
     const { key, modifiers } = command;
 
     switch (key) {
@@ -91,7 +76,7 @@ export class GameOverScene implements Scene {
         } else {
           state.reset();
           session.reset();
-          await showSplashScreen(state, session);
+          await showTitleScreen();
         }
         break;
     }
@@ -101,11 +86,9 @@ export class GameOverScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { engine } = this;
-    const session = engine.getSession();
-    const state = engine.getState();
+    const { state, session } = Globals;
     state.reset();
     session.reset();
-    await showSplashScreen(state, session);
+    await showTitleScreen();
   };
 }

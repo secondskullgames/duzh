@@ -1,19 +1,17 @@
 import { getUnoccupiedLocations } from './MapGenerationUtils';
-import TileFactory from '../../tiles/TileFactory';
 import MapInstance from '../MapInstance';
 import { TileType } from '@models/TileType';
 import { GeneratedMapModel } from '@models/GeneratedMapModel';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Feature } from '@main/utils/features';
+import { Globals } from '@main/core/globals';
 
 export abstract class AbstractMapGenerator {
-  protected constructor(private readonly tileFactory: TileFactory) {}
-
   generateMap = async (
     model: GeneratedMapModel,
     tileSetId: string
   ): Promise<MapInstance> => {
-    const { tileFactory } = this;
+    const { tileFactory } = Globals;
     const { id, width, height, levelNumber } = model;
 
     const tileTypes = this._generateTiles(width, height, levelNumber);

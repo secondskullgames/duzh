@@ -3,8 +3,6 @@ import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { moveUnit } from '@main/actions/moveUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 
 export class Strafe implements UnitAbility {
@@ -19,15 +17,10 @@ export class Strafe implements UnitAbility {
     return !isBlocked(coordinates, unit.getMap());
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
-    const map = session.getMap();
+  use = async (unit: Unit, coordinates: Coordinates) => {
+    const map = unit.getMap();
     if (map.contains(coordinates) && !isBlocked(coordinates, map)) {
-      await moveUnit(unit, coordinates, session, state);
+      await moveUnit(unit, coordinates);
     }
   };
 }

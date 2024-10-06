@@ -61,7 +61,7 @@ export default {
   //   "<rootDir>"
   // ],
   // runner: "jest-runner",
-  setupFiles: ['reflect-metadata']
+  // setupFiles: ['reflect-metadata']
   // setupFilesAfterEnv: [],
   // slowTestThreshold: 5,
   // snapshotSerializers: [],

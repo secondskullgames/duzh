@@ -2,12 +2,11 @@ import { die } from './die';
 import { recordKill } from './recordKill';
 import Unit, { DefendResult } from '../units/Unit';
 import { Activity } from '../units/Activity';
-import { GameState } from '@main/core/GameState';
 import { sleep } from '@lib/utils/promises';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { SoundEffect } from '@lib/audio/types';
-import { Session } from '@main/core/Session';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { Globals } from '@main/core/globals';
 
 export type AttackResult = Readonly<{
   /** the "outgoing", pre-mitigation damage */
@@ -20,20 +19,13 @@ export type Attack = Readonly<{
   sound: SoundEffect;
 }>;
 
-export const attackUnit = async (
-  attacker: Unit,
-  defender: Unit,
-  attack: Attack,
-  session: Session,
-  state: GameState
-) => {
+export const attackUnit = async (attacker: Unit, defender: Unit, attack: Attack) => {
+  const { session, soundPlayer } = Globals;
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).beforeAttack?.(
         equipment,
-        defender.getCoordinates(),
-        state,
-        session
+        defender.getCoordinates()
       );
     }
   }
@@ -49,7 +41,7 @@ export const attackUnit = async (
   const attackResult = attack.calculateAttackResult(attacker);
   const defendResult = defender.takeDamage(attackResult.damage, attacker);
   attacker.recordDamageDealt(defendResult.damageTaken);
-  state.getSoundPlayer().playSound(attack.sound);
+  soundPlayer.playSound(attack.sound);
   const message = attack.getDamageLogMessage(attacker, defender, defendResult);
   session.getTicker().log(message, { turn: session.getTurn() });
 
@@ -57,17 +49,15 @@ export const attackUnit = async (
   defender.refreshCombat();
 
   if (defender.getLife() <= 0) {
-    await die(defender, state, session);
-    recordKill(attacker, defender, session, state);
+    await die(defender);
+    recordKill(attacker, defender);
   }
 
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).afterAttack?.(
         equipment,
-        defender.getCoordinates(),
-        state,
-        session
+        defender.getCoordinates()
       );
     }
   }

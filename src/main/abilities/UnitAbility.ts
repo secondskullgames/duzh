@@ -21,8 +21,6 @@ import { Scorpion } from './Scorpion';
 import { Cleave } from './Cleave';
 import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { BurningAttack } from '@main/abilities/BurningAttack';
 import { FastTeleport } from '@main/abilities/FastTeleport';
 import { ShootFrostbolt } from '@main/abilities/ShootFrostbolt';
@@ -53,12 +51,7 @@ export interface UnitAbility {
    */
   isLegal: (unit: Unit, coordinates: Coordinates) => boolean;
 
-  use: (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => Promise<void>;
+  use: (unit: Unit, coordinates: Coordinates) => Promise<void>;
 }
 
 export namespace UnitAbility {

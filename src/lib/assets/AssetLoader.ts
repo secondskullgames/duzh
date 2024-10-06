@@ -1,4 +1,3 @@
-import { injectable } from 'inversify';
 import { AnySchema } from 'ajv';
 
 export interface AssetLoader {
@@ -16,9 +15,6 @@ export interface AssetLoader {
   loadImageAsset: (filename: string) => Promise<string | null>;
 }
 
-export const AssetLoader = Symbol('AssetLoader');
-
-@injectable()
 export class AssetLoaderImpl implements AssetLoader {
   loadSchemaAsset = async (filename: string): Promise<AnySchema> => {
     return (

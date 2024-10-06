@@ -9,32 +9,15 @@ import { Color } from '@lib/graphics/Color';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import Colors from '@main/graphics/Colors';
 import { LINE_HEIGHT } from '@main/graphics/constants';
-import { GameConfig } from '@main/core/GameConfig';
-import { TextRenderer } from '@main/graphics/TextRenderer';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
-import { Engine } from '@main/core/Engine';
-import { inject, injectable } from 'inversify';
+import { Globals } from '@main/core/globals';
 
 const BACKGROUND_FILENAME = 'bordered_background';
 
-@injectable()
 export class HelpScene implements Scene {
   readonly name = SceneName.HELP;
 
-  constructor(
-    @inject(Engine)
-    private readonly engine: Engine,
-    @inject(GameConfig)
-    private readonly gameConfig: GameConfig,
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory
-  ) {}
-
   handleKeyDown = async (command: KeyCommand) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const { key, modifiers } = command;
 
     switch (key) {
@@ -55,19 +38,18 @@ export class HelpScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     session.setScene(SceneName.GAME);
   };
 
   render = async (graphics: Graphics) => {
-    const { imageFactory } = this;
+    const { imageFactory, gameConfig } = Globals;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
       top: 0,
-      width: this.gameConfig.screenWidth,
-      height: this.gameConfig.screenHeight
+      width: gameConfig.screenWidth,
+      height: gameConfig.screenHeight
     });
 
     const left = 10;
@@ -183,7 +165,8 @@ export class HelpScene implements Scene {
     textAlign: Alignment,
     graphics: Graphics
   ) => {
-    const imageData = this.textRenderer.renderText({
+    const { textRenderer } = Globals;
+    const imageData = textRenderer.renderText({
       text,
       fontName,
       color,

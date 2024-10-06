@@ -1,5 +1,4 @@
 import { AbstractMapGenerator } from './AbstractMapGenerator';
-import TileFactory from '../../tiles/TileFactory';
 import { TileType } from '@models/TileType';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Rect } from '@lib/geometry/Rect';
@@ -13,13 +12,12 @@ const maxRoomHeight = 7;
 
 type Props = Readonly<{
   fillRate: number;
-  tileFactory: TileFactory;
 }>;
 
 export class DefaultMapGenerator extends AbstractMapGenerator {
   private readonly fillRate: number;
-  constructor({ tileFactory, fillRate }: Props) {
-    super(tileFactory);
+  constructor({ fillRate }: Props) {
+    super();
     this.fillRate = fillRate;
   }
 

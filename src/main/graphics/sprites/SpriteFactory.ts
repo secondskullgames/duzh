@@ -8,13 +8,11 @@ import { EquipmentSprite } from './EquipmentSprite';
 import { UnitSprite } from './UnitSprite';
 import Door, { DoorState } from '../../objects/Door';
 import Spawner, { SpawnerState } from '../../objects/Spawner';
-import ModelLoader from '@main/assets/ModelLoader';
 import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import Colors from '@main/graphics/Colors';
 import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { fillTemplate } from '@lib/utils/templates';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Image } from '@lib/graphics/images/Image';
 import { ImageEffect } from '@lib/graphics/images/ImageEffect';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
@@ -23,15 +21,9 @@ import { DoorDirection } from '@models/DoorDirection';
 import { DynamicSpriteModel } from '@models/DynamicSpriteModel';
 import Shrine from '@main/objects/Shrine';
 import { ShrineSprite } from '@main/graphics/sprites/ShrineSprite';
-import { injectable } from 'inversify';
+import { Globals } from '@main/core/globals';
 
-@injectable()
 export default class SpriteFactory {
-  constructor(
-    private readonly imageFactory: ImageFactory,
-    private readonly modelLoader: ModelLoader
-  ) {}
-
   /**
    * Tiles don't use JSON models and are assumed to use baseline parameters (white = transparent, offsets = (0, 0))
    */
@@ -39,7 +31,7 @@ export default class SpriteFactory {
     filename: string,
     paletteSwaps: PaletteSwaps
   ): Promise<Sprite> => {
-    const { imageFactory } = this;
+    const { imageFactory } = Globals;
     const offsets = { dx: 0, dy: 0 };
     const transparentColor = Colors.WHITE;
     const image = await imageFactory.getImage({
@@ -54,12 +46,13 @@ export default class SpriteFactory {
     spriteName: string,
     paletteSwaps?: PaletteSwaps
   ): Promise<Sprite> => {
-    const model = await this.modelLoader.loadStaticSpriteModel(spriteName);
+    const { modelLoader, imageFactory } = Globals;
+    const model = await modelLoader.loadStaticSpriteModel(spriteName);
     const { filename, offsets, transparentColor } = model;
     if (!paletteSwaps) {
       paletteSwaps = loadPaletteSwaps(model.paletteSwaps);
     }
-    const image = await this.imageFactory.getImage({
+    const image = await imageFactory.getImage({
       filename,
       paletteSwaps,
       transparentColor: transparentColor ? Colors.colorForName(transparentColor) : null
@@ -71,7 +64,8 @@ export default class SpriteFactory {
     spriteName: string,
     paletteSwaps: PaletteSwaps
   ): Promise<DynamicSprite<Unit>> => {
-    const model = await this.modelLoader.loadDynamicSpriteModel(
+    const { modelLoader } = Globals;
+    const model = await modelLoader.loadDynamicSpriteModel(
       spriteName,
       SpriteCategory.UNITS
     );
@@ -89,7 +83,8 @@ export default class SpriteFactory {
   };
 
   createEquipmentSprite = async (spriteName: string, paletteSwaps: PaletteSwaps) => {
-    const model = await this.modelLoader.loadDynamicSpriteModel(
+    const { modelLoader } = Globals;
+    const model = await modelLoader.loadDynamicSpriteModel(
       spriteName,
       SpriteCategory.EQUIPMENT
     );
@@ -114,6 +109,7 @@ export default class SpriteFactory {
     direction: Direction,
     paletteSwaps: PaletteSwaps
   ) => {
+    const { imageFactory } = Globals;
     const filename = `${spriteName}/${spriteName}_${direction}_1`;
     const offsets = (() => {
       switch (spriteName) {
@@ -124,7 +120,7 @@ export default class SpriteFactory {
           return { dx: 0, dy: -0 };
       }
     })();
-    const image = await this.imageFactory.getImage({
+    const image = await imageFactory.getImage({
       filename,
       paletteSwaps,
       transparentColor: Colors.WHITE
@@ -136,6 +132,7 @@ export default class SpriteFactory {
    * TODO - hardcoded
    */
   createDoorSprite = async (): Promise<DynamicSprite<Door>> => {
+    const { imageFactory } = Globals;
     const spriteName = 'door';
     const offsets = { dx: 0, dy: -24 };
     // TODO hardcoded
@@ -149,7 +146,7 @@ export default class SpriteFactory {
       for (const state of DoorState.values()) {
         const key = `${direction.toLowerCase()}_${state.toLowerCase()}`;
         const filename = `${spriteName}_${direction.toLowerCase()}_${state.toLowerCase()}`;
-        const image = await this.imageFactory.getImage({
+        const image = await imageFactory.getImage({
           filename,
           paletteSwaps,
           transparentColor: Colors.WHITE
@@ -161,6 +158,7 @@ export default class SpriteFactory {
   };
 
   createMirrorSprite = async (): Promise<DynamicSprite<Spawner>> => {
+    const { imageFactory } = Globals;
     const imageMap: Record<string, Image> = {};
     for (const state of SpawnerState.values()) {
       const key = `${state.toLowerCase()}`;
@@ -175,7 +173,7 @@ export default class SpriteFactory {
         }
       })();
 
-      const image = await this.imageFactory.getImage({
+      const image = await imageFactory.getImage({
         filename,
         transparentColor: Colors.WHITE
       });
@@ -187,13 +185,14 @@ export default class SpriteFactory {
   };
 
   createShrineSprite = async (): Promise<DynamicSprite<Shrine>> => {
+    const { imageFactory } = Globals;
     const imageMap: Record<string, Image> = {};
-    const image = await this.imageFactory.getImage({
+    const image = await imageFactory.getImage({
       filename: 'shrine',
       transparentColor: Colors.WHITE
     });
     imageMap['shrine'] = image;
-    const depletedImage = await this.imageFactory.getImage({
+    const depletedImage = await imageFactory.getImage({
       filename: 'shrine',
       transparentColor: Colors.WHITE,
       paletteSwaps: PaletteSwaps.builder()
@@ -210,6 +209,7 @@ export default class SpriteFactory {
     spriteModel: DynamicSpriteModel,
     paletteSwaps: PaletteSwaps
   ): Promise<Record<string, Image>> => {
+    const { imageFactory } = Globals;
     const imageMap: Record<string, Image> = {};
 
     for (const [animationName, animation] of Object.entries(spriteModel.animations)) {
@@ -254,7 +254,7 @@ export default class SpriteFactory {
           }
 
           const frameKey = `${animationName}_${direction}_${i}`;
-          const image = await this.imageFactory.getImage({
+          const image = await imageFactory.getImage({
             filenames,
             transparentColor: Colors.WHITE,
             paletteSwaps,

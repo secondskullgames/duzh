@@ -1,16 +1,16 @@
 import MapInstance from '@main/maps/MapInstance';
-import { GameState } from '@main/core/GameState';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { randChance, randChoice } from '@lib/utils/random';
 import { Faction } from '@main/units/Faction';
 import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
-import { Session } from '@main/core/Session';
 import { Feature } from '@main/utils/features';
 import { hypotenuse } from '@lib/geometry/CoordinatesUtils';
+import { Globals } from '@main/core/globals';
 
-export const spawnFogUnits = async (state: GameState, session: Session) => {
+export const spawnFogUnits = async () => {
+  const { session, unitFactory, modelLoader } = Globals;
   const map = session.getMap();
   const fogParams = map.getFogParams();
 
@@ -24,12 +24,11 @@ export const spawnFogUnits = async (state: GameState, session: Session) => {
     if (unitsOfClass.length >= maxSpawnedUnits) {
       return;
     }
-    const unitFactory = state.getUnitFactory();
     if (randChance(spawnRate)) {
-      const targetSpawnCoordinates = _getFogSpawnCoordinates(map, session);
+      const targetSpawnCoordinates = _getFogSpawnCoordinates(map);
       if (targetSpawnCoordinates) {
         // TODO would be nice if this was a one-liner
-        const unitModel = await state.getModelLoader().loadUnitModel(unitClass);
+        const unitModel = await modelLoader.loadUnitModel(unitClass);
         const unit = await unitFactory.createUnit({
           name: unitModel.name,
           unitClass,
@@ -45,10 +44,8 @@ export const spawnFogUnits = async (state: GameState, session: Session) => {
   }
 };
 
-const _getFogSpawnCoordinates = (
-  map: MapInstance,
-  session: Session
-): Coordinates | null => {
+const _getFogSpawnCoordinates = (map: MapInstance): Coordinates | null => {
+  const { session } = Globals;
   const allTiles = map.getTiles().flat();
   const candidateCoordinates = (() => {
     if (Feature.isEnabled(Feature.FOG_SHADES_EVERYWHERE)) {

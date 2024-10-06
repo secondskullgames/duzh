@@ -4,10 +4,9 @@ import Unit from '@main/units/Unit';
 import Sounds from '@main/sounds/Sounds';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { moveUnit } from '@main/actions/moveUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Direction } from '@lib/geometry/Direction';
+import { Globals } from '@main/core/globals';
 
 export class FreeMove implements UnitAbility {
   static readonly MANA_COST = 4;
@@ -22,21 +21,17 @@ export class FreeMove implements UnitAbility {
     return !isBlocked(coordinates, unit.getMap());
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
-    const map = session.getMap();
+  use = async (unit: Unit, coordinates: Coordinates) => {
+    const { soundPlayer } = Globals;
+    const map = unit.getMap();
     const direction = Direction.between(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
     const targetCoordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
     if (!isBlocked(targetCoordinates, map)) {
-      await moveUnit(unit, targetCoordinates, session, state);
+      await moveUnit(unit, targetCoordinates);
       unit.spendMana(this.manaCost);
     } else {
-      state.getSoundPlayer().playSound(Sounds.BLOCKED);
+      soundPlayer.playSound(Sounds.BLOCKED);
     }
   };
 }

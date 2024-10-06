@@ -1,12 +1,11 @@
 import { SceneName } from '@main/scenes/SceneName';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { Feature } from '@main/utils/features';
+import { Globals } from '@main/core/globals';
 
-export const showSplashScreen = async (state: GameState, session: Session) => {
+export const showTitleScreen = async () => {
+  const { session, musicController } = Globals;
   session.setScene(SceneName.TITLE);
   if (Feature.isEnabled(Feature.TITLE_MUSIC)) {
-    const musicController = state.getMusicController();
     const evilTheme = await musicController.loadMusic('evil');
     musicController.playMusic(evilTheme);
   }

@@ -1,5 +1,4 @@
 import { SpriteCategory } from '@main/graphics/sprites/SpriteCategory';
-import { AssetLoader } from '@lib/assets/AssetLoader';
 import { GeneratedMapModel } from '@models/GeneratedMapModel';
 import { ConsumableItemModel } from '@models/ConsumableItemModel';
 import { DynamicSpriteModel } from '@models/DynamicSpriteModel';
@@ -8,8 +7,8 @@ import { EquipmentModel } from '@models/EquipmentModel';
 import { PredefinedMapModel } from '@models/PredefinedMapModel';
 import { TileSetModel } from '@models/TileSetModel';
 import { StaticSpriteModel } from '@models/StaticSpriteModel';
-import { inject, injectable } from 'inversify';
 import Ajv from 'ajv';
+import { Globals } from '@main/core/globals';
 
 /**
  * Utility methods for working with models (in /data/) and schemas (in /src/main/schemas)
@@ -54,24 +53,21 @@ type SchemaType =
   | 'ConsumableType'
   | 'ConsumableItemModel';
 
-@injectable()
 export default class ModelLoader {
   private readonly ajv = new Ajv();
   private loadedSchemas = false;
 
-  constructor(
-    @inject(AssetLoader)
-    private readonly assetLoader: AssetLoader
-  ) {}
-
   private _loadSchemas = async () => {
+    const { assetLoader } = Globals;
     for (const schemaName of schemaNames) {
-      const schema = await this.assetLoader.loadSchemaAsset(`${schemaName}.schema.json`);
+      const schema = await assetLoader.loadSchemaAsset(`${schemaName}.schema.json`);
       this.ajv.addSchema(schema);
     }
   };
 
   private _loadModel = async <T>(path: string, schema: SchemaType): Promise<T> => {
+    const { assetLoader } = Globals;
+
     if (!this.loadedSchemas) {
       await this._loadSchemas();
       this.loadedSchemas = true;
@@ -82,7 +78,7 @@ export default class ModelLoader {
       throw new Error(`Failed to load schema ${schema}`);
     }
 
-    const data = await this.assetLoader.loadDataAsset(`${path}.json`);
+    const data = await assetLoader.loadDataAsset(`${path}.json`);
     if (!validate(data)) {
       throw new Error(
         `Failed to validate ${path}:\n${JSON.stringify(validate.errors, null, 4)}`

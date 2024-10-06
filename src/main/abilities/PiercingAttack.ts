@@ -8,8 +8,6 @@ import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { attackObject } from '@main/actions/attackObject';
 import { getSpawner } from '@main/maps/MapUtils';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 
 export class PiercingAttack implements UnitAbility {
@@ -26,13 +24,8 @@ export class PiercingAttack implements UnitAbility {
     return hasEnemyUnit(unit, coordinates);
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
-    const map = session.getMap();
+  use = async (unit: Unit, coordinates: Coordinates) => {
+    const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
@@ -57,7 +50,7 @@ export class PiercingAttack implements UnitAbility {
           return `${attackerName} hit ${defenderName} for ${damage} damage!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, session, state);
+      await attackUnit(unit, targetUnit, attack);
     }
 
     const nextCoordinates = Coordinates.plusDirection(coordinates, unit.getDirection());
@@ -82,17 +75,17 @@ export class PiercingAttack implements UnitAbility {
           return `${attackerName} hit ${defenderName} for ${damage} damage!`;
         }
       };
-      await attackUnit(unit, nextUnit, attack, session, state);
+      await attackUnit(unit, nextUnit, attack);
     }
 
     const spawner = getSpawner(map, coordinates);
     if (spawner && spawner.isBlocking()) {
-      await attackObject(unit, spawner, state);
+      await attackObject(unit, spawner);
     }
 
     const nextSpawner = getSpawner(map, nextCoordinates);
     if (nextSpawner && nextSpawner.isBlocking()) {
-      await attackObject(unit, nextSpawner, state);
+      await attackObject(unit, nextSpawner);
     }
   };
 }

@@ -1,30 +1,22 @@
 import { TileSet } from './TileSet';
 import Tile from './Tile';
 import Sprite from '../graphics/sprites/Sprite';
-import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import MapInstance from '../maps/MapInstance';
 import { TileType } from '@models/TileType';
-import ModelLoader from '@main/assets/ModelLoader';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { randChoice } from '@lib/utils/random';
 import { Feature } from '@main/utils/features';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
-import { inject, injectable } from 'inversify';
+import { Globals } from '@main/core/globals';
 
 type CreateTileParams = Readonly<{
   tileType: TileType;
   tileSet: TileSet;
 }>;
 
-@injectable()
 export default class TileFactory {
-  constructor(
-    @inject(SpriteFactory)
-    private readonly spriteFactory: SpriteFactory,
-    @inject(ModelLoader)
-    private readonly modelLoader: ModelLoader
-  ) {}
+  constructor() {}
 
   createTile = (
     { tileType, tileSet }: CreateTileParams,
@@ -37,7 +29,8 @@ export default class TileFactory {
   };
 
   getTileSet = async (id: string): Promise<TileSet> => {
-    const model = await this.modelLoader.loadTileSetModel(id);
+    const { modelLoader, spriteFactory } = Globals;
+    const model = await modelLoader.loadTileSetModel(id);
     const tileSet: {
       [key in TileType]?: (Sprite | null)[];
     } = {};
@@ -48,7 +41,7 @@ export default class TileFactory {
         const filename = filenames[index];
         if (filename) {
           const paletteSwaps = loadPaletteSwaps(model.paletteSwaps ?? {});
-          const tileSprite = await this.spriteFactory.createTileSprite(
+          const tileSprite = await spriteFactory.createTileSprite(
             `${model.path}/${filename}`,
             paletteSwaps
           );

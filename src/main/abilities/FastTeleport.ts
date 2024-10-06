@@ -5,10 +5,9 @@ import Sounds from '@main/sounds/Sounds';
 import { Activity } from '@main/units/Activity';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { moveUnit } from '@main/actions/moveUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Globals } from '@main/core/globals';
 
 export class FastTeleport implements UnitAbility {
   static readonly MANA_COST = 4;
@@ -27,16 +26,12 @@ export class FastTeleport implements UnitAbility {
     return map.contains(coordinates) && !isBlocked(coordinates, map);
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates) => {
+    const { soundPlayer } = Globals;
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
     unit.spendMana(this.manaCost);
-    await moveUnit(unit, coordinates, session, state);
+    await moveUnit(unit, coordinates);
     unit.setActivity(Activity.STANDING, 1, unit.getDirection());
-    state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
+    soundPlayer.playSound(Sounds.FOOTSTEP);
   };
 }

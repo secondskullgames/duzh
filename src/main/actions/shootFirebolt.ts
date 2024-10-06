@@ -6,10 +6,9 @@ import { Activity } from '../units/Activity';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { sleep } from '@lib/utils/promises';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { Globals } from '@main/core/globals';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s firebolt hit ${target.getName()} for ${damageTaken} damage!`;
@@ -19,10 +18,9 @@ export const shootFirebolt = async (
   unit: Unit,
   direction: Direction,
   damage: number,
-  burnDuration: number,
-  session: Session,
-  state: GameState
+  burnDuration: number
 ) => {
+  const { session, soundPlayer } = Globals;
   unit.setDirection(direction);
 
   const map = session.getMap();
@@ -35,8 +33,8 @@ export const shootFirebolt = async (
 
   const targetUnit = map.getUnit(coordinates);
   if (targetUnit) {
-    state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
-    await playFireboltAnimation(unit, direction, coordinatesList, targetUnit, state);
+    soundPlayer.playSound(Sounds.PLAYER_HITS_ENEMY);
+    await playFireboltAnimation(unit, direction, coordinatesList, targetUnit);
     const adjustedDamage = await dealDamage(damage, {
       sourceUnit: unit,
       targetUnit
@@ -45,7 +43,7 @@ export const shootFirebolt = async (
     session.getTicker().log(message, { turn: session.getTurn() });
     if (targetUnit.getLife() <= 0) {
       await sleep(100);
-      await die(targetUnit, state, session);
+      await die(targetUnit);
     } else {
       targetUnit.setBurning(burnDuration);
       session
@@ -53,7 +51,7 @@ export const shootFirebolt = async (
         .log(`${targetUnit.getName()} is burned!`, { turn: session.getTurn() });
     }
   } else {
-    await playFireboltAnimation(unit, direction, coordinatesList, null, state);
+    await playFireboltAnimation(unit, direction, coordinatesList, null);
   }
 };
 
@@ -66,9 +64,9 @@ const playFireboltAnimation = async (
   source: Unit,
   direction: Direction,
   coordinatesList: Coordinates[],
-  target: Unit | null,
-  state: GameState
+  target: Unit | null
 ) => {
+  const { projectileFactory } = Globals;
   const map = source.getMap();
 
   // first frame
@@ -84,9 +82,11 @@ const playFireboltAnimation = async (
 
   // firebolt movement frames
   for (const coordinates of visibleCoordinatesList) {
-    const projectile = await state
-      .getProjectileFactory()
-      .createFireball(coordinates, map, direction);
+    const projectile = await projectileFactory.createFireball(
+      coordinates,
+      map,
+      direction
+    );
     map.addProjectile(projectile);
     await sleep(50);
     map.removeProjectile(projectile);

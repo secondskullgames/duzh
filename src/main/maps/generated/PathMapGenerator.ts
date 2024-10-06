@@ -1,5 +1,4 @@
 import { AbstractMapGenerator } from './AbstractMapGenerator';
-import TileFactory from '../../tiles/TileFactory';
 import { TileType } from '@models/TileType';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
@@ -8,7 +7,6 @@ import { randInt } from '@lib/utils/random';
 
 type Props = Readonly<{
   numPoints: number;
-  tileFactory: TileFactory;
 }>;
 
 /**
@@ -17,8 +15,8 @@ type Props = Readonly<{
  */
 export class PathMapGenerator extends AbstractMapGenerator {
   private readonly numPoints: number;
-  constructor({ tileFactory, numPoints }: Props) {
-    super(tileFactory);
+  constructor({ numPoints }: Props) {
+    super();
     this.numPoints = numPoints;
   }
 

@@ -1,25 +1,14 @@
 import { levelUp as _levelUp } from '../actions/levelUp';
 import Sounds from '../sounds/Sounds';
-import { ItemFactory } from '../items/ItemFactory';
 import MapInstance from '../maps/MapInstance';
 import { die } from '@main/actions/die';
-import { MapController } from '@main/maps/MapController';
 import { Faction } from '@main/units/Faction';
-import { Engine } from '@main/core/Engine';
-import { inject, injectable } from 'inversify';
+import { Globals } from '@main/core/globals';
 
-@injectable()
 export class Debug {
   private _isMapRevealed: boolean;
 
-  constructor(
-    @inject(Engine)
-    private readonly engine: Engine,
-    @inject(MapController)
-    private readonly mapController: MapController,
-    @inject(ItemFactory)
-    private readonly itemFactory: ItemFactory
-  ) {
+  constructor() {
     this._isMapRevealed = false;
   }
 
@@ -30,24 +19,19 @@ export class Debug {
   isMapRevealed = () => this._isMapRevealed;
 
   killPlayer = async () => {
-    const { engine } = this;
-    const session = engine.getSession();
-    const state = engine.getState();
+    const { session } = Globals;
     const playerUnit = session.getPlayerUnit();
-    await die(playerUnit, state, session);
+    await die(playerUnit);
   };
 
   levelUp = async () => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const playerUnit = session.getPlayerUnit();
     _levelUp(playerUnit, session);
   };
 
   awardEquipment = async () => {
-    const { engine, itemFactory } = this;
-    const session = engine.getSession();
-    const state = engine.getState();
+    const { session, itemFactory, soundPlayer } = Globals;
 
     // eslint-disable-next-line no-alert
     const id = prompt('Enter a valid equipment_id')!;
@@ -55,12 +39,11 @@ export class Debug {
     const playerUnit = session.getPlayerUnit();
     playerUnit.getInventory().add(item);
     session.getTicker().log(`Picked up a ${item.name}.`, { turn: session.getTurn() });
-    state.getSoundPlayer().playSound(Sounds.PICK_UP_ITEM);
+    soundPlayer.playSound(Sounds.PICK_UP_ITEM);
   };
 
   attachToWindow = () => {
-    const { engine, mapController } = this;
-    const session = engine.getSession();
+    const { session, mapController } = Globals;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window.jwb = window.jwb ?? {};
@@ -76,12 +59,9 @@ export class Debug {
   };
 
   private killEnemies = async (map: MapInstance) => {
-    const { engine } = this;
-    const session = engine.getSession();
-    const state = engine.getState();
     for (const unit of map.getAllUnits()) {
       if (unit.getFaction() === Faction.ENEMY) {
-        await die(unit, state, session);
+        await die(unit);
       }
     }
   };

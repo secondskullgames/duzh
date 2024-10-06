@@ -27,6 +27,7 @@ export default [
       ...eslintJs.configs.recommended.rules,
       ...typescriptEslintPlugin.configs.recommended.rules,
       '@typescript-eslint/no-namespace': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn',
       'no-alert': 'warn',
       'no-console': ['warn', { 'allow': ['debug', 'warn', 'error'] }],
       'no-redeclare': 'off',

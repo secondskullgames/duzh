@@ -1,5 +1,4 @@
 import { ClickHandler, Handler, KeyHandler, TouchHandler } from '@lib/input/inputTypes';
-import { injectable } from 'inversify';
 
 type Props = Readonly<{
   onKeyDown: KeyHandler;
@@ -8,7 +7,6 @@ type Props = Readonly<{
   onTouchDown: TouchHandler;
 }>;
 
-@injectable()
 export default class InputHandler {
   private readonly keyDownHandler: KeyHandler;
   private readonly keyUpHandler: KeyHandler;

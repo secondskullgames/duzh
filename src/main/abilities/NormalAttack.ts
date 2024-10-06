@@ -38,12 +38,7 @@ export class NormalAttack implements UnitAbility {
     return hasEnemyUnit(unit, coordinates);
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates) => {
     // TODO: verify coordinates are adjacent
 
     const map = unit.getMap();
@@ -51,7 +46,7 @@ export class NormalAttack implements UnitAbility {
     unit.setDirection(direction);
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      await attackUnit(unit, targetUnit, attack, session, state);
+      await attackUnit(unit, targetUnit, attack);
       unit.gainMana(NormalAttack.MANA_RETURNED);
     }
   };

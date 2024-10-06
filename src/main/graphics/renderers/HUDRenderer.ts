@@ -1,7 +1,6 @@
 import { Renderer } from './Renderer';
 import Colors from '../Colors';
 import { LINE_HEIGHT } from '../constants';
-import { TextRenderer } from '../TextRenderer';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { FontName } from '../Fonts';
 import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
@@ -10,16 +9,13 @@ import { Graphics } from '@lib/graphics/Graphics';
 import { Feature } from '@main/utils/features';
 import Unit from '@main/units/Unit';
 import { Rect } from '@lib/geometry/Rect';
-import { GameConfig } from '@main/core/GameConfig';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { type UnitAbility } from '@main/abilities/UnitAbility';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { formatTimestamp } from '@lib/utils/time';
-import { Engine } from '@main/core/Engine';
-import { inject, injectable } from 'inversify';
+import { Globals } from '@main/core/globals';
 
 const HUD_FILENAME = 'brick_hud_3';
 
@@ -32,25 +28,17 @@ const BORDER_PADDING = 5;
 const ABILITIES_INNER_MARGIN = 5;
 const ABILITY_ICON_WIDTH = 20;
 
-@injectable()
 export default class HUDRenderer implements Renderer {
   private readonly TOP: number;
   private readonly WIDTH: number;
   private readonly MIDDLE_PANE_WIDTH: number;
 
-  constructor(
-    @inject(GameConfig)
-    gameConfig: GameConfig,
-    @inject(Engine)
-    private readonly engine: Engine,
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory
-  ) {
-    this.TOP = gameConfig.screenHeight - HEIGHT;
-    this.WIDTH = gameConfig.screenWidth;
-    this.MIDDLE_PANE_WIDTH = gameConfig.screenWidth - LEFT_PANE_WIDTH - RIGHT_PANE_WIDTH;
+  constructor() {
+    const { gameConfig } = Globals;
+    const { screenWidth, screenHeight } = gameConfig;
+    this.TOP = screenHeight - HEIGHT;
+    this.WIDTH = screenWidth;
+    this.MIDDLE_PANE_WIDTH = screenWidth - LEFT_PANE_WIDTH - RIGHT_PANE_WIDTH;
   }
 
   /**
@@ -64,8 +52,7 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderFrame = async (graphics: Graphics) => {
-    const { engine, imageFactory } = this;
-    const session = engine.getSession();
+    const { session, imageFactory } = Globals;
     const fillColor = (() => {
       const playerUnit = session.getPlayerUnit();
       if (playerUnit.getEffects().hasEffect(StatusEffect.STUNNED)) {
@@ -89,8 +76,7 @@ export default class HUDRenderer implements Renderer {
    * Renders the bottom-left area of the screen, showing information about the player
    */
   private _renderLeftPanel = (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const playerUnit = session.getPlayerUnit();
 
     const lines = [];
@@ -163,8 +149,7 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderMiddlePanel = async (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const top = this.TOP + BORDER_MARGIN + BORDER_PADDING;
     const playerUnit = session.getPlayerUnit();
     const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
@@ -240,8 +225,7 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderRightPanel = (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const playerUnit = session.getPlayerUnit();
     const turn = session.getTurn();
     const mapIndex = session.getMapIndex();
@@ -277,8 +261,7 @@ export default class HUDRenderer implements Renderer {
     topLeft: Pixel,
     graphics: Graphics
   ) => {
-    const { imageFactory, engine } = this;
-    const session = engine.getSession();
+    const { session, imageFactory } = Globals;
     const playerUnit = session.getPlayerUnit();
     const queuedAbility = session.getQueuedAbility();
 
@@ -312,7 +295,8 @@ export default class HUDRenderer implements Renderer {
     textAlign: Alignment,
     graphics: Graphics
   ) => {
-    const imageData = this.textRenderer.renderText({
+    const { textRenderer } = Globals;
+    const imageData = textRenderer.renderText({
       text,
       fontName,
       color,

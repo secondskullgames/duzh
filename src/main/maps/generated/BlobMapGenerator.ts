@@ -12,14 +12,13 @@ const minCenterYRatio = 3 / 8;
 const maxCenterYRatio = 5 / 8;
 
 type Props = Readonly<{
-  tileFactory: TileFactory;
   fillRate: number;
 }>;
 
 export class BlobMapGenerator extends AbstractMapGenerator {
   private readonly fillRate: number;
-  constructor({ tileFactory, fillRate }: Props) {
-    super(tileFactory);
+  constructor({ fillRate }: Props) {
+    super();
     this.fillRate = fillRate;
   }
 

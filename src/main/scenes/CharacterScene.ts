@@ -3,38 +3,21 @@ import { SceneName } from '@main/scenes/SceneName';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { Graphics } from '@lib/graphics/Graphics';
 import { toggleFullScreen } from '@lib/utils/dom';
-import { GameConfig } from '@main/core/GameConfig';
-import { TextRenderer } from '@main/graphics/TextRenderer';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { FontName } from '@main/graphics/Fonts';
 import Colors from '@main/graphics/Colors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Color } from '@lib/graphics/Color';
-import { Engine } from '@main/core/Engine';
-import { inject, injectable } from 'inversify';
+import { Globals } from '@main/core/globals';
 
 const BACKGROUND_FILENAME = 'bordered_background';
 const LINE_HEIGHT = 15;
 
-@injectable()
 export class CharacterScene implements Scene {
   readonly name = SceneName.CHARACTER;
 
-  constructor(
-    @inject(GameConfig)
-    private readonly gameConfig: GameConfig,
-    @inject(Engine)
-    private readonly engine: Engine,
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory
-  ) {}
-
   handleKeyDown = async (command: KeyCommand) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
 
     switch (command.key) {
       case 'C':
@@ -57,27 +40,25 @@ export class CharacterScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     session.setScene(SceneName.GAME);
   };
 
   render = async (graphics: Graphics) => {
-    const { imageFactory } = this;
+    const { imageFactory, gameConfig } = Globals;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
       top: 0,
-      width: this.gameConfig.screenWidth,
-      height: this.gameConfig.screenHeight
+      width: gameConfig.screenWidth,
+      height: gameConfig.screenHeight
     });
 
     await this._renderStatistics(graphics);
   };
 
   private _renderStatistics = async (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const playerUnit = session.getPlayerUnit();
     let top = 20;
     this._drawText(
@@ -145,7 +126,8 @@ export class CharacterScene implements Scene {
     textAlign: Alignment,
     graphics: Graphics
   ) => {
-    const imageData = this.textRenderer.renderText({
+    const { textRenderer } = Globals;
+    const imageData = textRenderer.renderText({
       text,
       fontName,
       color,

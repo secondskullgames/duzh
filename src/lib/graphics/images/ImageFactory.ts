@@ -5,7 +5,6 @@ import ImageLoader from './ImageLoader';
 import { applyTransparentColor, replaceColors } from './ImageUtils';
 import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import { Color } from '@lib/graphics/Color';
-import { inject, injectable } from 'inversify';
 
 type Params = Readonly<{
   filename?: string;
@@ -15,14 +14,11 @@ type Params = Readonly<{
   effects?: ImageEffect[];
 }>;
 
-@injectable()
 export default class ImageFactory {
   private readonly rawCache: Record<string, ImageData | null> = {};
 
   constructor(
-    @inject(ImageLoader)
     private readonly imageLoader: ImageLoader,
-    @inject(ImageCache)
     private readonly cache: ImageCache
   ) {}
 

@@ -3,11 +3,9 @@ import GameObject from './GameObject';
 import Block from './Block';
 import Bonus from './Bonus';
 import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
-import UnitFactory from '@main/units/UnitFactory';
 import { Faction } from '@main/units/Faction';
 import Sounds from '@main/sounds/Sounds';
 import Unit from '@main/units/Unit';
-import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
 import MapInstance from '@main/maps/MapInstance';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
@@ -20,19 +18,11 @@ import { randChoice, sample } from '@lib/utils/random';
 import { checkNotNull } from '@lib/utils/preconditions';
 import Door, { DoorState } from '@main/objects/Door';
 import { DoorDirection } from '@models/DoorDirection';
-import { inject, injectable } from 'inversify';
+import { Globals } from '@main/core/globals';
 
-@injectable()
 export default class ObjectFactory {
-  constructor(
-    @inject(SpriteFactory)
-    private readonly spriteFactory: SpriteFactory,
-    @inject(UnitFactory)
-    private readonly unitFactory: UnitFactory
-  ) {}
-
   createMirror = async (coordinates: Coordinates, map: MapInstance): Promise<Spawner> => {
-    const { spriteFactory, unitFactory } = this;
+    const { spriteFactory, unitFactory } = Globals;
 
     const sprite = await spriteFactory.createMirrorSprite();
     const spawnFunction = (coordinates: Coordinates) =>
@@ -62,7 +52,8 @@ export default class ObjectFactory {
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<GameObject> => {
-    const sprite = await this.spriteFactory.createStaticSprite('block');
+    const { spriteFactory } = Globals;
+    const sprite = await spriteFactory.createStaticSprite('block');
 
     return new Block({
       name: 'Movable Block',
@@ -77,7 +68,8 @@ export default class ObjectFactory {
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<GameObject> => {
-    const sprite = await this.spriteFactory.createStaticSprite('vines');
+    const { spriteFactory } = Globals;
+    const sprite = await spriteFactory.createStaticSprite('vines');
 
     return new Block({
       name: 'Vines',
@@ -92,15 +84,16 @@ export default class ObjectFactory {
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<GameObject> => {
-    const sprite = await this.spriteFactory.createStaticSprite('map_health_globe');
+    const { session, spriteFactory, soundPlayer } = Globals;
+    const sprite = await spriteFactory.createStaticSprite('map_health_globe');
 
     const lifeToGain = 10;
 
-    const onUse = async (unit: Unit, state: GameState, session: Session) => {
+    const onUse = async (unit: Unit) => {
       if (unit === session.getPlayerUnit()) {
         if (unit.getLife() < unit.getMaxLife()) {
           const lifeGained = unit.gainLife(lifeToGain);
-          state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
+          soundPlayer.playSound(Sounds.HEALTH_GLOBE);
           session
             .getTicker()
             .log(`${unit.getName()} used a health globe and gained ${lifeGained} life.`, {
@@ -126,7 +119,8 @@ export default class ObjectFactory {
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<GameObject> => {
-    const sprite = await this.spriteFactory.createStaticSprite(
+    const { session, spriteFactory } = Globals;
+    const sprite = await spriteFactory.createStaticSprite(
       'map_health_globe',
       loadPaletteSwaps({
         DARK_RED: 'DARK_BLUE',
@@ -136,11 +130,12 @@ export default class ObjectFactory {
 
     const manaToGain = 10;
 
-    const onUse = async (unit: Unit, state: GameState, session: Session) => {
+    const onUse = async (unit: Unit) => {
+      const { soundPlayer } = Globals;
       if (unit === session.getPlayerUnit()) {
         if (unit.getMana() < unit.getMaxMana()) {
           const manaGained = unit.gainMana(manaToGain);
-          state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
+          soundPlayer.playSound(Sounds.HEALTH_GLOBE);
           session
             .getTicker()
             .log(`${unit.getName()} used a mana globe and gained ${manaGained} mana.`, {
@@ -166,8 +161,9 @@ export default class ObjectFactory {
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<GameObject> => {
+    const { session, spriteFactory, soundPlayer } = Globals;
     // TODO same colors as mana globe
-    const sprite = await this.spriteFactory.createStaticSprite(
+    const sprite = await spriteFactory.createStaticSprite(
       'map_health_globe',
       loadPaletteSwaps({
         DARK_RED: 'DARK_BLUE',
@@ -177,7 +173,7 @@ export default class ObjectFactory {
 
     const radius = 7;
 
-    const onUse = async (unit: Unit, state: GameState, session: Session) => {
+    const onUse = async (unit: Unit) => {
       if (unit === session.getPlayerUnit()) {
         const playerX = unit.getCoordinates().x;
         const playerY = unit.getCoordinates().y;
@@ -190,7 +186,7 @@ export default class ObjectFactory {
             }
           }
         }
-        state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
+        soundPlayer.playSound(Sounds.HEALTH_GLOBE);
         session
           .getTicker()
           .log(`${unit.getName()} used a vision globe and revealed nearby tiles.`, {
@@ -214,7 +210,8 @@ export default class ObjectFactory {
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<GameObject> => {
-    const sprite = await this.spriteFactory.createShrineSprite();
+    const { spriteFactory, soundPlayer } = Globals;
+    const sprite = await spriteFactory.createShrineSprite();
     const onUse = (state: GameState, session: Session) => {
       const options = [];
       const playerUnit = checkNotNull(session.getPlayerUnit());
@@ -224,60 +221,60 @@ export default class ObjectFactory {
         mana: [
           {
             label: '+5 Mana',
-            onUse: async (state: GameState) => {
+            onUse: async () => {
               playerUnit.increaseMaxMana(5);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ],
         life: [
           {
             label: '+10 Life',
-            onUse: async (state: GameState) => {
+            onUse: async () => {
               playerUnit.increaseMaxLife(10);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ],
         lifePerTurn: [
           {
             label: '+0.5 Life Per Turn',
-            onUse: async (state: GameState) => {
+            onUse: async () => {
               playerUnit.increaseLifePerTurn(0.5);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ],
         manaPerTurn: [
           {
             label: '+0.5 Mana Per Turn',
-            onUse: async (state: GameState) => {
+            onUse: async () => {
               playerUnit.increaseManaPerTurn(0.5);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ],
         meleeDamage: [
           {
             label: '+1 Melee Damage',
-            onUse: async (state: GameState) => {
+            onUse: async () => {
               playerUnit.increaseMeleeDamage(1);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ],
         missileDamage: [
           {
             label: '+2 Missile Damage',
-            onUse: async (state: GameState) => {
+            onUse: async () => {
               playerUnit.increaseRangedDamage(2);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ]
@@ -309,7 +306,8 @@ export default class ObjectFactory {
     locked: boolean,
     map: MapInstance
   ): Promise<Door> => {
-    const sprite = await this.spriteFactory.createDoorSprite();
+    const { spriteFactory } = Globals;
+    const sprite = await spriteFactory.createDoorSprite();
 
     return new Door({
       name: 'Door',

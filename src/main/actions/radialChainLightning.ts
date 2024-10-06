@@ -5,13 +5,12 @@ import Unit from '../units/Unit';
 import Sounds from '../sounds/Sounds';
 import { Activity } from '../units/Activity';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { sleep } from '@lib/utils/promises';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import MapInstance from '@main/maps/MapInstance';
 import { Direction } from '@lib/geometry/Direction';
 import { Faction } from '@main/units/Faction';
+import { Globals } from '@main/core/globals';
 
 const getAdjacentEnemies = (unit: Unit, map: MapInstance) => {
   return map
@@ -27,12 +26,8 @@ const getAdjacentEnemies = (unit: Unit, map: MapInstance) => {
     });
 };
 
-export const radialChainLightning = async (
-  unit: Unit,
-  damage: number,
-  state: GameState,
-  session: Session
-) => {
+export const radialChainLightning = async (unit: Unit, damage: number) => {
+  const { session, soundPlayer } = Globals;
   const map = unit.getMap();
   const alreadyDamagedEnemies: Unit[] = [];
   const queue: Unit[] = getAdjacentEnemies(unit, map);
@@ -56,11 +51,11 @@ export const radialChainLightning = async (
     const message = getDamageLogMessage(unit, targetUnit, damageTaken);
     session.getTicker().log(message, { turn: session.getTurn() });
     if (targetUnit.getLife() <= 0) {
-      await die(targetUnit, state, session);
-      recordKill(unit, targetUnit, session, state);
+      await die(targetUnit);
+      recordKill(unit, targetUnit);
     }
     await sleep(150);
-    state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
+    soundPlayer.playSound(Sounds.PLAYER_HITS_ENEMY);
 
     unit.setActivity(Activity.STANDING, 1, unit.getDirection());
     targetUnit.setActivity(Activity.STANDING, 1, unit.getDirection());

@@ -11,7 +11,7 @@ import { UnitModel } from '@models/UnitModel';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import ModelLoader from '@main/assets/ModelLoader';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
-import { inject, injectable } from 'inversify';
+import { Globals } from '@main/core/globals';
 
 type CreateUnitParams = Readonly<{
   /**
@@ -27,20 +27,10 @@ type CreateUnitParams = Readonly<{
   playerUnitClass?: PlayerUnitClass;
 }>;
 
-@injectable()
 export default class UnitFactory {
-  constructor(
-    @inject(SpriteFactory)
-    private readonly spriteFactory: SpriteFactory,
-    @inject(ItemFactory)
-    private readonly itemFactory: ItemFactory,
-    @inject(ModelLoader)
-    private readonly modelLoader: ModelLoader
-  ) {}
-
   createUnit = async (params: CreateUnitParams): Promise<Unit> => {
-    const { itemFactory, spriteFactory } = this;
-    const model: UnitModel = await this.modelLoader.loadUnitModel(params.unitClass);
+    const { itemFactory, spriteFactory, modelLoader } = Globals;
+    const model: UnitModel = await modelLoader.loadUnitModel(params.unitClass);
     const sprite = await spriteFactory.createUnitSprite(
       model.sprite,
       loadPaletteSwaps(model.paletteSwaps)

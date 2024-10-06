@@ -3,14 +3,10 @@ import { PredefinedMapFactory } from './predefined/PredefinedMapFactory';
 import { GeneratedMapFactory } from './generated/GeneratedMapFactory';
 import { MapSpec } from '@models/MapSpec';
 import { MapType } from '@models/MapType';
-import { injectable } from 'inversify';
 
-@injectable()
 export default class MapFactory {
-  constructor(
-    private readonly predefinedMapFactory: PredefinedMapFactory,
-    private readonly generatedMapFactory: GeneratedMapFactory
-  ) {}
+  private readonly predefinedMapFactory = new PredefinedMapFactory();
+  private readonly generatedMapFactory = new GeneratedMapFactory();
 
   loadMap = async (mapSpec: MapSpec): Promise<MapInstance> => {
     switch (mapSpec.type) {

@@ -1,8 +1,5 @@
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import { Engine } from '@main/core/Engine';
-import { MapController } from '@main/maps/MapController';
-import { GameConfig } from '@main/core/GameConfig';
 import {
   ArrowKey,
   ClickCommand,
@@ -32,9 +29,7 @@ import { Pixel } from '@lib/geometry/Pixel';
 import { LINE_HEIGHT, TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
 import Unit from '@main/units/Unit';
 import { ShrineOption } from '@main/core/session/ShrineMenuState';
-import { TextRenderer } from '@main/graphics/TextRenderer';
 import GameScreenViewportRenderer from '@main/graphics/renderers/GameScreenViewportRenderer';
-import { Renderer } from '@main/graphics/renderers/Renderer';
 import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
 import { Graphics } from '@lib/graphics/Graphics';
 import Colors from '@main/graphics/Colors';
@@ -43,35 +38,22 @@ import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Color } from '@lib/graphics/Color';
 import { Direction } from '@lib/geometry/Direction';
 import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
-import SoundPlayer from '@lib/audio/SoundPlayer';
-import { inject, injectable } from 'inversify';
+import { Globals } from '@main/core/globals';
 
-@injectable()
 export class GameScene implements Scene {
   readonly name = SceneName.GAME;
+  private readonly viewportRenderer;
+  private readonly hudRenderer;
+  private readonly topMenuRenderer;
 
-  constructor(
-    @inject(Engine)
-    private readonly engine: Engine,
-    @inject(MapController)
-    private readonly mapController: MapController,
-    @inject(GameConfig)
-    private readonly gameConfig: GameConfig,
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer,
-    @inject(GameScreenViewportRenderer)
-    private readonly viewportRenderer: Renderer,
-    @inject(HUDRenderer)
-    private readonly hudRenderer: Renderer,
-    @inject(TopMenuRenderer)
-    private readonly topMenuRenderer: Renderer,
-    @inject(SoundPlayer)
-    private readonly soundPlayer: SoundPlayer
-  ) {}
+  constructor() {
+    this.viewportRenderer = new GameScreenViewportRenderer();
+    this.hudRenderer = new HUDRenderer();
+    this.topMenuRenderer = new TopMenuRenderer();
+  }
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { engine, session, soundPlayer } = Globals;
     const { key, modifiers } = command;
 
     if (session.isShowingShrineMenu()) {
@@ -86,7 +68,7 @@ export class GameScene implements Scene {
     } else if (isModifierKey(key)) {
       await this._handleModifierKeyDown(key as ModifierKey);
     } else if (key === 'SPACEBAR') {
-      this.soundPlayer.playSound(Sounds.FOOTSTEP);
+      soundPlayer.playSound(Sounds.FOOTSTEP);
       await engine.playTurn();
     } else if (key === 'TAB') {
       session.prepareInventoryScreen(session.getPlayerUnit());
@@ -114,8 +96,7 @@ export class GameScene implements Scene {
   };
 
   private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { engine, session, soundPlayer } = Globals;
     const playerUnit = session.getPlayerUnit();
     const direction = getDirection(key);
     const coordinates = Coordinates.plusDirection(playerUnit.getCoordinates(), direction);
@@ -178,13 +159,12 @@ export class GameScene implements Scene {
       await engine.playTurn();
     } else {
       playerUnit.setDirection(direction);
-      this.soundPlayer.playSound(Sounds.BLOCKED);
+      soundPlayer.playSound(Sounds.BLOCKED);
     }
   };
 
   private _handleAbilityKey = async (hotkey: Key) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const playerUnit = session.getPlayerUnit();
     const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
     const ability = playerUnitClass.getAbilityForHotkey(hotkey, playerUnit);
@@ -194,8 +174,7 @@ export class GameScene implements Scene {
   };
 
   private _handleAbility = async (ability: UnitAbility) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const playerUnit = session.getPlayerUnit();
     if (ability.isEnabled(playerUnit)) {
       if (session.getQueuedAbility() === ability) {
@@ -207,9 +186,7 @@ export class GameScene implements Scene {
   };
 
   private _handleEnter = async () => {
-    const { engine, mapController } = this;
-    const state = engine.getState();
-    const session = engine.getSession();
+    const { engine, mapController, session, soundPlayer } = Globals;
     const map = session.getMap();
     const playerUnit = session.getPlayerUnit();
     const coordinates = playerUnit.getCoordinates();
@@ -220,27 +197,26 @@ export class GameScene implements Scene {
     const item = getItem(map, coordinates);
     const shrine = map.contains(nextCoordinates) ? getShrine(map, nextCoordinates) : null;
     if (item) {
-      pickupItem(playerUnit, item, session, state);
+      pickupItem(playerUnit, item);
       map.removeObject(item);
       await engine.playTurn();
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_DOWN) {
-      this.soundPlayer.playSound(Sounds.DESCEND_STAIRS);
+      soundPlayer.playSound(Sounds.DESCEND_STAIRS);
       await mapController.loadNextMap();
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_UP) {
-      this.soundPlayer.playSound(Sounds.DESCEND_STAIRS); // TODO
+      soundPlayer.playSound(Sounds.DESCEND_STAIRS); // TODO
       await mapController.loadPreviousMap();
     } else if (shrine) {
-      shrine.use(state, session);
+      shrine.use();
     } else {
       // this is mostly a hack to support clicks
-      this.soundPlayer.playSound(Sounds.FOOTSTEP);
+      soundPlayer.playSound(Sounds.FOOTSTEP);
       await engine.playTurn();
     }
   };
 
   private _handleModifierKeyDown = async (key: ModifierKey) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const playerUnit = session.getPlayerUnit();
     switch (key) {
       case ModifierKey.SHIFT: {
@@ -269,8 +245,7 @@ export class GameScene implements Scene {
   };
 
   private _handleModifierKeyUp = async (key: ModifierKey) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     switch (key) {
       case ModifierKey.SHIFT: {
         const queuedAbility = session.getQueuedAbility();
@@ -297,9 +272,7 @@ export class GameScene implements Scene {
   };
 
   private _handleKeyDownInShrineMenu = async (command: KeyCommand) => {
-    const { engine } = this;
-    const state = engine.getState();
-    const session = engine.getSession();
+    const { session } = Globals;
     const shrineMenuState = checkNotNull(session.getShrineMenuState());
     switch (command.key) {
       case 'UP':
@@ -313,16 +286,14 @@ export class GameScene implements Scene {
           await toggleFullScreen();
         } else {
           const selectedOption = shrineMenuState.getSelectedOption();
-          await selectedOption.onUse(state);
+          await selectedOption.onUse();
           session.closeShrineMenu();
         }
     }
   };
 
   handleClick = async ({ pixel }: ClickCommand) => {
-    const { engine } = this;
-    const state = engine.getState();
-    const session = engine.getSession();
+    const { session } = Globals;
     // TODO I wish we had a widget library...
     const playerUnit = session.getPlayerUnit();
     const abilityRects = this._getAbilityRects(playerUnit);
@@ -359,7 +330,7 @@ export class GameScene implements Scene {
       const shrineOptionRects = this._getShrineOptionRects();
       for (const [option, rect] of shrineOptionRects) {
         if (Rect.containsPoint(rect, pixel)) {
-          await option.onUse(state);
+          await option.onUse();
           session.closeShrineMenu();
           return;
         }
@@ -403,11 +374,10 @@ export class GameScene implements Scene {
   };
 
   private _pixelToGrid = ({ x: pixelX, y: pixelY }: Pixel): Coordinates => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session, gameConfig } = Globals;
     const playerUnit = session.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
-    const { screenWidth, screenHeight } = this.gameConfig;
+    const { screenWidth, screenHeight } = gameConfig;
     return {
       x: Math.floor((pixelX - (screenWidth - TILE_WIDTH) / 2) / TILE_WIDTH + playerX),
       y: Math.floor((pixelY - (screenHeight - TILE_HEIGHT) / 2) / TILE_HEIGHT + playerY)
@@ -452,11 +422,10 @@ export class GameScene implements Scene {
   };
 
   private _getShrineOptionRects = (): [ShrineOption, Rect][] => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session, gameConfig } = Globals;
     const shrineMenuState = session.getShrineMenuState();
     const shrineOptionRects: [ShrineOption, Rect][] = [];
-    const { screenWidth, screenHeight } = this.gameConfig;
+    const { screenWidth, screenHeight } = gameConfig;
     for (let i = 0; i < shrineMenuState.options.length; i++) {
       const option = shrineMenuState.options[i];
       const rect = {
@@ -471,8 +440,7 @@ export class GameScene implements Scene {
   };
 
   render = async (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     graphics.fillRect(
       {
         left: 0,
@@ -499,8 +467,7 @@ export class GameScene implements Scene {
   };
 
   private _renderTicker = async (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const messages = session.getTicker().getRecentMessages(session.getTurn());
 
     const left = 0;
@@ -524,8 +491,7 @@ export class GameScene implements Scene {
   };
 
   private _drawTurnProgressIndicator = (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     if (session.isTurnInProgress()) {
       const width = 20;
       const height = 20;
@@ -544,7 +510,8 @@ export class GameScene implements Scene {
     textAlign: Alignment,
     graphics: Graphics
   ) => {
-    const imageData = this.textRenderer.renderText({
+    const { textRenderer } = Globals;
+    const imageData = textRenderer.renderText({
       text,
       fontName,
       color,

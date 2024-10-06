@@ -1,5 +1,4 @@
 import InventoryItem from './InventoryItem';
-import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import Sounds from '../sounds/Sounds';
 import Unit from '../units/Unit';
 import Equipment from '../equipment/Equipment';
@@ -7,14 +6,12 @@ import MapItem from '../objects/MapItem';
 import MapInstance from '../maps/MapInstance';
 import { ConsumableItemModel } from '@models/ConsumableItemModel';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import ModelLoader from '@main/assets/ModelLoader';
 import { equipItem } from '@main/actions/equipItem';
 import { getEquipmentTooltip } from '@main/equipment/EquipmentUtils';
 import { shootFireball } from '@main/actions/shootFireball';
 import { SceneName } from '@main/scenes/SceneName';
 import { floorFire } from '@main/actions/floorFire';
 import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { revealMap } from '@main/maps/MapUtils';
 import { castFreeze } from '@main/actions/castFreeze';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
@@ -24,8 +21,8 @@ import { Feature } from '@main/utils/features';
 import { checkState } from '@lib/utils/preconditions';
 import { weightedRandom, WeightedRandomChoice } from '@lib/utils/random';
 import { radialChainLightning } from '@main/actions/radialChainLightning';
-import { injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
+import { Globals } from '@main/core/globals';
 
 export enum ItemType {
   EQUIPMENT = 'equipment',
@@ -37,21 +34,12 @@ export type ItemSpec = Readonly<{
   id: string;
 }>;
 
-@injectable()
 export class ItemFactory {
-  constructor(
-    private readonly spriteFactory: SpriteFactory,
-    private readonly modelLoader: ModelLoader
-  ) {}
-
   createLifePotion = (lifeRestored: number): InventoryItem => {
-    const onUse: ItemProc = async (
-      item: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
-      state.getSoundPlayer().playSound(Sounds.USE_POTION);
+    const { session, soundPlayer } = Globals;
+
+    const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
+      soundPlayer.playSound(Sounds.USE_POTION);
       const lifeGained = unit.gainLife(lifeRestored);
       session
         .getTicker()
@@ -69,13 +57,9 @@ export class ItemFactory {
   };
 
   createManaPotion = (name: string, manaRestored: number): InventoryItem => {
-    const onUse: ItemProc = async (
-      item: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
-      state.getSoundPlayer().playSound(Sounds.USE_POTION);
+    const onUse: ItemProc = async (item: InventoryItem, unit: Unit) => {
+      const { session, soundPlayer } = Globals;
+      soundPlayer.playSound(Sounds.USE_POTION);
       const manaGained = unit.gainMana(manaRestored);
       session
         .getTicker()
@@ -106,14 +90,10 @@ export class ItemFactory {
     name: string,
     damage: number
   ): Promise<InventoryItem> => {
-    const onUse: ItemProc = async (
-      _: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
+    const { session } = Globals;
+    const onUse: ItemProc = async (_: InventoryItem, unit: Unit) => {
       session.setScene(SceneName.GAME);
-      await floorFire(unit, damage, state, session);
+      await floorFire(unit, damage);
     };
 
     return new InventoryItem({
@@ -128,14 +108,10 @@ export class ItemFactory {
     name: string,
     damage: number
   ): Promise<InventoryItem> => {
-    const onUse: ItemProc = async (
-      _: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
+    const { session } = Globals;
+    const onUse: ItemProc = async (_: InventoryItem, unit: Unit) => {
       session.setScene(SceneName.GAME);
-      await radialChainLightning(unit, damage, state, session);
+      await radialChainLightning(unit, damage);
     };
 
     return new InventoryItem({
@@ -163,14 +139,11 @@ export class ItemFactory {
     name: string,
     damage: number
   ): Promise<InventoryItem> => {
-    const onUse: ItemProc = async (
-      _: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
+    const { session } = Globals;
+
+    const onUse: ItemProc = async (_: InventoryItem, unit: Unit) => {
       session.setScene(SceneName.GAME);
-      await shootFireball(unit, unit.getDirection(), damage, session, state);
+      await shootFireball(unit, unit.getDirection(), damage);
     };
 
     return new InventoryItem({
@@ -185,14 +158,11 @@ export class ItemFactory {
     name: string,
     duration: number
   ): Promise<InventoryItem> => {
-    const onUse: ItemProc = async (
-      _: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
+    const { session } = Globals;
+
+    const onUse: ItemProc = async (_: InventoryItem, unit: Unit) => {
       session.setScene(SceneName.GAME);
-      await castFreeze(unit, 5, duration, session, state);
+      await castFreeze(unit, 5, duration);
     };
 
     return new InventoryItem({
@@ -204,17 +174,13 @@ export class ItemFactory {
   };
 
   createInventoryEquipment = async (modelName: string): Promise<InventoryItem> => {
-    const onUse: ItemProc = async (
-      _: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
+    const { modelLoader } = Globals;
+    const onUse: ItemProc = async (_: InventoryItem, unit: Unit) => {
       const equipment = await this.createEquipment(modelName);
-      return equipItem(equipment, unit, session, state);
+      return equipItem(equipment, unit);
     };
 
-    const model = await this.modelLoader.loadEquipmentModel(modelName);
+    const model = await modelLoader.loadEquipmentModel(modelName);
     return new InventoryItem({
       name: model.name,
       category: model.itemCategory,
@@ -228,8 +194,9 @@ export class ItemFactory {
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<MapItem> => {
-    const model = await this.modelLoader.loadEquipmentModel(modelName);
-    const sprite = await this.spriteFactory.createStaticSprite(
+    const { modelLoader, spriteFactory } = Globals;
+    const model = await modelLoader.loadEquipmentModel(modelName);
+    const sprite = await spriteFactory.createStaticSprite(
       model.mapIcon,
       loadPaletteSwaps(model.paletteSwaps)
     );
@@ -244,9 +211,10 @@ export class ItemFactory {
   };
 
   createEquipment = async (modelName: string): Promise<Equipment> => {
-    const model = await this.modelLoader.loadEquipmentModel(modelName);
+    const { modelLoader, spriteFactory } = Globals;
+    const model = await modelLoader.loadEquipmentModel(modelName);
     const spriteName = model.sprite;
-    const sprite = await this.spriteFactory.createEquipmentSprite(
+    const sprite = await spriteFactory.createEquipmentSprite(
       spriteName,
       loadPaletteSwaps(model.paletteSwaps)
     );
@@ -303,9 +271,10 @@ export class ItemFactory {
   };
 
   createMapItem = async (itemId: string, coordinates: Coordinates, map: MapInstance) => {
-    const model: ConsumableItemModel = await this.modelLoader.loadItemModel(itemId);
+    const { modelLoader, spriteFactory } = Globals;
+    const model: ConsumableItemModel = await modelLoader.loadItemModel(itemId);
     const inventoryItem = await this.createInventoryItem(model);
-    const sprite = await this.spriteFactory.createStaticSprite(
+    const sprite = await spriteFactory.createStaticSprite(
       model.mapSprite,
       loadPaletteSwaps(model.paletteSwaps)
     );
@@ -316,8 +285,9 @@ export class ItemFactory {
     levelNumber: number,
     state: GameState
   ): Promise<ItemSpec> => {
-    const allEquipmentModels = await this.modelLoader.loadAllEquipmentModels();
-    const allConsumableModels = await this.modelLoader.loadAllConsumableModels();
+    const { modelLoader } = Globals;
+    const allEquipmentModels = await modelLoader.loadAllEquipmentModels();
+    const allConsumableModels = await modelLoader.loadAllConsumableModels();
     const possibleEquipmentModels = allEquipmentModels
       .filter(equipmentModel => {
         if (Feature.isEnabled(Feature.DEDUPLICATE_EQUIPMENT)) {

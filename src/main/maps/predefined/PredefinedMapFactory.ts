@@ -2,39 +2,24 @@ import Tile from '../../tiles/Tile';
 import Unit from '../../units/Unit';
 import GameObject from '../../objects/GameObject';
 import MapInstance from '../MapInstance';
-import TileFactory from '../../tiles/TileFactory';
-import UnitFactory from '../../units/UnitFactory';
-import ObjectFactory from '../../objects/ObjectFactory';
-import MusicController from '../../sounds/MusicController';
-import { ItemFactory } from '@main/items/ItemFactory';
 import Colors from '@main/graphics/Colors';
 import { PredefinedMapModel } from '@models/PredefinedMapModel';
 import { TileType } from '@models/TileType';
-import ModelLoader from '@main/assets/ModelLoader';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Faction } from '@main/units/Faction';
 import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
 import { Image } from '@lib/graphics/images/Image';
 import { Color } from '@lib/graphics/Color';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { DoorDirection } from '@models/DoorDirection';
-import { injectable } from 'inversify';
+import { Globals } from '@main/core/globals';
 
-@injectable()
 export class PredefinedMapFactory {
-  constructor(
-    private readonly imageFactory: ImageFactory,
-    private readonly tileFactory: TileFactory,
-    private readonly objectFactory: ObjectFactory,
-    private readonly unitFactory: UnitFactory,
-    private readonly itemFactory: ItemFactory,
-    private readonly modelLoader: ModelLoader,
-    private readonly musicController: MusicController
-  ) {}
+  constructor() {}
 
   buildPredefinedMap = async (mapId: string): Promise<MapInstance> => {
-    const model = await this.modelLoader.loadPredefinedMapModel(mapId);
-    const image = await this.imageFactory.getImage({
+    const { imageFactory, modelLoader, musicController } = Globals;
+    const model = await modelLoader.loadPredefinedMapModel(mapId);
+    const image = await imageFactory.getImage({
       filename: `maps/${model.imageFilename}`
     });
 
@@ -45,7 +30,7 @@ export class PredefinedMapFactory {
       height: image.bitmap.height,
       levelNumber: model.levelNumber,
       startingCoordinates,
-      music: model.music ? await this.musicController.loadMusic(model.music) : null,
+      music: model.music ? await musicController.loadMusic(model.music) : null,
       fogParams: model.fogOfWar
     });
 
@@ -73,8 +58,9 @@ export class PredefinedMapFactory {
     image: Image,
     map: MapInstance
   ): Promise<Tile[][]> => {
+    const { tileFactory } = Globals;
     const tileColors = this._toHexColors(model.tileColors);
-    const tileSet = await this.tileFactory.getTileSet(model.tileset);
+    const tileSet = await tileFactory.getTileSet(model.tileset);
     const tiles: Tile[][] = [];
     for (let y = 0; y < image.height; y++) {
       tiles.push([]);
@@ -84,7 +70,7 @@ export class PredefinedMapFactory {
 
         const tileType = tileColors[color.hex] ?? model.defaultTile ?? null;
         if (tileType !== null) {
-          tiles[y][x] = this.tileFactory.createTile(
+          tiles[y][x] = tileFactory.createTile(
             {
               tileType: tileType as TileType,
               tileSet
@@ -133,6 +119,7 @@ export class PredefinedMapFactory {
     image: Image,
     map: MapInstance
   ): Promise<Unit[]> => {
+    const { modelLoader, unitFactory } = Globals;
     const units: Unit[] = [];
     const enemyColors = this._toHexColors(model.enemyColors);
 
@@ -148,9 +135,9 @@ export class PredefinedMapFactory {
           }
           const enemyUnitClass = enemyColors[color.hex] ?? null;
           if (enemyUnitClass !== null) {
-            const enemyUnitModel = await this.modelLoader.loadUnitModel(enemyUnitClass);
+            const enemyUnitModel = await modelLoader.loadUnitModel(enemyUnitClass);
             const controller = chooseUnitController(enemyUnitModel.id);
-            const unit = await this.unitFactory.createUnit({
+            const unit = await unitFactory.createUnit({
               name: enemyUnitModel.name,
               unitClass: enemyUnitClass,
               faction: Faction.ENEMY,
@@ -172,6 +159,7 @@ export class PredefinedMapFactory {
     image: Image,
     map: MapInstance
   ): Promise<GameObject[]> => {
+    const { objectFactory, itemFactory } = Globals;
     const objects: GameObject[] = [];
 
     const objectColors = this._toHexColors(model.objectColors);
@@ -189,7 +177,7 @@ export class PredefinedMapFactory {
             objectName === 'door_horizontal'
               ? DoorDirection.HORIZONTAL
               : DoorDirection.VERTICAL;
-          const door = await this.objectFactory.createDoor(
+          const door = await objectFactory.createDoor(
             { x, y },
             doorDirection,
             false,
@@ -198,16 +186,16 @@ export class PredefinedMapFactory {
           objects.push(door);
         } else {
           if (objectName === 'mirror') {
-            const spawner = await this.objectFactory.createMirror({ x, y }, map);
+            const spawner = await objectFactory.createMirror({ x, y }, map);
             objects.push(spawner);
           } else if (objectName === 'movable_block') {
-            const block = await this.objectFactory.createMovableBlock({ x, y }, map);
+            const block = await objectFactory.createMovableBlock({ x, y }, map);
             objects.push(block);
           } else if (objectName === 'vines') {
-            const vines = await this.objectFactory.createVines({ x, y }, map);
+            const vines = await objectFactory.createVines({ x, y }, map);
             objects.push(vines);
           } else if (objectName === 'shrine') {
-            const shrine = await this.objectFactory.createShrine({ x, y }, map);
+            const shrine = await objectFactory.createShrine({ x, y }, map);
             objects.push(shrine);
           } else if (objectName) {
             throw new Error(`Unrecognized object name: ${objectName}`);
@@ -216,13 +204,13 @@ export class PredefinedMapFactory {
 
         const itemId = itemColors?.[color.hex] ?? null;
         if (itemId) {
-          const item = await this.itemFactory.createMapItem(itemId, { x, y }, map);
+          const item = await itemFactory.createMapItem(itemId, { x, y }, map);
           objects.push(item);
         }
 
         const equipmentId = equipmentColors?.[color.hex] ?? null;
         if (equipmentId) {
-          const equipment = await this.itemFactory.createMapEquipment(
+          const equipment = await itemFactory.createMapEquipment(
             equipmentId,
             { x, y },
             map

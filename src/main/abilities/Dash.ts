@@ -6,10 +6,9 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { sleep } from '@lib/utils/promises';
 import { moveUnit } from '@main/actions/moveUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Direction } from '@lib/geometry/Direction';
+import { Globals } from '@main/core/globals';
 
 export class Dash implements UnitAbility {
   static readonly MANA_COST = 4;
@@ -27,13 +26,9 @@ export class Dash implements UnitAbility {
     return !isBlocked(onePlus, map) && !isBlocked(coordinates, map);
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
-    const map = session.getMap();
+  use = async (unit: Unit, coordinates: Coordinates) => {
+    const { soundPlayer } = Globals;
+    const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
@@ -45,7 +40,7 @@ export class Dash implements UnitAbility {
       x += dx;
       y += dy;
       if (map.contains({ x, y }) && !isBlocked({ x, y }, map)) {
-        await moveUnit(unit, { x, y }, session, state);
+        await moveUnit(unit, { x, y });
         moved = true;
         if (map.isTileRevealed({ x, y })) {
           await sleep(100);
@@ -56,10 +51,10 @@ export class Dash implements UnitAbility {
     }
 
     if (moved) {
-      state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
+      soundPlayer.playSound(Sounds.FOOTSTEP);
       unit.spendMana(this.manaCost);
     } else {
-      state.getSoundPlayer().playSound(Sounds.BLOCKED);
+      soundPlayer.playSound(Sounds.BLOCKED);
     }
   };
 }

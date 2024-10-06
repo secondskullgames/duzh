@@ -6,8 +6,6 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Feature } from '@main/utils/features';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { checkState } from '@lib/utils/preconditions';
 import { Direction } from '@lib/geometry/Direction';
@@ -27,12 +25,7 @@ export class Blink implements UnitAbility {
     return !_isBlocked(unit.getCoordinates(), coordinates, map);
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates) => {
     const map = unit.getMap();
     const direction = Direction.between(unit.getCoordinates(), coordinates);
 
@@ -46,7 +39,7 @@ export class Blink implements UnitAbility {
     const blocked = _isBlocked(unit.getCoordinates(), targetCoordinates, map);
     checkState(!blocked);
 
-    await moveUnit(unit, targetCoordinates, session, state);
+    await moveUnit(unit, targetCoordinates);
     unit.spendMana(this.manaCost);
   };
 }

@@ -6,10 +6,9 @@ import { Activity } from '../units/Activity';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { sleep } from '@lib/utils/promises';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { Globals } from '@main/core/globals';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s frostbolt hit ${target.getName()} for ${damageTaken} damage!`;
@@ -19,10 +18,9 @@ export const shootFrostbolt = async (
   unit: Unit,
   direction: Direction,
   damage: number,
-  freezeDuration: number,
-  session: Session,
-  state: GameState
+  freezeDuration: number
 ) => {
+  const { session, soundPlayer } = Globals;
   unit.setDirection(direction);
 
   const map = session.getMap();
@@ -35,8 +33,8 @@ export const shootFrostbolt = async (
 
   const targetUnit = map.getUnit(coordinates);
   if (targetUnit) {
-    state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
-    await playFrostboltAnimation(unit, direction, coordinatesList, targetUnit, state);
+    soundPlayer.playSound(Sounds.PLAYER_HITS_ENEMY);
+    await playFrostboltAnimation(unit, direction, coordinatesList, targetUnit);
     const adjustedDamage = await dealDamage(damage, {
       sourceUnit: unit,
       targetUnit
@@ -45,7 +43,7 @@ export const shootFrostbolt = async (
     session.getTicker().log(message, { turn: session.getTurn() });
     if (targetUnit.getLife() <= 0) {
       await sleep(100);
-      await die(targetUnit, state, session);
+      await die(targetUnit);
     } else {
       targetUnit.setFrozen(freezeDuration);
       session
@@ -53,7 +51,7 @@ export const shootFrostbolt = async (
         .log(`${targetUnit.getName()} is frozen!`, { turn: session.getTurn() });
     }
   } else {
-    await playFrostboltAnimation(unit, direction, coordinatesList, null, state);
+    await playFrostboltAnimation(unit, direction, coordinatesList, null);
   }
 };
 
@@ -61,9 +59,9 @@ const playFrostboltAnimation = async (
   source: Unit,
   direction: Direction,
   coordinatesList: Coordinates[],
-  target: Unit | null,
-  state: GameState
+  target: Unit | null
 ) => {
+  const { projectileFactory } = Globals;
   const map = source.getMap();
 
   // first frame
@@ -79,9 +77,11 @@ const playFrostboltAnimation = async (
 
   // frostbolt movement frames
   for (const coordinates of visibleCoordinatesList) {
-    const projectile = await state
-      .getProjectileFactory()
-      .createFrostbolt(coordinates, map, direction);
+    const projectile = await projectileFactory.createFrostbolt(
+      coordinates,
+      map,
+      direction
+    );
     map.addProjectile(projectile);
     await sleep(50);
     map.removeProjectile(projectile);

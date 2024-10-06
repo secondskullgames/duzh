@@ -1,22 +1,9 @@
 import 'reflect-metadata';
-import { Debug } from './core/Debug';
-import { GameStateImpl } from './core/GameState';
-import { showSplashScreen } from './actions/showSplashScreen';
-import { FontFactory } from './graphics/Fonts';
+import { showTitleScreen } from './actions/showTitleScreen';
 import { Feature } from './utils/features';
-import { SessionImpl } from './core/Session';
-import { MapController, MapControllerImpl } from './maps/MapController';
-import { MapSpec } from '@models/MapSpec';
-import InputHandler from '@lib/input/InputHandler';
-import { AssetLoader, AssetLoaderImpl } from '@lib/assets/AssetLoader';
 import { createCanvas, enterFullScreen, isMobileDevice } from '@lib/utils/dom';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Graphics } from '@lib/graphics/Graphics';
-import { GameConfig } from '@main/core/GameConfig';
-import mapSpecsJson from '@data/maps.json';
-import { Engine, EngineImpl } from '@main/core/Engine';
-import { FontBundle } from '@lib/graphics/Fonts';
-import { createInputHandler } from '@main/input/createInputHandler';
 import { TitleScene } from '@main/scenes/TitleScene';
 import { GameScene } from '@main/scenes/GameScene';
 import { InventoryScene } from '@main/scenes/InventoryScene';
@@ -27,40 +14,15 @@ import { GameOverScene } from '@main/scenes/GameOverScene';
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
 import { MapScene } from '@main/scenes/MapScene';
-import { OrderExecutor } from '@main/units/orders/OrderExecutor';
-import SoundPlayer from '@lib/audio/SoundPlayer';
-import { Container } from 'inversify';
+import { Globals } from '@main/core/globals';
+import { createInputHandler } from '@main/input/createInputHandler';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
-  gameConfig: GameConfig;
 }>;
 
-const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
-  const container = new Container({
-    defaultScope: 'Singleton',
-    autoBindInjectable: true
-  });
-  container.bind(GameConfig).toConstantValue(gameConfig);
-  container.bind<FontBundle>(FontBundle).toDynamicValue(async context => {
-    const fontFactory = context.container.get(FontFactory);
-    return fontFactory.loadFonts();
-  });
-  container.bind(AssetLoader).to(AssetLoaderImpl);
-  container.bind(MapController).to(MapControllerImpl);
-  container.bind(SoundPlayer).toConstantValue(SoundPlayer.forSounds());
-  const session = new SessionImpl();
-  const state = await container.getAsync(GameStateImpl);
-  const orderExecutor = await container.getAsync(OrderExecutor);
-  const engine = new EngineImpl(session, state, orderExecutor);
-  container.bind(InputHandler).toConstantValue(createInputHandler({ engine }));
-  container.bind(Engine).toConstantValue(engine);
-  return container;
-};
-
-const init = async ({ rootElement, gameConfig }: Props) => {
-  const container = await setupContainer({ rootElement, gameConfig });
-  const engine = await container.getAsync<Engine>(Engine);
+const init = async ({ rootElement }: Props) => {
+  const { gameConfig } = Globals;
   const canvas = createCanvas({
     width: gameConfig.screenWidth,
     height: gameConfig.screenHeight
@@ -74,7 +36,7 @@ const init = async ({ rootElement, gameConfig }: Props) => {
     await enterFullScreen();
   }
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
-    const debug = container.get(Debug);
+    const { debug } = Globals;
     debug.attachToWindow();
     const debugElement = document.getElementById('debug');
     if (debugElement) {
@@ -82,26 +44,25 @@ const init = async ({ rootElement, gameConfig }: Props) => {
     }
   }
 
+  const { session } = Globals;
   const scenes: Record<SceneName, Scene> = {
-    [SceneName.CHARACTER]: await container.getAsync(CharacterScene),
-    [SceneName.GAME]: await container.getAsync(GameScene),
-    [SceneName.GAME_OVER]: await container.getAsync(GameOverScene),
-    [SceneName.HELP]: await container.getAsync(HelpScene),
-    [SceneName.INVENTORY]: await container.getAsync(InventoryScene),
-    [SceneName.MAP]: await container.getAsync(MapScene),
-    [SceneName.TITLE]: await container.getAsync(TitleScene),
-    [SceneName.VICTORY]: await container.getAsync(VictoryScene)
+    [SceneName.CHARACTER]: new CharacterScene(),
+    [SceneName.GAME]: new GameScene(),
+    [SceneName.GAME_OVER]: new GameOverScene(),
+    [SceneName.HELP]: new HelpScene(),
+    [SceneName.INVENTORY]: new InventoryScene(),
+    [SceneName.MAP]: new MapScene(),
+    [SceneName.TITLE]: new TitleScene(),
+    [SceneName.VICTORY]: new VictoryScene()
   };
-  const session = engine.getSession();
-  const state = engine.getState();
   for (const scene of Object.values(scenes)) {
     session.addScene(scene);
   }
 
-  const inputHandler = await container.getAsync(InputHandler);
+  const inputHandler = createInputHandler();
   inputHandler.addEventListener(canvas);
 
-  await showSplashScreen(state, session);
+  await showTitleScreen();
   setInterval(async () => {
     const currentScene = session.getCurrentScene();
     if (currentScene) {
@@ -112,13 +73,7 @@ const init = async ({ rootElement, gameConfig }: Props) => {
 
 const main = async () => {
   const rootElement = checkNotNull(document.getElementById('container'));
-  const gameConfig: GameConfig = {
-    mapSpecs: mapSpecsJson as MapSpec[],
-    screenWidth: 640,
-    screenHeight: 360
-  };
-
-  await init({ rootElement, gameConfig });
+  await init({ rootElement });
 };
 
 main().catch(e => {

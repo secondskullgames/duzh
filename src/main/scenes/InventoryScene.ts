@@ -10,9 +10,6 @@ import {
   InventoryCategory
 } from '@main/core/session/InventoryState';
 import InventoryItem from '@main/items/InventoryItem';
-import { GameConfig } from '@main/core/GameConfig';
-import { TextRenderer } from '@main/graphics/TextRenderer';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Graphics } from '@lib/graphics/Graphics';
 import { FontName } from '@main/graphics/Fonts';
 import { Pixel } from '@lib/geometry/Pixel';
@@ -21,8 +18,7 @@ import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import Colors from '@main/graphics/Colors';
 import { getSlotName, splitTooltipToLines } from '@main/equipment/EquipmentUtils';
 import { LINE_HEIGHT } from '@main/graphics/constants';
-import { Engine } from '@main/core/Engine';
-import { inject, injectable } from 'inversify';
+import { Globals } from '@main/core/globals';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -30,29 +26,11 @@ const INVENTORY_MARGIN = 10;
 
 const INVENTORY_BACKGROUND_FILENAME = 'inventory2';
 
-@injectable()
 export class InventoryScene implements Scene {
   readonly name = SceneName.INVENTORY;
-  private readonly inventoryWidth: number;
-  private readonly inventoryHeight: number;
-
-  constructor(
-    @inject(Engine)
-    private readonly engine: Engine,
-    @inject(GameConfig)
-    gameConfig: GameConfig,
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory
-  ) {
-    this.inventoryWidth = gameConfig.screenWidth;
-    this.inventoryHeight = gameConfig.screenHeight;
-  }
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const { key, modifiers } = command;
     const playerUnit = session.getPlayerUnit();
     const inventory = session.getInventoryState();
@@ -94,21 +72,19 @@ export class InventoryScene implements Scene {
   handleKeyUp = async () => {};
 
   private _handleEnter = async () => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const playerUnit = session.getPlayerUnit();
     const inventory = session.getInventoryState();
     const selectedItem = inventory.getSelectedItem();
 
     if (selectedItem) {
-      await useItem(playerUnit, selectedItem, engine);
+      await useItem(playerUnit, selectedItem);
       session.prepareInventoryScreen(playerUnit);
     }
   };
 
   handleClick = async ({ pixel }: ClickCommand) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const playerUnit = session.getPlayerUnit();
     const inventoryState = session.getInventoryState();
 
@@ -124,7 +100,7 @@ export class InventoryScene implements Scene {
     for (const [item, rect] of itemRects) {
       if (Rect.containsPoint(rect, pixel)) {
         if (inventoryState.getSelectedItem() == item) {
-          await useItem(playerUnit, item, engine);
+          await useItem(playerUnit, item);
           session.prepareInventoryScreen(playerUnit);
         } else {
           inventoryState.selectItem(session.getPlayerUnit(), item);
@@ -153,8 +129,7 @@ export class InventoryScene implements Scene {
   };
 
   private _getItemRects = (): [InventoryItem, Rect][] => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const inventoryScreenState = session.getInventoryState();
     const itemCategory = inventoryScreenState.getSelectedItemCategory();
     const itemRects: [InventoryItem, Rect][] = [];
@@ -190,7 +165,8 @@ export class InventoryScene implements Scene {
     textAlign: Alignment,
     graphics: Graphics
   ) => {
-    const imageData = this.textRenderer.renderText({
+    const { textRenderer } = Globals;
+    const imageData = textRenderer.renderText({
       text,
       fontName,
       color,
@@ -200,7 +176,7 @@ export class InventoryScene implements Scene {
   };
 
   private _drawBackground = async (graphics: Graphics) => {
-    const { imageFactory } = this;
+    const { imageFactory, gameConfig } = Globals;
     graphics.clear();
 
     const image = await imageFactory.getImage({
@@ -210,21 +186,20 @@ export class InventoryScene implements Scene {
     graphics.drawScaledImage(image, {
       left: INVENTORY_LEFT,
       top: INVENTORY_TOP,
-      width: this.inventoryWidth,
-      height: this.inventoryHeight
+      width: gameConfig.screenWidth,
+      height: gameConfig.screenHeight
     });
   };
 
   private _drawEquipment = (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session, gameConfig } = Globals;
     const inventory = session.getInventoryState();
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
 
     this._drawText(
       'EQUIPMENT',
       FontName.APPLE_II,
-      { x: this.inventoryWidth / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
+      { x: gameConfig.screenWidth / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
       inventory.getSelectedCategory() === InventoryCategory.EQUIPMENT
         ? Colors.YELLOW
         : Colors.WHITE,
@@ -234,7 +209,10 @@ export class InventoryScene implements Scene {
     this._drawText(
       'INVENTORY',
       FontName.APPLE_II,
-      { x: (this.inventoryWidth * 3) / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
+      {
+        x: gameConfig.screenWidth * 0.75,
+        y: INVENTORY_TOP + INVENTORY_MARGIN
+      },
       inventory.getSelectedCategory() === InventoryCategory.ITEMS
         ? Colors.YELLOW
         : Colors.WHITE,
@@ -262,13 +240,12 @@ export class InventoryScene implements Scene {
   };
 
   private _drawInventory = (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session, gameConfig } = Globals;
     const inventory = session.getInventoryState();
     const inventoryCategories = inventory.getItemCategories();
     const categoryWidth = 60;
     const xOffset = 4;
-    const itemsLeft = (this.inventoryWidth + INVENTORY_MARGIN) / 2;
+    const itemsLeft = (gameConfig.screenWidth + INVENTORY_MARGIN) / 2;
 
     for (let i = 0; i < inventoryCategories.length; i++) {
       const x = itemsLeft + i * categoryWidth + categoryWidth / 2 + xOffset;
@@ -319,8 +296,7 @@ export class InventoryScene implements Scene {
   };
 
   private _drawTooltip = (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const left = 10;
     const top = Math.round(graphics.getHeight() * 0.6);
 

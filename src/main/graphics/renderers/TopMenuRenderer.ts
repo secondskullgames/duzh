@@ -1,8 +1,7 @@
 import { Renderer } from '@main/graphics/renderers/Renderer';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Graphics } from '@lib/graphics/Graphics';
 import { Rect } from '@lib/geometry/Rect';
-import { inject, injectable } from 'inversify';
+import { Globals } from '@main/core/globals';
 
 export enum TopMenuIcon {
   MAP = 'MAP',
@@ -17,21 +16,16 @@ export type TopMenuIconWithRect = Readonly<{
   rect: Rect;
 }>;
 
-@injectable()
 export default class TopMenuRenderer implements Renderer {
-  constructor(
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory
-  ) {}
-
   /**
    * @override {@link Renderer#render}
    */
   render = async (graphics: Graphics) => {
+    const { imageFactory } = Globals;
     const iconRects = TopMenuRenderer.getIconRects();
     for (let i = 0; i < iconRects.length; i++) {
       const { filename, rect } = iconRects[i];
-      const image = await this.imageFactory.getImage({
+      const image = await imageFactory.getImage({
         filename
       });
       graphics.drawImage(image, Rect.getTopLeft(rect));
@@ -46,7 +40,7 @@ export default class TopMenuRenderer implements Renderer {
       TopMenuIcon.HELP
     ];
     const iconsWithRects: TopMenuIconWithRect[] = [];
-    const screenWidth = 640; // TODO this sucks
+    const { screenWidth } = Globals.gameConfig;
     for (let i = 0; i < icons.length; i++) {
       const rect = {
         left: screenWidth - 25 - 25 * icons.length + 25 * i,

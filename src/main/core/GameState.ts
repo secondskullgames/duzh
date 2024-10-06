@@ -1,13 +1,5 @@
 import MapInstance from '../maps/MapInstance';
-import { ItemFactory } from '../items/ItemFactory';
-import UnitFactory from '../units/UnitFactory';
-import ObjectFactory from '../objects/ObjectFactory';
-import MusicController from '../sounds/MusicController';
-import ProjectileFactory from '../objects/ProjectileFactory';
-import SoundPlayer from '@lib/audio/SoundPlayer';
 import { clear } from '@lib/utils/arrays';
-import ModelLoader from '@main/assets/ModelLoader';
-import { inject, injectable } from 'inversify';
 
 /**
  * Represents the "game world": persistent state that is shared across all current sessions.
@@ -20,42 +12,16 @@ export interface GameState {
   getMap: (mapIndex: number) => MapInstance;
   setMap: (mapIndex: number, map: MapInstance) => void;
   isMapLoaded: (mapIndex: number) => boolean;
-
-  // TODO trying to find ways to remove the remainder
-
-  getItemFactory: () => ItemFactory;
-  getUnitFactory: () => UnitFactory;
-  getObjectFactory: () => ObjectFactory;
-  getProjectileFactory: () => ProjectileFactory;
-  getSoundPlayer: () => SoundPlayer;
-  getMusicController: () => MusicController;
-  getModelLoader: () => ModelLoader;
 }
 
 /**
  * Global mutable state
  */
-@injectable()
 export class GameStateImpl implements GameState {
   private readonly maps: Record<number, MapInstance>;
   private readonly generatedEquipmentIds: string[];
 
-  constructor(
-    @inject(ItemFactory)
-    private readonly itemFactory: ItemFactory,
-    @inject(UnitFactory)
-    private readonly unitFactory: UnitFactory,
-    @inject(ObjectFactory)
-    private readonly objectFactory: ObjectFactory,
-    @inject(MusicController)
-    private readonly musicController: MusicController,
-    @inject(ProjectileFactory)
-    private readonly projectileFactory: ProjectileFactory,
-    @inject(ModelLoader)
-    private readonly modelLoader: ModelLoader,
-    @inject(SoundPlayer)
-    private readonly soundPlayer: SoundPlayer
-  ) {
+  constructor() {
     this.maps = [];
     this.generatedEquipmentIds = [];
   }
@@ -81,12 +47,4 @@ export class GameStateImpl implements GameState {
     this.maps[mapIndex] = map;
   };
   getMap = (mapIndex: number) => this.maps[mapIndex];
-
-  getItemFactory = (): ItemFactory => this.itemFactory;
-  getUnitFactory = (): UnitFactory => this.unitFactory;
-  getObjectFactory = (): ObjectFactory => this.objectFactory;
-  getProjectileFactory = (): ProjectileFactory => this.projectileFactory;
-  getSoundPlayer = (): SoundPlayer => this.soundPlayer;
-  getMusicController = (): MusicController => this.musicController;
-  getModelLoader = (): ModelLoader => this.modelLoader;
 }

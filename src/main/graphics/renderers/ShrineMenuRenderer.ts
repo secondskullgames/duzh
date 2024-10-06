@@ -1,38 +1,21 @@
 import { Renderer } from './Renderer';
 import { FontName } from '../Fonts';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';
-import { GameConfig } from '@main/core/GameConfig';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { ShrineOption } from '@main/core/session/ShrineMenuState';
-import { Engine } from '@main/core/Engine';
-import { inject, injectable } from 'inversify';
+import { Globals } from '@main/core/globals';
 
 const BACKGROUND_FILENAME = 'bordered_background';
 
-@injectable()
 export class ShrineMenuRenderer implements Renderer {
-  constructor(
-    @inject(GameConfig)
-    private readonly gameConfig: GameConfig,
-    @inject(Engine)
-    private readonly engine: Engine,
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory
-  ) {}
-
   render = async (graphics: Graphics) => {
-    const { imageFactory, gameConfig, engine } = this;
-    const session = engine.getSession();
-    const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
+    const { imageFactory, session, gameConfig } = Globals;
     const { screenWidth, screenHeight } = gameConfig;
+    const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     const left = screenWidth / 4;
     const top = screenHeight / 4;
     const width = screenWidth / 2;
@@ -74,8 +57,7 @@ export class ShrineMenuRenderer implements Renderer {
   };
 
   private _getOptionColor = (option: ShrineOption): Color => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const selectedOption = checkNotNull(session.getShrineMenuState()).getSelectedOption();
     const isSelected = selectedOption.label === option.label;
     return isSelected ? Colors.WHITE : Colors.LIGHT_GRAY;
@@ -89,7 +71,8 @@ export class ShrineMenuRenderer implements Renderer {
     textAlign: Alignment,
     graphics: Graphics
   ) => {
-    const imageData = this.textRenderer.renderText({
+    const { textRenderer } = Globals;
+    const imageData = textRenderer.renderText({
       text,
       fontName,
       color,

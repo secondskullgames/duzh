@@ -1,11 +1,11 @@
 import Sounds from '../sounds/Sounds';
 import { SceneName } from '@main/scenes/SceneName';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Globals } from '@main/core/globals';
 
-export const gameOver = async (state: GameState, session: Session) => {
+export const gameOver = async () => {
+  const { session, soundPlayer, musicController } = Globals;
   session.endGameTimer();
   session.setScene(SceneName.GAME_OVER);
-  state.getMusicController().stop();
-  state.getSoundPlayer().playSound(Sounds.GAME_OVER);
+  musicController.stop();
+  soundPlayer.playSound(Sounds.GAME_OVER);
 };

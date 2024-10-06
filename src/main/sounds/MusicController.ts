@@ -2,20 +2,12 @@ import { transpose8vb } from '@lib/audio/AudioUtils';
 import SoundPlayer from '@lib/audio/SoundPlayer';
 import { Figure, Suite } from '@lib/audio/types';
 import { randChoice } from '@lib/utils/random';
-import { AssetLoader } from '@lib/assets/AssetLoader';
-import { inject, injectable } from 'inversify';
+import { Globals } from '@main/core/globals';
 
-@injectable()
 export default class MusicController {
-  private readonly soundPlayer: SoundPlayer;
   private activeMusic: Suite | Figure[] | null = null;
 
-  constructor(
-    @inject(AssetLoader)
-    private readonly assetLoader: AssetLoader
-  ) {
-    this.soundPlayer = SoundPlayer.forMusic();
-  }
+  constructor(private readonly soundPlayer: SoundPlayer) {}
 
   playSuite = (suite: Suite) => {
     this.activeMusic = suite;
@@ -87,6 +79,8 @@ export default class MusicController {
     this.activeMusic = null;
   };
 
-  loadMusic = async (filename: string): Promise<Figure[]> =>
-    this.assetLoader.loadDataAsset(`music/${filename}.json`);
+  loadMusic = async (filename: string): Promise<Figure[]> => {
+    const { assetLoader } = Globals;
+    return assetLoader.loadDataAsset(`music/${filename}.json`);
+  };
 }

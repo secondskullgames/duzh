@@ -4,8 +4,6 @@ import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { shootFireball } from '@main/actions/shootFireball';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 
 export class ShootFireball implements UnitAbility {
   static readonly MANA_COST = 25;
@@ -19,14 +17,9 @@ export class ShootFireball implements UnitAbility {
 
   isLegal = () => true; // TODO
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates) => {
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.spendMana(this.manaCost);
-    await shootFireball(unit, direction, ShootFireball.DAMAGE, session, state);
+    await shootFireball(unit, direction, ShootFireball.DAMAGE);
   };
 }

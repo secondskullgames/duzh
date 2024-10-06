@@ -6,12 +6,10 @@ import { BlobMapGenerator } from './BlobMapGenerator';
 import { PathMapGenerator } from './PathMapGenerator';
 import { getUnoccupiedLocations } from './MapGenerationUtils';
 import MapInstance from '../MapInstance';
-import TileFactory from '../../tiles/TileFactory';
 import GameObject from '../../objects/GameObject';
-import { ItemFactory, ItemSpec, ItemType } from '@main/items/ItemFactory';
+import { ItemSpec, ItemType } from '@main/items/ItemFactory';
 import { UnitModel } from '@models/UnitModel';
 import { Algorithm, GeneratedMapModel } from '@models/GeneratedMapModel';
-import ModelLoader from '@main/assets/ModelLoader';
 import {
   randChance,
   randChoice,
@@ -22,42 +20,26 @@ import {
 } from '@lib/utils/random';
 import Unit from '@main/units/Unit';
 import { Feature } from '@main/utils/features';
-import UnitFactory from '@main/units/UnitFactory';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Faction } from '@main/units/Faction';
 import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
 import { isOccupied } from '@main/maps/MapUtils';
 import { TileType } from '@models/TileType';
 import MapItem from '@main/objects/MapItem';
-import ObjectFactory from '@main/objects/ObjectFactory';
 import { Direction } from '@lib/geometry/Direction';
 import { DoorDirection } from '@models/DoorDirection';
-import { Engine } from '@main/core/Engine';
-import { inject, injectable } from 'inversify';
+import { Globals } from '@main/core/globals';
 
-@injectable()
 export class GeneratedMapFactory {
-  constructor(
-    @inject(ModelLoader)
-    private readonly modelLoader: ModelLoader,
-    @inject(TileFactory)
-    private readonly tileFactory: TileFactory,
-    @inject(ItemFactory)
-    private readonly itemFactory: ItemFactory,
-    @inject(UnitFactory)
-    private readonly unitFactory: UnitFactory,
-    @inject(ObjectFactory)
-    private readonly objectFactory: ObjectFactory,
-    @inject(Engine)
-    private readonly engine: Engine
-  ) {}
+  constructor() {}
 
   loadMap = async (mapId: string): Promise<MapInstance> => {
-    const model = await this.modelLoader.loadGeneratedMapModel(mapId);
+    const { modelLoader, tileFactory } = Globals;
+    const model = await modelLoader.loadGeneratedMapModel(mapId);
     const algorithm = model.algorithm;
     const tileSet =
       model.tileSet === 'RANDOM'
-        ? randChoice(this.tileFactory.getTileSetNames())
+        ? randChoice(tileFactory.getTileSetNames())
         : model.tileSet;
     const dungeonGenerator = this._getDungeonGenerator(algorithm);
     const map = await dungeonGenerator.generateMap(model, tileSet);
@@ -74,16 +56,15 @@ export class GeneratedMapFactory {
   };
 
   private _getDungeonGenerator = (algorithm: Algorithm): AbstractMapGenerator => {
-    const { tileFactory } = this;
     switch (algorithm) {
       case Algorithm.ROOMS_AND_CORRIDORS:
-        return this._getRoomsAndCorridorsGenerator(tileFactory);
+        return this._getRoomsAndCorridorsGenerator();
       case Algorithm.DEFAULT:
-        return new DefaultMapGenerator({ tileFactory, fillRate: 0.25 });
+        return new DefaultMapGenerator({ fillRate: 0.25 });
       case Algorithm.BLOB:
-        return new BlobMapGenerator({ tileFactory, fillRate: randFloat(0.3, 0.6) });
+        return new BlobMapGenerator({ fillRate: randFloat(0.3, 0.6) });
       case Algorithm.PATH:
-        return new PathMapGenerator({ tileFactory, numPoints: 20 });
+        return new PathMapGenerator({ numPoints: 20 });
       case Algorithm.RANDOM:
         return this._getDungeonGenerator(
           randChoice([
@@ -98,10 +79,9 @@ export class GeneratedMapFactory {
     }
   };
 
-  private _getRoomsAndCorridorsGenerator = (tileFactory: TileFactory) => {
+  private _getRoomsAndCorridorsGenerator = () => {
     if (Feature.isEnabled(Feature.ROOMS_AND_CORRIDORS_2)) {
       return new RoomCorridorMapGenerator2({
-        tileFactory,
         minRoomWidth: 5,
         minRoomHeight: 4
       });
@@ -110,8 +90,7 @@ export class GeneratedMapFactory {
     const maxRoomDimension = 9;
     return new RoomCorridorMapGenerator({
       minRoomDimension,
-      maxRoomDimension,
-      tileFactory
+      maxRoomDimension
     });
   };
 
@@ -119,7 +98,7 @@ export class GeneratedMapFactory {
     map: MapInstance,
     model: GeneratedMapModel
   ): Promise<Unit[]> => {
-    const { unitFactory } = this;
+    const { unitFactory } = Globals;
 
     const units: Unit[] = [];
     const candidateLocations = getUnoccupiedLocations(
@@ -158,9 +137,10 @@ export class GeneratedMapFactory {
   private _getEnemyUnitModels = async (
     model: GeneratedMapModel
   ): Promise<[UnitModel, number][]> => {
+    const { modelLoader } = Globals;
     return Promise.all(
       model.enemies.types.map(async ({ chance, type }) => {
-        return [await this.modelLoader.loadUnitModel(type), chance];
+        return [await modelLoader.loadUnitModel(type), chance];
       })
     );
   };
@@ -169,8 +149,7 @@ export class GeneratedMapFactory {
     map: MapInstance,
     mapModel: GeneratedMapModel
   ): Promise<GameObject[]> => {
-    const { engine, itemFactory } = this;
-    const state = engine.getState();
+    const { state, itemFactory, objectFactory } = Globals;
     const objects: GameObject[] = [];
     const candidateLocations = this._getCandidateObjectLocations(map);
 
@@ -217,7 +196,7 @@ export class GeneratedMapFactory {
       const numShrines = mapModel.shrines;
       for (let i = 0; i < numShrines; i++) {
         const coordinates = randChoice(candidateLocations);
-        const shrine = await this.objectFactory.createShrine(coordinates, map);
+        const shrine = await objectFactory.createShrine(coordinates, map);
         objects.push(shrine);
         candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
       }
@@ -259,11 +238,12 @@ export class GeneratedMapFactory {
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<MapItem> => {
+    const { itemFactory } = Globals;
     switch (itemSpec.type) {
       case ItemType.EQUIPMENT:
-        return this.itemFactory.createMapEquipment(itemSpec.id, coordinates, map);
+        return itemFactory.createMapEquipment(itemSpec.id, coordinates, map);
       case ItemType.CONSUMABLE:
-        return this.itemFactory.createMapItem(itemSpec.id, coordinates, map);
+        return itemFactory.createMapItem(itemSpec.id, coordinates, map);
     }
   };
 
@@ -271,6 +251,7 @@ export class GeneratedMapFactory {
     map: MapInstance,
     model: GeneratedMapModel
   ): Promise<GameObject[]> => {
+    const { objectFactory } = Globals;
     const doorChance = model.algorithm === Algorithm.ROOMS_AND_CORRIDORS ? 1 : 0;
     const doors = [];
     for (let y = 0; y < map.height; y++) {
@@ -288,7 +269,7 @@ export class GeneratedMapFactory {
                   direction === Direction.N || direction === Direction.S
                     ? DoorDirection.VERTICAL
                     : DoorDirection.HORIZONTAL;
-                const door = await this.objectFactory.createDoor(
+                const door = await objectFactory.createDoor(
                   { x, y },
                   doorDirection,
                   false,

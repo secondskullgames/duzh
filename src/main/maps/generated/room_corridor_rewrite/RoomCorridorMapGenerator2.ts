@@ -13,7 +13,6 @@ const VERTICAL_SECTION_PADDING = 2;
 type Props = Readonly<{
   minRoomWidth: number;
   minRoomHeight: number;
-  tileFactory: TileFactory;
 }>;
 
 /**
@@ -46,8 +45,8 @@ export class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
   //    |        |
   //    +--------+
 
-  constructor({ minRoomWidth, minRoomHeight, tileFactory }: Props) {
-    super(tileFactory);
+  constructor({ minRoomWidth, minRoomHeight }: Props) {
+    super();
     this.minRoomWidth = minRoomWidth;
     this.minRoomHeight = minRoomHeight;
   }

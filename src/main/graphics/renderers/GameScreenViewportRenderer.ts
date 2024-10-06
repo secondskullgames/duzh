@@ -9,35 +9,18 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';
 import Entity from '@main/entities/Entity';
-import { Debug } from '@main/core/Debug';
-import { GameConfig } from '@main/core/GameConfig';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { getItem, getMovableBlock } from '@main/maps/MapUtils';
+import { Globals } from '@main/core/globals';
 import { ShrineMenuRenderer } from '@main/graphics/renderers/ShrineMenuRenderer';
-import { Engine } from '@main/core/Engine';
-import { inject, injectable } from 'inversify';
 
 const SHADOW_FILENAME = 'shadow';
 
-@injectable()
 export default class GameScreenViewportRenderer implements Renderer {
-  constructor(
-    @inject(GameConfig)
-    private readonly gameConfig: GameConfig,
-    @inject(Engine)
-    private readonly engine: Engine,
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory,
-    @inject(ShrineMenuRenderer)
-    private readonly shrineMenuRenderer: ShrineMenuRenderer,
-    @inject(Debug)
-    private readonly debug: Debug
-  ) {}
+  private readonly shrineMenuRenderer = new ShrineMenuRenderer();
 
   render = async (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     graphics.fill(Colors.BLACK);
 
     this._renderTiles(graphics);
@@ -76,19 +59,18 @@ export default class GameScreenViewportRenderer implements Renderer {
    * @return the top left pixel
    */
   private _gridToPixel = ({ x, y }: Coordinates): Pixel => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session, gameConfig } = Globals;
+    const { screenWidth, screenHeight } = gameConfig;
     const playerUnit = session.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     return {
-      x: (x - playerX) * TILE_WIDTH + (this.gameConfig.screenWidth - TILE_WIDTH) / 2,
-      y: (y - playerY) * TILE_HEIGHT + (this.gameConfig.screenHeight - TILE_HEIGHT) / 2
+      x: (x - playerX) * TILE_WIDTH + (screenWidth - TILE_WIDTH) / 2,
+      y: (y - playerY) * TILE_HEIGHT + (screenHeight - TILE_HEIGHT) / 2
     };
   };
 
   private _renderTiles = (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const map = session.getMap();
 
     for (let y = 0; y < map.height; y++) {
@@ -108,8 +90,7 @@ export default class GameScreenViewportRenderer implements Renderer {
    * Render all entities, one row at a time.
    */
   private _renderEntities = async (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const map = session.getMap();
 
     for (let y = 0; y < map.height; y++) {
@@ -160,15 +141,13 @@ export default class GameScreenViewportRenderer implements Renderer {
   };
 
   private _isTileRevealed = (coordinates: Coordinates): boolean => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session, debug } = Globals;
     const map = session.getMap();
-    return this.debug.isMapRevealed() || map.isTileRevealed(coordinates);
+    return debug.isMapRevealed() || map.isTileRevealed(coordinates);
   };
 
   private _drawShadow = async (coordinates: Coordinates, graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = Globals;
     const map = session.getMap();
     const unit = map.getUnit(coordinates);
 
@@ -190,9 +169,10 @@ export default class GameScreenViewportRenderer implements Renderer {
     color: Color,
     graphics: Graphics
   ) => {
+    const { imageFactory } = Globals;
     const pixel = this._gridToPixel(coordinates);
     const paletteSwaps = PaletteSwaps.builder().addMapping(Colors.BLACK, color).build();
-    const image = await this.imageFactory.getImage({
+    const image = await imageFactory.getImage({
       filename: SHADOW_FILENAME,
       transparentColor: Colors.WHITE,
       paletteSwaps
@@ -203,11 +183,17 @@ export default class GameScreenViewportRenderer implements Renderer {
   /**
    * Allow for a one-tile buffer in each direction
    */
-  private _isPixelOnScreen = ({ x, y }: Pixel): boolean =>
-    x >= -TILE_WIDTH &&
-    x <= this.gameConfig.screenWidth + TILE_WIDTH &&
-    y >= -TILE_HEIGHT &&
-    y <= this.gameConfig.screenHeight + TILE_HEIGHT;
+  private _isPixelOnScreen = ({ x, y }: Pixel): boolean => {
+    const { gameConfig } = Globals;
+    const { screenWidth, screenHeight } = gameConfig;
+
+    return (
+      x >= -TILE_WIDTH &&
+      x <= screenWidth + TILE_WIDTH &&
+      y >= -TILE_HEIGHT &&
+      y <= screenHeight + TILE_HEIGHT
+    );
+  };
 
   private _renderShrineMenu = async (graphics: Graphics) => {
     await this.shrineMenuRenderer.render(graphics);
