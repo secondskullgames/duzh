@@ -78,7 +78,7 @@ export class VictoryScene implements Scene {
   };
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { state, session } = this.game;
+    const { state, session, mapController } = this.game;
     const { key, modifiers } = command;
     switch (key) {
       case 'ENTER':
@@ -87,6 +87,7 @@ export class VictoryScene implements Scene {
         } else {
           state.reset();
           session.reset();
+          mapController.reset();
           await showTitleScreen(this.game);
         }
         break;
@@ -99,9 +100,10 @@ export class VictoryScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { state, session } = this.game;
+    const { state, session, mapController } = this.game;
     state.reset();
     session.reset();
+    mapController.reset();
     await showTitleScreen(this.game);
   };
 }

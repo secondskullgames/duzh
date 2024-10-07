@@ -10,6 +10,7 @@ import ProjectileFactory from '@main/objects/ProjectileFactory';
 import ModelLoader from '@main/assets/ModelLoader';
 import SoundPlayer from '@lib/audio/SoundPlayer';
 import Ticker from '@main/core/Ticker';
+import { MapController } from '@main/maps/MapController';
 
 // First goal: replace all the (state,session) garbage with this
 export type Game = Readonly<{
@@ -24,6 +25,7 @@ export type Game = Readonly<{
   projectileFactory: ProjectileFactory;
   modelLoader: ModelLoader;
   soundPlayer: SoundPlayer;
+  mapController: MapController;
   ticker: Ticker;
 }>;
 

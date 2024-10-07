@@ -13,10 +13,8 @@ import { openDoor } from '@main/actions/openDoor';
 import { pushBlock } from '@main/actions/pushBlock';
 import { SpellOrder } from '@main/units/orders/SpellOrder';
 import { AbilityName } from '@main/abilities/AbilityName';
-import { injectable } from 'inversify';
 import { Game } from '@main/core/Game';
 
-@injectable()
 export class OrderExecutor {
   executeOrder = async (unit: Unit, order: UnitOrder, game: Game) => {
     switch (order.type) {

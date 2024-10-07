@@ -27,7 +27,6 @@ import { GameOverScene } from '@main/scenes/GameOverScene';
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
 import { MapScene } from '@main/scenes/MapScene';
-import { OrderExecutor } from '@main/units/orders/OrderExecutor';
 import SoundPlayer from '@lib/audio/SoundPlayer';
 import { Container } from 'inversify';
 import { Game } from '@main/core/Game';
@@ -59,8 +58,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
   container.bind(SoundPlayer).toConstantValue(SoundPlayer.forSounds());
   const session = new SessionImpl();
   const state = await container.getAsync(GameStateImpl);
-  const orderExecutor = await container.getAsync(OrderExecutor);
-  const engine = new EngineImpl(orderExecutor);
+  const engine = new EngineImpl();
   const game: Game = {
     engine,
     state,
@@ -73,6 +71,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
     projectileFactory: await container.getAsync(ProjectileFactory),
     modelLoader: await container.getAsync(ModelLoader),
     soundPlayer: container.get(SoundPlayer),
+    mapController: await container.getAsync(MapController),
     ticker: new Ticker()
   };
   container.bind(Game).toConstantValue(game);

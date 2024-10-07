@@ -217,10 +217,10 @@ export class GameScene implements Scene {
       await this.game.engine.playTurn(this.game);
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_DOWN) {
       this.soundPlayer.playSound(Sounds.DESCEND_STAIRS);
-      await mapController.loadNextMap();
+      await mapController.loadNextMap(this.game);
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_UP) {
       this.soundPlayer.playSound(Sounds.DESCEND_STAIRS); // TODO
-      await mapController.loadPreviousMap();
+      await mapController.loadPreviousMap(this.game);
     } else if (shrine) {
       shrine.use(this.game);
     } else {

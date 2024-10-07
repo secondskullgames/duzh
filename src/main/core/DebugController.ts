@@ -66,7 +66,7 @@ export class DebugController {
       ...this,
       killEnemies: () => this.killEnemies(session.getPlayerUnit().getMap()),
       nextLevel: async () => {
-        await mapController.loadNextMap();
+        await mapController.loadNextMap(this.game);
       }
     };
   };

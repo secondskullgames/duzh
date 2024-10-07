@@ -13,10 +13,7 @@ export interface Engine {
 }
 
 export class EngineImpl implements Engine {
-  constructor(
-    // TODO weird depedency but OK
-    private readonly orderExecutor: OrderExecutor
-  ) {}
+  private readonly orderExecutor = new OrderExecutor();
 
   playTurn = async (game: Game) => {
     const { session } = game;

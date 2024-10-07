@@ -36,9 +36,9 @@ export class TitleScene implements Scene {
     const { mapController } = this;
     const { session, ticker } = this.game;
     if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
-      await mapController.loadDebugMap();
+      await mapController.loadDebugMap(this.game);
     } else {
-      await mapController.loadFirstMap();
+      await mapController.loadFirstMap(this.game);
     }
     session.startGameTimer();
     session.setScene(SceneName.GAME);
