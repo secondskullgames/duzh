@@ -1,5 +1,4 @@
 import { Engine } from '@main/core/Engine';
-import { GameState } from '@main/core/GameState';
 import { Session } from '@main/core/Session';
 import { GameConfig } from '@main/core/GameConfig';
 import { ItemFactory } from '@main/items/ItemFactory';
@@ -12,11 +11,9 @@ import SoundPlayer from '@lib/audio/SoundPlayer';
 import Ticker from '@main/core/Ticker';
 import { MapController } from '@main/maps/MapController';
 
-// First goal: replace all the (state,session) garbage with this
 export type Game = Readonly<{
   config: GameConfig;
   engine: Engine;
-  state: GameState;
   session: Session;
   itemFactory: ItemFactory;
   unitFactory: UnitFactory;

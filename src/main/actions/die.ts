@@ -79,9 +79,9 @@ const _createItem = async (
   map: MapInstance,
   game: Game
 ): Promise<GameObject> => {
-  const { state, itemFactory } = game;
+  const { session, itemFactory } = game;
   const itemSpec = await itemFactory.chooseRandomMapItemForLevel(map.levelNumber, game);
-  state.recordEquipmentGenerated(itemSpec.id);
+  session.recordEquipmentGenerated(itemSpec.id);
   switch (itemSpec.type) {
     case ItemType.CONSUMABLE:
       return itemFactory.createMapItem(itemSpec.id, coordinates, map);

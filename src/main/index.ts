@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 import { DebugController } from './core/DebugController';
-import { GameStateImpl } from './core/GameState';
 import { showTitleScreen } from './actions/showTitleScreen';
 import { FontFactory } from './graphics/Fonts';
 import { Feature } from './utils/features';
@@ -57,11 +56,9 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
   container.bind(MapController).to(MapControllerImpl);
   container.bind(SoundPlayer).toConstantValue(SoundPlayer.forSounds());
   const session = new SessionImpl();
-  const state = await container.getAsync(GameStateImpl);
   const engine = new EngineImpl();
   const game: Game = {
     engine,
-    state,
     session,
     config: gameConfig,
     itemFactory: await container.getAsync(ItemFactory),

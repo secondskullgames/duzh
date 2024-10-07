@@ -169,7 +169,7 @@ export class GeneratedMapFactory {
     game: Game
   ): Promise<GameObject[]> => {
     const { itemFactory } = this;
-    const { state } = game;
+    const { session } = game;
     const objects: GameObject[] = [];
     const candidateLocations = this._getCandidateObjectLocations(map);
 
@@ -182,14 +182,14 @@ export class GeneratedMapFactory {
       if (
         Feature.isEnabled(Feature.FORCE_BRONZE_SWORD) &&
         mapModel.levelNumber === 1 &&
-        !state.getGeneratedEquipmentIds().includes('bronze_sword')
+        !session.getGeneratedEquipmentIds().includes('bronze_sword')
       ) {
         itemSpecs.push({
           type: ItemType.EQUIPMENT,
           id: 'bronze_sword'
         });
         itemsRemaining--;
-        state.recordEquipmentGenerated('bronze_sword');
+        session.recordEquipmentGenerated('bronze_sword');
         continue;
       } else {
         const chosenItemSpec = await itemFactory.chooseRandomMapItemForLevel(
@@ -198,7 +198,7 @@ export class GeneratedMapFactory {
         );
         itemSpecs.push(chosenItemSpec);
         if (chosenItemSpec.type === ItemType.EQUIPMENT) {
-          state.recordEquipmentGenerated(chosenItemSpec.id);
+          session.recordEquipmentGenerated(chosenItemSpec.id);
         }
       }
       itemsRemaining--;

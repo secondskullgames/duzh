@@ -1,12 +1,12 @@
 import { InventoryCategory, InventoryState } from './session/InventoryState';
 import { SceneName } from '../scenes/SceneName';
 import Unit from '../units/Unit';
-import MapInstance from '../maps/MapInstance';
 import { checkNotNull, checkState } from '@lib/utils/preconditions';
 import { Seconds } from '@lib/utils/time';
 import { ShrineMenuState } from '@main/core/session/ShrineMenuState';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Scene } from '@main/scenes/Scene';
+import { clear } from '@lib/utils/arrays';
 
 export interface Session {
   startGameTimer: () => void;
@@ -34,6 +34,9 @@ export interface Session {
 
   getQueuedAbility: () => UnitAbility | null;
   setQueuedAbility: (ability: UnitAbility | null) => void;
+
+  getGeneratedEquipmentIds: () => string[];
+  recordEquipmentGenerated: (equipmentId: string) => void;
 }
 
 export class SessionImpl implements Session {
@@ -46,10 +49,9 @@ export class SessionImpl implements Session {
   private shrineMenuState: ShrineMenuState | null;
   private playerUnit: Unit | null;
   private _isTurnInProgress: boolean;
-  private mapIndex: number;
-  private map: MapInstance | null;
   private turn: number;
   private queuedAbility: UnitAbility | null;
+  private readonly generatedEquipmentIds: string[];
 
   constructor() {
     this.scenes = [];
@@ -59,12 +61,11 @@ export class SessionImpl implements Session {
     this.shrineMenuState = null;
     this._isTurnInProgress = false;
     this.playerUnit = null;
-    this.mapIndex = -1;
-    this.map = null;
     this.turn = 1;
     this.queuedAbility = null;
     this.startTime = null;
     this.endTime = null;
+    this.generatedEquipmentIds = [];
   }
 
   startGameTimer = (): void => {
@@ -147,10 +148,9 @@ export class SessionImpl implements Session {
     this.currentScene = null;
     this.prevScene = null;
     this.playerUnit = null;
-    this.mapIndex = -1;
-    this.map = null;
     this.turn = 1;
     this.queuedAbility = null;
+    clear(this.generatedEquipmentIds);
   };
 
   setTurnInProgress = (val: boolean) => {
@@ -177,5 +177,11 @@ export class SessionImpl implements Session {
     const endTime = this.endTime ?? new Date();
     const milliseconds = endTime.getTime() - startTime.getTime();
     return milliseconds / 1000;
+  };
+
+  getGeneratedEquipmentIds = (): string[] => this.generatedEquipmentIds;
+
+  recordEquipmentGenerated = (equipmentId: string) => {
+    this.generatedEquipmentIds.push(equipmentId);
   };
 }

@@ -280,13 +280,13 @@ export class ItemFactory {
     levelNumber: number,
     game: Game
   ): Promise<ItemSpec> => {
-    const { state } = game;
+    const { session } = game;
     const allEquipmentModels = await this.modelLoader.loadAllEquipmentModels();
     const allConsumableModels = await this.modelLoader.loadAllConsumableModels();
     const possibleEquipmentModels = allEquipmentModels
       .filter(equipmentModel => {
         if (Feature.isEnabled(Feature.DEDUPLICATE_EQUIPMENT)) {
-          return !state.getGeneratedEquipmentIds().includes(equipmentModel.id);
+          return !session.getGeneratedEquipmentIds().includes(equipmentModel.id);
         }
         return true;
       })
