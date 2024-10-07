@@ -1,5 +1,4 @@
 import MapInstance from '@main/maps/MapInstance';
-import { GameState } from '@main/core/GameState';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { randChance, randChoice } from '@lib/utils/random';
 import { Faction } from '@main/units/Faction';
@@ -9,8 +8,10 @@ import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
 import { Session } from '@main/core/Session';
 import { Feature } from '@main/utils/features';
 import { hypotenuse } from '@lib/geometry/CoordinatesUtils';
+import { Game } from '@main/core/Game';
 
-export const spawnFogUnits = async (state: GameState, session: Session) => {
+export const spawnFogUnits = async (game: Game) => {
+  const { session, unitFactory, modelLoader } = game;
   const map = session.getMap();
   const fogParams = map.getFogParams();
 
@@ -24,12 +25,11 @@ export const spawnFogUnits = async (state: GameState, session: Session) => {
     if (unitsOfClass.length >= maxSpawnedUnits) {
       return;
     }
-    const unitFactory = state.getUnitFactory();
     if (randChance(spawnRate)) {
       const targetSpawnCoordinates = _getFogSpawnCoordinates(map, session);
       if (targetSpawnCoordinates) {
         // TODO would be nice if this was a one-liner
-        const unitModel = await state.getModelLoader().loadUnitModel(unitClass);
+        const unitModel = await modelLoader.loadUnitModel(unitClass);
         const unit = await unitFactory.createUnit({
           name: unitModel.name,
           unitClass,

@@ -44,16 +44,14 @@ export class Scorpion implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { state } = game;
+    const { projectileFactory } = game;
     const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     const { dx, dy } = Direction.getOffsets(direction);
     unit.setDirection(direction);
     const targetUnit = this._findTargetUnit(unit, direction);
     unit.spendMana(this.manaCost);
-    const projectile = await state
-      .getProjectileFactory()
-      .createArrow(coordinates, map, direction);
+    const projectile = await projectileFactory.createArrow(coordinates, map, direction);
     map.addProjectile(projectile);
 
     for (let i = 1; i < Scorpion.RANGE; i++) {

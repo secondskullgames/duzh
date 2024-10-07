@@ -43,15 +43,15 @@ export class DebugController {
 
   awardEquipment = async () => {
     const { itemFactory } = this;
-    const { state, session } = this.game;
+    const { soundPlayer, session, ticker } = this.game;
 
     // eslint-disable-next-line no-alert
     const id = prompt('Enter a valid equipment_id')!;
     const item = await itemFactory.createInventoryEquipment(id);
     const playerUnit = session.getPlayerUnit();
     playerUnit.getInventory().add(item);
-    session.getTicker().log(`Picked up a ${item.name}.`, { turn: session.getTurn() });
-    state.getSoundPlayer().playSound(Sounds.PICK_UP_ITEM);
+    ticker.log(`Picked up a ${item.name}.`, { turn: session.getTurn() });
+    soundPlayer.playSound(Sounds.PICK_UP_ITEM);
   };
 
   attachToWindow = () => {

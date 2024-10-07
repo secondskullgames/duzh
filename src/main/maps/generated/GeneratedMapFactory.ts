@@ -194,7 +194,7 @@ export class GeneratedMapFactory {
       } else {
         const chosenItemSpec = await itemFactory.chooseRandomMapItemForLevel(
           mapModel.levelNumber,
-          state
+          game
         );
         itemSpecs.push(chosenItemSpec);
         if (chosenItemSpec.type === ItemType.EQUIPMENT) {

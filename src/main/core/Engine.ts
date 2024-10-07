@@ -36,7 +36,7 @@ export class EngineImpl implements Engine {
     }
 
     updateRevealedTiles(map, session.getPlayerUnit());
-    await doMapEvents(state, session);
+    await doMapEvents(game);
     // TODO weird place to jam this logic
     if (!session.getQueuedAbility()?.isEnabled(session.getPlayerUnit())) {
       session.setQueuedAbility(null);

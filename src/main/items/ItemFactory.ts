@@ -13,7 +13,6 @@ import { getEquipmentTooltip } from '@main/equipment/EquipmentUtils';
 import { shootFireball } from '@main/actions/shootFireball';
 import { SceneName } from '@main/scenes/SceneName';
 import { floorFire } from '@main/actions/floorFire';
-import { GameState } from '@main/core/GameState';
 import { revealMap } from '@main/maps/MapUtils';
 import { castFreeze } from '@main/actions/castFreeze';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
@@ -46,14 +45,12 @@ export class ItemFactory {
 
   createLifePotion = (lifeRestored: number): InventoryItem => {
     const onUse: ItemProc = async (item: InventoryItem, unit: Unit, game: Game) => {
-      const { state, session } = game;
-      state.getSoundPlayer().playSound(Sounds.USE_POTION);
+      const { soundPlayer, session, ticker } = game;
+      soundPlayer.playSound(Sounds.USE_POTION);
       const lifeGained = unit.gainLife(lifeRestored);
-      session
-        .getTicker()
-        .log(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`, {
-          turn: session.getTurn()
-        });
+      ticker.log(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`, {
+        turn: session.getTurn()
+      });
     };
 
     return new InventoryItem({
@@ -66,14 +63,12 @@ export class ItemFactory {
 
   createManaPotion = (name: string, manaRestored: number): InventoryItem => {
     const onUse: ItemProc = async (item: InventoryItem, unit: Unit, game: Game) => {
-      const { state, session } = game;
-      state.getSoundPlayer().playSound(Sounds.USE_POTION);
+      const { soundPlayer, session, ticker } = game;
+      soundPlayer.playSound(Sounds.USE_POTION);
       const manaGained = unit.gainMana(manaRestored);
-      session
-        .getTicker()
-        .log(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`, {
-          turn: session.getTurn()
-        });
+      ticker.log(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`, {
+        turn: session.getTurn()
+      });
     };
 
     return new InventoryItem({
@@ -283,8 +278,9 @@ export class ItemFactory {
 
   chooseRandomMapItemForLevel = async (
     levelNumber: number,
-    state: GameState
+    game: Game
   ): Promise<ItemSpec> => {
+    const { state } = game;
     const allEquipmentModels = await this.modelLoader.loadAllEquipmentModels();
     const allConsumableModels = await this.modelLoader.loadAllConsumableModels();
     const possibleEquipmentModels = allEquipmentModels

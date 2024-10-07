@@ -10,7 +10,6 @@ import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { dealDamage } from '@main/actions/dealDamage';
 import { sleep } from '@lib/utils/promises';
 import { die } from '@main/actions/die';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
@@ -39,7 +38,7 @@ export class ShootArrow implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { state, session } = game;
+    const { soundPlayer, session, ticker } = game;
     if (!unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON)) {
       throw new Error('ShootArrow requires a ranged weapon!');
     }
@@ -60,14 +59,14 @@ export class ShootArrow implements UnitAbility {
     const targetUnit = map.getUnit(targetCoordinates);
     if (targetUnit) {
       const damage = getRangedDamage(unit);
-      await this._playArrowAnimation(unit, direction, coordinatesList, targetUnit, state);
-      state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
+      await this._playArrowAnimation(unit, direction, coordinatesList, targetUnit, game);
+      soundPlayer.playSound(Sounds.PLAYER_HITS_ENEMY);
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
         targetUnit
       });
       const message = this._getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      session.getTicker().log(message, { turn: session.getTurn() });
+      ticker.log(message, { turn: session.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
         await die(targetUnit, game);
@@ -83,7 +82,7 @@ export class ShootArrow implements UnitAbility {
         }
       }
     } else {
-      await this._playArrowAnimation(unit, direction, coordinatesList, null, state);
+      await this._playArrowAnimation(unit, direction, coordinatesList, null, game);
     }
   };
 
@@ -100,8 +99,9 @@ export class ShootArrow implements UnitAbility {
     direction: Direction,
     coordinatesList: Coordinates[],
     target: Unit | null,
-    state: GameState
+    game: Game
   ) => {
+    const { projectileFactory } = game;
     const map = source.getMap();
 
     // first frame
@@ -117,9 +117,7 @@ export class ShootArrow implements UnitAbility {
 
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await state
-        .getProjectileFactory()
-        .createArrow(coordinates, map, direction);
+      const projectile = await projectileFactory.createArrow(coordinates, map, direction);
       map.addProjectile(projectile);
       await sleep(50);
       map.removeProjectile(projectile);

@@ -6,8 +6,7 @@ import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Game } from '@main/core/Game';
 
 export const levelUp = (unit: Unit, game: Game) => {
-  const { session } = game;
-  const ticker = session.getTicker();
+  const { session, ticker } = game;
   unit.incrementLevel();
   if (unit.getFaction() === Faction.PLAYER) {
     const playerUnitClass = checkNotNull(unit.getPlayerUnitClass());

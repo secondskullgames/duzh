@@ -23,7 +23,6 @@ export interface Session {
   closeShrineMenu: () => void;
   prepareInventoryScreen: (playerUnit: Unit) => void;
   getInventoryState: () => InventoryState;
-  getTicker: () => Ticker;
   reset: () => void;
   getPlayerUnit: () => Unit;
   setPlayerUnit: (unit: Unit) => void;
@@ -44,7 +43,6 @@ export interface Session {
 }
 
 export class SessionImpl implements Session {
-  private readonly ticker: Ticker;
   private startTime: Date | null;
   private endTime: Date | null;
   private readonly scenes: Scene[];
@@ -60,7 +58,6 @@ export class SessionImpl implements Session {
   private queuedAbility: UnitAbility | null;
 
   constructor() {
-    this.ticker = new Ticker();
     this.scenes = [];
     this.currentScene = null;
     this.prevScene = null;
@@ -152,12 +149,9 @@ export class SessionImpl implements Session {
     this.shrineMenuState = null;
   };
 
-  getTicker = (): Ticker => this.ticker;
-
   reset = (): void => {
     this.currentScene = null;
     this.prevScene = null;
-    this.ticker.clear();
     this.playerUnit = null;
     this.mapIndex = -1;
     this.map = null;

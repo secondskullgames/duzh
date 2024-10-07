@@ -10,7 +10,6 @@ import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { dealDamage } from '@main/actions/dealDamage';
 import { sleep } from '@lib/utils/promises';
 import { die } from '@main/actions/die';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { Game } from '@main/core/Game';
@@ -27,7 +26,7 @@ export class ShootBolt implements UnitAbility {
   isLegal = () => true; // TODO
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { state, session } = game;
+    const { soundPlayer, session, ticker } = game;
     const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -49,15 +48,15 @@ export class ShootBolt implements UnitAbility {
         targetUnit
       });
       const message = this._getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      await this._playBoltAnimation(unit, direction, coordinatesList, targetUnit, state);
-      state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
-      session.getTicker().log(message, { turn: session.getTurn() });
+      await this._playBoltAnimation(unit, direction, coordinatesList, targetUnit, game);
+      soundPlayer.playSound(Sounds.PLAYER_HITS_ENEMY);
+      ticker.log(message, { turn: session.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
         await die(targetUnit, game);
       }
     } else {
-      await this._playBoltAnimation(unit, direction, coordinatesList, null, state);
+      await this._playBoltAnimation(unit, direction, coordinatesList, null, game);
     }
   };
 
@@ -74,8 +73,9 @@ export class ShootBolt implements UnitAbility {
     direction: Direction,
     coordinatesList: Coordinates[],
     target: Unit | null,
-    state: GameState
+    game: Game
   ) => {
+    const { projectileFactory } = game;
     const map = source.getMap();
 
     // first frame
@@ -91,9 +91,7 @@ export class ShootBolt implements UnitAbility {
 
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await state
-        .getProjectileFactory()
-        .createArrow(coordinates, map, direction);
+      const projectile = await projectileFactory.createArrow(coordinates, map, direction);
       map.addProjectile(projectile);
       await sleep(50);
       map.removeProjectile(projectile);

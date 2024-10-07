@@ -21,13 +21,13 @@ export class Summon implements UnitAbility {
     !isBlocked(coordinates, unit.getMap());
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { state, session } = game;
+    const { soundPlayer, unitFactory, session } = game;
     const map = session.getMap();
     const unitClass = checkNotNull(unit.getSummonedUnitClass());
 
-    state.getSoundPlayer().playSound(Sounds.WIZARD_APPEAR);
+    soundPlayer.playSound(Sounds.WIZARD_APPEAR);
 
-    const summonedUnit = await state.getUnitFactory().createUnit({
+    const summonedUnit = await unitFactory.createUnit({
       unitClass,
       faction: unit.getFaction(),
       controller: new BasicEnemyController(),

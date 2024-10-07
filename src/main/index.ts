@@ -31,6 +31,13 @@ import { OrderExecutor } from '@main/units/orders/OrderExecutor';
 import SoundPlayer from '@lib/audio/SoundPlayer';
 import { Container } from 'inversify';
 import { Game } from '@main/core/Game';
+import UnitFactory from '@main/units/UnitFactory';
+import { ItemFactory } from '@main/items/ItemFactory';
+import ModelLoader from '@main/assets/ModelLoader';
+import ProjectileFactory from '@main/objects/ProjectileFactory';
+import MusicController from '@main/sounds/MusicController';
+import ObjectFactory from '@main/objects/ObjectFactory';
+import Ticker from '@main/core/Ticker';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -58,7 +65,15 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
     engine,
     state,
     session,
-    config: gameConfig
+    config: gameConfig,
+    itemFactory: await container.getAsync(ItemFactory),
+    unitFactory: await container.getAsync(UnitFactory),
+    objectFactory: await container.getAsync(ObjectFactory),
+    musicController: await container.getAsync(MusicController),
+    projectileFactory: await container.getAsync(ProjectileFactory),
+    modelLoader: await container.getAsync(ModelLoader),
+    soundPlayer: container.get(SoundPlayer),
+    ticker: new Ticker()
   };
   container.bind(Game).toConstantValue(game);
   const inputHandler = createInputHandler({ game });

@@ -4,7 +4,7 @@ import Sounds from '../sounds/Sounds';
 import { Game } from '@main/core/Game';
 
 export const equipItem = async (equipment: Equipment, unit: Unit, game: Game) => {
-  const { state, session } = game;
+  const { soundPlayer, session, ticker } = game;
   const currentEquipment = unit.getEquipment().getBySlot(equipment.slot);
   if (currentEquipment) {
     _unequipItem(currentEquipment, unit);
@@ -14,10 +14,8 @@ export const equipItem = async (equipment: Equipment, unit: Unit, game: Game) =>
     unit.learnAbility(equipment.ability);
   }
   equipment.attach(unit);
-  session
-    .getTicker()
-    .log(`Equipped ${equipment.getName()}.`, { turn: session.getTurn() });
-  state.getSoundPlayer().playSound(Sounds.BLOCKED);
+  ticker.log(`Equipped ${equipment.getName()}.`, { turn: session.getTurn() });
+  soundPlayer.playSound(Sounds.BLOCKED);
 };
 
 const _unequipItem = (equipment: Equipment, unit: Unit) => {

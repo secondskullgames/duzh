@@ -28,7 +28,7 @@ export class Teleport implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { state } = game;
+    const { soundPlayer } = game;
     const map = unit.getMap();
 
     const maybeSleep = async () => {
@@ -41,7 +41,7 @@ export class Teleport implements UnitAbility {
 
     if (map.contains(coordinates) && !isBlocked(coordinates, map)) {
       unit.spendMana(this.manaCost);
-      state.getSoundPlayer().playSound(Sounds.WIZARD_VANISH);
+      soundPlayer.playSound(Sounds.WIZARD_VANISH);
 
       for (let i = 1; i <= 4; i++) {
         unit.setActivity(Activity.VANISHING, i, unit.getDirection());
@@ -54,7 +54,7 @@ export class Teleport implements UnitAbility {
       await moveUnit(unit, coordinates, game);
       await maybeSleep();
 
-      state.getSoundPlayer().playSound(Sounds.WIZARD_APPEAR);
+      soundPlayer.playSound(Sounds.WIZARD_APPEAR);
       for (let i = 1; i <= 4; i++) {
         unit.setActivity(Activity.APPEARING, i, unit.getDirection());
         await maybeSleep();
@@ -62,7 +62,7 @@ export class Teleport implements UnitAbility {
 
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());
     } else {
-      state.getSoundPlayer().playSound(Sounds.BLOCKED);
+      soundPlayer.playSound(Sounds.BLOCKED);
     }
   };
 }

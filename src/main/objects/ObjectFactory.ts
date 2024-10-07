@@ -9,8 +9,6 @@ import Sounds from '@main/sounds/Sounds';
 import Unit from '@main/units/Unit';
 import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
 import MapInstance from '@main/maps/MapInstance';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { getBonus } from '@main/maps/MapUtils';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { Coordinates } from '@lib/geometry/Coordinates';
@@ -98,16 +96,17 @@ export default class ObjectFactory {
     const lifeToGain = 10;
 
     const onUse = async (unit: Unit, game: Game) => {
-      const { state, session } = game;
+      const { soundPlayer, session, ticker } = game;
       if (unit === session.getPlayerUnit()) {
         if (unit.getLife() < unit.getMaxLife()) {
           const lifeGained = unit.gainLife(lifeToGain);
-          state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
-          session
-            .getTicker()
-            .log(`${unit.getName()} used a health globe and gained ${lifeGained} life.`, {
+          soundPlayer.playSound(Sounds.HEALTH_GLOBE);
+          ticker.log(
+            `${unit.getName()} used a health globe and gained ${lifeGained} life.`,
+            {
               turn: session.getTurn()
-            });
+            }
+          );
           const map = unit.getMap();
           const _this = getBonus(map, unit.getCoordinates())!;
           map.removeObject(_this);
@@ -139,16 +138,17 @@ export default class ObjectFactory {
     const manaToGain = 10;
 
     const onUse = async (unit: Unit, game: Game) => {
-      const { state, session } = game;
+      const { soundPlayer, session, ticker } = game;
       if (unit === session.getPlayerUnit()) {
         if (unit.getMana() < unit.getMaxMana()) {
           const manaGained = unit.gainMana(manaToGain);
-          state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
-          session
-            .getTicker()
-            .log(`${unit.getName()} used a mana globe and gained ${manaGained} mana.`, {
+          soundPlayer.playSound(Sounds.HEALTH_GLOBE);
+          ticker.log(
+            `${unit.getName()} used a mana globe and gained ${manaGained} mana.`,
+            {
               turn: session.getTurn()
-            });
+            }
+          );
           const map = unit.getMap();
           const _this = getBonus(map, unit.getCoordinates())!;
           map.removeObject(_this);
@@ -181,7 +181,7 @@ export default class ObjectFactory {
     const radius = 7;
 
     const onUse = async (unit: Unit, game: Game) => {
-      const { state, session } = game;
+      const { soundPlayer, ticker, session } = game;
       if (unit === session.getPlayerUnit()) {
         const playerX = unit.getCoordinates().x;
         const playerY = unit.getCoordinates().y;
@@ -194,12 +194,10 @@ export default class ObjectFactory {
             }
           }
         }
-        state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
-        session
-          .getTicker()
-          .log(`${unit.getName()} used a vision globe and revealed nearby tiles.`, {
-            turn: session.getTurn()
-          });
+        soundPlayer.playSound(Sounds.HEALTH_GLOBE);
+        ticker.log(`${unit.getName()} used a vision globe and revealed nearby tiles.`, {
+          turn: session.getTurn()
+        });
         const _this = getBonus(map, unit.getCoordinates())!;
         map.removeObject(_this);
       }
@@ -219,7 +217,8 @@ export default class ObjectFactory {
     map: MapInstance
   ): Promise<GameObject> => {
     const sprite = await this.spriteFactory.createShrineSprite();
-    const onUse = (state: GameState, session: Session) => {
+    const onUse = (game: Game) => {
+      const { session } = game;
       const options = [];
       const playerUnit = checkNotNull(session.getPlayerUnit());
 
@@ -228,60 +227,60 @@ export default class ObjectFactory {
         mana: [
           {
             label: '+5 Mana',
-            onUse: async (state: GameState) => {
+            onUse: async (game: Game) => {
               playerUnit.increaseMaxMana(5);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              game.soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ],
         life: [
           {
             label: '+10 Life',
-            onUse: async (state: GameState) => {
+            onUse: async (game: Game) => {
               playerUnit.increaseMaxLife(10);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              game.soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ],
         lifePerTurn: [
           {
             label: '+0.5 Life Per Turn',
-            onUse: async (state: GameState) => {
+            onUse: async (game: Game) => {
               playerUnit.increaseLifePerTurn(0.5);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              game.soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ],
         manaPerTurn: [
           {
             label: '+0.5 Mana Per Turn',
-            onUse: async (state: GameState) => {
+            onUse: async (game: Game) => {
               playerUnit.increaseManaPerTurn(0.5);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              game.soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ],
         meleeDamage: [
           {
             label: '+1 Melee Damage',
-            onUse: async (state: GameState) => {
+            onUse: async (game: Game) => {
               playerUnit.increaseMeleeDamage(1);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              game.soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ],
         missileDamage: [
           {
             label: '+2 Missile Damage',
-            onUse: async (state: GameState) => {
+            onUse: async (game: Game) => {
               playerUnit.increaseRangedDamage(2);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              game.soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ]

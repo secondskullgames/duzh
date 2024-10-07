@@ -9,7 +9,7 @@ import { Game } from '@main/core/Game';
 export const walk = async (unit: Unit, direction: Direction, game: Game) => {
   const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
 
-  const { state, session } = game;
+  const { soundPlayer, session } = game;
   const map = unit.getMap();
   if (!map.contains(coordinates) || isBlocked(coordinates, map)) {
     // do nothing
@@ -17,7 +17,7 @@ export const walk = async (unit: Unit, direction: Direction, game: Game) => {
     await moveUnit(unit, coordinates, game);
     const playerUnit = session.getPlayerUnit();
     if (unit === playerUnit) {
-      state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
+      soundPlayer.playSound(Sounds.FOOTSTEP);
     }
     unit.recordStepTaken();
   }

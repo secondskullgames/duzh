@@ -27,7 +27,7 @@ export class Dash implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { state, session } = game;
+    const { soundPlayer, session } = game;
     const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -51,10 +51,10 @@ export class Dash implements UnitAbility {
     }
 
     if (moved) {
-      state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
+      soundPlayer.playSound(Sounds.FOOTSTEP);
       unit.spendMana(this.manaCost);
     } else {
-      state.getSoundPlayer().playSound(Sounds.BLOCKED);
+      soundPlayer.playSound(Sounds.BLOCKED);
     }
   };
 }

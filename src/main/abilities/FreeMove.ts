@@ -22,7 +22,7 @@ export class FreeMove implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { state, session } = game;
+    const { soundPlayer, session } = game;
     const map = session.getMap();
     const direction = Direction.between(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -31,7 +31,7 @@ export class FreeMove implements UnitAbility {
       await moveUnit(unit, targetCoordinates, game);
       unit.spendMana(this.manaCost);
     } else {
-      state.getSoundPlayer().playSound(Sounds.BLOCKED);
+      soundPlayer.playSound(Sounds.BLOCKED);
     }
   };
 }

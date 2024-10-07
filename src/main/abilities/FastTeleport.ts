@@ -27,11 +27,11 @@ export class FastTeleport implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { state } = game;
+    const { soundPlayer } = game;
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
     unit.spendMana(this.manaCost);
     await moveUnit(unit, coordinates, game);
     unit.setActivity(Activity.STANDING, 1, unit.getDirection());
-    state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
+    soundPlayer.playSound(Sounds.FOOTSTEP);
   };
 }

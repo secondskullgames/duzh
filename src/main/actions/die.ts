@@ -2,7 +2,6 @@ import { gameOver } from './gameOver';
 import Unit from '@main/units/Unit';
 import Sounds from '@main/sounds/Sounds';
 import { random, weightedRandom } from '@lib/utils/random';
-import { GameState } from '@main/core/GameState';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import MapInstance from '@main/maps/MapInstance';
 import GameObject from '@main/objects/GameObject';
@@ -17,7 +16,7 @@ const MANA_GLOBE_DROP_CHANCE = 0;
 const VISION_GLOBE_DROP_CHANCE = 0;
 
 export const die = async (unit: Unit, game: Game) => {
-  const { state, session } = game;
+  const { soundPlayer, session, ticker } = game;
   const playerUnit = session.getPlayerUnit();
   const coordinates = unit.getCoordinates();
   const map = unit.getMap();
@@ -27,18 +26,18 @@ export const die = async (unit: Unit, game: Game) => {
     await gameOver(game);
     return;
   } else {
-    state.getSoundPlayer().playSound(Sounds.ENEMY_DIES);
-    session.getTicker().log(`${unit.getName()} dies!`, { turn: session.getTurn() });
+    soundPlayer.playSound(Sounds.ENEMY_DIES);
+    ticker.log(`${unit.getName()} dies!`, { turn: session.getTurn() });
 
     if (_canDropItems(unit)) {
       const randomRoll = random();
       if (randomRoll < GLOBE_DROP_CHANCE) {
-        const globe = await _createGlobe(coordinates, map, state);
+        const globe = await _createGlobe(coordinates, map, game);
         map.addObject(globe);
       } else if (randomRoll < GLOBE_DROP_CHANCE + ITEM_DROP_CHANCE) {
-        const item = await _createItem(coordinates, map, state);
+        const item = await _createItem(coordinates, map, game);
         map.addObject(item);
-        session.getTicker().log(`${unit.getName()} dropped a ${item.getName()}.`, {
+        ticker.log(`${unit.getName()} dropped a ${item.getName()}.`, {
           turn: session.getTurn()
         });
       }
@@ -53,9 +52,9 @@ const _canDropItems = (unit: Unit): boolean => {
 const _createGlobe = async (
   coordinates: Coordinates,
   map: MapInstance,
-  state: GameState
+  game: Game
 ): Promise<GameObject> => {
-  const objectFactory = state.getObjectFactory();
+  const { objectFactory } = game;
   return weightedRandom([
     {
       key: 'health_globe',
@@ -78,10 +77,10 @@ const _createGlobe = async (
 const _createItem = async (
   coordinates: Coordinates,
   map: MapInstance,
-  state: GameState
+  game: Game
 ): Promise<GameObject> => {
-  const itemFactory = state.getItemFactory();
-  const itemSpec = await itemFactory.chooseRandomMapItemForLevel(map.levelNumber, state);
+  const { state, itemFactory } = game;
+  const itemSpec = await itemFactory.chooseRandomMapItemForLevel(map.levelNumber, game);
   state.recordEquipmentGenerated(itemSpec.id);
   switch (itemSpec.type) {
     case ItemType.CONSUMABLE:

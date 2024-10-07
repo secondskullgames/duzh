@@ -4,7 +4,7 @@ import Sounds from '../sounds/Sounds';
 import { Game } from '@main/core/Game';
 
 export const recordKill = (attacker: Unit, defender: Unit, game: Game) => {
-  const { state } = game;
+  const { soundPlayer } = game;
   const experience = defender.getExperienceRewarded();
   if (!experience || experience <= 0) {
     return;
@@ -20,7 +20,7 @@ export const recordKill = (attacker: Unit, defender: Unit, game: Game) => {
       );
       if (killsToNextLevel !== null && attacker.getLifetimeKills() >= killsToNextLevel) {
         levelUp(attacker, game);
-        state.getSoundPlayer().playSound(Sounds.LEVEL_UP);
+        soundPlayer.playSound(Sounds.LEVEL_UP);
       } else {
         break;
       }

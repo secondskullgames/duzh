@@ -201,7 +201,7 @@ export class GameScene implements Scene {
 
   private _handleEnter = async () => {
     const { mapController } = this;
-    const { state, session } = this.game;
+    const { session } = this.game;
     const map = session.getMap();
     const playerUnit = session.getPlayerUnit();
     const coordinates = playerUnit.getCoordinates();
@@ -212,7 +212,7 @@ export class GameScene implements Scene {
     const item = getItem(map, coordinates);
     const shrine = map.contains(nextCoordinates) ? getShrine(map, nextCoordinates) : null;
     if (item) {
-      pickupItem(playerUnit, item, session, state);
+      pickupItem(playerUnit, item, this.game);
       map.removeObject(item);
       await this.game.engine.playTurn(this.game);
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_DOWN) {
@@ -222,7 +222,7 @@ export class GameScene implements Scene {
       this.soundPlayer.playSound(Sounds.DESCEND_STAIRS); // TODO
       await mapController.loadPreviousMap();
     } else if (shrine) {
-      shrine.use(state, session);
+      shrine.use(this.game);
     } else {
       // this is mostly a hack to support clicks
       this.soundPlayer.playSound(Sounds.FOOTSTEP);
@@ -287,7 +287,7 @@ export class GameScene implements Scene {
   };
 
   private _handleKeyDownInShrineMenu = async (command: KeyCommand) => {
-    const { state, session } = this.game;
+    const { session } = this.game;
     const shrineMenuState = checkNotNull(session.getShrineMenuState());
     switch (command.key) {
       case 'UP':
@@ -301,14 +301,14 @@ export class GameScene implements Scene {
           await toggleFullScreen();
         } else {
           const selectedOption = shrineMenuState.getSelectedOption();
-          await selectedOption.onUse(state);
+          await selectedOption.onUse(this.game);
           session.closeShrineMenu();
         }
     }
   };
 
   handleClick = async ({ pixel }: ClickCommand) => {
-    const { state, session } = this.game;
+    const { session } = this.game;
     // TODO I wish we had a widget library...
     const playerUnit = session.getPlayerUnit();
     const abilityRects = this._getAbilityRects(playerUnit);
@@ -345,7 +345,7 @@ export class GameScene implements Scene {
       const shrineOptionRects = this._getShrineOptionRects();
       for (const [option, rect] of shrineOptionRects) {
         if (Rect.containsPoint(rect, pixel)) {
-          await option.onUse(state);
+          await option.onUse(this.game);
           session.closeShrineMenu();
           return;
         }
@@ -482,8 +482,8 @@ export class GameScene implements Scene {
   };
 
   private _renderTicker = async (graphics: Graphics) => {
-    const { session } = this.game;
-    const messages = session.getTicker().getRecentMessages(session.getTurn());
+    const { session, ticker } = this.game;
+    const messages = ticker.getRecentMessages(session.getTurn());
 
     const left = 0;
     const top = 0;
