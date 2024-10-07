@@ -6,10 +6,10 @@ import { Activity } from '../units/Activity';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { sleep } from '@lib/utils/promises';
-import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { Game } from '@main/core/Game';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s frostbolt hit ${target.getName()} for ${damageTaken} damage!`;
@@ -20,9 +20,9 @@ export const shootFrostbolt = async (
   direction: Direction,
   damage: number,
   freezeDuration: number,
-  session: Session,
-  state: GameState
+  game: Game
 ) => {
+  const { state, session } = game;
   unit.setDirection(direction);
 
   const map = session.getMap();
@@ -45,7 +45,7 @@ export const shootFrostbolt = async (
     session.getTicker().log(message, { turn: session.getTurn() });
     if (targetUnit.getLife() <= 0) {
       await sleep(100);
-      await die(targetUnit, state, session);
+      await die(targetUnit, game);
     } else {
       targetUnit.setFrozen(freezeDuration);
       session

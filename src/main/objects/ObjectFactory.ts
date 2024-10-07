@@ -21,6 +21,7 @@ import { checkNotNull } from '@lib/utils/preconditions';
 import Door, { DoorState } from '@main/objects/Door';
 import { DoorDirection } from '@models/DoorDirection';
 import { inject, injectable } from 'inversify';
+import { Game } from '@main/core/Game';
 
 @injectable()
 export default class ObjectFactory {
@@ -96,7 +97,8 @@ export default class ObjectFactory {
 
     const lifeToGain = 10;
 
-    const onUse = async (unit: Unit, state: GameState, session: Session) => {
+    const onUse = async (unit: Unit, game: Game) => {
+      const { state, session } = game;
       if (unit === session.getPlayerUnit()) {
         if (unit.getLife() < unit.getMaxLife()) {
           const lifeGained = unit.gainLife(lifeToGain);
@@ -136,7 +138,8 @@ export default class ObjectFactory {
 
     const manaToGain = 10;
 
-    const onUse = async (unit: Unit, state: GameState, session: Session) => {
+    const onUse = async (unit: Unit, game: Game) => {
+      const { state, session } = game;
       if (unit === session.getPlayerUnit()) {
         if (unit.getMana() < unit.getMaxMana()) {
           const manaGained = unit.gainMana(manaToGain);
@@ -177,7 +180,8 @@ export default class ObjectFactory {
 
     const radius = 7;
 
-    const onUse = async (unit: Unit, state: GameState, session: Session) => {
+    const onUse = async (unit: Unit, game: Game) => {
+      const { state, session } = game;
       if (unit === session.getPlayerUnit()) {
         const playerX = unit.getCoordinates().x;
         const playerY = unit.getCoordinates().y;

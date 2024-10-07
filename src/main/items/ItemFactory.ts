@@ -26,6 +26,7 @@ import { weightedRandom, WeightedRandomChoice } from '@lib/utils/random';
 import { radialChainLightning } from '@main/actions/radialChainLightning';
 import { injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
+import { Game } from '@main/core/Game';
 
 export enum ItemType {
   EQUIPMENT = 'equipment',
@@ -45,12 +46,8 @@ export class ItemFactory {
   ) {}
 
   createLifePotion = (lifeRestored: number): InventoryItem => {
-    const onUse: ItemProc = async (
-      item: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
+    const onUse: ItemProc = async (item: InventoryItem, unit: Unit, game: Game) => {
+      const { state, session } = game;
       state.getSoundPlayer().playSound(Sounds.USE_POTION);
       const lifeGained = unit.gainLife(lifeRestored);
       session
@@ -69,12 +66,8 @@ export class ItemFactory {
   };
 
   createManaPotion = (name: string, manaRestored: number): InventoryItem => {
-    const onUse: ItemProc = async (
-      item: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
+    const onUse: ItemProc = async (item: InventoryItem, unit: Unit, game: Game) => {
+      const { state, session } = game;
       state.getSoundPlayer().playSound(Sounds.USE_POTION);
       const manaGained = unit.gainMana(manaRestored);
       session
@@ -106,14 +99,10 @@ export class ItemFactory {
     name: string,
     damage: number
   ): Promise<InventoryItem> => {
-    const onUse: ItemProc = async (
-      _: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
+    const onUse: ItemProc = async (_: InventoryItem, unit: Unit, game: Game) => {
+      const { session } = game;
       session.setScene(SceneName.GAME);
-      await floorFire(unit, damage, state, session);
+      await floorFire(unit, damage, game);
     };
 
     return new InventoryItem({
@@ -128,14 +117,10 @@ export class ItemFactory {
     name: string,
     damage: number
   ): Promise<InventoryItem> => {
-    const onUse: ItemProc = async (
-      _: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
+    const onUse: ItemProc = async (_: InventoryItem, unit: Unit, game: Game) => {
+      const { state, session } = game;
       session.setScene(SceneName.GAME);
-      await radialChainLightning(unit, damage, state, session);
+      await radialChainLightning(unit, damage, game);
     };
 
     return new InventoryItem({
@@ -163,14 +148,9 @@ export class ItemFactory {
     name: string,
     damage: number
   ): Promise<InventoryItem> => {
-    const onUse: ItemProc = async (
-      _: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
-      session.setScene(SceneName.GAME);
-      await shootFireball(unit, unit.getDirection(), damage, session, state);
+    const onUse: ItemProc = async (_: InventoryItem, unit: Unit, game: Game) => {
+      game.session.setScene(SceneName.GAME);
+      await shootFireball(unit, unit.getDirection(), damage, game);
     };
 
     return new InventoryItem({
@@ -185,14 +165,9 @@ export class ItemFactory {
     name: string,
     duration: number
   ): Promise<InventoryItem> => {
-    const onUse: ItemProc = async (
-      _: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
-      session.setScene(SceneName.GAME);
-      await castFreeze(unit, 5, duration, session, state);
+    const onUse: ItemProc = async (_: InventoryItem, unit: Unit, game: Game) => {
+      game.session.setScene(SceneName.GAME);
+      await castFreeze(unit, 5, duration, game);
     };
 
     return new InventoryItem({
@@ -204,14 +179,9 @@ export class ItemFactory {
   };
 
   createInventoryEquipment = async (modelName: string): Promise<InventoryItem> => {
-    const onUse: ItemProc = async (
-      _: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
+    const onUse: ItemProc = async (_: InventoryItem, unit: Unit, game: Game) => {
       const equipment = await this.createEquipment(modelName);
-      return equipItem(equipment, unit, session, state);
+      return equipItem(equipment, unit, game);
     };
 
     const model = await this.modelLoader.loadEquipmentModel(modelName);

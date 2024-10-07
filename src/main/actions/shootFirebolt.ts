@@ -6,10 +6,10 @@ import { Activity } from '../units/Activity';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { sleep } from '@lib/utils/promises';
-import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { Game } from '@main/core/Game';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s firebolt hit ${target.getName()} for ${damageTaken} damage!`;
@@ -20,11 +20,11 @@ export const shootFirebolt = async (
   direction: Direction,
   damage: number,
   burnDuration: number,
-  session: Session,
-  state: GameState
+  game: Game
 ) => {
   unit.setDirection(direction);
 
+  const { state, session } = game;
   const map = session.getMap();
   const coordinatesList = [];
   let coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
@@ -45,7 +45,7 @@ export const shootFirebolt = async (
     session.getTicker().log(message, { turn: session.getTurn() });
     if (targetUnit.getLife() <= 0) {
       await sleep(100);
-      await die(targetUnit, state, session);
+      await die(targetUnit, game);
     } else {
       targetUnit.setBurning(burnDuration);
       session

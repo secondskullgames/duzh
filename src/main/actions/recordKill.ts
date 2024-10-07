@@ -1,15 +1,10 @@
 import { levelUp } from './levelUp';
 import Unit from '../units/Unit';
 import Sounds from '../sounds/Sounds';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Game } from '@main/core/Game';
 
-export const recordKill = (
-  attacker: Unit,
-  defender: Unit,
-  session: Session,
-  state: GameState
-) => {
+export const recordKill = (attacker: Unit, defender: Unit, game: Game) => {
+  const { state } = game;
   const experience = defender.getExperienceRewarded();
   if (!experience || experience <= 0) {
     return;
@@ -24,7 +19,7 @@ export const recordKill = (
         attacker.getLevel()
       );
       if (killsToNextLevel !== null && attacker.getLifetimeKills() >= killsToNextLevel) {
-        levelUp(attacker, session);
+        levelUp(attacker, game);
         state.getSoundPlayer().playSound(Sounds.LEVEL_UP);
       } else {
         break;

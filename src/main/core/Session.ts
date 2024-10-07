@@ -8,7 +8,6 @@ import { Seconds } from '@lib/utils/time';
 import { ShrineMenuState } from '@main/core/session/ShrineMenuState';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Scene } from '@main/scenes/Scene';
-import { injectable } from 'inversify';
 
 export interface Session {
   startGameTimer: () => void;
@@ -44,7 +43,6 @@ export interface Session {
   setQueuedAbility: (ability: UnitAbility | null) => void;
 }
 
-@injectable()
 export class SessionImpl implements Session {
   private readonly ticker: Ticker;
   private startTime: Date | null;

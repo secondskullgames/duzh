@@ -9,6 +9,7 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Game } from '@main/core/Game';
 
 export class FastTeleport implements UnitAbility {
   static readonly MANA_COST = 4;
@@ -27,15 +28,11 @@ export class FastTeleport implements UnitAbility {
     return map.contains(coordinates) && !isBlocked(coordinates, map);
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+    const { state } = game;
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
     unit.spendMana(this.manaCost);
-    await moveUnit(unit, coordinates, session, state);
+    await moveUnit(unit, coordinates, game);
     unit.setActivity(Activity.STANDING, 1, unit.getDirection());
     state.getSoundPlayer().playSound(Sounds.FOOTSTEP);
   };

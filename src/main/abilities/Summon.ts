@@ -5,9 +5,8 @@ import Sounds from '@main/sounds/Sounds';
 import BasicEnemyController from '@main/units/controllers/BasicEnemyController';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Game } from '@main/core/Game';
 
 export class Summon implements UnitAbility {
   static readonly MANA_COST = 25;
@@ -21,12 +20,8 @@ export class Summon implements UnitAbility {
   isLegal = (unit: Unit, coordinates: Coordinates) =>
     !isBlocked(coordinates, unit.getMap());
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+    const { state, session } = game;
     const map = session.getMap();
     const unitClass = checkNotNull(unit.getSummonedUnitClass());
 

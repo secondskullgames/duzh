@@ -6,9 +6,8 @@ import { getMeleeDamage } from '@main/units/UnitUtils';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
+import { Game } from '@main/core/Game';
 
 export class StunAttack implements UnitAbility {
   static readonly DAMAGE_COEFFICIENT = 1;
@@ -24,12 +23,8 @@ export class StunAttack implements UnitAbility {
     return hasEnemyUnit(unit, coordinates);
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+    const { session } = game;
     const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -55,7 +50,7 @@ export class StunAttack implements UnitAbility {
           return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} is stunned!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, session, state);
+      await attackUnit(unit, targetUnit, attack, game);
       targetUnit.setStunned(StunAttack.STUN_DURATION);
     }
   };

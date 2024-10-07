@@ -10,10 +10,10 @@ import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { dealDamage } from '@main/actions/dealDamage';
 import { sleep } from '@lib/utils/promises';
 import { die } from '@main/actions/die';
-import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { Game } from '@main/core/Game';
 
 export class ShootTurretArrow implements UnitAbility {
   static readonly MANA_COST = 5;
@@ -26,12 +26,8 @@ export class ShootTurretArrow implements UnitAbility {
 
   isLegal = () => true; // TODO
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+    const { state, session } = game;
     const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -58,7 +54,7 @@ export class ShootTurretArrow implements UnitAbility {
       session.getTicker().log(message, { turn: session.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, state, session);
+        await die(targetUnit, game);
       }
     } else {
       await this._playArrowAnimation(unit, direction, coordinatesList, null, state);

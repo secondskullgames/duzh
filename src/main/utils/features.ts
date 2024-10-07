@@ -1,4 +1,5 @@
 export enum Feature {
+  ALERT_ON_ERROR = 'ALERT_ON_ERROR',
   // Note: Only one ALT_ feature should be enabled at any one time.
   // They don't work together and the precedence is undefined.
   ALT_DASH = 'ALT_DASH',
@@ -25,6 +26,7 @@ export enum Feature {
 
 export namespace Feature {
   const ENABLED_FEATURES: Record<Feature, boolean> = {
+    [Feature.ALERT_ON_ERROR]: true,
     [Feature.ALT_DASH]: true,
     [Feature.ALT_STRAFE]: false,
     [Feature.ALT_TURN]: false,

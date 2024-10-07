@@ -1,10 +1,9 @@
 import Equipment from './Equipment';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { GameState } from '@main/core/GameState';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { Session } from '@main/core/Session';
 import { isBlocked } from '@main/maps/MapUtils';
 import { ShootBolt } from '@main/abilities/ShootBolt';
+import { Game } from '@main/core/Game';
 
 export type EquipmentScriptName =
   | 'bolt_sword'
@@ -15,24 +14,19 @@ export type EquipmentScriptName =
 type EquipmentProc = (
   equipment: Equipment,
   target: Coordinates,
-  state: GameState,
-  session: Session
+  game: Game
 ) => Promise<void>;
 
 export type EquipmentScript = Readonly<{
   beforeAttack?: EquipmentProc;
   afterAttack?: EquipmentProc;
   afterRangedAttack?: EquipmentProc;
-  onMove?: EquipmentProc;
+  afterMove?: EquipmentProc;
 }>;
 
 const BoltSwordScript: EquipmentScript = {
-  onMove: async (
-    equipment: Equipment,
-    target: Coordinates,
-    state: GameState,
-    session: Session
-  ) => {
+  afterMove: async (equipment: Equipment, target: Coordinates, game: Game) => {
+    const { state, session } = game;
     const map = session.getMap();
     const unit = checkNotNull(equipment.getUnit());
     // TODO need to store this somewhere, on the equipment maybe?
@@ -49,18 +43,14 @@ const BoltSwordScript: EquipmentScript = {
       map.isTileRevealed(coordinates) &&
       map.getUnit(coordinates)
     ) {
-      await ability.use(unit, target, session, state);
+      await ability.use(unit, target, game);
     }
   }
 };
 
 const BowOfFrostScript: EquipmentScript = {
-  afterRangedAttack: async (
-    equipment: Equipment,
-    target: Coordinates,
-    _: GameState,
-    session: Session
-  ) => {
+  afterRangedAttack: async (equipment: Equipment, target: Coordinates, game: Game) => {
+    const { session } = game;
     const unit = checkNotNull(equipment.getUnit());
     const map = unit.getMap();
     const targetUnit = map.getUnit(target);
@@ -74,12 +64,8 @@ const BowOfFrostScript: EquipmentScript = {
 };
 
 const BowOfFireScript: EquipmentScript = {
-  afterRangedAttack: async (
-    equipment: Equipment,
-    target: Coordinates,
-    _: GameState,
-    session: Session
-  ) => {
+  afterRangedAttack: async (equipment: Equipment, target: Coordinates, game: Game) => {
+    const { session } = game;
     const unit = checkNotNull(equipment.getUnit());
     const map = unit.getMap();
     const targetUnit = map.getUnit(target);
@@ -93,12 +79,8 @@ const BowOfFireScript: EquipmentScript = {
 };
 
 const FireSwordScript: EquipmentScript = {
-  afterAttack: async (
-    equipment: Equipment,
-    target: Coordinates,
-    _: GameState,
-    session: Session
-  ) => {
+  afterAttack: async (equipment: Equipment, target: Coordinates, game: Game) => {
+    const { session } = game;
     const unit = checkNotNull(equipment.getUnit());
     const map = unit.getMap();
     const targetUnit = map.getUnit(target);

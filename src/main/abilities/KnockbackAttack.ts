@@ -8,10 +8,9 @@ import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { sleep } from '@lib/utils/promises';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
+import { Game } from '@main/core/Game';
 
 const TWO_TILES = false;
 
@@ -30,12 +29,8 @@ export class KnockbackAttack implements UnitAbility {
     return hasEnemyUnit(unit, coordinates);
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+    const { session } = game;
     const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -63,19 +58,19 @@ export class KnockbackAttack implements UnitAbility {
           return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} recoils!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, session, state);
+      await attackUnit(unit, targetUnit, attack, game);
 
       targetUnit.setStunned(KnockbackAttack.STUN_DURATION);
       if (targetUnit.getLife() > 0) {
         const first = Coordinates.plusDirection(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !isBlocked(first, map)) {
-          await moveUnit(targetUnit, first, session, state);
+          await moveUnit(targetUnit, first, game);
           if (TWO_TILES) {
             await sleep(75);
             if (targetUnit.getLife() > 0) {
               const second = Coordinates.plusDirection(first, direction);
               if (map.contains(second) && !isBlocked(second, map)) {
-                await moveUnit(targetUnit, second, session, state);
+                await moveUnit(targetUnit, second, game);
               }
             }
           }

@@ -2,12 +2,12 @@ import { gameOver } from './gameOver';
 import Unit from '@main/units/Unit';
 import Sounds from '@main/sounds/Sounds';
 import { random, weightedRandom } from '@lib/utils/random';
-import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import MapInstance from '@main/maps/MapInstance';
 import GameObject from '@main/objects/GameObject';
 import { ItemType } from '@main/items/ItemFactory';
+import { Game } from '@main/core/Game';
 
 // TODO this should be enemy-specific? add loot tables
 const ITEM_DROP_CHANCE = 0.05;
@@ -16,14 +16,15 @@ const HEALTH_GLOBE_DROP_CHANCE = 1;
 const MANA_GLOBE_DROP_CHANCE = 0;
 const VISION_GLOBE_DROP_CHANCE = 0;
 
-export const die = async (unit: Unit, state: GameState, session: Session) => {
+export const die = async (unit: Unit, game: Game) => {
+  const { state, session } = game;
   const playerUnit = session.getPlayerUnit();
   const coordinates = unit.getCoordinates();
   const map = unit.getMap();
 
   map.removeUnit(unit);
   if (unit === playerUnit) {
-    await gameOver(state, session);
+    await gameOver(game);
     return;
   } else {
     state.getSoundPlayer().playSound(Sounds.ENEMY_DIES);

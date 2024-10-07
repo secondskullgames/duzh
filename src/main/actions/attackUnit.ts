@@ -8,6 +8,7 @@ import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { SoundEffect } from '@lib/audio/types';
 import { Session } from '@main/core/Session';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { Game } from '@main/core/Game';
 
 export type AttackResult = Readonly<{
   /** the "outgoing", pre-mitigation damage */
@@ -24,16 +25,15 @@ export const attackUnit = async (
   attacker: Unit,
   defender: Unit,
   attack: Attack,
-  session: Session,
-  state: GameState
+  game: Game
 ) => {
+  const { state, session } = game;
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).beforeAttack?.(
         equipment,
         defender.getCoordinates(),
-        state,
-        session
+        game
       );
     }
   }
@@ -57,8 +57,8 @@ export const attackUnit = async (
   defender.refreshCombat();
 
   if (defender.getLife() <= 0) {
-    await die(defender, state, session);
-    recordKill(attacker, defender, session, state);
+    await die(defender, game);
+    recordKill(attacker, defender, game);
   }
 
   for (const equipment of attacker.getEquipment().getAll()) {
@@ -66,8 +66,7 @@ export const attackUnit = async (
       await EquipmentScript.forName(equipment.script).afterAttack?.(
         equipment,
         defender.getCoordinates(),
-        state,
-        session
+        game
       );
     }
   }

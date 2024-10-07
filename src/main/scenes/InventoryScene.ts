@@ -10,7 +10,6 @@ import {
   InventoryCategory
 } from '@main/core/session/InventoryState';
 import InventoryItem from '@main/items/InventoryItem';
-import { GameConfig } from '@main/core/GameConfig';
 import { TextRenderer } from '@main/graphics/TextRenderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Graphics } from '@lib/graphics/Graphics';
@@ -21,7 +20,7 @@ import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import Colors from '@main/graphics/Colors';
 import { getSlotName, splitTooltipToLines } from '@main/equipment/EquipmentUtils';
 import { LINE_HEIGHT } from '@main/graphics/constants';
-import { Engine } from '@main/core/Engine';
+import { Game } from '@main/core/Game';
 import { inject, injectable } from 'inversify';
 
 const INVENTORY_LEFT = 0;
@@ -37,22 +36,19 @@ export class InventoryScene implements Scene {
   private readonly inventoryHeight: number;
 
   constructor(
-    @inject(Engine)
-    private readonly engine: Engine,
-    @inject(GameConfig)
-    gameConfig: GameConfig,
+    @inject(Game)
+    private readonly game: Game,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
     @inject(ImageFactory)
     private readonly imageFactory: ImageFactory
   ) {
-    this.inventoryWidth = gameConfig.screenWidth;
-    this.inventoryHeight = gameConfig.screenHeight;
+    this.inventoryWidth = game.config.screenWidth;
+    this.inventoryHeight = game.config.screenHeight;
   }
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = this.game;
     const { key, modifiers } = command;
     const playerUnit = session.getPlayerUnit();
     const inventory = session.getInventoryState();
@@ -94,21 +90,19 @@ export class InventoryScene implements Scene {
   handleKeyUp = async () => {};
 
   private _handleEnter = async () => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = this.game;
     const playerUnit = session.getPlayerUnit();
     const inventory = session.getInventoryState();
     const selectedItem = inventory.getSelectedItem();
 
     if (selectedItem) {
-      await useItem(playerUnit, selectedItem, engine);
+      await useItem(playerUnit, selectedItem, this.game);
       session.prepareInventoryScreen(playerUnit);
     }
   };
 
   handleClick = async ({ pixel }: ClickCommand) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = this.game;
     const playerUnit = session.getPlayerUnit();
     const inventoryState = session.getInventoryState();
 
@@ -124,7 +118,7 @@ export class InventoryScene implements Scene {
     for (const [item, rect] of itemRects) {
       if (Rect.containsPoint(rect, pixel)) {
         if (inventoryState.getSelectedItem() == item) {
-          await useItem(playerUnit, item, engine);
+          await useItem(playerUnit, item, this.game);
           session.prepareInventoryScreen(playerUnit);
         } else {
           inventoryState.selectItem(session.getPlayerUnit(), item);
@@ -153,8 +147,7 @@ export class InventoryScene implements Scene {
   };
 
   private _getItemRects = (): [InventoryItem, Rect][] => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = this.game;
     const inventoryScreenState = session.getInventoryState();
     const itemCategory = inventoryScreenState.getSelectedItemCategory();
     const itemRects: [InventoryItem, Rect][] = [];
@@ -216,8 +209,7 @@ export class InventoryScene implements Scene {
   };
 
   private _drawEquipment = (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = this.game;
     const inventory = session.getInventoryState();
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
 
@@ -262,8 +254,7 @@ export class InventoryScene implements Scene {
   };
 
   private _drawInventory = (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = this.game;
     const inventory = session.getInventoryState();
     const inventoryCategories = inventory.getItemCategories();
     const categoryWidth = 60;
@@ -319,8 +310,7 @@ export class InventoryScene implements Scene {
   };
 
   private _drawTooltip = (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = this.game;
     const left = 10;
     const top = Math.round(graphics.getHeight() * 0.6);
 

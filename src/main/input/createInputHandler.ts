@@ -1,21 +1,21 @@
 import InputHandler from '@lib/input/InputHandler';
 import { mapToClickCommand, mapToKeyCommand } from '@main/input/inputMappers';
 import { isMobileDevice } from '@lib/utils/dom';
-import { Engine } from '@main/core/Engine';
 import type { ClickCommand, KeyCommand } from '@lib/input/inputTypes';
+import { Game } from '@main/core/Game';
 
 type Props = Readonly<{
-  engine: Engine;
+  game: Game;
 }>;
 
-export const createInputHandler = ({ engine }: Props): InputHandler => {
+export const createInputHandler = ({ game }: Props): InputHandler => {
+  const { session } = game;
   const onKeyDown = async (event: KeyboardEvent) => {
     const command: KeyCommand | null = mapToKeyCommand(event);
     if (!command) {
       return;
     }
     event.preventDefault();
-    const session = engine.getSession();
     const currentScene = session.getCurrentScene();
     if (currentScene) {
       await currentScene.handleKeyDown(command);
@@ -28,7 +28,6 @@ export const createInputHandler = ({ engine }: Props): InputHandler => {
     if (!command) {
       return;
     }
-    const session = engine.getSession();
     const currentScene = session.getCurrentScene();
     if (currentScene) {
       await currentScene.handleKeyUp(command);
@@ -44,7 +43,6 @@ export const createInputHandler = ({ engine }: Props): InputHandler => {
     if (!command) {
       return;
     }
-    const session = engine.getSession();
     const currentScene = session.getCurrentScene();
     if (currentScene) {
       await currentScene.handleClick(command);
@@ -60,7 +58,6 @@ export const createInputHandler = ({ engine }: Props): InputHandler => {
     if (!command) {
       return;
     }
-    const session = engine.getSession();
     const currentScene = session.getCurrentScene();
     if (currentScene) {
       await currentScene.handleClick(command);

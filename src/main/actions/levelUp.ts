@@ -1,11 +1,12 @@
 import Unit from '../units/Unit';
 import { Feature } from '@main/utils/features';
-import { Session } from '@main/core/Session';
 import { Faction } from '@main/units/Faction';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { UnitAbility } from '@main/abilities/UnitAbility';
+import { Game } from '@main/core/Game';
 
-export const levelUp = (unit: Unit, session: Session) => {
+export const levelUp = (unit: Unit, game: Game) => {
+  const { session } = game;
   const ticker = session.getTicker();
   unit.incrementLevel();
   if (unit.getFaction() === Faction.PLAYER) {

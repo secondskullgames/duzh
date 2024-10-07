@@ -16,6 +16,7 @@ import { isBlocked } from '@main/maps/MapUtils';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { EquipmentSlot } from '@models/EquipmentSlot';
+import { Game } from '@main/core/Game';
 
 export class ShootArrow implements UnitAbility {
   static readonly MANA_COST = 5;
@@ -38,12 +39,8 @@ export class ShootArrow implements UnitAbility {
     return map.getUnit(targetCoordinates) !== null;
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+    const { state, session } = game;
     if (!unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON)) {
       throw new Error('ShootArrow requires a ranged weapon!');
     }
@@ -74,15 +71,14 @@ export class ShootArrow implements UnitAbility {
       session.getTicker().log(message, { turn: session.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, state, session);
+        await die(targetUnit, game);
       } else {
         for (const equipment of unit.getEquipment().getAll()) {
           if (equipment.script) {
             await EquipmentScript.forName(equipment.script).afterRangedAttack?.(
               equipment,
               targetUnit.getCoordinates(),
-              state,
-              session
+              game
             );
           }
         }

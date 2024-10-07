@@ -3,19 +3,18 @@ import Unit from '../units/Unit';
 import Sprite from '@main/graphics/sprites/Sprite';
 import MapInstance from '@main/maps/MapInstance';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { Game } from '@main/core/Game';
 
 type Props = Readonly<{
   name: string;
   coordinates: Coordinates;
   map: MapInstance;
   sprite: Sprite;
-  onUse: (unit: Unit, state: GameState, session: Session) => Promise<void>;
+  onUse: (unit: Unit, game: Game) => Promise<void>;
 }>;
 
 export default class Bonus extends GameObject {
-  readonly onUse: (unit: Unit, state: GameState, session: Session) => Promise<void>;
+  readonly onUse: (unit: Unit, game: Game) => Promise<void>;
 
   constructor({ name, coordinates, map, sprite, onUse }: Props) {
     super({

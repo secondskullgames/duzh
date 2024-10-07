@@ -4,6 +4,7 @@ import { GeneratedMapFactory } from './generated/GeneratedMapFactory';
 import { MapSpec } from '@models/MapSpec';
 import { MapType } from '@models/MapType';
 import { injectable } from 'inversify';
+import { Game } from '@main/core/Game';
 
 @injectable()
 export default class MapFactory {
@@ -12,10 +13,10 @@ export default class MapFactory {
     private readonly generatedMapFactory: GeneratedMapFactory
   ) {}
 
-  loadMap = async (mapSpec: MapSpec): Promise<MapInstance> => {
+  loadMap = async (mapSpec: MapSpec, game: Game): Promise<MapInstance> => {
     switch (mapSpec.type) {
       case MapType.GENERATED: {
-        return this.generatedMapFactory.loadMap(mapSpec.id);
+        return this.generatedMapFactory.loadMap(mapSpec.id, game);
       }
       case MapType.PREDEFINED: {
         return this.predefinedMapFactory.buildPredefinedMap(mapSpec.id);

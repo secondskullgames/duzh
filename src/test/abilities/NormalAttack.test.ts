@@ -3,6 +3,7 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import MapInstance from '@main/maps/MapInstance';
 import { Direction } from '@lib/geometry/Direction';
+import { Game } from '@main/core/Game';
 
 describe('NormalAttack', () => {
   test('successful attack', async () => {
@@ -38,7 +39,8 @@ describe('NormalAttack', () => {
     const coordinates = { x: 2, y: 1 };
     const session = {} as Session;
     const state = {} as GameState;
-    await new NormalAttack().use(unit, coordinates, session, state);
+    const game = { state, session } as Game;
+    await new NormalAttack().use(unit, coordinates, game);
     expect(_attackUnit).toHaveBeenCalled();
   });
 
@@ -71,7 +73,8 @@ describe('NormalAttack', () => {
     const coordinates = { x: 2, y: 1 };
     const session = {} as Session;
     const state = {} as GameState;
-    await new NormalAttack().use(unit, coordinates, session, state);
+    const game = { state, session } as Game;
+    await new NormalAttack().use(unit, coordinates, game);
     expect(_attackUnit).not.toHaveBeenCalled();
   });
 });

@@ -12,7 +12,7 @@ import Colors from '@main/graphics/Colors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Color } from '@lib/graphics/Color';
-import { Engine } from '@main/core/Engine';
+import { Game } from '@main/core/Game';
 import { inject, injectable } from 'inversify';
 
 const TITLE_FILENAME = 'title2';
@@ -22,8 +22,8 @@ export class TitleScene implements Scene {
   readonly name = SceneName.TITLE;
 
   constructor(
-    @inject(Engine)
-    private readonly engine: Engine,
+    @inject(Game)
+    private readonly game: Game,
     @inject(MapController)
     private readonly mapController: MapController,
     @inject(ImageFactory)
@@ -33,8 +33,8 @@ export class TitleScene implements Scene {
   ) {}
 
   private _handleStartGame = async () => {
-    const { engine, mapController } = this;
-    const session = engine.getSession();
+    const { mapController } = this;
+    const { session } = this.game;
     if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
       await mapController.loadDebugMap();
     } else {

@@ -5,17 +5,12 @@ import Unit from '../units/Unit';
 import Sounds from '../sounds/Sounds';
 import { Activity } from '../units/Activity';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { sleep } from '@lib/utils/promises';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { Game } from '@main/core/Game';
 
-export const floorFire = async (
-  unit: Unit,
-  damage: number,
-  state: GameState,
-  session: Session
-) => {
+export const floorFire = async (unit: Unit, damage: number, game: Game) => {
+  const { state, session } = game;
   const map = unit.getMap();
   // TODO - optimization opportunity
   const targets: Unit[] = map.getAllUnits().filter(u => {
@@ -41,8 +36,8 @@ export const floorFire = async (
         const message = getDamageLogMessage(unit, targetUnit, damageTaken);
         session.getTicker().log(message, { turn: session.getTurn() });
         if (targetUnit.getLife() <= 0) {
-          await die(targetUnit, state, session);
-          recordKill(unit, targetUnit, session, state);
+          await die(targetUnit, game);
+          recordKill(unit, targetUnit, game);
         }
       } else {
         targets[j].getEffects().removeEffect(StatusEffect.DAMAGED);

@@ -3,7 +3,6 @@ import { SceneName } from '@main/scenes/SceneName';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { Graphics } from '@lib/graphics/Graphics';
 import { toggleFullScreen } from '@lib/utils/dom';
-import { GameConfig } from '@main/core/GameConfig';
 import { TextRenderer } from '@main/graphics/TextRenderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { FontName } from '@main/graphics/Fonts';
@@ -11,7 +10,7 @@ import Colors from '@main/graphics/Colors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Color } from '@lib/graphics/Color';
-import { Engine } from '@main/core/Engine';
+import { Game } from '@main/core/Game';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'bordered_background';
@@ -22,10 +21,8 @@ export class CharacterScene implements Scene {
   readonly name = SceneName.CHARACTER;
 
   constructor(
-    @inject(GameConfig)
-    private readonly gameConfig: GameConfig,
-    @inject(Engine)
-    private readonly engine: Engine,
+    @inject(Game)
+    private readonly game: Game,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
     @inject(ImageFactory)
@@ -33,8 +30,7 @@ export class CharacterScene implements Scene {
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = this.game;
 
     switch (command.key) {
       case 'C':
@@ -57,8 +53,7 @@ export class CharacterScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = this.game;
     session.setScene(SceneName.GAME);
   };
 
@@ -68,16 +63,15 @@ export class CharacterScene implements Scene {
     graphics.drawScaledImage(image, {
       left: 0,
       top: 0,
-      width: this.gameConfig.screenWidth,
-      height: this.gameConfig.screenHeight
+      width: this.game.config.screenWidth,
+      height: this.game.config.screenHeight
     });
 
     await this._renderStatistics(graphics);
   };
 
   private _renderStatistics = async (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { session } = this.game;
     const playerUnit = session.getPlayerUnit();
     let top = 20;
     this._drawText(

@@ -10,6 +10,7 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Direction } from '@lib/geometry/Direction';
+import { Game } from '@main/core/Game';
 
 export class Dash implements UnitAbility {
   static readonly MANA_COST = 4;
@@ -27,12 +28,8 @@ export class Dash implements UnitAbility {
     return !isBlocked(onePlus, map) && !isBlocked(coordinates, map);
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+    const { state, session } = game;
     const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -45,7 +42,7 @@ export class Dash implements UnitAbility {
       x += dx;
       y += dy;
       if (map.contains({ x, y }) && !isBlocked({ x, y }, map)) {
-        await moveUnit(unit, { x, y }, session, state);
+        await moveUnit(unit, { x, y }, game);
         moved = true;
         if (map.isTileRevealed({ x, y })) {
           await sleep(100);

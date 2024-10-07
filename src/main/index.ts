@@ -1,7 +1,7 @@
 import 'reflect-metadata';
-import { Debug } from './core/Debug';
+import { DebugController } from './core/DebugController';
 import { GameStateImpl } from './core/GameState';
-import { showSplashScreen } from './actions/showSplashScreen';
+import { showTitleScreen } from './actions/showTitleScreen';
 import { FontFactory } from './graphics/Fonts';
 import { Feature } from './utils/features';
 import { SessionImpl } from './core/Session';
@@ -14,7 +14,7 @@ import { checkNotNull } from '@lib/utils/preconditions';
 import { Graphics } from '@lib/graphics/Graphics';
 import { GameConfig } from '@main/core/GameConfig';
 import mapSpecsJson from '@data/maps.json';
-import { Engine, EngineImpl } from '@main/core/Engine';
+import { EngineImpl } from '@main/core/Engine';
 import { FontBundle } from '@lib/graphics/Fonts';
 import { createInputHandler } from '@main/input/createInputHandler';
 import { TitleScene } from '@main/scenes/TitleScene';
@@ -30,6 +30,8 @@ import { MapScene } from '@main/scenes/MapScene';
 import { OrderExecutor } from '@main/units/orders/OrderExecutor';
 import SoundPlayer from '@lib/audio/SoundPlayer';
 import { Container } from 'inversify';
+import { Game } from '@main/core/Game';
+import { TextRenderer } from '@main/graphics/TextRenderer';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -52,15 +54,22 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
   const session = new SessionImpl();
   const state = await container.getAsync(GameStateImpl);
   const orderExecutor = await container.getAsync(OrderExecutor);
-  const engine = new EngineImpl(session, state, orderExecutor);
-  container.bind(InputHandler).toConstantValue(createInputHandler({ engine }));
-  container.bind(Engine).toConstantValue(engine);
+  const engine = new EngineImpl(orderExecutor);
+  const game: Game = {
+    engine,
+    state,
+    session,
+    config: gameConfig
+  };
+  container.bind(Game).toConstantValue(game);
+  const inputHandler = createInputHandler({ game });
+  container.bind(InputHandler).toConstantValue(inputHandler);
   return container;
 };
 
 const init = async ({ rootElement, gameConfig }: Props) => {
   const container = await setupContainer({ rootElement, gameConfig });
-  const engine = await container.getAsync<Engine>(Engine);
+  const game = await container.getAsync<Game>(Game);
   const canvas = createCanvas({
     width: gameConfig.screenWidth,
     height: gameConfig.screenHeight
@@ -74,7 +83,7 @@ const init = async ({ rootElement, gameConfig }: Props) => {
     await enterFullScreen();
   }
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
-    const debug = container.get(Debug);
+    const debug = container.get(DebugController);
     debug.attachToWindow();
     const debugElement = document.getElementById('debug');
     if (debugElement) {
@@ -92,8 +101,7 @@ const init = async ({ rootElement, gameConfig }: Props) => {
     [SceneName.TITLE]: await container.getAsync(TitleScene),
     [SceneName.VICTORY]: await container.getAsync(VictoryScene)
   };
-  const session = engine.getSession();
-  const state = engine.getState();
+  const { session } = game;
   for (const scene of Object.values(scenes)) {
     session.addScene(scene);
   }
@@ -101,7 +109,7 @@ const init = async ({ rootElement, gameConfig }: Props) => {
   const inputHandler = await container.getAsync(InputHandler);
   inputHandler.addEventListener(canvas);
 
-  await showSplashScreen(state, session);
+  await showTitleScreen(game);
   setInterval(async () => {
     const currentScene = session.getCurrentScene();
     if (currentScene) {
@@ -123,6 +131,8 @@ const main = async () => {
 
 main().catch(e => {
   console.error(e);
-  // eslint-disable-next-line no-alert
-  alert(e);
+  if (Feature.isEnabled(Feature.ALERT_ON_ERROR)) {
+    // eslint-disable-next-line no-alert
+    alert(e);
+  }
 });

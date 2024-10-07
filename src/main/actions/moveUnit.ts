@@ -1,17 +1,12 @@
 import Unit from '../units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
-import { GameState } from '@main/core/GameState';
 import { getBonus } from '@main/maps/MapUtils';
-import { Session } from '@main/core/Session';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
+import { Game } from '@main/core/Game';
 
-export const moveUnit = async (
-  unit: Unit,
-  coordinates: Coordinates,
-  session: Session,
-  state: GameState
-) => {
+export const moveUnit = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+  const { state, session } = game;
   const map = unit.getMap();
   map.removeUnit(unit);
 
@@ -28,17 +23,16 @@ export const moveUnit = async (
         unit.getCoordinates(),
         unit.getDirection()
       );
-      await EquipmentScript.forName(equipment.script).onMove?.(
+      await EquipmentScript.forName(equipment.script).afterMove?.(
         equipment,
         nextCoordinates,
-        state,
-        session
+        game
       );
     }
   }
 
   const bonus = getBonus(map, coordinates);
   if (bonus) {
-    await bonus.onUse(unit, state, session);
+    await bonus.onUse(unit, game);
   }
 };

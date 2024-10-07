@@ -5,10 +5,9 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import Unit, { DefendResult } from '@main/units/Unit';
 import { getMeleeDamage } from '@main/units/UnitUtils';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { Session } from '@main/core/Session';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import { GameState } from '@main/core/GameState';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
+import { Game } from '@main/core/Game';
 
 const attack: Attack = {
   sound: Sounds.PLAYER_HITS_ENEMY,
@@ -38,12 +37,7 @@ export class NormalAttack implements UnitAbility {
     return hasEnemyUnit(unit, coordinates);
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
     // TODO: verify coordinates are adjacent
 
     const map = unit.getMap();
@@ -51,7 +45,7 @@ export class NormalAttack implements UnitAbility {
     unit.setDirection(direction);
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      await attackUnit(unit, targetUnit, attack, session, state);
+      await attackUnit(unit, targetUnit, attack, game);
       unit.gainMana(NormalAttack.MANA_RETURNED);
     }
   };

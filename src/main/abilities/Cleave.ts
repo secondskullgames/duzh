@@ -9,6 +9,7 @@ import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import type { UnitAbility } from './UnitAbility';
+import { Game } from '@main/core/Game';
 
 const attack: Attack = {
   sound: Sounds.SPECIAL_ATTACK,
@@ -38,12 +39,8 @@ export class Cleave implements UnitAbility {
     return _getTargetUnits(unit).length > 0;
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+    const { state, session } = game;
     const initialDirection = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(initialDirection);
 
@@ -56,7 +53,7 @@ export class Cleave implements UnitAbility {
     for (const targetUnit of targetUnits) {
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
       unit.setDirection(direction);
-      await attackUnit(unit, targetUnit, attack, session, state);
+      await attackUnit(unit, targetUnit, attack, game);
     }
     unit.setDirection(initialDirection);
   };

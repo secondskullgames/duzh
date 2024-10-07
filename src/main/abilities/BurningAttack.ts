@@ -9,6 +9,7 @@ import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 import type { UnitAbility } from './UnitAbility';
+import { Game } from '@main/core/Game';
 
 const attack: Attack = {
   sound: Sounds.SPECIAL_ATTACK,
@@ -40,12 +41,8 @@ export class BurningAttack implements UnitAbility {
     return hasEnemyUnit(unit, coordinates);
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+    const { session } = game;
     const map = session.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -53,7 +50,7 @@ export class BurningAttack implements UnitAbility {
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
       unit.spendMana(this.manaCost);
-      await attackUnit(unit, targetUnit, attack, session, state);
+      await attackUnit(unit, targetUnit, attack, game);
       targetUnit.setBurning(BurningAttack.BURN_DURATION);
     }
   };

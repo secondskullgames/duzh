@@ -27,6 +27,7 @@ import { BurningAttack } from '@main/abilities/BurningAttack';
 import { FastTeleport } from '@main/abilities/FastTeleport';
 import { ShootFrostbolt } from '@main/abilities/ShootFrostbolt';
 import { ShootFirebolt } from '@main/abilities/ShootFirebolt';
+import { Game } from '@main/core/Game';
 
 /**
  * Currently, a UnitAbility can really be one of three things:
@@ -53,12 +54,7 @@ export interface UnitAbility {
    */
   isLegal: (unit: Unit, coordinates: Coordinates) => boolean;
 
-  use: (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => Promise<void>;
+  use: (unit: Unit, coordinates: Coordinates, game: Game) => Promise<void>;
 }
 
 export namespace UnitAbility {

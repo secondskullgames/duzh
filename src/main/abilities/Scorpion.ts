@@ -7,11 +7,10 @@ import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { moveUnit } from '@main/actions/moveUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { sleep } from '@lib/utils/promises';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Game } from '@main/core/Game';
 
 const attack: Attack = {
   sound: Sounds.PLAYER_HITS_ENEMY,
@@ -44,12 +43,8 @@ export class Scorpion implements UnitAbility {
     return this._findTargetUnit(unit, direction) !== null;
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+    const { state } = game;
     const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     const { dx, dy } = Direction.getOffsets(direction);
@@ -74,7 +69,7 @@ export class Scorpion implements UnitAbility {
           targetUnit &&
           Coordinates.equals(currentCoordinates, targetUnit.getCoordinates())
         ) {
-          await attackUnit(unit, targetUnit, attack, session, state);
+          await attackUnit(unit, targetUnit, attack, game);
         }
         break;
       }
@@ -94,7 +89,7 @@ export class Scorpion implements UnitAbility {
           dx: dx * (i - 1),
           dy: dy * (i - 1)
         });
-        await moveUnit(targetUnit, previousCoordinates, session, state);
+        await moveUnit(targetUnit, previousCoordinates, game);
         await sleep(75);
       }
     }
