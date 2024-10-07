@@ -14,12 +14,15 @@ export interface MapController {
   loadNextMap: () => Promise<void>;
   loadPreviousMap: () => Promise<void>;
   loadDebugMap: () => Promise<void>;
+  reset: () => void;
 }
 
 export const MapController = Symbol('MapController');
 
 @injectable()
 export class MapControllerImpl implements MapController {
+  private readonly maps: Record<string, MapInstance>;
+
   constructor(
     @inject(Game)
     private readonly game: Game,
@@ -29,7 +32,9 @@ export class MapControllerImpl implements MapController {
     private readonly unitFactory: UnitFactory,
     @inject(MusicController)
     private readonly musicController: MusicController
-  ) {}
+  ) {
+    this.maps = {};
+  }
 
   loadFirstMap = async () => {
     const { unitFactory, musicController } = this;
@@ -112,16 +117,18 @@ export class MapControllerImpl implements MapController {
 
   private _loadMap = async (mapId: string): Promise<MapInstance> => {
     const { mapFactory } = this;
-    const { state, config } = this.game;
+    const { config } = this.game;
     const mapSpec = checkNotNull(config.mapSpecs.find(spec => spec.id === mapId));
-    if (!state.isMapLoaded(mapId)) {
-      const map = await mapFactory.loadMap(mapSpec, this.game);
-      state.setMap(mapId, map);
+    const id = mapSpec.id;
+    if (!this.maps[id]) {
+      this.maps[id] = await mapFactory.loadMap(mapSpec, this.game);
     }
-    return state.getMap(mapId);
+    return checkNotNull(this.maps[id]);
   };
 
-  private _hasMap = (mapId: string): boolean => {
-    return this.game.config.mapSpecs.some(spec => spec.id === mapId);
+  reset = () => {
+    Object.keys(this.maps).forEach(key => {
+      delete this.maps[key];
+    });
   };
 }
