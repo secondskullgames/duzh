@@ -37,7 +37,6 @@ export class MapControllerImpl implements MapController {
     checkState(session.getMapIndex() === -1);
     session.setMapIndex(0);
     const map = await this._loadMap(0);
-    session.setMap(map);
     const playerUnit = await unitFactory.createPlayerUnit(
       map.getStartingCoordinates(),
       map
@@ -62,7 +61,6 @@ export class MapControllerImpl implements MapController {
     } else {
       session.setMapIndex(nextMapIndex);
       const map = await this._loadMap(nextMapIndex);
-      session.setMap(map);
       // TODO really need some bidirectional magic
       const playerUnit = session.getPlayerUnit();
       playerUnit.getMap().removeUnit(playerUnit);
@@ -83,7 +81,6 @@ export class MapControllerImpl implements MapController {
     const previousMapIndex = session.getMapIndex() - 1;
     session.setMapIndex(previousMapIndex);
     const map = await this._loadMap(previousMapIndex);
-    session.setMap(map);
     const playerUnit = session.getPlayerUnit();
     playerUnit.getMap().removeUnit(playerUnit);
     playerUnit.setMap(map);
@@ -103,7 +100,6 @@ export class MapControllerImpl implements MapController {
       { type: MapType.PREDEFINED, id: 'test' },
       this.game
     );
-    session.setMap(map);
     const playerUnit = await unitFactory.createPlayerUnit(
       map.getStartingCoordinates(),
       map
@@ -112,7 +108,7 @@ export class MapControllerImpl implements MapController {
     session.setPlayerUnit(playerUnit);
     updateRevealedTiles(map, playerUnit);
     musicController.stop();
-    updateRevealedTiles(session.getMap(), session.getPlayerUnit());
+    updateRevealedTiles(map, session.getPlayerUnit());
   };
 
   private _loadMap = async (mapIndex: number): Promise<MapInstance> => {

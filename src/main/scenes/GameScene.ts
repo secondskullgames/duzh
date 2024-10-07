@@ -202,8 +202,8 @@ export class GameScene implements Scene {
   private _handleEnter = async () => {
     const { mapController } = this;
     const { session } = this.game;
-    const map = session.getMap();
     const playerUnit = session.getPlayerUnit();
+    const map = playerUnit.getMap();
     const coordinates = playerUnit.getCoordinates();
     const nextCoordinates = Coordinates.plusDirection(
       coordinates,

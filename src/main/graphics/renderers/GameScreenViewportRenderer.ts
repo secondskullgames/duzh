@@ -16,6 +16,7 @@ import { getItem, getMovableBlock } from '@main/maps/MapUtils';
 import { ShrineMenuRenderer } from '@main/graphics/renderers/ShrineMenuRenderer';
 import { Game } from '@main/core/Game';
 import { inject, injectable } from 'inversify';
+import MapInstance from '@main/maps/MapInstance';
 
 const SHADOW_FILENAME = 'shadow';
 
@@ -34,10 +35,11 @@ export default class GameScreenViewportRenderer implements Renderer {
 
   render = async (graphics: Graphics) => {
     const { session } = this.game;
+    const map = session.getPlayerUnit().getMap();
     graphics.fill(Colors.BLACK);
 
-    this._renderTiles(graphics);
-    await this._renderEntities(graphics);
+    this._renderTiles(map, graphics);
+    await this._renderEntities(map, graphics);
 
     // TODO: consider a generic menu system
     if (session.isShowingShrineMenu()) {
@@ -81,14 +83,11 @@ export default class GameScreenViewportRenderer implements Renderer {
     };
   };
 
-  private _renderTiles = (graphics: Graphics) => {
-    const { session } = this.game;
-    const map = session.getMap();
-
+  private _renderTiles = (map: MapInstance, graphics: Graphics) => {
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         const coordinates = { x, y };
-        if (this._isTileRevealed(coordinates)) {
+        if (this._isTileRevealed(coordinates, map)) {
           const tile = map.getTile(coordinates);
           if (tile) {
             this._renderElement(tile, coordinates, graphics);
@@ -101,15 +100,12 @@ export default class GameScreenViewportRenderer implements Renderer {
   /**
    * Render all entities, one row at a time.
    */
-  private _renderEntities = async (graphics: Graphics) => {
-    const { session } = this.game;
-    const map = session.getMap();
-
+  private _renderEntities = async (map: MapInstance, graphics: Graphics) => {
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         const coordinates = { x, y };
-        if (this._isTileRevealed(coordinates)) {
-          await this._drawShadow(coordinates, graphics);
+        if (this._isTileRevealed(coordinates, map)) {
+          await this._drawShadow(coordinates, map, graphics);
           for (const object of map.getObjects(coordinates)) {
             this._renderElement(object, coordinates, graphics);
           }
@@ -152,15 +148,16 @@ export default class GameScreenViewportRenderer implements Renderer {
     }
   };
 
-  private _isTileRevealed = (coordinates: Coordinates): boolean => {
-    const { session } = this.game;
-    const map = session.getMap();
+  private _isTileRevealed = (coordinates: Coordinates, map: MapInstance): boolean => {
     return this.debug.isMapRevealed() || map.isTileRevealed(coordinates);
   };
 
-  private _drawShadow = async (coordinates: Coordinates, graphics: Graphics) => {
+  private _drawShadow = async (
+    coordinates: Coordinates,
+    map: MapInstance,
+    graphics: Graphics
+  ) => {
     const { session } = this.game;
-    const map = session.getMap();
     const unit = map.getUnit(coordinates);
 
     if (unit) {

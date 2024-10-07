@@ -10,9 +10,8 @@ import { Feature } from '@main/utils/features';
 import { hypotenuse } from '@lib/geometry/CoordinatesUtils';
 import { Game } from '@main/core/Game';
 
-export const spawnFogUnits = async (game: Game) => {
+export const spawnFogUnits = async (map: MapInstance, game: Game) => {
   const { session, unitFactory, modelLoader } = game;
-  const map = session.getMap();
   const fogParams = map.getFogParams();
 
   const areSpawnsEnabled = fogParams?.enabled && (fogParams.spawnEnemies ?? false);

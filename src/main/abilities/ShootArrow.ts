@@ -43,7 +43,7 @@ export class ShootArrow implements UnitAbility {
       throw new Error('ShootArrow requires a ranged weapon!');
     }
 
-    const map = session.getMap();
+    const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 

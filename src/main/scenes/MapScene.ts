@@ -5,7 +5,6 @@ import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { Color } from '@lib/graphics/Color';
 import { Graphics } from '@lib/graphics/Graphics';
-import { checkNotNull } from '@lib/utils/preconditions';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import Colors from '@main/graphics/Colors';
 import { TileType } from '@models/TileType';
@@ -53,7 +52,8 @@ export class MapScene implements Scene {
 
   render = async (graphics: Graphics) => {
     const { session } = this.game;
-    const map = checkNotNull(session.getMap());
+    const playerUnit = session.getPlayerUnit();
+    const map = playerUnit.getMap();
 
     graphics.fill(backgroundColor);
     const cellDimension = Math.floor(
@@ -78,8 +78,8 @@ export class MapScene implements Scene {
   };
 
   private _getColor = (coordinates: Coordinates, session: Session): Color => {
-    const map = checkNotNull(session.getMap());
     const playerUnit = session.getPlayerUnit();
+    const map = playerUnit.getMap();
 
     if (Coordinates.equals(playerUnit.getCoordinates(), coordinates)) {
       return Colors.GREEN;

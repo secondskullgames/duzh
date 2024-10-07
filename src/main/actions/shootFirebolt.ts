@@ -24,7 +24,7 @@ export const shootFirebolt = async (
   unit.setDirection(direction);
 
   const { soundPlayer, session, ticker } = game;
-  const map = session.getMap();
+  const map = unit.getMap();
   const coordinatesList = [];
   let coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
   while (map.contains(coordinates) && !isBlocked(coordinates, map)) {

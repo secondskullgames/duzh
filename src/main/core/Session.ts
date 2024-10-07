@@ -1,4 +1,3 @@
-import Ticker from './Ticker';
 import { InventoryCategory, InventoryState } from './session/InventoryState';
 import { SceneName } from '../scenes/SceneName';
 import Unit from '../units/Unit';
@@ -33,7 +32,6 @@ export interface Session {
   getMapIndex: () => number;
   setMapIndex: (mapIndex: number) => void;
   setMap: (map: MapInstance) => void;
-  getMap: () => MapInstance;
 
   getTurn: () => number;
   nextTurn: () => void;

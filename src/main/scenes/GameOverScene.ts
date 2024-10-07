@@ -43,7 +43,7 @@ export class GameOverScene implements Scene {
     const elapsedTurns = session.getTurn();
     const elapsedTime = formatTimestamp(session.getElapsedTime());
     const lines = [
-      `Died on level ${session.getMap().levelNumber}`,
+      `Died on level ${session.getPlayerUnit().getMap().levelNumber}`,
       `in ${elapsedTurns} turns (${elapsedTime})`,
       'PRESS ENTER TO PLAY AGAIN'
     ];

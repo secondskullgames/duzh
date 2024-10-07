@@ -1,5 +1,3 @@
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { doMapEvents } from '@main/actions/doMapEvents';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 import Unit from '@main/units/Unit';
@@ -21,9 +19,10 @@ export class EngineImpl implements Engine {
   ) {}
 
   playTurn = async (game: Game) => {
-    const { state, session } = game;
-    const map = session.getMap();
+    const { session } = game;
     session.setTurnInProgress(true);
+    // TODO consider iterating over every map
+    const map = session.getPlayerUnit().getMap();
     const sortedUnits = this._sortUnits(map.getAllUnits());
     for (const unit of sortedUnits) {
       if (unit.getLife() > 0) {
@@ -32,11 +31,11 @@ export class EngineImpl implements Engine {
     }
 
     for (const object of map.getAllObjects()) {
-      await this._playObjectTurnAction(object, state, session);
+      await this._playObjectTurnAction(object, game);
     }
 
     updateRevealedTiles(map, session.getPlayerUnit());
-    await doMapEvents(game);
+    await doMapEvents(map, game);
     // TODO weird place to jam this logic
     if (!session.getQueuedAbility()?.isEnabled(session.getPlayerUnit())) {
       session.setQueuedAbility(null);
@@ -58,15 +57,11 @@ export class EngineImpl implements Engine {
     await unit.endOfTurn(game);
   };
 
-  private _playObjectTurnAction = async (
-    object: GameObject,
-    state: GameState,
-    session: Session
-  ) => {
+  private _playObjectTurnAction = async (object: GameObject, game: Game) => {
     switch (object.getObjectType()) {
       case ObjectType.SPAWNER:
         // TODO we should refactor
-        await (object as Spawner).playTurnAction(state, session);
+        await (object as Spawner).playTurnAction(game);
         break;
       default:
       // nothing to do!

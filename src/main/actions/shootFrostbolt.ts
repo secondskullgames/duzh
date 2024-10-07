@@ -24,7 +24,7 @@ export const shootFrostbolt = async (
   const { soundPlayer, ticker, session } = game;
   unit.setDirection(direction);
 
-  const map = session.getMap();
+  const map = unit.getMap();
   const coordinatesList = [];
   let coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
   while (map.contains(coordinates) && !isBlocked(coordinates, map)) {

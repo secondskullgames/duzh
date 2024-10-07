@@ -26,8 +26,7 @@ export class MinorKnockback implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { session } = game;
-    const map = session.getMap();
+    const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
 
     unit.setDirection(direction);

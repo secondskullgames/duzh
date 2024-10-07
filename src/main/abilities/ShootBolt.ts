@@ -27,7 +27,7 @@ export class ShootBolt implements UnitAbility {
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
     const { soundPlayer, session, ticker } = game;
-    const map = session.getMap();
+    const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 

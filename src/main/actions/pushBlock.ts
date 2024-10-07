@@ -8,12 +8,11 @@ import { Direction } from '@lib/geometry/Direction';
 import { Game } from '@main/core/Game';
 
 export const pushBlock = async (unit: Unit, block: Block, game: Game) => {
-  const { session } = game;
   const coordinates = block.getCoordinates();
   const direction = Direction.between(unit.getCoordinates(), coordinates);
   const nextCoordinates = Coordinates.plusDirection(coordinates, direction);
 
-  const map = session.getMap();
+  const map = unit.getMap();
   if (map.contains(nextCoordinates) && !isBlocked(nextCoordinates, map)) {
     await moveObject(block, nextCoordinates, map);
     await moveUnit(unit, coordinates, game);

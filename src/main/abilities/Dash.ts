@@ -27,8 +27,8 @@ export class Dash implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { soundPlayer, session } = game;
-    const map = session.getMap();
+    const { soundPlayer } = game;
+    const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 

@@ -21,8 +21,8 @@ export class Summon implements UnitAbility {
     !isBlocked(coordinates, unit.getMap());
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { soundPlayer, unitFactory, session } = game;
-    const map = session.getMap();
+    const { soundPlayer, unitFactory } = game;
+    const map = unit.getMap();
     const unitClass = checkNotNull(unit.getSummonedUnitClass());
 
     soundPlayer.playSound(Sounds.WIZARD_APPEAR);

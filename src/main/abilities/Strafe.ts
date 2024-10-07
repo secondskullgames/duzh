@@ -19,8 +19,7 @@ export class Strafe implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { session } = game;
-    const map = session.getMap();
+    const map = unit.getMap();
     if (map.contains(coordinates) && !isBlocked(coordinates, map)) {
       await moveUnit(unit, coordinates, game);
     }

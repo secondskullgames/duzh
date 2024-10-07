@@ -64,7 +64,7 @@ export class DebugController {
     // @ts-ignore
     window.jwb.debug = {
       ...this,
-      killEnemies: () => this.killEnemies(session.getMap()),
+      killEnemies: () => this.killEnemies(session.getPlayerUnit().getMap()),
       nextLevel: async () => {
         await mapController.loadNextMap();
       }
