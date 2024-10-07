@@ -98,10 +98,6 @@ const init = async ({ rootElement, gameConfig }: Props) => {
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
     const debug = container.get(DebugController);
     debug.attachToWindow();
-    const debugElement = document.getElementById('debug');
-    if (debugElement) {
-      debugElement.style.display = 'block';
-    }
   }
 
   const scenes: Record<SceneName, Scene> = {
