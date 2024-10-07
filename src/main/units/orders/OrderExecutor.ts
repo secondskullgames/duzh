@@ -1,8 +1,6 @@
 import { OrderType, UnitOrder } from '@main/units/orders/UnitOrder';
 import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { check } from '@lib/utils/preconditions';
 import { getDoor, getMovableBlock, getSpawner, isBlocked } from '@main/maps/MapUtils';
 import { attackObject } from '@main/actions/attackObject';
@@ -50,7 +48,6 @@ export class OrderExecutor {
   };
 
   private _executeAttackOrder = async (unit: Unit, order: AttackOrder, game: Game) => {
-    const { state } = game;
     const map = unit.getMap();
     const { direction } = order;
     unit.setDirection(direction);

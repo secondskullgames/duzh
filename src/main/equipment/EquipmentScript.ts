@@ -26,7 +26,7 @@ export type EquipmentScript = Readonly<{
 
 const BoltSwordScript: EquipmentScript = {
   afterMove: async (equipment: Equipment, target: Coordinates, game: Game) => {
-    const { state, session } = game;
+    const { session } = game;
     const map = session.getMap();
     const unit = checkNotNull(equipment.getUnit());
     // TODO need to store this somewhere, on the equipment maybe?

@@ -3,8 +3,6 @@ import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { shootFrostbolt } from '@main/actions/shootFrostbolt';
 import { Game } from '@main/core/Game';
 

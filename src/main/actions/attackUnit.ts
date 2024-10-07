@@ -2,11 +2,9 @@ import { die } from './die';
 import { recordKill } from './recordKill';
 import Unit, { DefendResult } from '../units/Unit';
 import { Activity } from '../units/Activity';
-import { GameState } from '@main/core/GameState';
 import { sleep } from '@lib/utils/promises';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { SoundEffect } from '@lib/audio/types';
-import { Session } from '@main/core/Session';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { Game } from '@main/core/Game';
 

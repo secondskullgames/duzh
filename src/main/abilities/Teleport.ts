@@ -6,8 +6,6 @@ import { Activity } from '@main/units/Activity';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { moveUnit } from '@main/actions/moveUnit';
 import { sleep } from '@lib/utils/promises';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { hypotenuse, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';

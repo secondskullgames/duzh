@@ -5,8 +5,6 @@ import Sounds from '@main/sounds/Sounds';
 import { Activity } from '@main/units/Activity';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { moveUnit } from '@main/actions/moveUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';

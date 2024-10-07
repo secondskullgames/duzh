@@ -14,7 +14,6 @@ import { shootFireball } from '@main/actions/shootFireball';
 import { SceneName } from '@main/scenes/SceneName';
 import { floorFire } from '@main/actions/floorFire';
 import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { revealMap } from '@main/maps/MapUtils';
 import { castFreeze } from '@main/actions/castFreeze';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
@@ -118,7 +117,7 @@ export class ItemFactory {
     damage: number
   ): Promise<InventoryItem> => {
     const onUse: ItemProc = async (_: InventoryItem, unit: Unit, game: Game) => {
-      const { state, session } = game;
+      const { session } = game;
       session.setScene(SceneName.GAME);
       await radialChainLightning(unit, damage, game);
     };

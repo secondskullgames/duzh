@@ -10,7 +10,6 @@ import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { dealDamage } from '@main/actions/dealDamage';
 import { sleep } from '@lib/utils/promises';
 import { die } from '@main/actions/die';
-import { Session } from '@main/core/Session';
 import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';

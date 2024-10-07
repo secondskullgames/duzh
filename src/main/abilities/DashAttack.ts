@@ -7,8 +7,6 @@ import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { offsetsToDirection, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { moveUnit } from '@main/actions/moveUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { sleep } from '@lib/utils/promises';
 import { getEnemyUnit, isBlocked } from '@main/maps/MapUtils';
@@ -59,7 +57,7 @@ export class DashAttack implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { state, session } = game;
+    const { session } = game;
     const map = session.getMap();
     let { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
     dx = Math.sign(dx);

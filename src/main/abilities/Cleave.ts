@@ -6,8 +6,6 @@ import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import type { UnitAbility } from './UnitAbility';
 import { Game } from '@main/core/Game';
 
@@ -40,7 +38,6 @@ export class Cleave implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { state, session } = game;
     const initialDirection = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(initialDirection);
 

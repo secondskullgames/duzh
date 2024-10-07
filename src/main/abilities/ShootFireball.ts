@@ -4,8 +4,6 @@ import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { shootFireball } from '@main/actions/shootFireball';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { Game } from '@main/core/Game';
 
 export class ShootFireball implements UnitAbility {

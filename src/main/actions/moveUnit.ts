@@ -6,7 +6,7 @@ import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 import { Game } from '@main/core/Game';
 
 export const moveUnit = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-  const { state, session } = game;
+  const { session } = game;
   const map = unit.getMap();
   map.removeUnit(unit);
 

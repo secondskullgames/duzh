@@ -31,7 +31,6 @@ import { OrderExecutor } from '@main/units/orders/OrderExecutor';
 import SoundPlayer from '@lib/audio/SoundPlayer';
 import { Container } from 'inversify';
 import { Game } from '@main/core/Game';
-import { TextRenderer } from '@main/graphics/TextRenderer';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
