@@ -78,16 +78,13 @@ export class VictoryScene implements Scene {
   };
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { state, session, mapController } = this.game;
+    const { session } = this.game;
     const { key, modifiers } = command;
     switch (key) {
       case 'ENTER':
         if (modifiers.includes(ModifierKey.ALT)) {
           await toggleFullScreen();
         } else {
-          state.reset();
-          session.reset();
-          mapController.reset();
           await showTitleScreen(this.game);
         }
         break;
@@ -100,10 +97,6 @@ export class VictoryScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { state, session, mapController } = this.game;
-    state.reset();
-    session.reset();
-    mapController.reset();
     await showTitleScreen(this.game);
   };
 }

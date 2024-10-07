@@ -79,7 +79,6 @@ export class GameOverScene implements Scene {
   };
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { session, state, mapController } = this.game;
     const { key, modifiers } = command;
 
     switch (key) {
@@ -87,9 +86,6 @@ export class GameOverScene implements Scene {
         if (modifiers.includes(ModifierKey.ALT)) {
           await toggleFullScreen();
         } else {
-          state.reset();
-          session.reset();
-          mapController.reset();
           await showTitleScreen(this.game);
         }
         break;
@@ -100,11 +96,6 @@ export class GameOverScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { game } = this;
-    const { state, session, mapController } = game;
-    state.reset();
-    session.reset();
-    mapController.reset();
-    await showTitleScreen(game);
+    await showTitleScreen(this.game);
   };
 }
