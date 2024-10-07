@@ -1,6 +1,7 @@
 import MapInstance from '../maps/MapInstance';
 import { clear } from '@lib/utils/arrays';
 import { injectable } from 'inversify';
+import { checkNotNull } from '@lib/utils/preconditions';
 
 /**
  * Represents the "game world": persistent state that is shared across all current sessions.
@@ -10,9 +11,9 @@ export interface GameState {
   recordEquipmentGenerated: (equipmentId: string) => void;
   reset: () => void;
 
-  getMap: (mapIndex: number) => MapInstance;
-  setMap: (mapIndex: number, map: MapInstance) => void;
-  isMapLoaded: (mapIndex: number) => boolean;
+  getMap: (id: string) => MapInstance;
+  setMap: (id: string, map: MapInstance) => void;
+  isMapLoaded: (id: string) => boolean;
 }
 
 /**
@@ -20,11 +21,11 @@ export interface GameState {
  */
 @injectable()
 export class GameStateImpl implements GameState {
-  private readonly maps: Record<number, MapInstance>;
+  private readonly maps: Record<string, MapInstance>;
   private readonly generatedEquipmentIds: string[];
 
   constructor() {
-    this.maps = [];
+    this.maps = {};
     this.generatedEquipmentIds = [];
   }
 
@@ -36,17 +37,18 @@ export class GameStateImpl implements GameState {
 
   reset = () => {
     Object.keys(this.maps).forEach(key => {
-      delete this.maps[parseInt(key)];
+      delete this.maps[key];
     });
     clear(this.generatedEquipmentIds);
   };
 
-  isMapLoaded = (index: number): boolean => {
-    return this.maps[index] !== undefined;
+  isMapLoaded = (id: string): boolean => {
+    return this.maps[id] !== undefined;
   };
 
-  setMap = (mapIndex: number, map: MapInstance) => {
-    this.maps[mapIndex] = map;
+  setMap = (id: string, map: MapInstance) => {
+    this.maps[id] = map;
   };
-  getMap = (mapIndex: number) => this.maps[mapIndex];
+
+  getMap = (id: string): MapInstance => checkNotNull(this.maps[id]);
 }

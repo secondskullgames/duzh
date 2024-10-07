@@ -238,13 +238,13 @@ export default class HUDRenderer implements Renderer {
     const { session } = this.game;
     const playerUnit = session.getPlayerUnit();
     const turn = session.getTurn();
-    const mapIndex = session.getMapIndex();
+    const map = playerUnit.getMap();
 
     const left =
       LEFT_PANE_WIDTH + this.MIDDLE_PANE_WIDTH + BORDER_MARGIN + BORDER_PADDING;
     const top = this.TOP + BORDER_MARGIN + BORDER_PADDING;
 
-    const lines = [`Turn: ${turn}`, `Floor: ${mapIndex + 1}`];
+    const lines = [`Turn: ${turn}`, `Floor: ${map.levelNumber}`];
     const killsToNextLevel = playerUnit.getKillsToNextLevel();
     if (killsToNextLevel !== null) {
       lines.push(`Kills: ${playerUnit.getLifetimeKills()} (${killsToNextLevel})`);

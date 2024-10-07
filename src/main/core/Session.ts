@@ -29,10 +29,6 @@ export interface Session {
   isTurnInProgress: () => boolean;
   getElapsedTime: () => Seconds;
 
-  getMapIndex: () => number;
-  setMapIndex: (mapIndex: number) => void;
-  setMap: (map: MapInstance) => void;
-
   getTurn: () => number;
   nextTurn: () => void;
 
@@ -165,19 +161,6 @@ export class SessionImpl implements Session {
    * Used for showing the "busy" indicator in the UI
    */
   isTurnInProgress = (): boolean => this._isTurnInProgress;
-
-  getMapIndex = () => this.mapIndex;
-
-  setMapIndex = (mapIndex: number): void => {
-    this.mapIndex = mapIndex;
-  };
-
-  getMap = (): MapInstance =>
-    checkNotNull(this.map, 'Tried to retrieve map before map was loaded');
-
-  setMap = (map: MapInstance): void => {
-    this.map = map;
-  };
 
   getTurn = () => this.turn;
   nextTurn = () => {
