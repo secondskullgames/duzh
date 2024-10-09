@@ -22,6 +22,7 @@ export const die = async (unit: Unit, game: Game) => {
   const map = unit.getMap();
 
   map.removeUnit(unit);
+  state.removeUnit(unit);
   if (unit === playerUnit) {
     await gameOver(game);
     return;
