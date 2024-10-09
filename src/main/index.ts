@@ -3,7 +3,7 @@ import { DebugController } from './core/DebugController';
 import { showTitleScreen } from './actions/showTitleScreen';
 import { FontFactory } from './graphics/Fonts';
 import { Feature } from './utils/features';
-import { SessionImpl } from './core/Session';
+import { GameStateImpl } from './core/GameState';
 import { MapController, MapControllerImpl } from './maps/MapController';
 import { MapSpec } from '@models/MapSpec';
 import InputHandler from '@lib/input/InputHandler';
@@ -55,11 +55,11 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
   container.bind(AssetLoader).to(AssetLoaderImpl);
   container.bind(MapController).to(MapControllerImpl);
   container.bind(SoundPlayer).toConstantValue(SoundPlayer.forSounds());
-  const session = new SessionImpl();
+  const state = new GameStateImpl();
   const engine = new EngineImpl();
   const game: Game = {
     engine,
-    session,
+    state,
     config: gameConfig,
     itemFactory: await container.getAsync(ItemFactory),
     unitFactory: await container.getAsync(UnitFactory),
@@ -107,9 +107,9 @@ const init = async ({ rootElement, gameConfig }: Props) => {
     [SceneName.TITLE]: await container.getAsync(TitleScene),
     [SceneName.VICTORY]: await container.getAsync(VictoryScene)
   };
-  const { session } = game;
+  const { state } = game;
   for (const scene of Object.values(scenes)) {
-    session.addScene(scene);
+    state.addScene(scene);
   }
 
   const inputHandler = await container.getAsync(InputHandler);
@@ -117,7 +117,7 @@ const init = async ({ rootElement, gameConfig }: Props) => {
 
   await showTitleScreen(game);
   setInterval(async () => {
-    const currentScene = session.getCurrentScene();
+    const currentScene = state.getCurrentScene();
     if (currentScene) {
       await currentScene.render(canvasGraphics);
     }

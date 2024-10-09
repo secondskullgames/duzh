@@ -5,13 +5,12 @@ import { Faction } from '@main/units/Faction';
 import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
-import { Session } from '@main/core/Session';
 import { Feature } from '@main/utils/features';
 import { hypotenuse } from '@lib/geometry/CoordinatesUtils';
 import { Game } from '@main/core/Game';
 
 export const spawnFogUnits = async (map: MapInstance, game: Game) => {
-  const { session, unitFactory, modelLoader } = game;
+  const { state, unitFactory, modelLoader } = game;
   const fogParams = map.getFogParams();
 
   const areSpawnsEnabled = fogParams?.enabled && (fogParams.spawnEnemies ?? false);
@@ -25,7 +24,7 @@ export const spawnFogUnits = async (map: MapInstance, game: Game) => {
       return;
     }
     if (randChance(spawnRate)) {
-      const targetSpawnCoordinates = _getFogSpawnCoordinates(map, session);
+      const targetSpawnCoordinates = _getFogSpawnCoordinates(map, game);
       if (targetSpawnCoordinates) {
         // TODO would be nice if this was a one-liner
         const unitModel = await modelLoader.loadUnitModel(unitClass);
@@ -39,19 +38,17 @@ export const spawnFogUnits = async (map: MapInstance, game: Game) => {
           map
         });
         map.addUnit(unit);
+        state.addUnit(unit);
       }
     }
   }
 };
 
-const _getFogSpawnCoordinates = (
-  map: MapInstance,
-  session: Session
-): Coordinates | null => {
+const _getFogSpawnCoordinates = (map: MapInstance, game: Game): Coordinates | null => {
   const allTiles = map.getTiles().flat();
   const candidateCoordinates = (() => {
     if (Feature.isEnabled(Feature.FOG_SHADES_EVERYWHERE)) {
-      const playerUnit = session.getPlayerUnit();
+      const playerUnit = game.state.getPlayerUnit();
       const minDistanceWaway = 10;
       return allTiles
         .map(tile => tile.getCoordinates())

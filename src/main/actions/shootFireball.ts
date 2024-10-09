@@ -20,7 +20,7 @@ export const shootFireball = async (
   damage: number,
   game: Game
 ) => {
-  const { soundPlayer, session, ticker } = game;
+  const { soundPlayer, state, ticker } = game;
   const { dx, dy } = Direction.getOffsets(direction);
   unit.setDirection(direction);
 
@@ -42,7 +42,7 @@ export const shootFireball = async (
       targetUnit
     });
     const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-    ticker.log(message, { turn: session.getTurn() });
+    ticker.log(message, { turn: state.getTurn() });
     if (targetUnit.getLife() <= 0) {
       await sleep(100);
       await die(targetUnit, game);

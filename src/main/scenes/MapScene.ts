@@ -1,6 +1,5 @@
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import { Session } from '@main/core/Session';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { Color } from '@lib/graphics/Color';
@@ -22,15 +21,15 @@ export class MapScene implements Scene {
   constructor(@inject(Game) private readonly game: Game) {}
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { session } = this.game;
+    const { state } = this.game;
     const { key, modifiers } = command;
 
     switch (key) {
       case 'M':
-        session.setScene(SceneName.GAME);
+        state.setScene(SceneName.GAME);
         break;
       case 'F1':
-        session.setScene(SceneName.HELP);
+        state.setScene(SceneName.HELP);
         break;
       case 'ENTER':
         if (modifiers.includes(ModifierKey.ALT)) {
@@ -38,7 +37,7 @@ export class MapScene implements Scene {
         }
         break;
       case 'ESCAPE':
-        session.setScene(SceneName.GAME);
+        state.setScene(SceneName.GAME);
     }
   };
 
@@ -46,13 +45,13 @@ export class MapScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { session } = this.game;
-    session.setScene(SceneName.GAME);
+    const { state } = this.game;
+    state.setScene(SceneName.GAME);
   };
 
   render = async (graphics: Graphics) => {
-    const { session } = this.game;
-    const playerUnit = session.getPlayerUnit();
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
     const map = playerUnit.getMap();
 
     graphics.fill(backgroundColor);
@@ -65,7 +64,7 @@ export class MapScene implements Scene {
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        const color = this._getColor({ x, y }, session);
+        const color = this._getColor({ x, y }, this.game);
         const rect = {
           left: x * cellDimension + left,
           top: y * cellDimension + top,
@@ -77,8 +76,8 @@ export class MapScene implements Scene {
     }
   };
 
-  private _getColor = (coordinates: Coordinates, session: Session): Color => {
-    const playerUnit = session.getPlayerUnit();
+  private _getColor = (coordinates: Coordinates, game: Game): Color => {
+    const playerUnit = game.state.getPlayerUnit();
     const map = playerUnit.getMap();
 
     if (Coordinates.equals(playerUnit.getCoordinates(), coordinates)) {

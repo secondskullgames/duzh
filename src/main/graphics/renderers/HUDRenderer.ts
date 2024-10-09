@@ -62,9 +62,9 @@ export default class HUDRenderer implements Renderer {
 
   private _renderFrame = async (graphics: Graphics) => {
     const { game, imageFactory } = this;
-    const { session } = game;
+    const { state } = game;
     const fillColor = (() => {
-      const playerUnit = session.getPlayerUnit();
+      const playerUnit = state.getPlayerUnit();
       if (playerUnit.getEffects().hasEffect(StatusEffect.STUNNED)) {
         return Colors.GRAY_128;
       } else {
@@ -86,8 +86,8 @@ export default class HUDRenderer implements Renderer {
    * Renders the bottom-left area of the screen, showing information about the player
    */
   private _renderLeftPanel = (graphics: Graphics) => {
-    const { session } = this.game;
-    const playerUnit = session.getPlayerUnit();
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
 
     const lines = [];
     if (playerUnit.getEffects().hasEffect(StatusEffect.STUNNED)) {
@@ -159,9 +159,9 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderMiddlePanel = async (graphics: Graphics) => {
-    const { session } = this.game;
+    const { state } = this.game;
     const top = this.TOP + BORDER_MARGIN + BORDER_PADDING;
-    const playerUnit = session.getPlayerUnit();
+    const playerUnit = state.getPlayerUnit();
     const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
     const isNumberedAbility = (ability: UnitAbility) =>
       ability.name !== AbilityName.ATTACK &&
@@ -235,9 +235,9 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderRightPanel = (graphics: Graphics) => {
-    const { session } = this.game;
-    const playerUnit = session.getPlayerUnit();
-    const turn = session.getTurn();
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
+    const turn = state.getTurn();
     const map = playerUnit.getMap();
 
     const left =
@@ -251,7 +251,7 @@ export default class HUDRenderer implements Renderer {
     } else {
       lines.push(`Kills: ${playerUnit.getLifetimeKills()}`);
     }
-    lines.push(`Time: ${formatTimestamp(session.getElapsedTime())}`);
+    lines.push(`Time: ${formatTimestamp(state.getElapsedTime())}`);
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + LINE_HEIGHT * i;
@@ -272,9 +272,9 @@ export default class HUDRenderer implements Renderer {
     graphics: Graphics
   ) => {
     const { imageFactory } = this;
-    const { session } = this.game;
-    const playerUnit = session.getPlayerUnit();
-    const queuedAbility = session.getQueuedAbility();
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
+    const queuedAbility = state.getQueuedAbility();
 
     let borderColor: Color;
 

@@ -34,21 +34,21 @@ export class TitleScene implements Scene {
 
   private _handleStartGame = async () => {
     const { mapController } = this;
-    const { session, ticker } = this.game;
+    const { state, ticker } = this.game;
     if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
       await mapController.loadDebugMap(this.game);
     } else {
       await mapController.loadFirstMap(this.game);
     }
-    session.startGameTimer();
-    session.setScene(SceneName.GAME);
-    ticker.log('Welcome to the Dungeons of Duzh!', { turn: session.getTurn() });
+    state.startGameTimer();
+    state.setScene(SceneName.GAME);
+    ticker.log('Welcome to the Dungeons of Duzh!', { turn: state.getTurn() });
     if (isMobileDevice()) {
       ticker.log('Press the ? icon in the upper-right for instructions.', {
-        turn: session.getTurn()
+        turn: state.getTurn()
       });
     } else {
-      ticker.log('Press F1 for instructions.', { turn: session.getTurn() });
+      ticker.log('Press F1 for instructions.', { turn: state.getTurn() });
     }
   };
 

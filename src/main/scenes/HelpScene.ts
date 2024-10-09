@@ -30,12 +30,12 @@ export class HelpScene implements Scene {
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { session } = this.game;
+    const { state } = this.game;
     const { key, modifiers } = command;
 
     switch (key) {
       case 'F1':
-        session.showPrevScene();
+        state.showPrevScene();
         break;
       case 'ENTER':
         if (modifiers.includes(ModifierKey.ALT)) {
@@ -43,7 +43,7 @@ export class HelpScene implements Scene {
         }
         break;
       case 'ESCAPE':
-        session.setScene(SceneName.GAME);
+        state.setScene(SceneName.GAME);
     }
   };
 
@@ -51,8 +51,8 @@ export class HelpScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { session } = this.game;
-    session.setScene(SceneName.GAME);
+    const { state } = this.game;
+    state.setScene(SceneName.GAME);
   };
 
   render = async (graphics: Graphics) => {

@@ -8,7 +8,7 @@ import { Graphics } from '@lib/graphics/Graphics';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { ShrineOption } from '@main/core/session/ShrineMenuState';
+import { ShrineOption } from '@main/core/state/ShrineMenuState';
 import { Game } from '@main/core/Game';
 import { inject, injectable } from 'inversify';
 
@@ -27,7 +27,7 @@ export class ShrineMenuRenderer implements Renderer {
 
   render = async (graphics: Graphics) => {
     const { imageFactory } = this;
-    const { session } = this.game;
+    const { state } = this.game;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     const { screenWidth, screenHeight } = this.game.config;
     const left = screenWidth / 4;
@@ -36,7 +36,7 @@ export class ShrineMenuRenderer implements Renderer {
     const height = screenHeight / 2;
     graphics.drawScaledImage(image, { left, top, width, height });
 
-    const options = checkNotNull(session.getShrineMenuState()).options;
+    const options = checkNotNull(state.getShrineMenuState()).options;
 
     let y = top + 10;
     const x = left + 10;
@@ -71,8 +71,8 @@ export class ShrineMenuRenderer implements Renderer {
   };
 
   private _getOptionColor = (option: ShrineOption): Color => {
-    const { session } = this.game;
-    const selectedOption = checkNotNull(session.getShrineMenuState()).getSelectedOption();
+    const { state } = this.game;
+    const selectedOption = checkNotNull(state.getShrineMenuState()).getSelectedOption();
     const isSelected = selectedOption.label === option.label;
     return isSelected ? Colors.WHITE : Colors.LIGHT_GRAY;
   };

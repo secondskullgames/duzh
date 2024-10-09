@@ -6,12 +6,12 @@ import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Game } from '@main/core/Game';
 
 export const levelUp = (unit: Unit, game: Game) => {
-  const { session, ticker } = game;
+  const { state, ticker } = game;
   unit.incrementLevel();
   if (unit.getFaction() === Faction.PLAYER) {
     const playerUnitClass = checkNotNull(unit.getPlayerUnitClass());
     if (Feature.isEnabled(Feature.SHRINES)) {
-      ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: session.getTurn() });
+      ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: state.getTurn() });
       const abilitiesToLearn = playerUnitClass.getAbilitiesLearnedAtLevel(
         unit.getLevel()
       );
@@ -22,7 +22,7 @@ export const levelUp = (unit: Unit, game: Game) => {
       unit.increaseMaxLife(playerUnitClass.lifePerLevel);
       unit.increaseMaxMana(playerUnitClass.manaPerLevel);
       unit.increaseMeleeDamage(playerUnitClass.meleeDamagePerLevel);
-      ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: session.getTurn() });
+      ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: state.getTurn() });
       const abilitiesToLearn = playerUnitClass.getAbilitiesLearnedAtLevel(
         unit.getLevel()
       );

@@ -34,15 +34,15 @@ export default class GameScreenViewportRenderer implements Renderer {
   ) {}
 
   render = async (graphics: Graphics) => {
-    const { session } = this.game;
-    const map = session.getPlayerUnit().getMap();
+    const { state } = this.game;
+    const map = state.getPlayerUnit().getMap();
     graphics.fill(Colors.BLACK);
 
     this._renderTiles(map, graphics);
     await this._renderEntities(map, graphics);
 
     // TODO: consider a generic menu system
-    if (session.isShowingShrineMenu()) {
+    if (state.isShowingShrineMenu()) {
       await this._renderShrineMenu(graphics);
     }
   };
@@ -74,8 +74,8 @@ export default class GameScreenViewportRenderer implements Renderer {
    * @return the top left pixel
    */
   private _gridToPixel = ({ x, y }: Coordinates): Pixel => {
-    const { session, config } = this.game;
-    const playerUnit = session.getPlayerUnit();
+    const { state, config } = this.game;
+    const playerUnit = state.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     return {
       x: (x - playerX) * TILE_WIDTH + (config.screenWidth - TILE_WIDTH) / 2,
@@ -157,11 +157,11 @@ export default class GameScreenViewportRenderer implements Renderer {
     map: MapInstance,
     graphics: Graphics
   ) => {
-    const { session } = this.game;
+    const { state } = this.game;
     const unit = map.getUnit(coordinates);
 
     if (unit) {
-      if (unit === session.getPlayerUnit()) {
+      if (unit === state.getPlayerUnit()) {
         return this._drawEllipse(coordinates, Colors.GREEN, graphics);
       } else {
         return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);

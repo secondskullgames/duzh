@@ -16,8 +16,8 @@ const MANA_GLOBE_DROP_CHANCE = 0;
 const VISION_GLOBE_DROP_CHANCE = 0;
 
 export const die = async (unit: Unit, game: Game) => {
-  const { soundPlayer, session, ticker } = game;
-  const playerUnit = session.getPlayerUnit();
+  const { soundPlayer, state, ticker } = game;
+  const playerUnit = state.getPlayerUnit();
   const coordinates = unit.getCoordinates();
   const map = unit.getMap();
 
@@ -27,7 +27,7 @@ export const die = async (unit: Unit, game: Game) => {
     return;
   } else {
     soundPlayer.playSound(Sounds.ENEMY_DIES);
-    ticker.log(`${unit.getName()} dies!`, { turn: session.getTurn() });
+    ticker.log(`${unit.getName()} dies!`, { turn: state.getTurn() });
 
     if (_canDropItems(unit)) {
       const randomRoll = random();
@@ -38,7 +38,7 @@ export const die = async (unit: Unit, game: Game) => {
         const item = await _createItem(coordinates, map, game);
         map.addObject(item);
         ticker.log(`${unit.getName()} dropped a ${item.getName()}.`, {
-          turn: session.getTurn()
+          turn: state.getTurn()
         });
       }
     }
@@ -79,9 +79,9 @@ const _createItem = async (
   map: MapInstance,
   game: Game
 ): Promise<GameObject> => {
-  const { session, itemFactory } = game;
+  const { state, itemFactory } = game;
   const itemSpec = await itemFactory.chooseRandomMapItemForLevel(map.levelNumber, game);
-  session.recordEquipmentGenerated(itemSpec.id);
+  state.recordEquipmentGenerated(itemSpec.id);
   switch (itemSpec.type) {
     case ItemType.CONSUMABLE:
       return itemFactory.createMapItem(itemSpec.id, coordinates, map);

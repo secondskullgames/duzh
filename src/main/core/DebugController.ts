@@ -30,33 +30,33 @@ export class DebugController {
   isMapRevealed = () => this._isMapRevealed;
 
   killPlayer = async () => {
-    const { session } = this.game;
-    const playerUnit = session.getPlayerUnit();
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
     await die(playerUnit, this.game);
   };
 
   levelUp = async () => {
-    const { session } = this.game;
-    const playerUnit = session.getPlayerUnit();
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
     _levelUp(playerUnit, this.game);
   };
 
   awardEquipment = async () => {
     const { itemFactory } = this;
-    const { soundPlayer, session, ticker } = this.game;
+    const { soundPlayer, state, ticker } = this.game;
 
     // eslint-disable-next-line no-alert
     const id = prompt('Enter a valid equipment_id')!;
     const item = await itemFactory.createInventoryEquipment(id);
-    const playerUnit = session.getPlayerUnit();
+    const playerUnit = state.getPlayerUnit();
     playerUnit.getInventory().add(item);
-    ticker.log(`Picked up a ${item.name}.`, { turn: session.getTurn() });
+    ticker.log(`Picked up a ${item.name}.`, { turn: state.getTurn() });
     soundPlayer.playSound(Sounds.PICK_UP_ITEM);
   };
 
   attachToWindow = () => {
     const { mapController } = this;
-    const { session } = this.game;
+    const { state } = this.game;
     const rootElelement = document.getElementById('debug');
     const items = [
       {
@@ -65,7 +65,7 @@ export class DebugController {
       },
       {
         label: 'Kill Enemies',
-        onClick: () => this.killEnemies(session.getPlayerUnit().getMap())
+        onClick: () => this.killEnemies(state.getPlayerUnit().getMap())
       },
       {
         label: 'Kill Player',

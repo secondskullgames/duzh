@@ -32,7 +32,7 @@ export class VictoryScene implements Scene {
 
   render = async (graphics: Graphics): Promise<void> => {
     const { imageFactory } = this;
-    const { session } = this.game;
+    const { state } = this.game;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
@@ -40,8 +40,8 @@ export class VictoryScene implements Scene {
       width: graphics.getWidth(),
       height: graphics.getHeight()
     });
-    const elapsedTurns = session.getTurn();
-    const elapsedTime = formatTimestamp(session.getElapsedTime());
+    const elapsedTurns = state.getTurn();
+    const elapsedTime = formatTimestamp(state.getElapsedTime());
     const lines = [
       `Finished in ${elapsedTurns} turns (${elapsedTime})`,
       'PRESS ENTER TO PLAY AGAIN'
@@ -78,7 +78,7 @@ export class VictoryScene implements Scene {
   };
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { session } = this.game;
+    const { state } = this.game;
     const { key, modifiers } = command;
     switch (key) {
       case 'ENTER':
@@ -89,7 +89,7 @@ export class VictoryScene implements Scene {
         }
         break;
       case 'ESCAPE':
-        session.setScene(SceneName.GAME);
+        state.setScene(SceneName.GAME);
     }
   };
 

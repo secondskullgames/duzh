@@ -1,14 +1,15 @@
-import { InventoryCategory, InventoryState } from './session/InventoryState';
+import { InventoryCategory, InventoryState } from '@main/core/state/InventoryState';
 import { SceneName } from '../scenes/SceneName';
 import Unit from '../units/Unit';
-import { checkNotNull, checkState } from '@lib/utils/preconditions';
+import { check, checkNotNull } from '@lib/utils/preconditions';
 import { Seconds } from '@lib/utils/time';
-import { ShrineMenuState } from '@main/core/session/ShrineMenuState';
+import { ShrineMenuState } from '@main/core/state/ShrineMenuState';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Scene } from '@main/scenes/Scene';
 import { clear } from '@lib/utils/arrays';
+import { Faction } from '@main/units/Faction';
 
-export interface Session {
+export interface GameState {
   startGameTimer: () => void;
   endGameTimer: () => void;
   getScenes: () => Scene[];
@@ -23,8 +24,6 @@ export interface Session {
   prepareInventoryScreen: (playerUnit: Unit) => void;
   getInventoryState: () => InventoryState;
   reset: () => void;
-  getPlayerUnit: () => Unit;
-  setPlayerUnit: (unit: Unit) => void;
   setTurnInProgress: (val: boolean) => void;
   isTurnInProgress: () => boolean;
   getElapsedTime: () => Seconds;
@@ -35,11 +34,16 @@ export interface Session {
   getQueuedAbility: () => UnitAbility | null;
   setQueuedAbility: (ability: UnitAbility | null) => void;
 
+  getUnits: () => Unit[];
+  getPlayerUnit: () => Unit;
+  addUnit: (unit: Unit) => void;
+  removeUnit: (unit: Unit) => void;
+
   getGeneratedEquipmentIds: () => string[];
   recordEquipmentGenerated: (equipmentId: string) => void;
 }
 
-export class SessionImpl implements Session {
+export class GameStateImpl implements GameState {
   private startTime: Date | null;
   private endTime: Date | null;
   private readonly scenes: Scene[];
@@ -47,10 +51,10 @@ export class SessionImpl implements Session {
   private prevScene: Scene | null;
   private inventoryState: InventoryState | null;
   private shrineMenuState: ShrineMenuState | null;
-  private playerUnit: Unit | null;
   private _isTurnInProgress: boolean;
   private turn: number;
   private queuedAbility: UnitAbility | null;
+  private readonly units: Unit[];
   private readonly generatedEquipmentIds: string[];
 
   constructor() {
@@ -60,11 +64,11 @@ export class SessionImpl implements Session {
     this.inventoryState = null;
     this.shrineMenuState = null;
     this._isTurnInProgress = false;
-    this.playerUnit = null;
     this.turn = 1;
     this.queuedAbility = null;
     this.startTime = null;
     this.endTime = null;
+    this.units = [];
     this.generatedEquipmentIds = [];
   }
 
@@ -74,12 +78,6 @@ export class SessionImpl implements Session {
 
   endGameTimer = (): void => {
     this.endTime = new Date();
-  };
-
-  getPlayerUnit = (): Unit => checkNotNull(this.playerUnit);
-  setPlayerUnit = (unit: Unit): void => {
-    checkState(this.playerUnit === null);
-    this.playerUnit = unit;
   };
 
   getScenes = (): Scene[] => this.scenes;
@@ -147,9 +145,9 @@ export class SessionImpl implements Session {
   reset = (): void => {
     this.currentScene = null;
     this.prevScene = null;
-    this.playerUnit = null;
     this.turn = 1;
     this.queuedAbility = null;
+    clear(this.units);
     clear(this.generatedEquipmentIds);
   };
 
@@ -177,6 +175,19 @@ export class SessionImpl implements Session {
     const endTime = this.endTime ?? new Date();
     const milliseconds = endTime.getTime() - startTime.getTime();
     return milliseconds / 1000;
+  };
+
+  getUnits = (): Unit[] => this.units;
+
+  getPlayerUnit = (): Unit =>
+    checkNotNull(this.units.find(u => u.getFaction() === Faction.PLAYER));
+
+  addUnit = (unit: Unit) => this.units.push(unit);
+
+  removeUnit = (unit: Unit) => {
+    const index = this.units.indexOf(unit);
+    check(index >= 0);
+    this.units.splice(index, 1);
   };
 
   getGeneratedEquipmentIds = (): string[] => this.generatedEquipmentIds;

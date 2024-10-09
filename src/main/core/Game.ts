@@ -1,5 +1,5 @@
 import { Engine } from '@main/core/Engine';
-import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
 import { GameConfig } from '@main/core/GameConfig';
 import { ItemFactory } from '@main/items/ItemFactory';
 import UnitFactory from '@main/units/UnitFactory';
@@ -14,7 +14,7 @@ import { MapController } from '@main/maps/MapController';
 export type Game = Readonly<{
   config: GameConfig;
   engine: Engine;
-  session: Session;
+  state: GameState;
   itemFactory: ItemFactory;
   unitFactory: UnitFactory;
   objectFactory: ObjectFactory;

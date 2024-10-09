@@ -13,13 +13,13 @@ export const castFreeze = async (
   duration: number,
   game: Game
 ) => {
-  const { soundPlayer, session, ticker } = game;
+  const { soundPlayer, state, ticker } = game;
   const targetUnits = _getTargetUnits(unit, radius);
   for (const targetUnit of targetUnits) {
     targetUnit.setFrozen(duration);
     soundPlayer.playSound(Sounds.SPECIAL_ATTACK); // TODO
     const message = getLogMessage(unit, targetUnit, duration);
-    ticker.log(message, { turn: session.getTurn() });
+    ticker.log(message, { turn: state.getTurn() });
   }
 };
 

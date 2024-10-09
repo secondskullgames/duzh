@@ -30,14 +30,14 @@ export class CharacterScene implements Scene {
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { session } = this.game;
+    const { state } = this.game;
 
     switch (command.key) {
       case 'C':
-        session.setScene(SceneName.GAME);
+        state.setScene(SceneName.GAME);
         break;
       case 'F1':
-        session.setScene(SceneName.HELP);
+        state.setScene(SceneName.HELP);
         break;
       case 'ENTER':
         if (command.modifiers.includes(ModifierKey.ALT)) {
@@ -45,7 +45,7 @@ export class CharacterScene implements Scene {
         }
         break;
       case 'ESCAPE':
-        session.setScene(SceneName.GAME);
+        state.setScene(SceneName.GAME);
     }
   };
 
@@ -53,8 +53,8 @@ export class CharacterScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { session } = this.game;
-    session.setScene(SceneName.GAME);
+    const { state } = this.game;
+    state.setScene(SceneName.GAME);
   };
 
   render = async (graphics: Graphics) => {
@@ -71,8 +71,8 @@ export class CharacterScene implements Scene {
   };
 
   private _renderStatistics = async (graphics: Graphics) => {
-    const { session } = this.game;
-    const playerUnit = session.getPlayerUnit();
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
     let top = 20;
     this._drawText(
       'Character Statistics',

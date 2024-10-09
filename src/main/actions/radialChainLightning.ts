@@ -27,7 +27,7 @@ const getAdjacentEnemies = (unit: Unit, map: MapInstance) => {
 };
 
 export const radialChainLightning = async (unit: Unit, damage: number, game: Game) => {
-  const { soundPlayer, session, ticker } = game;
+  const { soundPlayer, state, ticker } = game;
   const map = unit.getMap();
   const alreadyDamagedEnemies: Unit[] = [];
   const queue: Unit[] = getAdjacentEnemies(unit, map);
@@ -49,7 +49,7 @@ export const radialChainLightning = async (unit: Unit, damage: number, game: Gam
     });
 
     const message = getDamageLogMessage(unit, targetUnit, damageTaken);
-    ticker.log(message, { turn: session.getTurn() });
+    ticker.log(message, { turn: state.getTurn() });
     if (targetUnit.getLife() <= 0) {
       await die(targetUnit, game);
       recordKill(unit, targetUnit, game);

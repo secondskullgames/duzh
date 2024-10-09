@@ -36,14 +36,14 @@ export class MapControllerImpl implements MapController {
 
   loadFirstMap = async (game: Game) => {
     const { unitFactory, musicController } = this;
-    const { session } = game;
+    const { state } = game;
     const map = await this._loadMap(game.config.mapSpecs[0].id, game);
     const playerUnit = await unitFactory.createPlayerUnit(
       map.getStartingCoordinates(),
       map
     );
     map.addUnit(playerUnit);
-    session.setPlayerUnit(playerUnit);
+    state.addUnit(playerUnit);
     updateRevealedTiles(map, playerUnit);
     musicController.stop();
     if (map.music) {
@@ -53,18 +53,18 @@ export class MapControllerImpl implements MapController {
 
   loadNextMap = async (game: Game) => {
     const { musicController } = this;
-    const { session } = game;
-    const currentMap = session.getPlayerUnit().getMap();
+    const { state } = game;
+    const currentMap = state.getPlayerUnit().getMap();
     musicController.stop();
     const { mapSpecs } = game.config;
     const nextMapIndex = mapSpecs.findIndex(spec => spec.id === currentMap.id) + 1;
     if (nextMapIndex >= mapSpecs.length) {
-      session.endGameTimer();
-      session.setScene(SceneName.VICTORY);
+      state.endGameTimer();
+      state.setScene(SceneName.VICTORY);
     } else {
       const map = await this._loadMap(mapSpecs[nextMapIndex].id, game);
       // TODO really need some bidirectional magic
-      const playerUnit = session.getPlayerUnit();
+      const playerUnit = state.getPlayerUnit();
       playerUnit.getMap().removeUnit(playerUnit);
       playerUnit.setCoordinates(map.getStartingCoordinates());
       playerUnit.setMap(map);
@@ -78,9 +78,9 @@ export class MapControllerImpl implements MapController {
 
   loadPreviousMap = async (game: Game) => {
     const { musicController } = this;
-    const { session } = game;
+    const { state } = game;
     const { mapSpecs } = game.config;
-    const playerUnit = session.getPlayerUnit();
+    const playerUnit = state.getPlayerUnit();
     const currentMap = playerUnit.getMap();
     const previousMapIndex = mapSpecs.findIndex(spec => spec.id === currentMap.id) - 1;
     const map = await this._loadMap(mapSpecs[previousMapIndex].id, game);
@@ -96,7 +96,7 @@ export class MapControllerImpl implements MapController {
 
   loadDebugMap = async (game: Game) => {
     const { musicController, mapFactory, unitFactory } = this;
-    const { session } = game;
+    const { state } = game;
 
     const map = await mapFactory.loadMap({ type: MapType.PREDEFINED, id: 'test' }, game);
     const playerUnit = await unitFactory.createPlayerUnit(
@@ -104,10 +104,10 @@ export class MapControllerImpl implements MapController {
       map
     );
     map.addUnit(playerUnit);
-    session.setPlayerUnit(playerUnit);
+    state.addUnit(playerUnit);
     updateRevealedTiles(map, playerUnit);
     musicController.stop();
-    updateRevealedTiles(map, session.getPlayerUnit());
+    updateRevealedTiles(map, state.getPlayerUnit());
   };
 
   private _loadMap = async (mapId: string, game: Game): Promise<MapInstance> => {

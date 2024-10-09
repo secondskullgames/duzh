@@ -32,7 +32,7 @@ export class GameOverScene implements Scene {
 
   render = async (graphics: Graphics): Promise<void> => {
     const { imageFactory } = this;
-    const { session } = this.game;
+    const { state } = this.game;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
@@ -40,10 +40,10 @@ export class GameOverScene implements Scene {
       width: graphics.getWidth(),
       height: graphics.getHeight()
     });
-    const elapsedTurns = session.getTurn();
-    const elapsedTime = formatTimestamp(session.getElapsedTime());
+    const elapsedTurns = state.getTurn();
+    const elapsedTime = formatTimestamp(state.getElapsedTime());
     const lines = [
-      `Died on level ${session.getPlayerUnit().getMap().levelNumber}`,
+      `Died on level ${state.getPlayerUnit().getMap().levelNumber}`,
       `in ${elapsedTurns} turns (${elapsedTime})`,
       'PRESS ENTER TO PLAY AGAIN'
     ];

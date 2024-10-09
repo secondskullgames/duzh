@@ -9,13 +9,13 @@ import { Game } from '@main/core/Game';
 export const walk = async (unit: Unit, direction: Direction, game: Game) => {
   const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
 
-  const { soundPlayer, session } = game;
+  const { soundPlayer, state } = game;
   const map = unit.getMap();
   if (!map.contains(coordinates) || isBlocked(coordinates, map)) {
     // do nothing
   } else {
     await moveUnit(unit, coordinates, game);
-    const playerUnit = session.getPlayerUnit();
+    const playerUnit = state.getPlayerUnit();
     if (unit === playerUnit) {
       soundPlayer.playSound(Sounds.FOOTSTEP);
     }

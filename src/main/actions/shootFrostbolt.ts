@@ -21,7 +21,7 @@ export const shootFrostbolt = async (
   freezeDuration: number,
   game: Game
 ) => {
-  const { soundPlayer, ticker, session } = game;
+  const { soundPlayer, ticker, state } = game;
   unit.setDirection(direction);
 
   const map = unit.getMap();
@@ -41,13 +41,13 @@ export const shootFrostbolt = async (
       targetUnit
     });
     const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-    ticker.log(message, { turn: session.getTurn() });
+    ticker.log(message, { turn: state.getTurn() });
     if (targetUnit.getLife() <= 0) {
       await sleep(100);
       await die(targetUnit, game);
     } else {
       targetUnit.setFrozen(freezeDuration);
-      ticker.log(`${targetUnit.getName()} is frozen!`, { turn: session.getTurn() });
+      ticker.log(`${targetUnit.getName()} is frozen!`, { turn: state.getTurn() });
     }
   } else {
     await playFrostboltAnimation(unit, direction, coordinatesList, null, game);

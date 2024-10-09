@@ -10,7 +10,7 @@ import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { Game } from '@main/core/Game';
 
 export const floorFire = async (unit: Unit, damage: number, game: Game) => {
-  const { soundPlayer, session, ticker } = game;
+  const { soundPlayer, state, ticker } = game;
   const map = unit.getMap();
   // TODO - optimization opportunity
   const targets: Unit[] = map.getAllUnits().filter(u => {
@@ -34,7 +34,7 @@ export const floorFire = async (unit: Unit, damage: number, game: Game) => {
         });
 
         const message = getDamageLogMessage(unit, targetUnit, damageTaken);
-        ticker.log(message, { turn: session.getTurn() });
+        ticker.log(message, { turn: state.getTurn() });
         if (targetUnit.getLife() <= 0) {
           await die(targetUnit, game);
           recordKill(unit, targetUnit, game);

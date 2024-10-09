@@ -9,14 +9,14 @@ type Props = Readonly<{
 }>;
 
 export const createInputHandler = ({ game }: Props): InputHandler => {
-  const { session } = game;
+  const { state } = game;
   const onKeyDown = async (event: KeyboardEvent) => {
     const command: KeyCommand | null = mapToKeyCommand(event);
     if (!command) {
       return;
     }
     event.preventDefault();
-    const currentScene = session.getCurrentScene();
+    const currentScene = state.getCurrentScene();
     if (currentScene) {
       await currentScene.handleKeyDown(command);
     }
@@ -28,7 +28,7 @@ export const createInputHandler = ({ game }: Props): InputHandler => {
     if (!command) {
       return;
     }
-    const currentScene = session.getCurrentScene();
+    const currentScene = state.getCurrentScene();
     if (currentScene) {
       await currentScene.handleKeyUp(command);
     }
@@ -43,7 +43,7 @@ export const createInputHandler = ({ game }: Props): InputHandler => {
     if (!command) {
       return;
     }
-    const currentScene = session.getCurrentScene();
+    const currentScene = state.getCurrentScene();
     if (currentScene) {
       await currentScene.handleClick(command);
     }
@@ -58,7 +58,7 @@ export const createInputHandler = ({ game }: Props): InputHandler => {
     if (!command) {
       return;
     }
-    const currentScene = session.getCurrentScene();
+    const currentScene = state.getCurrentScene();
     if (currentScene) {
       await currentScene.handleClick(command);
     }

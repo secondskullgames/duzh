@@ -19,6 +19,7 @@ import { Color } from '@lib/graphics/Color';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { DoorDirection } from '@models/DoorDirection';
 import { injectable } from 'inversify';
+import { Game } from '@main/core/Game';
 
 @injectable()
 export class PredefinedMapFactory {
@@ -32,7 +33,7 @@ export class PredefinedMapFactory {
     private readonly musicController: MusicController
   ) {}
 
-  buildPredefinedMap = async (mapId: string): Promise<MapInstance> => {
+  buildPredefinedMap = async (mapId: string, game: Game): Promise<MapInstance> => {
     const model = await this.modelLoader.loadPredefinedMapModel(mapId);
     const image = await this.imageFactory.getImage({
       filename: `maps/${model.imageFilename}`
@@ -59,6 +60,7 @@ export class PredefinedMapFactory {
     const units = await this._loadUnits(model, image, map);
     for (const unit of units) {
       map.addUnit(unit);
+      game.state.addUnit(unit);
     }
 
     const objects = await this._loadObjects(model, image, map);

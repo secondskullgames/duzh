@@ -8,7 +8,7 @@ import { ItemCategory } from '@models/ItemCategory';
 import {
   displayableItemCategories,
   InventoryCategory
-} from '@main/core/session/InventoryState';
+} from '@main/core/state/InventoryState';
 import InventoryItem from '@main/items/InventoryItem';
 import { TextRenderer } from '@main/graphics/TextRenderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
@@ -48,10 +48,10 @@ export class InventoryScene implements Scene {
   }
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { session } = this.game;
+    const { state } = this.game;
     const { key, modifiers } = command;
-    const playerUnit = session.getPlayerUnit();
-    const inventory = session.getInventoryState();
+    const playerUnit = state.getPlayerUnit();
+    const inventory = state.getInventoryState();
 
     switch (key) {
       case 'UP':
@@ -74,37 +74,37 @@ export class InventoryScene implements Scene {
         }
         break;
       case 'TAB':
-        session.setScene(SceneName.GAME);
+        state.setScene(SceneName.GAME);
         break;
       case 'M':
-        session.setScene(SceneName.MAP);
+        state.setScene(SceneName.MAP);
         break;
       case 'F1':
-        session.setScene(SceneName.HELP);
+        state.setScene(SceneName.HELP);
         break;
       case 'ESCAPE':
-        session.setScene(SceneName.GAME);
+        state.setScene(SceneName.GAME);
     }
   };
 
   handleKeyUp = async () => {};
 
   private _handleEnter = async () => {
-    const { session } = this.game;
-    const playerUnit = session.getPlayerUnit();
-    const inventory = session.getInventoryState();
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
+    const inventory = state.getInventoryState();
     const selectedItem = inventory.getSelectedItem();
 
     if (selectedItem) {
       await useItem(playerUnit, selectedItem, this.game);
-      session.prepareInventoryScreen(playerUnit);
+      state.prepareInventoryScreen(playerUnit);
     }
   };
 
   handleClick = async ({ pixel }: ClickCommand) => {
-    const { session } = this.game;
-    const playerUnit = session.getPlayerUnit();
-    const inventoryState = session.getInventoryState();
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
+    const inventoryState = state.getInventoryState();
 
     const itemCategoryRects = this._getItemCategoryRects();
     for (const [category, rect] of itemCategoryRects) {
@@ -119,14 +119,14 @@ export class InventoryScene implements Scene {
       if (Rect.containsPoint(rect, pixel)) {
         if (inventoryState.getSelectedItem() == item) {
           await useItem(playerUnit, item, this.game);
-          session.prepareInventoryScreen(playerUnit);
+          state.prepareInventoryScreen(playerUnit);
         } else {
-          inventoryState.selectItem(session.getPlayerUnit(), item);
+          inventoryState.selectItem(state.getPlayerUnit(), item);
         }
         return;
       }
     }
-    session.setScene(SceneName.GAME);
+    state.setScene(SceneName.GAME);
   };
 
   /** TODO this sucks */
@@ -147,13 +147,13 @@ export class InventoryScene implements Scene {
   };
 
   private _getItemRects = (): [InventoryItem, Rect][] => {
-    const { session } = this.game;
-    const inventoryScreenState = session.getInventoryState();
+    const { state } = this.game;
+    const inventoryScreenState = state.getInventoryState();
     const itemCategory = inventoryScreenState.getSelectedItemCategory();
     const itemRects: [InventoryItem, Rect][] = [];
     if (itemCategory) {
       const visibleItems = inventoryScreenState.getItems(
-        session.getPlayerUnit(),
+        state.getPlayerUnit(),
         itemCategory
       );
       for (let i = 0; i < visibleItems.length; i++) {
@@ -209,8 +209,8 @@ export class InventoryScene implements Scene {
   };
 
   private _drawEquipment = (graphics: Graphics) => {
-    const { session } = this.game;
-    const inventory = session.getInventoryState();
+    const { state } = this.game;
+    const inventory = state.getInventoryState();
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
 
     this._drawText(
@@ -238,7 +238,7 @@ export class InventoryScene implements Scene {
     // for now, just display them all in one list
 
     let y = INVENTORY_TOP + 64;
-    const playerUnit = session.getPlayerUnit();
+    const playerUnit = state.getPlayerUnit();
     for (const equipment of playerUnit.getEquipment().getAll()) {
       const text = `${getSlotName(equipment.slot)} - ${equipment.getName()}`;
       this._drawText(
@@ -254,8 +254,8 @@ export class InventoryScene implements Scene {
   };
 
   private _drawInventory = (graphics: Graphics) => {
-    const { session } = this.game;
-    const inventory = session.getInventoryState();
+    const { state } = this.game;
+    const inventory = state.getInventoryState();
     const inventoryCategories = inventory.getItemCategories();
     const categoryWidth = 60;
     const xOffset = 4;
@@ -287,7 +287,7 @@ export class InventoryScene implements Scene {
     // draw inventory items
     const selectedItemCategory = inventory.getSelectedItemCategory();
     if (selectedItemCategory) {
-      const items = inventory.getItems(session.getPlayerUnit(), selectedItemCategory);
+      const items = inventory.getItems(state.getPlayerUnit(), selectedItemCategory);
       const x = itemsLeft + 8;
       for (let i = 0; i < items.length; i++) {
         const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
@@ -310,12 +310,12 @@ export class InventoryScene implements Scene {
   };
 
   private _drawTooltip = (graphics: Graphics) => {
-    const { session } = this.game;
+    const { state } = this.game;
     const left = 10;
     const top = Math.round(graphics.getHeight() * 0.6);
 
     const lines: string[] | null = (() => {
-      const inventory = session.getInventoryState();
+      const inventory = state.getInventoryState();
       const selectedEquipment = inventory.getSelectedEquipment();
       if (selectedEquipment) {
         const lines: string[] = [];

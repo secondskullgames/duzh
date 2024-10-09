@@ -38,7 +38,7 @@ export class ShootArrow implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { soundPlayer, session, ticker } = game;
+    const { soundPlayer, state, ticker } = game;
     if (!unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON)) {
       throw new Error('ShootArrow requires a ranged weapon!');
     }
@@ -66,7 +66,7 @@ export class ShootArrow implements UnitAbility {
         targetUnit
       });
       const message = this._getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      ticker.log(message, { turn: session.getTurn() });
+      ticker.log(message, { turn: state.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
         await die(targetUnit, game);

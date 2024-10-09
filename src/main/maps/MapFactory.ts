@@ -19,7 +19,7 @@ export default class MapFactory {
         return this.generatedMapFactory.loadMap(mapSpec.id, game);
       }
       case MapType.PREDEFINED: {
-        return this.predefinedMapFactory.buildPredefinedMap(mapSpec.id);
+        return this.predefinedMapFactory.buildPredefinedMap(mapSpec.id, game);
       }
     }
   };

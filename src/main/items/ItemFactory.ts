@@ -45,11 +45,11 @@ export class ItemFactory {
 
   createLifePotion = (lifeRestored: number): InventoryItem => {
     const onUse: ItemProc = async (item: InventoryItem, unit: Unit, game: Game) => {
-      const { soundPlayer, session, ticker } = game;
+      const { soundPlayer, state, ticker } = game;
       soundPlayer.playSound(Sounds.USE_POTION);
       const lifeGained = unit.gainLife(lifeRestored);
       ticker.log(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`, {
-        turn: session.getTurn()
+        turn: state.getTurn()
       });
     };
 
@@ -63,11 +63,11 @@ export class ItemFactory {
 
   createManaPotion = (name: string, manaRestored: number): InventoryItem => {
     const onUse: ItemProc = async (item: InventoryItem, unit: Unit, game: Game) => {
-      const { soundPlayer, session, ticker } = game;
+      const { soundPlayer, state, ticker } = game;
       soundPlayer.playSound(Sounds.USE_POTION);
       const manaGained = unit.gainMana(manaRestored);
       ticker.log(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`, {
-        turn: session.getTurn()
+        turn: state.getTurn()
       });
     };
 
@@ -94,8 +94,8 @@ export class ItemFactory {
     damage: number
   ): Promise<InventoryItem> => {
     const onUse: ItemProc = async (_: InventoryItem, unit: Unit, game: Game) => {
-      const { session } = game;
-      session.setScene(SceneName.GAME);
+      const { state } = game;
+      state.setScene(SceneName.GAME);
       await floorFire(unit, damage, game);
     };
 
@@ -112,8 +112,8 @@ export class ItemFactory {
     damage: number
   ): Promise<InventoryItem> => {
     const onUse: ItemProc = async (_: InventoryItem, unit: Unit, game: Game) => {
-      const { session } = game;
-      session.setScene(SceneName.GAME);
+      const { state } = game;
+      state.setScene(SceneName.GAME);
       await radialChainLightning(unit, damage, game);
     };
 
@@ -143,7 +143,7 @@ export class ItemFactory {
     damage: number
   ): Promise<InventoryItem> => {
     const onUse: ItemProc = async (_: InventoryItem, unit: Unit, game: Game) => {
-      game.session.setScene(SceneName.GAME);
+      game.state.setScene(SceneName.GAME);
       await shootFireball(unit, unit.getDirection(), damage, game);
     };
 
@@ -160,7 +160,7 @@ export class ItemFactory {
     duration: number
   ): Promise<InventoryItem> => {
     const onUse: ItemProc = async (_: InventoryItem, unit: Unit, game: Game) => {
-      game.session.setScene(SceneName.GAME);
+      game.state.setScene(SceneName.GAME);
       await castFreeze(unit, 5, duration, game);
     };
 
@@ -280,13 +280,13 @@ export class ItemFactory {
     levelNumber: number,
     game: Game
   ): Promise<ItemSpec> => {
-    const { session } = game;
+    const { state } = game;
     const allEquipmentModels = await this.modelLoader.loadAllEquipmentModels();
     const allConsumableModels = await this.modelLoader.loadAllConsumableModels();
     const possibleEquipmentModels = allEquipmentModels
       .filter(equipmentModel => {
         if (Feature.isEnabled(Feature.DEDUPLICATE_EQUIPMENT)) {
-          return !session.getGeneratedEquipmentIds().includes(equipmentModel.id);
+          return !state.getGeneratedEquipmentIds().includes(equipmentModel.id);
         }
         return true;
       })

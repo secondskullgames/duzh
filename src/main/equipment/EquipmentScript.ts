@@ -49,39 +49,39 @@ const BoltSwordScript: EquipmentScript = {
 
 const BowOfFrostScript: EquipmentScript = {
   afterRangedAttack: async (equipment: Equipment, target: Coordinates, game: Game) => {
-    const { session, ticker } = game;
+    const { state, ticker } = game;
     const unit = checkNotNull(equipment.getUnit());
     const map = unit.getMap();
     const targetUnit = map.getUnit(target);
     if (targetUnit) {
       targetUnit.setFrozen(3);
-      ticker.log(`${targetUnit.getName()} is frozen!`, { turn: session.getTurn() });
+      ticker.log(`${targetUnit.getName()} is frozen!`, { turn: state.getTurn() });
     }
   }
 };
 
 const BowOfFireScript: EquipmentScript = {
   afterRangedAttack: async (equipment: Equipment, target: Coordinates, game: Game) => {
-    const { session, ticker } = game;
+    const { state, ticker } = game;
     const unit = checkNotNull(equipment.getUnit());
     const map = unit.getMap();
     const targetUnit = map.getUnit(target);
     if (targetUnit) {
       targetUnit.setBurning(5);
-      ticker.log(`${targetUnit.getName()} is burned!`, { turn: session.getTurn() });
+      ticker.log(`${targetUnit.getName()} is burned!`, { turn: state.getTurn() });
     }
   }
 };
 
 const FireSwordScript: EquipmentScript = {
   afterAttack: async (equipment: Equipment, target: Coordinates, game: Game) => {
-    const { session, ticker } = game;
+    const { state, ticker } = game;
     const unit = checkNotNull(equipment.getUnit());
     const map = unit.getMap();
     const targetUnit = map.getUnit(target);
     if (targetUnit) {
       targetUnit.setBurning(5);
-      ticker.log(`${targetUnit.getName()} is burned!`, { turn: session.getTurn() });
+      ticker.log(`${targetUnit.getName()} is burned!`, { turn: state.getTurn() });
     }
   }
 };

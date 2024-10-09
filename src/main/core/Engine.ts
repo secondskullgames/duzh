@@ -16,10 +16,10 @@ export class EngineImpl implements Engine {
   private readonly orderExecutor = new OrderExecutor();
 
   playTurn = async (game: Game) => {
-    const { session } = game;
-    session.setTurnInProgress(true);
+    const { state } = game;
+    state.setTurnInProgress(true);
     // TODO consider iterating over every map
-    const map = session.getPlayerUnit().getMap();
+    const map = state.getPlayerUnit().getMap();
     const sortedUnits = this._sortUnits(map.getAllUnits());
     for (const unit of sortedUnits) {
       if (unit.getLife() > 0) {
@@ -31,15 +31,15 @@ export class EngineImpl implements Engine {
       await this._playObjectTurnAction(object, game);
     }
 
-    updateRevealedTiles(map, session.getPlayerUnit());
+    updateRevealedTiles(map, state.getPlayerUnit());
     await doMapEvents(map, game);
     // TODO weird place to jam this logic
-    if (!session.getQueuedAbility()?.isEnabled(session.getPlayerUnit())) {
-      session.setQueuedAbility(null);
+    if (!state.getQueuedAbility()?.isEnabled(state.getPlayerUnit())) {
+      state.setQueuedAbility(null);
     }
 
-    session.nextTurn();
-    session.setTurnInProgress(false);
+    state.nextTurn();
+    state.setTurnInProgress(false);
   };
 
   private _playUnitTurnAction = async (unit: Unit, game: Game) => {

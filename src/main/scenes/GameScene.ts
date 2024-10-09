@@ -29,7 +29,7 @@ import { isAdjacent, offsetsToDirection, pointAt } from '@lib/geometry/Coordinat
 import { Pixel } from '@lib/geometry/Pixel';
 import { LINE_HEIGHT, TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
 import Unit from '@main/units/Unit';
-import { ShrineOption } from '@main/core/session/ShrineMenuState';
+import { ShrineOption } from '@main/core/state/ShrineMenuState';
 import { TextRenderer } from '@main/graphics/TextRenderer';
 import { Renderer } from '@main/graphics/renderers/Renderer';
 import { Graphics } from '@lib/graphics/Graphics';
@@ -67,10 +67,10 @@ export class GameScene implements Scene {
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { session } = this.game;
+    const { state } = this.game;
     const { key, modifiers } = command;
 
-    if (session.isShowingShrineMenu()) {
+    if (state.isShowingShrineMenu()) {
       await this._handleKeyDownInShrineMenu(command);
       return;
     }
@@ -85,12 +85,12 @@ export class GameScene implements Scene {
       this.soundPlayer.playSound(Sounds.FOOTSTEP);
       await this.game.engine.playTurn(this.game);
     } else if (key === 'TAB') {
-      session.prepareInventoryScreen(session.getPlayerUnit());
-      session.setScene(SceneName.INVENTORY);
+      state.prepareInventoryScreen(state.getPlayerUnit());
+      state.setScene(SceneName.INVENTORY);
     } else if (key === 'M') {
-      session.setScene(SceneName.MAP);
+      state.setScene(SceneName.MAP);
     } else if (key === 'C') {
-      session.setScene(SceneName.CHARACTER);
+      state.setScene(SceneName.CHARACTER);
     } else if (key === 'ENTER') {
       if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
@@ -98,7 +98,7 @@ export class GameScene implements Scene {
         await this._handleEnter();
       }
     } else if (key === 'F1') {
-      session.setScene(SceneName.HELP);
+      state.setScene(SceneName.HELP);
     }
   };
 
@@ -110,8 +110,8 @@ export class GameScene implements Scene {
   };
 
   private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
-    const { session } = this.game;
-    const playerUnit = session.getPlayerUnit();
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
     const direction = getDirection(key);
     const coordinates = Coordinates.plusDirection(playerUnit.getCoordinates(), direction);
 
@@ -156,8 +156,8 @@ export class GameScene implements Scene {
         }
       }
     } else {
-      const ability = session.getQueuedAbility();
-      session.setQueuedAbility(null);
+      const ability = state.getQueuedAbility();
+      state.setQueuedAbility(null);
       if (ability) {
         if (ability.isEnabled(playerUnit) && ability.isLegal(playerUnit, coordinates)) {
           order = AbilityOrder.create({ ability, direction });
@@ -178,8 +178,8 @@ export class GameScene implements Scene {
   };
 
   private _handleAbilityKey = async (hotkey: Key) => {
-    const { session } = this.game;
-    const playerUnit = session.getPlayerUnit();
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
     const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
     const ability = playerUnitClass.getAbilityForHotkey(hotkey, playerUnit);
     if (ability) {
@@ -188,21 +188,21 @@ export class GameScene implements Scene {
   };
 
   private _handleAbility = async (ability: UnitAbility) => {
-    const { session } = this.game;
-    const playerUnit = session.getPlayerUnit();
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
     if (ability.isEnabled(playerUnit)) {
-      if (session.getQueuedAbility() === ability) {
-        session.setQueuedAbility(null);
+      if (state.getQueuedAbility() === ability) {
+        state.setQueuedAbility(null);
       } else {
-        session.setQueuedAbility(ability);
+        state.setQueuedAbility(ability);
       }
     }
   };
 
   private _handleEnter = async () => {
     const { mapController } = this;
-    const { session } = this.game;
-    const playerUnit = session.getPlayerUnit();
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
     const map = playerUnit.getMap();
     const coordinates = playerUnit.getCoordinates();
     const nextCoordinates = Coordinates.plusDirection(
@@ -231,8 +231,8 @@ export class GameScene implements Scene {
   };
 
   private _handleModifierKeyDown = async (key: ModifierKey) => {
-    const { session } = this.game;
-    const playerUnit = session.getPlayerUnit();
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
     switch (key) {
       case ModifierKey.SHIFT: {
         for (const abilityName of [
@@ -243,7 +243,7 @@ export class GameScene implements Scene {
           if (playerUnit.hasAbility(abilityName)) {
             const ability = playerUnit.getAbilityForName(abilityName);
             if (ability?.isEnabled(playerUnit)) {
-              session.setQueuedAbility(ability);
+              state.setQueuedAbility(ability);
             }
           }
         }
@@ -252,7 +252,7 @@ export class GameScene implements Scene {
       case ModifierKey.ALT: {
         const ability = playerUnit.getAbilityForName(AbilityName.DASH);
         if (ability?.isEnabled(playerUnit)) {
-          session.setQueuedAbility(ability);
+          state.setQueuedAbility(ability);
         }
         break;
       }
@@ -260,10 +260,10 @@ export class GameScene implements Scene {
   };
 
   private _handleModifierKeyUp = async (key: ModifierKey) => {
-    const { session } = this.game;
+    const { state } = this.game;
     switch (key) {
       case ModifierKey.SHIFT: {
-        const queuedAbility = session.getQueuedAbility();
+        const queuedAbility = state.getQueuedAbility();
         if (queuedAbility) {
           // TODO need to centralize this logic
           const possibleAbilities = [
@@ -272,14 +272,14 @@ export class GameScene implements Scene {
             AbilityName.SHOOT_FROSTBOLT
           ];
           if (possibleAbilities.includes(queuedAbility.name)) {
-            session.setQueuedAbility(null);
+            state.setQueuedAbility(null);
           }
         }
         break;
       }
       case ModifierKey.ALT: {
-        if (session.getQueuedAbility()?.name === AbilityName.DASH) {
-          session.setQueuedAbility(null);
+        if (state.getQueuedAbility()?.name === AbilityName.DASH) {
+          state.setQueuedAbility(null);
         }
         break;
       }
@@ -287,8 +287,8 @@ export class GameScene implements Scene {
   };
 
   private _handleKeyDownInShrineMenu = async (command: KeyCommand) => {
-    const { session } = this.game;
-    const shrineMenuState = checkNotNull(session.getShrineMenuState());
+    const { state } = this.game;
+    const shrineMenuState = checkNotNull(state.getShrineMenuState());
     switch (command.key) {
       case 'UP':
         shrineMenuState.selectPreviousOption();
@@ -302,15 +302,15 @@ export class GameScene implements Scene {
         } else {
           const selectedOption = shrineMenuState.getSelectedOption();
           await selectedOption.onUse(this.game);
-          session.closeShrineMenu();
+          state.closeShrineMenu();
         }
     }
   };
 
   handleClick = async ({ pixel }: ClickCommand) => {
-    const { session } = this.game;
+    const { state } = this.game;
     // TODO I wish we had a widget library...
-    const playerUnit = session.getPlayerUnit();
+    const playerUnit = state.getPlayerUnit();
     const abilityRects = this._getAbilityRects(playerUnit);
     for (const [abilityName, rect] of abilityRects) {
       if (Rect.containsPoint(rect, pixel)) {
@@ -325,28 +325,28 @@ export class GameScene implements Scene {
       if (Rect.containsPoint(rect, pixel)) {
         switch (icon) {
           case TopMenuIcon.MAP:
-            session.setScene(SceneName.MAP);
+            state.setScene(SceneName.MAP);
             return;
           case TopMenuIcon.INVENTORY:
-            session.prepareInventoryScreen(session.getPlayerUnit());
-            session.setScene(SceneName.INVENTORY);
+            state.prepareInventoryScreen(state.getPlayerUnit());
+            state.setScene(SceneName.INVENTORY);
             return;
           case TopMenuIcon.CHARACTER:
-            session.setScene(SceneName.CHARACTER);
+            state.setScene(SceneName.CHARACTER);
             return;
           case TopMenuIcon.HELP:
-            session.setScene(SceneName.HELP);
+            state.setScene(SceneName.HELP);
             return;
         }
       }
     }
 
-    if (session.isShowingShrineMenu()) {
+    if (state.isShowingShrineMenu()) {
       const shrineOptionRects = this._getShrineOptionRects();
       for (const [option, rect] of shrineOptionRects) {
         if (Rect.containsPoint(rect, pixel)) {
           await option.onUse(this.game);
-          session.closeShrineMenu();
+          state.closeShrineMenu();
           return;
         }
       }
@@ -389,8 +389,8 @@ export class GameScene implements Scene {
   };
 
   private _pixelToGrid = ({ x: pixelX, y: pixelY }: Pixel): Coordinates => {
-    const { session, config } = this.game;
-    const playerUnit = session.getPlayerUnit();
+    const { state, config } = this.game;
+    const playerUnit = state.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     const { screenWidth, screenHeight } = config;
     return {
@@ -437,8 +437,8 @@ export class GameScene implements Scene {
   };
 
   private _getShrineOptionRects = (): [ShrineOption, Rect][] => {
-    const { session, config } = this.game;
-    const shrineMenuState = session.getShrineMenuState();
+    const { state, config } = this.game;
+    const shrineMenuState = state.getShrineMenuState();
     const shrineOptionRects: [ShrineOption, Rect][] = [];
     const { screenWidth, screenHeight } = config;
     for (let i = 0; i < shrineMenuState.options.length; i++) {
@@ -455,7 +455,7 @@ export class GameScene implements Scene {
   };
 
   render = async (graphics: Graphics) => {
-    const { session } = this.game;
+    const { state } = this.game;
     graphics.fillRect(
       {
         left: 0,
@@ -475,15 +475,15 @@ export class GameScene implements Scene {
     }
 
     if (Feature.isEnabled(Feature.BUSY_INDICATOR)) {
-      if (session.isTurnInProgress()) {
+      if (state.isTurnInProgress()) {
         this._drawTurnProgressIndicator(graphics);
       }
     }
   };
 
   private _renderTicker = async (graphics: Graphics) => {
-    const { session, ticker } = this.game;
-    const messages = ticker.getRecentMessages(session.getTurn());
+    const { state, ticker } = this.game;
+    const messages = ticker.getRecentMessages(state.getTurn());
 
     const left = 0;
     const top = 0;
@@ -506,8 +506,8 @@ export class GameScene implements Scene {
   };
 
   private _drawTurnProgressIndicator = (graphics: Graphics) => {
-    const { session } = this.game;
-    if (session.isTurnInProgress()) {
+    const { state } = this.game;
+    if (state.isTurnInProgress()) {
       const width = 20;
       const height = 20;
       const left = graphics.getWidth() - width;

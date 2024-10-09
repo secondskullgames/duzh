@@ -6,10 +6,10 @@ import { Game } from '@main/core/Game';
  * Fully reset the game and show the title screen.
  */
 export const showTitleScreen = async (game: Game) => {
-  const { session, mapController, musicController } = game;
-  session.reset();
+  const { state, mapController, musicController } = game;
+  state.reset();
   mapController.reset();
-  session.setScene(SceneName.TITLE);
+  state.setScene(SceneName.TITLE);
   if (Feature.isEnabled(Feature.TITLE_MUSIC)) {
     const evilTheme = await musicController.loadMusic('evil');
     musicController.playMusic(evilTheme);

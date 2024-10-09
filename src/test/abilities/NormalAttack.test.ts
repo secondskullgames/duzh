@@ -1,5 +1,5 @@
 import Unit from '@main/units/Unit';
-import { Session } from '@main/core/Session';
+import { GameState } from '@main/core/GameState';
 import MapInstance from '@main/maps/MapInstance';
 import { Direction } from '@lib/geometry/Direction';
 import { Game } from '@main/core/Game';
@@ -36,8 +36,8 @@ describe('NormalAttack', () => {
     } as unknown as Unit;
     jest.mocked(map.getUnit).mockReturnValue(targetUnit);
     const coordinates = { x: 2, y: 1 };
-    const session = {} as Session;
-    const game = { session } as Game;
+    const state = {} as GameState;
+    const game = { state } as Game;
     await new NormalAttack().use(unit, coordinates, game);
     expect(_attackUnit).toHaveBeenCalled();
   });
@@ -69,8 +69,8 @@ describe('NormalAttack', () => {
     } as unknown as Unit;
     jest.mocked(map.getUnit).mockReturnValue(null);
     const coordinates = { x: 2, y: 1 };
-    const session = {} as Session;
-    const game = { session } as Game;
+    const state = {} as GameState;
+    const game = { state } as Game;
     await new NormalAttack().use(unit, coordinates, game);
     expect(_attackUnit).not.toHaveBeenCalled();
   });

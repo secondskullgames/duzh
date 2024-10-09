@@ -25,7 +25,7 @@ export const attackUnit = async (
   attack: Attack,
   game: Game
 ) => {
-  const { soundPlayer, session, ticker } = game;
+  const { soundPlayer, state, ticker } = game;
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).beforeAttack?.(
@@ -49,7 +49,7 @@ export const attackUnit = async (
   attacker.recordDamageDealt(defendResult.damageTaken);
   soundPlayer.playSound(attack.sound);
   const message = attack.getDamageLogMessage(attacker, defender, defendResult);
-  ticker.log(message, { turn: session.getTurn() });
+  ticker.log(message, { turn: state.getTurn() });
 
   attacker.refreshCombat();
   defender.refreshCombat();
