@@ -6,10 +6,9 @@ import { Activity } from '../units/Activity';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { sleep } from '@lib/utils/promises';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { Game } from '@main/core/Game';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s fireball hit ${target.getName()} for ${damageTaken} damage!`;
@@ -19,13 +18,13 @@ export const shootFireball = async (
   unit: Unit,
   direction: Direction,
   damage: number,
-  session: Session,
-  state: GameState
+  game: Game
 ) => {
+  const { soundPlayer, state, ticker } = game;
   const { dx, dy } = Direction.getOffsets(direction);
   unit.setDirection(direction);
 
-  const map = session.getMap();
+  const map = unit.getMap();
   const coordinatesList = [];
   let { x, y } = Coordinates.plusDirection(unit.getCoordinates(), direction);
   while (map.contains({ x, y }) && !isBlocked({ x, y }, map)) {
@@ -36,20 +35,20 @@ export const shootFireball = async (
 
   const targetUnit = map.getUnit({ x, y });
   if (targetUnit) {
-    state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
-    await playFireballAnimation(unit, direction, coordinatesList, targetUnit, state);
+    soundPlayer.playSound(Sounds.PLAYER_HITS_ENEMY);
+    await playFireballAnimation(unit, direction, coordinatesList, targetUnit, game);
     const adjustedDamage = await dealDamage(damage, {
       sourceUnit: unit,
       targetUnit
     });
     const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-    session.getTicker().log(message, { turn: session.getTurn() });
+    ticker.log(message, { turn: state.getTurn() });
     if (targetUnit.getLife() <= 0) {
       await sleep(100);
-      await die(targetUnit, state, session);
+      await die(targetUnit, game);
     }
   } else {
-    await playFireballAnimation(unit, direction, coordinatesList, null, state);
+    await playFireballAnimation(unit, direction, coordinatesList, null, game);
   }
 };
 
@@ -63,8 +62,9 @@ const playFireballAnimation = async (
   direction: Direction,
   coordinatesList: Coordinates[],
   target: Unit | null,
-  state: GameState
+  game: Game
 ) => {
+  const { projectileFactory } = game;
   const map = source.getMap();
 
   // first frame
@@ -80,9 +80,11 @@ const playFireballAnimation = async (
 
   // fireball movement frames
   for (const coordinates of visibleCoordinatesList) {
-    const projectile = await state
-      .getProjectileFactory()
-      .createFireball(coordinates, map, direction);
+    const projectile = await projectileFactory.createFireball(
+      coordinates,
+      map,
+      direction
+    );
     map.addProjectile(projectile);
     await sleep(50);
     map.removeProjectile(projectile);

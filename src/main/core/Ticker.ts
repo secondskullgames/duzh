@@ -1,4 +1,5 @@
 import { clear, tail } from '@lib/utils/arrays';
+import { injectable } from 'inversify';
 
 const maxTurnsAgo = 8;
 const maxMessages = 2;
@@ -12,6 +13,7 @@ type Context = Readonly<{
   turn: number;
 }>;
 
+@injectable()
 export default class Ticker {
   private readonly messages: Message[] = [];
 

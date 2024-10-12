@@ -3,8 +3,7 @@ import Unit from '@main/units/Unit';
 import Sprite from '@main/graphics/sprites/Sprite';
 import MapInstance from '@main/maps/MapInstance';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
+import { Game } from '@main/core/Game';
 
 export enum SpawnerState {
   ALIVE = 'ALIVE',
@@ -63,14 +62,15 @@ export default class Spawner extends GameObject {
     this._isBlocking = isBlocking;
   }
 
-  playTurnAction = async (state: GameState, session: Session) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  playTurnAction = async (game: Game) => {
     if (this._state === SpawnerState.DEAD) {
       return;
     }
 
     this.cooldown = Math.max(this.cooldown - 1, 0);
 
-    const map = session.getMap();
+    const { map } = this;
     for (const spawnedUnit of [...this.spawnedUnits]) {
       if (!map.unitExists(spawnedUnit)) {
         this.spawnedUnits.delete(spawnedUnit);

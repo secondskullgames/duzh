@@ -1,8 +1,7 @@
 import { ItemProc } from './ItemProc';
 import Unit from '../units/Unit';
 import { ItemCategory } from '@models/ItemCategory';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { Game } from '@main/core/Game';
 
 type Props = Readonly<{
   name: string;
@@ -24,8 +23,8 @@ export default class InventoryItem {
     this.tooltip = tooltip ?? null;
   }
 
-  use = async (unit: Unit, state: GameState, session: Session) => {
-    await this.onUse(this, unit, state, session);
+  use = async (unit: Unit, game: Game) => {
+    await this.onUse(this, unit, game);
   };
 
   getTooltip = (): string | null => this.tooltip;

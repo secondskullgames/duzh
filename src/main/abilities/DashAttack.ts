@@ -7,11 +7,10 @@ import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { offsetsToDirection, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { moveUnit } from '@main/actions/moveUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { sleep } from '@lib/utils/promises';
 import { getEnemyUnit, isBlocked } from '@main/maps/MapUtils';
+import { Game } from '@main/core/Game';
 
 const attack: Attack = {
   sound: Sounds.SPECIAL_ATTACK,
@@ -57,13 +56,8 @@ export class DashAttack implements UnitAbility {
     return !isBlocked(onePlus, map) && !isBlocked(twoPlus, map);
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
-    const map = session.getMap();
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+    const map = unit.getMap();
     let { dx, dy } = Coordinates.difference(unit.getCoordinates(), coordinates);
     dx = Math.sign(dx);
     dy = Math.sign(dy);
@@ -92,15 +86,15 @@ export class DashAttack implements UnitAbility {
           const behindCoordinates = Coordinates.plus(targetCoordinates, { dx, dy });
           if (!isBlocked(behindCoordinates, map)) {
             const direction = offsetsToDirection({ dx, dy });
-            await _doKnockback(targetUnit, direction, session, state);
-            await moveUnit(unit, targetCoordinates, session, state);
+            await _doKnockback(targetUnit, direction, game);
+            await moveUnit(unit, targetCoordinates, game);
           }
           if (i === numTiles - 1) {
-            await attackUnit(unit, targetUnit, attack, session, state);
+            await attackUnit(unit, targetUnit, attack, game);
             targetUnit.setStunned(DashAttack.STUN_DURATION);
           }
         } else if (!isBlocked(targetCoordinates, map)) {
-          await moveUnit(unit, targetCoordinates, session, state);
+          await moveUnit(unit, targetCoordinates, game);
         }
         await sleep(100);
       }
@@ -108,15 +102,10 @@ export class DashAttack implements UnitAbility {
   };
 }
 
-const _doKnockback = async (
-  targetUnit: Unit,
-  direction: Direction,
-  session: Session,
-  state: GameState
-) => {
+const _doKnockback = async (targetUnit: Unit, direction: Direction, game: Game) => {
   const targetCoordinates = Coordinates.plusDirection(
     targetUnit.getCoordinates(),
     direction
   );
-  await moveUnit(targetUnit, targetCoordinates, session, state);
+  await moveUnit(targetUnit, targetCoordinates, game);
 };

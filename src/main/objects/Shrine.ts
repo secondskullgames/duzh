@@ -1,21 +1,20 @@
 import GameObject, { ObjectType } from './GameObject';
 import MapInstance from '@main/maps/MapInstance';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import DynamicSprite from '@main/graphics/sprites/DynamicSprite';
+import { Game } from '@main/core/Game';
 
 type Props = Readonly<{
   name: string;
   coordinates: Coordinates;
   map: MapInstance;
   sprite: DynamicSprite<Shrine>;
-  onUse: (state: GameState, session: Session) => void /** TODO surely needs more args */;
+  onUse: (game: Game) => void;
 }>;
 
 export default class Shrine extends GameObject {
   private _isDepleted: boolean;
-  private readonly onUse: (state: GameState, session: Session) => void;
+  private readonly onUse: (game: Game) => void;
 
   constructor({ name, coordinates, map, sprite, onUse }: Props) {
     super({
@@ -35,9 +34,9 @@ export default class Shrine extends GameObject {
 
   isDepleted = (): boolean => this._isDepleted;
 
-  use = (state: GameState, session: Session): void => {
+  use = (game: Game): void => {
     if (!this._isDepleted) {
-      this.onUse(state, session);
+      this.onUse(game);
       this._isDepleted = true;
     }
   };

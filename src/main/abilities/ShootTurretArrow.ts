@@ -10,10 +10,9 @@ import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { dealDamage } from '@main/actions/dealDamage';
 import { sleep } from '@lib/utils/promises';
 import { die } from '@main/actions/die';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { Game } from '@main/core/Game';
 
 export class ShootTurretArrow implements UnitAbility {
   static readonly MANA_COST = 5;
@@ -26,13 +25,9 @@ export class ShootTurretArrow implements UnitAbility {
 
   isLegal = () => true; // TODO
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
-    const map = session.getMap();
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+    const { soundPlayer, state, ticker } = game;
+    const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
@@ -48,20 +43,20 @@ export class ShootTurretArrow implements UnitAbility {
     const targetUnit = map.getUnit(targetCoordinates);
     if (targetUnit) {
       const damage = getRangedDamage(unit);
-      state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
-      await this._playArrowAnimation(unit, direction, coordinatesList, targetUnit, state);
+      soundPlayer.playSound(Sounds.PLAYER_HITS_ENEMY);
+      await this._playArrowAnimation(unit, direction, coordinatesList, targetUnit, game);
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
         targetUnit
       });
       const message = this._getDamageLogMessage(unit, targetUnit, adjustedDamage);
-      session.getTicker().log(message, { turn: session.getTurn() });
+      ticker.log(message, { turn: state.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);
-        await die(targetUnit, state, session);
+        await die(targetUnit, game);
       }
     } else {
-      await this._playArrowAnimation(unit, direction, coordinatesList, null, state);
+      await this._playArrowAnimation(unit, direction, coordinatesList, null, game);
     }
   };
 
@@ -78,8 +73,9 @@ export class ShootTurretArrow implements UnitAbility {
     direction: Direction,
     coordinatesList: Coordinates[],
     target: Unit | null,
-    state: GameState
+    game: Game
   ) => {
+    const { projectileFactory } = game;
     const map = source.getMap();
 
     // first frame
@@ -95,9 +91,7 @@ export class ShootTurretArrow implements UnitAbility {
 
     // arrow movement frames
     for (const coordinates of visibleCoordinatesList) {
-      const projectile = await state
-        .getProjectileFactory()
-        .createArrow(coordinates, map, direction);
+      const projectile = await projectileFactory.createArrow(coordinates, map, direction);
       map.addProjectile(projectile);
       await sleep(50);
       map.removeProjectile(projectile);

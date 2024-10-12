@@ -9,18 +9,17 @@ import Sounds from '@main/sounds/Sounds';
 import Unit from '@main/units/Unit';
 import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
 import MapInstance from '@main/maps/MapInstance';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { getBonus } from '@main/maps/MapUtils';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import Shrine from '@main/objects/Shrine';
-import { ShrineMenuState, ShrineOption } from '@main/core/session/ShrineMenuState';
+import { ShrineMenuState, ShrineOption } from '@main/core/state/ShrineMenuState';
 import { randChoice, sample } from '@lib/utils/random';
 import { checkNotNull } from '@lib/utils/preconditions';
 import Door, { DoorState } from '@main/objects/Door';
 import { DoorDirection } from '@models/DoorDirection';
 import { inject, injectable } from 'inversify';
+import { Game } from '@main/core/Game';
 
 @injectable()
 export default class ObjectFactory {
@@ -96,16 +95,18 @@ export default class ObjectFactory {
 
     const lifeToGain = 10;
 
-    const onUse = async (unit: Unit, state: GameState, session: Session) => {
-      if (unit === session.getPlayerUnit()) {
+    const onUse = async (unit: Unit, game: Game) => {
+      const { soundPlayer, state, ticker } = game;
+      if (unit === state.getPlayerUnit()) {
         if (unit.getLife() < unit.getMaxLife()) {
           const lifeGained = unit.gainLife(lifeToGain);
-          state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
-          session
-            .getTicker()
-            .log(`${unit.getName()} used a health globe and gained ${lifeGained} life.`, {
-              turn: session.getTurn()
-            });
+          soundPlayer.playSound(Sounds.HEALTH_GLOBE);
+          ticker.log(
+            `${unit.getName()} used a health globe and gained ${lifeGained} life.`,
+            {
+              turn: state.getTurn()
+            }
+          );
           const map = unit.getMap();
           const _this = getBonus(map, unit.getCoordinates())!;
           map.removeObject(_this);
@@ -136,16 +137,18 @@ export default class ObjectFactory {
 
     const manaToGain = 10;
 
-    const onUse = async (unit: Unit, state: GameState, session: Session) => {
-      if (unit === session.getPlayerUnit()) {
+    const onUse = async (unit: Unit, game: Game) => {
+      const { soundPlayer, state, ticker } = game;
+      if (unit === state.getPlayerUnit()) {
         if (unit.getMana() < unit.getMaxMana()) {
           const manaGained = unit.gainMana(manaToGain);
-          state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
-          session
-            .getTicker()
-            .log(`${unit.getName()} used a mana globe and gained ${manaGained} mana.`, {
-              turn: session.getTurn()
-            });
+          soundPlayer.playSound(Sounds.HEALTH_GLOBE);
+          ticker.log(
+            `${unit.getName()} used a mana globe and gained ${manaGained} mana.`,
+            {
+              turn: state.getTurn()
+            }
+          );
           const map = unit.getMap();
           const _this = getBonus(map, unit.getCoordinates())!;
           map.removeObject(_this);
@@ -177,8 +180,9 @@ export default class ObjectFactory {
 
     const radius = 7;
 
-    const onUse = async (unit: Unit, state: GameState, session: Session) => {
-      if (unit === session.getPlayerUnit()) {
+    const onUse = async (unit: Unit, game: Game) => {
+      const { soundPlayer, ticker, state } = game;
+      if (unit === state.getPlayerUnit()) {
         const playerX = unit.getCoordinates().x;
         const playerY = unit.getCoordinates().y;
 
@@ -190,12 +194,10 @@ export default class ObjectFactory {
             }
           }
         }
-        state.getSoundPlayer().playSound(Sounds.HEALTH_GLOBE);
-        session
-          .getTicker()
-          .log(`${unit.getName()} used a vision globe and revealed nearby tiles.`, {
-            turn: session.getTurn()
-          });
+        soundPlayer.playSound(Sounds.HEALTH_GLOBE);
+        ticker.log(`${unit.getName()} used a vision globe and revealed nearby tiles.`, {
+          turn: state.getTurn()
+        });
         const _this = getBonus(map, unit.getCoordinates())!;
         map.removeObject(_this);
       }
@@ -215,69 +217,70 @@ export default class ObjectFactory {
     map: MapInstance
   ): Promise<GameObject> => {
     const sprite = await this.spriteFactory.createShrineSprite();
-    const onUse = (state: GameState, session: Session) => {
+    const onUse = (game: Game) => {
+      const { state } = game;
       const options = [];
-      const playerUnit = checkNotNull(session.getPlayerUnit());
+      const playerUnit = checkNotNull(state.getPlayerUnit());
 
       // grouped by key so we do not present redundant options for the same stat
       const possibleStatOptions: Record<string, ShrineOption[]> = {
         mana: [
           {
             label: '+5 Mana',
-            onUse: async (state: GameState) => {
+            onUse: async (game: Game) => {
               playerUnit.increaseMaxMana(5);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              game.soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ],
         life: [
           {
             label: '+10 Life',
-            onUse: async (state: GameState) => {
+            onUse: async (game: Game) => {
               playerUnit.increaseMaxLife(10);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              game.soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ],
         lifePerTurn: [
           {
             label: '+0.5 Life Per Turn',
-            onUse: async (state: GameState) => {
+            onUse: async (game: Game) => {
               playerUnit.increaseLifePerTurn(0.5);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              game.soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ],
         manaPerTurn: [
           {
             label: '+0.5 Mana Per Turn',
-            onUse: async (state: GameState) => {
+            onUse: async (game: Game) => {
               playerUnit.increaseManaPerTurn(0.5);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              game.soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ],
         meleeDamage: [
           {
             label: '+1 Melee Damage',
-            onUse: async (state: GameState) => {
+            onUse: async (game: Game) => {
               playerUnit.increaseMeleeDamage(1);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              game.soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ],
         missileDamage: [
           {
             label: '+2 Missile Damage',
-            onUse: async (state: GameState) => {
+            onUse: async (game: Game) => {
               playerUnit.increaseRangedDamage(2);
               // TODO
-              state.getSoundPlayer().playSound(Sounds.USE_POTION);
+              game.soundPlayer.playSound(Sounds.USE_POTION);
             }
           }
         ]
@@ -291,7 +294,7 @@ export default class ObjectFactory {
       const shrineMenuState = new ShrineMenuState({
         options
       });
-      session.setShrineMenuState(shrineMenuState);
+      state.setShrineMenuState(shrineMenuState);
     };
 
     return new Shrine({

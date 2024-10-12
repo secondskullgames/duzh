@@ -10,7 +10,6 @@ import { Graphics } from '@lib/graphics/Graphics';
 import { Feature } from '@main/utils/features';
 import Unit from '@main/units/Unit';
 import { Rect } from '@lib/geometry/Rect';
-import { GameConfig } from '@main/core/GameConfig';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { checkNotNull } from '@lib/utils/preconditions';
@@ -18,8 +17,8 @@ import { AbilityName } from '@main/abilities/AbilityName';
 import { type UnitAbility } from '@main/abilities/UnitAbility';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { formatTimestamp } from '@lib/utils/time';
-import { Engine } from '@main/core/Engine';
 import { inject, injectable } from 'inversify';
+import { Game } from '@main/core/Game';
 
 const HUD_FILENAME = 'brick_hud_3';
 
@@ -39,18 +38,16 @@ export default class HUDRenderer implements Renderer {
   private readonly MIDDLE_PANE_WIDTH: number;
 
   constructor(
-    @inject(GameConfig)
-    gameConfig: GameConfig,
-    @inject(Engine)
-    private readonly engine: Engine,
+    @inject(Game)
+    private readonly game: Game,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
     @inject(ImageFactory)
     private readonly imageFactory: ImageFactory
   ) {
-    this.TOP = gameConfig.screenHeight - HEIGHT;
-    this.WIDTH = gameConfig.screenWidth;
-    this.MIDDLE_PANE_WIDTH = gameConfig.screenWidth - LEFT_PANE_WIDTH - RIGHT_PANE_WIDTH;
+    this.TOP = game.config.screenHeight - HEIGHT;
+    this.WIDTH = game.config.screenWidth;
+    this.MIDDLE_PANE_WIDTH = game.config.screenWidth - LEFT_PANE_WIDTH - RIGHT_PANE_WIDTH;
   }
 
   /**
@@ -64,10 +61,10 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderFrame = async (graphics: Graphics) => {
-    const { engine, imageFactory } = this;
-    const session = engine.getSession();
+    const { game, imageFactory } = this;
+    const { state } = game;
     const fillColor = (() => {
-      const playerUnit = session.getPlayerUnit();
+      const playerUnit = state.getPlayerUnit();
       if (playerUnit.getEffects().hasEffect(StatusEffect.STUNNED)) {
         return Colors.GRAY_128;
       } else {
@@ -89,9 +86,8 @@ export default class HUDRenderer implements Renderer {
    * Renders the bottom-left area of the screen, showing information about the player
    */
   private _renderLeftPanel = (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
-    const playerUnit = session.getPlayerUnit();
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
 
     const lines = [];
     if (playerUnit.getEffects().hasEffect(StatusEffect.STUNNED)) {
@@ -163,10 +159,9 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderMiddlePanel = async (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { state } = this.game;
     const top = this.TOP + BORDER_MARGIN + BORDER_PADDING;
-    const playerUnit = session.getPlayerUnit();
+    const playerUnit = state.getPlayerUnit();
     const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
     const isNumberedAbility = (ability: UnitAbility) =>
       ability.name !== AbilityName.ATTACK &&
@@ -240,24 +235,23 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderRightPanel = (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
-    const playerUnit = session.getPlayerUnit();
-    const turn = session.getTurn();
-    const mapIndex = session.getMapIndex();
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
+    const turn = state.getTurn();
+    const map = playerUnit.getMap();
 
     const left =
       LEFT_PANE_WIDTH + this.MIDDLE_PANE_WIDTH + BORDER_MARGIN + BORDER_PADDING;
     const top = this.TOP + BORDER_MARGIN + BORDER_PADDING;
 
-    const lines = [`Turn: ${turn}`, `Floor: ${mapIndex + 1}`];
+    const lines = [`Turn: ${turn}`, `Floor: ${map.levelNumber}`];
     const killsToNextLevel = playerUnit.getKillsToNextLevel();
     if (killsToNextLevel !== null) {
       lines.push(`Kills: ${playerUnit.getLifetimeKills()} (${killsToNextLevel})`);
     } else {
       lines.push(`Kills: ${playerUnit.getLifetimeKills()}`);
     }
-    lines.push(`Time: ${formatTimestamp(session.getElapsedTime())}`);
+    lines.push(`Time: ${formatTimestamp(state.getElapsedTime())}`);
 
     for (let i = 0; i < lines.length; i++) {
       const y = top + LINE_HEIGHT * i;
@@ -277,10 +271,10 @@ export default class HUDRenderer implements Renderer {
     topLeft: Pixel,
     graphics: Graphics
   ) => {
-    const { imageFactory, engine } = this;
-    const session = engine.getSession();
-    const playerUnit = session.getPlayerUnit();
-    const queuedAbility = session.getQueuedAbility();
+    const { imageFactory } = this;
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
+    const queuedAbility = state.getQueuedAbility();
 
     let borderColor: Color;
 

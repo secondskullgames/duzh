@@ -134,9 +134,7 @@ export default class MapInstance {
   });
 
   isTileRevealed = (coordinates: Coordinates): boolean =>
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    window.jwb?.debug?.isMapRevealed() || !!this.revealedTiles.get(coordinates);
+    !!this.revealedTiles.get(coordinates);
 
   revealTile = (coordinates: Coordinates) => {
     this.revealedTiles.put(coordinates, true);

@@ -32,8 +32,8 @@ import MapItem from '@main/objects/MapItem';
 import ObjectFactory from '@main/objects/ObjectFactory';
 import { Direction } from '@lib/geometry/Direction';
 import { DoorDirection } from '@models/DoorDirection';
-import { Engine } from '@main/core/Engine';
 import { inject, injectable } from 'inversify';
+import { Game } from '@main/core/Game';
 
 @injectable()
 export class GeneratedMapFactory {
@@ -47,12 +47,10 @@ export class GeneratedMapFactory {
     @inject(UnitFactory)
     private readonly unitFactory: UnitFactory,
     @inject(ObjectFactory)
-    private readonly objectFactory: ObjectFactory,
-    @inject(Engine)
-    private readonly engine: Engine
+    private readonly objectFactory: ObjectFactory
   ) {}
 
-  loadMap = async (mapId: string): Promise<MapInstance> => {
+  loadMap = async (mapId: string, game: Game): Promise<MapInstance> => {
     const model = await this.modelLoader.loadGeneratedMapModel(mapId);
     const algorithm = model.algorithm;
     const tileSet =
@@ -64,8 +62,9 @@ export class GeneratedMapFactory {
     const units = await this._generateUnits(map, model);
     for (const unit of units) {
       map.addUnit(unit);
+      game.state.addUnit(unit);
     }
-    const objects = await this._generateObjects(map, model);
+    const objects = await this._generateObjects(map, model, game);
     objects.push(...(await this._addDoors(map, model)));
     for (const object of objects) {
       map.addObject(object);
@@ -167,10 +166,11 @@ export class GeneratedMapFactory {
 
   private _generateObjects = async (
     map: MapInstance,
-    mapModel: GeneratedMapModel
+    mapModel: GeneratedMapModel,
+    game: Game
   ): Promise<GameObject[]> => {
-    const { engine, itemFactory } = this;
-    const state = engine.getState();
+    const { itemFactory } = this;
+    const { state } = game;
     const objects: GameObject[] = [];
     const candidateLocations = this._getCandidateObjectLocations(map);
 
@@ -195,7 +195,7 @@ export class GeneratedMapFactory {
       } else {
         const chosenItemSpec = await itemFactory.chooseRandomMapItemForLevel(
           mapModel.levelNumber,
-          state
+          game
         );
         itemSpecs.push(chosenItemSpec);
         if (chosenItemSpec.type === ItemType.EQUIPMENT) {

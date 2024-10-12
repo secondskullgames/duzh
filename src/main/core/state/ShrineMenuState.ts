@@ -1,6 +1,6 @@
-import { GameState } from '@main/core/GameState';
+import { Game } from '@main/core/Game';
 
-type OnUseFunc = (state: GameState) => Promise<void>;
+type OnUseFunc = (game: Game) => Promise<void>;
 
 export type ShrineOption = Readonly<{
   label: string;

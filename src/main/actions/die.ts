@@ -2,12 +2,11 @@ import { gameOver } from './gameOver';
 import Unit from '@main/units/Unit';
 import Sounds from '@main/sounds/Sounds';
 import { random, weightedRandom } from '@lib/utils/random';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import MapInstance from '@main/maps/MapInstance';
 import GameObject from '@main/objects/GameObject';
 import { ItemType } from '@main/items/ItemFactory';
+import { Game } from '@main/core/Game';
 
 // TODO this should be enemy-specific? add loot tables
 const ITEM_DROP_CHANCE = 0.05;
@@ -16,29 +15,31 @@ const HEALTH_GLOBE_DROP_CHANCE = 1;
 const MANA_GLOBE_DROP_CHANCE = 0;
 const VISION_GLOBE_DROP_CHANCE = 0;
 
-export const die = async (unit: Unit, state: GameState, session: Session) => {
-  const playerUnit = session.getPlayerUnit();
+export const die = async (unit: Unit, game: Game) => {
+  const { soundPlayer, state, ticker } = game;
+  const playerUnit = state.getPlayerUnit();
   const coordinates = unit.getCoordinates();
   const map = unit.getMap();
 
   map.removeUnit(unit);
+  state.removeUnit(unit);
   if (unit === playerUnit) {
-    await gameOver(state, session);
+    await gameOver(game);
     return;
   } else {
-    state.getSoundPlayer().playSound(Sounds.ENEMY_DIES);
-    session.getTicker().log(`${unit.getName()} dies!`, { turn: session.getTurn() });
+    soundPlayer.playSound(Sounds.ENEMY_DIES);
+    ticker.log(`${unit.getName()} dies!`, { turn: state.getTurn() });
 
     if (_canDropItems(unit)) {
       const randomRoll = random();
       if (randomRoll < GLOBE_DROP_CHANCE) {
-        const globe = await _createGlobe(coordinates, map, state);
+        const globe = await _createGlobe(coordinates, map, game);
         map.addObject(globe);
       } else if (randomRoll < GLOBE_DROP_CHANCE + ITEM_DROP_CHANCE) {
-        const item = await _createItem(coordinates, map, state);
+        const item = await _createItem(coordinates, map, game);
         map.addObject(item);
-        session.getTicker().log(`${unit.getName()} dropped a ${item.getName()}.`, {
-          turn: session.getTurn()
+        ticker.log(`${unit.getName()} dropped a ${item.getName()}.`, {
+          turn: state.getTurn()
         });
       }
     }
@@ -52,9 +53,9 @@ const _canDropItems = (unit: Unit): boolean => {
 const _createGlobe = async (
   coordinates: Coordinates,
   map: MapInstance,
-  state: GameState
+  game: Game
 ): Promise<GameObject> => {
-  const objectFactory = state.getObjectFactory();
+  const { objectFactory } = game;
   return weightedRandom([
     {
       key: 'health_globe',
@@ -77,10 +78,10 @@ const _createGlobe = async (
 const _createItem = async (
   coordinates: Coordinates,
   map: MapInstance,
-  state: GameState
+  game: Game
 ): Promise<GameObject> => {
-  const itemFactory = state.getItemFactory();
-  const itemSpec = await itemFactory.chooseRandomMapItemForLevel(map.levelNumber, state);
+  const { state, itemFactory } = game;
+  const itemSpec = await itemFactory.chooseRandomMapItemForLevel(map.levelNumber, game);
   state.recordEquipmentGenerated(itemSpec.id);
   switch (itemSpec.type) {
     case ItemType.CONSUMABLE:

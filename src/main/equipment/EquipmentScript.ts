@@ -1,10 +1,9 @@
 import Equipment from './Equipment';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { GameState } from '@main/core/GameState';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { Session } from '@main/core/Session';
 import { isBlocked } from '@main/maps/MapUtils';
 import { ShootBolt } from '@main/abilities/ShootBolt';
+import { Game } from '@main/core/Game';
 
 export type EquipmentScriptName =
   | 'bolt_sword'
@@ -15,26 +14,20 @@ export type EquipmentScriptName =
 type EquipmentProc = (
   equipment: Equipment,
   target: Coordinates,
-  state: GameState,
-  session: Session
+  game: Game
 ) => Promise<void>;
 
 export type EquipmentScript = Readonly<{
   beforeAttack?: EquipmentProc;
   afterAttack?: EquipmentProc;
   afterRangedAttack?: EquipmentProc;
-  onMove?: EquipmentProc;
+  afterMove?: EquipmentProc;
 }>;
 
 const BoltSwordScript: EquipmentScript = {
-  onMove: async (
-    equipment: Equipment,
-    target: Coordinates,
-    state: GameState,
-    session: Session
-  ) => {
-    const map = session.getMap();
+  afterMove: async (equipment: Equipment, target: Coordinates, game: Game) => {
     const unit = checkNotNull(equipment.getUnit());
+    const map = unit.getMap();
     // TODO need to store this somewhere, on the equipment maybe?
     const ability = new ShootBolt();
 
@@ -49,64 +42,46 @@ const BoltSwordScript: EquipmentScript = {
       map.isTileRevealed(coordinates) &&
       map.getUnit(coordinates)
     ) {
-      await ability.use(unit, target, session, state);
+      await ability.use(unit, target, game);
     }
   }
 };
 
 const BowOfFrostScript: EquipmentScript = {
-  afterRangedAttack: async (
-    equipment: Equipment,
-    target: Coordinates,
-    _: GameState,
-    session: Session
-  ) => {
+  afterRangedAttack: async (equipment: Equipment, target: Coordinates, game: Game) => {
+    const { state, ticker } = game;
     const unit = checkNotNull(equipment.getUnit());
     const map = unit.getMap();
     const targetUnit = map.getUnit(target);
     if (targetUnit) {
       targetUnit.setFrozen(3);
-      session
-        .getTicker()
-        .log(`${targetUnit.getName()} is frozen!`, { turn: session.getTurn() });
+      ticker.log(`${targetUnit.getName()} is frozen!`, { turn: state.getTurn() });
     }
   }
 };
 
 const BowOfFireScript: EquipmentScript = {
-  afterRangedAttack: async (
-    equipment: Equipment,
-    target: Coordinates,
-    _: GameState,
-    session: Session
-  ) => {
+  afterRangedAttack: async (equipment: Equipment, target: Coordinates, game: Game) => {
+    const { state, ticker } = game;
     const unit = checkNotNull(equipment.getUnit());
     const map = unit.getMap();
     const targetUnit = map.getUnit(target);
     if (targetUnit) {
       targetUnit.setBurning(5);
-      session
-        .getTicker()
-        .log(`${targetUnit.getName()} is burned!`, { turn: session.getTurn() });
+      ticker.log(`${targetUnit.getName()} is burned!`, { turn: state.getTurn() });
     }
   }
 };
 
 const FireSwordScript: EquipmentScript = {
-  afterAttack: async (
-    equipment: Equipment,
-    target: Coordinates,
-    _: GameState,
-    session: Session
-  ) => {
+  afterAttack: async (equipment: Equipment, target: Coordinates, game: Game) => {
+    const { state, ticker } = game;
     const unit = checkNotNull(equipment.getUnit());
     const map = unit.getMap();
     const targetUnit = map.getUnit(target);
     if (targetUnit) {
       targetUnit.setBurning(5);
-      session
-        .getTicker()
-        .log(`${targetUnit.getName()} is burned!`, { turn: session.getTurn() });
+      ticker.log(`${targetUnit.getName()} is burned!`, { turn: state.getTurn() });
     }
   }
 };

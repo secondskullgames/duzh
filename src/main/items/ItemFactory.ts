@@ -13,8 +13,6 @@ import { getEquipmentTooltip } from '@main/equipment/EquipmentUtils';
 import { shootFireball } from '@main/actions/shootFireball';
 import { SceneName } from '@main/scenes/SceneName';
 import { floorFire } from '@main/actions/floorFire';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { revealMap } from '@main/maps/MapUtils';
 import { castFreeze } from '@main/actions/castFreeze';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
@@ -26,6 +24,7 @@ import { weightedRandom, WeightedRandomChoice } from '@lib/utils/random';
 import { radialChainLightning } from '@main/actions/radialChainLightning';
 import { injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
+import { Game } from '@main/core/Game';
 
 export enum ItemType {
   EQUIPMENT = 'equipment',
@@ -45,19 +44,13 @@ export class ItemFactory {
   ) {}
 
   createLifePotion = (lifeRestored: number): InventoryItem => {
-    const onUse: ItemProc = async (
-      item: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
-      state.getSoundPlayer().playSound(Sounds.USE_POTION);
+    const onUse: ItemProc = async (item: InventoryItem, unit: Unit, game: Game) => {
+      const { soundPlayer, state, ticker } = game;
+      soundPlayer.playSound(Sounds.USE_POTION);
       const lifeGained = unit.gainLife(lifeRestored);
-      session
-        .getTicker()
-        .log(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`, {
-          turn: session.getTurn()
-        });
+      ticker.log(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`, {
+        turn: state.getTurn()
+      });
     };
 
     return new InventoryItem({
@@ -69,19 +62,13 @@ export class ItemFactory {
   };
 
   createManaPotion = (name: string, manaRestored: number): InventoryItem => {
-    const onUse: ItemProc = async (
-      item: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
-      state.getSoundPlayer().playSound(Sounds.USE_POTION);
+    const onUse: ItemProc = async (item: InventoryItem, unit: Unit, game: Game) => {
+      const { soundPlayer, state, ticker } = game;
+      soundPlayer.playSound(Sounds.USE_POTION);
       const manaGained = unit.gainMana(manaRestored);
-      session
-        .getTicker()
-        .log(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`, {
-          turn: session.getTurn()
-        });
+      ticker.log(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`, {
+        turn: state.getTurn()
+      });
     };
 
     return new InventoryItem({
@@ -106,14 +93,10 @@ export class ItemFactory {
     name: string,
     damage: number
   ): Promise<InventoryItem> => {
-    const onUse: ItemProc = async (
-      _: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
-      session.setScene(SceneName.GAME);
-      await floorFire(unit, damage, state, session);
+    const onUse: ItemProc = async (_: InventoryItem, unit: Unit, game: Game) => {
+      const { state } = game;
+      state.setScene(SceneName.GAME);
+      await floorFire(unit, damage, game);
     };
 
     return new InventoryItem({
@@ -128,14 +111,10 @@ export class ItemFactory {
     name: string,
     damage: number
   ): Promise<InventoryItem> => {
-    const onUse: ItemProc = async (
-      _: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
-      session.setScene(SceneName.GAME);
-      await radialChainLightning(unit, damage, state, session);
+    const onUse: ItemProc = async (_: InventoryItem, unit: Unit, game: Game) => {
+      const { state } = game;
+      state.setScene(SceneName.GAME);
+      await radialChainLightning(unit, damage, game);
     };
 
     return new InventoryItem({
@@ -163,14 +142,9 @@ export class ItemFactory {
     name: string,
     damage: number
   ): Promise<InventoryItem> => {
-    const onUse: ItemProc = async (
-      _: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
-      session.setScene(SceneName.GAME);
-      await shootFireball(unit, unit.getDirection(), damage, session, state);
+    const onUse: ItemProc = async (_: InventoryItem, unit: Unit, game: Game) => {
+      game.state.setScene(SceneName.GAME);
+      await shootFireball(unit, unit.getDirection(), damage, game);
     };
 
     return new InventoryItem({
@@ -185,14 +159,9 @@ export class ItemFactory {
     name: string,
     duration: number
   ): Promise<InventoryItem> => {
-    const onUse: ItemProc = async (
-      _: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
-      session.setScene(SceneName.GAME);
-      await castFreeze(unit, 5, duration, session, state);
+    const onUse: ItemProc = async (_: InventoryItem, unit: Unit, game: Game) => {
+      game.state.setScene(SceneName.GAME);
+      await castFreeze(unit, 5, duration, game);
     };
 
     return new InventoryItem({
@@ -204,14 +173,9 @@ export class ItemFactory {
   };
 
   createInventoryEquipment = async (modelName: string): Promise<InventoryItem> => {
-    const onUse: ItemProc = async (
-      _: InventoryItem,
-      unit: Unit,
-      state: GameState,
-      session: Session
-    ) => {
+    const onUse: ItemProc = async (_: InventoryItem, unit: Unit, game: Game) => {
       const equipment = await this.createEquipment(modelName);
-      return equipItem(equipment, unit, session, state);
+      return equipItem(equipment, unit, game);
     };
 
     const model = await this.modelLoader.loadEquipmentModel(modelName);
@@ -314,8 +278,9 @@ export class ItemFactory {
 
   chooseRandomMapItemForLevel = async (
     levelNumber: number,
-    state: GameState
+    game: Game
   ): Promise<ItemSpec> => {
+    const { state } = game;
     const allEquipmentModels = await this.modelLoader.loadAllEquipmentModels();
     const allConsumableModels = await this.modelLoader.loadAllConsumableModels();
     const possibleEquipmentModels = allEquipmentModels

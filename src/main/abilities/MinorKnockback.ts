@@ -7,10 +7,9 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
+import { Game } from '@main/core/Game';
 
 export class MinorKnockback implements UnitAbility {
   static readonly MANA_COST = 8;
@@ -26,13 +25,8 @@ export class MinorKnockback implements UnitAbility {
     return hasEnemyUnit(unit, coordinates);
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
-    const map = session.getMap();
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+    const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
 
     unit.setDirection(direction);
@@ -60,12 +54,12 @@ export class MinorKnockback implements UnitAbility {
           return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} recoils!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, session, state);
+      await attackUnit(unit, targetUnit, attack, game);
 
       if (targetUnit.getLife() > 0) {
         const first = Coordinates.plusDirection(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !isBlocked(first, map)) {
-          await moveUnit(targetUnit, first, session, state);
+          await moveUnit(targetUnit, first, game);
         }
       }
     }

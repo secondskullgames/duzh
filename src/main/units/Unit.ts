@@ -18,13 +18,12 @@ import { UnitType } from '@models/UnitType';
 import { UnitModel } from '@models/UnitModel';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { check, checkArgument, checkNotNull } from '@lib/utils/preconditions';
 import { die } from '@main/actions/die';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { UnitStatusEffects } from '@main/units/effects/UnitStatusEffects';
 import { dealDamage } from '@main/actions/dealDamage';
+import { Game } from '@main/core/Game';
 
 /**
  * Regenerate this raw amount of health each turn
@@ -383,7 +382,7 @@ export default class Unit implements Entity {
 
   getPlayerUnitClass = (): PlayerUnitClass | null => this.playerUnitClass;
 
-  upkeep = async (state: GameState, session: Session) => {
+  upkeep = async (game: Game) => {
     // life regeneration
     this.lifeRemainder += this.lifePerTurn;
     const deltaLife = Math.floor(this.lifeRemainder);
@@ -393,7 +392,7 @@ export default class Unit implements Entity {
       this.life = this.getMaxLife();
     }
     if (this.life <= 0) {
-      await die(this, state, session);
+      await die(this, game);
     }
 
     // mana regeneration
@@ -409,13 +408,13 @@ export default class Unit implements Entity {
     }
   };
 
-  endOfTurn = async (state: GameState, session: Session) => {
+  endOfTurn = async (game: Game) => {
     for (const effect of this.effects.getEffects()) {
       switch (effect) {
         case StatusEffect.BURNING:
           await dealDamage(2, { targetUnit: this });
           if (this.life <= 0) {
-            await die(this, state, session);
+            await die(this, game);
           }
           break;
         default:

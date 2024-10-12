@@ -9,42 +9,37 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';
 import Entity from '@main/entities/Entity';
-import { Debug } from '@main/core/Debug';
-import { GameConfig } from '@main/core/GameConfig';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { getItem, getMovableBlock } from '@main/maps/MapUtils';
 import { ShrineMenuRenderer } from '@main/graphics/renderers/ShrineMenuRenderer';
-import { Engine } from '@main/core/Engine';
+import { Game } from '@main/core/Game';
 import { inject, injectable } from 'inversify';
+import MapInstance from '@main/maps/MapInstance';
 
 const SHADOW_FILENAME = 'shadow';
 
 @injectable()
 export default class GameScreenViewportRenderer implements Renderer {
   constructor(
-    @inject(GameConfig)
-    private readonly gameConfig: GameConfig,
-    @inject(Engine)
-    private readonly engine: Engine,
+    @inject(Game)
+    private readonly game: Game,
     @inject(ImageFactory)
     private readonly imageFactory: ImageFactory,
     @inject(ShrineMenuRenderer)
-    private readonly shrineMenuRenderer: ShrineMenuRenderer,
-    @inject(Debug)
-    private readonly debug: Debug
+    private readonly shrineMenuRenderer: ShrineMenuRenderer
   ) {}
 
   render = async (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { state } = this.game;
+    const map = state.getPlayerUnit().getMap();
     graphics.fill(Colors.BLACK);
 
-    this._renderTiles(graphics);
-    await this._renderEntities(graphics);
+    this._renderTiles(map, graphics);
+    await this._renderEntities(map, graphics);
 
     // TODO: consider a generic menu system
-    if (session.isShowingShrineMenu()) {
+    if (state.isShowingShrineMenu()) {
       await this._renderShrineMenu(graphics);
     }
   };
@@ -76,25 +71,20 @@ export default class GameScreenViewportRenderer implements Renderer {
    * @return the top left pixel
    */
   private _gridToPixel = ({ x, y }: Coordinates): Pixel => {
-    const { engine } = this;
-    const session = engine.getSession();
-    const playerUnit = session.getPlayerUnit();
+    const { state, config } = this.game;
+    const playerUnit = state.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     return {
-      x: (x - playerX) * TILE_WIDTH + (this.gameConfig.screenWidth - TILE_WIDTH) / 2,
-      y: (y - playerY) * TILE_HEIGHT + (this.gameConfig.screenHeight - TILE_HEIGHT) / 2
+      x: (x - playerX) * TILE_WIDTH + (config.screenWidth - TILE_WIDTH) / 2,
+      y: (y - playerY) * TILE_HEIGHT + (config.screenHeight - TILE_HEIGHT) / 2
     };
   };
 
-  private _renderTiles = (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
-    const map = session.getMap();
-
+  private _renderTiles = (map: MapInstance, graphics: Graphics) => {
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         const coordinates = { x, y };
-        if (this._isTileRevealed(coordinates)) {
+        if (this._isTileRevealed(coordinates, map)) {
           const tile = map.getTile(coordinates);
           if (tile) {
             this._renderElement(tile, coordinates, graphics);
@@ -107,16 +97,12 @@ export default class GameScreenViewportRenderer implements Renderer {
   /**
    * Render all entities, one row at a time.
    */
-  private _renderEntities = async (graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
-    const map = session.getMap();
-
+  private _renderEntities = async (map: MapInstance, graphics: Graphics) => {
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         const coordinates = { x, y };
-        if (this._isTileRevealed(coordinates)) {
-          await this._drawShadow(coordinates, graphics);
+        if (this._isTileRevealed(coordinates, map)) {
+          await this._drawShadow(coordinates, map, graphics);
           for (const object of map.getObjects(coordinates)) {
             this._renderElement(object, coordinates, graphics);
           }
@@ -159,21 +145,20 @@ export default class GameScreenViewportRenderer implements Renderer {
     }
   };
 
-  private _isTileRevealed = (coordinates: Coordinates): boolean => {
-    const { engine } = this;
-    const session = engine.getSession();
-    const map = session.getMap();
-    return this.debug.isMapRevealed() || map.isTileRevealed(coordinates);
+  private _isTileRevealed = (coordinates: Coordinates, map: MapInstance): boolean => {
+    return map.isTileRevealed(coordinates);
   };
 
-  private _drawShadow = async (coordinates: Coordinates, graphics: Graphics) => {
-    const { engine } = this;
-    const session = engine.getSession();
-    const map = session.getMap();
+  private _drawShadow = async (
+    coordinates: Coordinates,
+    map: MapInstance,
+    graphics: Graphics
+  ) => {
+    const { state } = this.game;
     const unit = map.getUnit(coordinates);
 
     if (unit) {
-      if (unit === session.getPlayerUnit()) {
+      if (unit === state.getPlayerUnit()) {
         return this._drawEllipse(coordinates, Colors.GREEN, graphics);
       } else {
         return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);
@@ -205,9 +190,9 @@ export default class GameScreenViewportRenderer implements Renderer {
    */
   private _isPixelOnScreen = ({ x, y }: Pixel): boolean =>
     x >= -TILE_WIDTH &&
-    x <= this.gameConfig.screenWidth + TILE_WIDTH &&
+    x <= this.game.config.screenWidth + TILE_WIDTH &&
     y >= -TILE_HEIGHT &&
-    y <= this.gameConfig.screenHeight + TILE_HEIGHT;
+    y <= this.game.config.screenHeight + TILE_HEIGHT;
 
   private _renderShrineMenu = async (graphics: Graphics) => {
     await this.shrineMenuRenderer.render(graphics);

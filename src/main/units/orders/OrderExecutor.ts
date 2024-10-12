@@ -1,8 +1,6 @@
 import { OrderType, UnitOrder } from '@main/units/orders/UnitOrder';
 import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
 import { check } from '@lib/utils/preconditions';
 import { getDoor, getMovableBlock, getSpawner, isBlocked } from '@main/maps/MapUtils';
 import { attackObject } from '@main/actions/attackObject';
@@ -15,31 +13,25 @@ import { openDoor } from '@main/actions/openDoor';
 import { pushBlock } from '@main/actions/pushBlock';
 import { SpellOrder } from '@main/units/orders/SpellOrder';
 import { AbilityName } from '@main/abilities/AbilityName';
-import { injectable } from 'inversify';
+import { Game } from '@main/core/Game';
 
-@injectable()
 export class OrderExecutor {
-  executeOrder = async (
-    unit: Unit,
-    order: UnitOrder,
-    state: GameState,
-    session: Session
-  ) => {
+  executeOrder = async (unit: Unit, order: UnitOrder, game: Game) => {
     switch (order.type) {
       case OrderType.ABILITY: {
-        await this._executeAbilityOrder(unit, order, session, state);
+        await this._executeAbilityOrder(unit, order, game);
         break;
       }
       case OrderType.ATTACK: {
-        await this._executeAttackOrder(unit, order, session, state);
+        await this._executeAttackOrder(unit, order, game);
         break;
       }
       case OrderType.MOVE: {
-        await this._executeMoveOrder(unit, order, session, state);
+        await this._executeMoveOrder(unit, order, game);
         break;
       }
       case OrderType.SPELL: {
-        await this._executeSpellOrder(unit, order, session, state);
+        await this._executeSpellOrder(unit, order, game);
         break;
       }
       case OrderType.STAY:
@@ -47,23 +39,13 @@ export class OrderExecutor {
     }
   };
 
-  private _executeAbilityOrder = async (
-    unit: Unit,
-    order: AbilityOrder,
-    session: Session,
-    state: GameState
-  ) => {
+  private _executeAbilityOrder = async (unit: Unit, order: AbilityOrder, game: Game) => {
     const { ability, direction } = order;
     const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
-    await ability.use(unit, coordinates, session, state);
+    await ability.use(unit, coordinates, game);
   };
 
-  private _executeAttackOrder = async (
-    unit: Unit,
-    order: AttackOrder,
-    session: Session,
-    state: GameState
-  ) => {
+  private _executeAttackOrder = async (unit: Unit, order: AttackOrder, game: Game) => {
     const map = unit.getMap();
     const { direction } = order;
     unit.setDirection(direction);
@@ -73,52 +55,42 @@ export class OrderExecutor {
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
       const normalAttack = targetUnit.getAbilityForName(AbilityName.ATTACK);
-      await normalAttack.use(unit, coordinates, session, state);
+      await normalAttack.use(unit, coordinates, game);
     } else {
       const spawner = getSpawner(map, coordinates);
       if (spawner && spawner.isBlocking()) {
-        await attackObject(unit, spawner, state);
+        await attackObject(unit, spawner, game);
       }
     }
   };
 
-  private _executeMoveOrder = async (
-    unit: Unit,
-    order: MoveOrder,
-    session: Session,
-    state: GameState
-  ) => {
-    const map = session.getMap();
+  private _executeMoveOrder = async (unit: Unit, order: MoveOrder, game: Game) => {
+    const map = unit.getMap();
     const { coordinates } = order;
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
     check(map.contains(coordinates));
     if (!isBlocked(coordinates, map)) {
-      await walk(unit, direction, session, state);
+      await walk(unit, direction, game);
       return;
     } else {
       const door = getDoor(map, coordinates);
       if (door) {
-        await openDoor(unit, door, state);
+        await openDoor(unit, door, game);
         return;
       }
 
       const block = getMovableBlock(map, coordinates);
       if (block) {
-        await pushBlock(unit, block, session, state);
+        await pushBlock(unit, block, game);
         return;
       }
     }
   };
 
-  private _executeSpellOrder = async (
-    unit: Unit,
-    order: SpellOrder,
-    session: Session,
-    state: GameState
-  ) => {
+  private _executeSpellOrder = async (unit: Unit, order: SpellOrder, game: Game) => {
     const { ability, coordinates } = order;
-    await ability.use(unit, coordinates, session, state);
+    await ability.use(unit, coordinates, game);
   };
 }

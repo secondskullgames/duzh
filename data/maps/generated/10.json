@@ -1,7 +1,7 @@
 {
   "$schema": "../../../src/gen-schema/GeneratedMapModel.schema.json",
-  "id": "9",
-  "levelNumber": 9,
+  "id": "10",
+  "levelNumber": 10,
   "algorithm": "PATH",
   "tileSet": "dungeon_cga",
   "width": 40,

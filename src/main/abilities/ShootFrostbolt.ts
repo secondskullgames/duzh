@@ -3,9 +3,8 @@ import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { shootFrostbolt } from '@main/actions/shootFrostbolt';
+import { Game } from '@main/core/Game';
 
 export class ShootFrostbolt implements UnitAbility {
   static readonly DAMAGE = 10;
@@ -19,12 +18,7 @@ export class ShootFrostbolt implements UnitAbility {
 
   isLegal = () => true; // TODO
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.spendMana(this.manaCost);
     await shootFrostbolt(
@@ -32,8 +26,7 @@ export class ShootFrostbolt implements UnitAbility {
       direction,
       ShootFrostbolt.DAMAGE,
       ShootFrostbolt.FREEZE_DURATION,
-      session,
-      state
+      game
     );
   };
 }

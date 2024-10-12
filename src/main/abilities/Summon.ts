@@ -5,9 +5,8 @@ import Sounds from '@main/sounds/Sounds';
 import BasicEnemyController from '@main/units/controllers/BasicEnemyController';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
+import { Game } from '@main/core/Game';
 
 export class Summon implements UnitAbility {
   static readonly MANA_COST = 25;
@@ -21,18 +20,14 @@ export class Summon implements UnitAbility {
   isLegal = (unit: Unit, coordinates: Coordinates) =>
     !isBlocked(coordinates, unit.getMap());
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
-    const map = session.getMap();
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+    const { soundPlayer, unitFactory } = game;
+    const map = unit.getMap();
     const unitClass = checkNotNull(unit.getSummonedUnitClass());
 
-    state.getSoundPlayer().playSound(Sounds.WIZARD_APPEAR);
+    soundPlayer.playSound(Sounds.WIZARD_APPEAR);
 
-    const summonedUnit = await state.getUnitFactory().createUnit({
+    const summonedUnit = await unitFactory.createUnit({
       unitClass,
       faction: unit.getFaction(),
       controller: new BasicEnemyController(),
@@ -41,6 +36,7 @@ export class Summon implements UnitAbility {
       map
     });
     map.addUnit(summonedUnit);
+    game.state.addUnit(unit);
     unit.spendMana(this.manaCost);
   };
 }

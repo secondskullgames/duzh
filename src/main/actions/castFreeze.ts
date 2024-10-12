@@ -1,8 +1,7 @@
 import Unit from '../units/Unit';
 import Sounds from '../sounds/Sounds';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isHostile } from '@main/units/UnitUtils';
+import { Game } from '@main/core/Game';
 
 const getLogMessage = (unit: Unit, target: Unit, duration: number): string => {
   return `${target.getName()} is frozen for ${duration} turns!`;
@@ -12,15 +11,15 @@ export const castFreeze = async (
   unit: Unit,
   radius: number,
   duration: number,
-  session: Session,
-  state: GameState
+  game: Game
 ) => {
+  const { soundPlayer, state, ticker } = game;
   const targetUnits = _getTargetUnits(unit, radius);
   for (const targetUnit of targetUnits) {
     targetUnit.setFrozen(duration);
-    state.getSoundPlayer().playSound(Sounds.SPECIAL_ATTACK); // TODO
+    soundPlayer.playSound(Sounds.SPECIAL_ATTACK); // TODO
     const message = getLogMessage(unit, targetUnit, duration);
-    session.getTicker().log(message, { turn: session.getTurn() });
+    ticker.log(message, { turn: state.getTurn() });
   }
 };
 

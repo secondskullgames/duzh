@@ -12,7 +12,7 @@ import Colors from '@main/graphics/Colors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Color } from '@lib/graphics/Color';
-import { Engine } from '@main/core/Engine';
+import { Game } from '@main/core/Game';
 import { inject, injectable } from 'inversify';
 
 const TITLE_FILENAME = 'title2';
@@ -22,8 +22,8 @@ export class TitleScene implements Scene {
   readonly name = SceneName.TITLE;
 
   constructor(
-    @inject(Engine)
-    private readonly engine: Engine,
+    @inject(Game)
+    private readonly game: Game,
     @inject(MapController)
     private readonly mapController: MapController,
     @inject(ImageFactory)
@@ -33,24 +33,22 @@ export class TitleScene implements Scene {
   ) {}
 
   private _handleStartGame = async () => {
-    const { engine, mapController } = this;
-    const session = engine.getSession();
+    const { mapController } = this;
+    const { state, ticker } = this.game;
     if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
-      await mapController.loadDebugMap();
+      await mapController.loadDebugMap(this.game);
     } else {
-      await mapController.loadFirstMap();
+      await mapController.loadFirstMap(this.game);
     }
-    session.startGameTimer();
-    session.setScene(SceneName.GAME);
-    session
-      .getTicker()
-      .log('Welcome to the Dungeons of Duzh!', { turn: session.getTurn() });
+    state.startGameTimer();
+    state.setScene(SceneName.GAME);
+    ticker.log('Welcome to the Dungeons of Duzh!', { turn: state.getTurn() });
     if (isMobileDevice()) {
-      session.getTicker().log('Press the ? icon in the upper-right for instructions.', {
-        turn: session.getTurn()
+      ticker.log('Press the ? icon in the upper-right for instructions.', {
+        turn: state.getTurn()
       });
     } else {
-      session.getTicker().log('Press F1 for instructions.', { turn: session.getTurn() });
+      ticker.log('Press F1 for instructions.', { turn: state.getTurn() });
     }
   };
 

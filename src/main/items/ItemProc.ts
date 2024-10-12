@@ -1,11 +1,5 @@
 import InventoryItem from './InventoryItem';
 import Unit from '../units/Unit';
-import { GameState } from '@main/core/GameState';
-import { Session } from '@main/core/Session';
+import { Game } from '@main/core/Game';
 
-export type ItemProc = (
-  item: InventoryItem,
-  unit: Unit,
-  state: GameState,
-  session: Session
-) => Promise<void>;
+export type ItemProc = (item: InventoryItem, unit: Unit, game: Game) => Promise<void>;

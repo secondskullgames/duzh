@@ -9,10 +9,9 @@ import { Color } from '@lib/graphics/Color';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import Colors from '@main/graphics/Colors';
 import { LINE_HEIGHT } from '@main/graphics/constants';
-import { GameConfig } from '@main/core/GameConfig';
 import { TextRenderer } from '@main/graphics/TextRenderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
-import { Engine } from '@main/core/Engine';
+import { Game } from '@main/core/Game';
 import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'bordered_background';
@@ -22,10 +21,8 @@ export class HelpScene implements Scene {
   readonly name = SceneName.HELP;
 
   constructor(
-    @inject(Engine)
-    private readonly engine: Engine,
-    @inject(GameConfig)
-    private readonly gameConfig: GameConfig,
+    @inject(Game)
+    private readonly game: Game,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
     @inject(ImageFactory)
@@ -33,13 +30,12 @@ export class HelpScene implements Scene {
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { engine } = this;
-    const session = engine.getSession();
+    const { state } = this.game;
     const { key, modifiers } = command;
 
     switch (key) {
       case 'F1':
-        session.showPrevScene();
+        state.showPrevScene();
         break;
       case 'ENTER':
         if (modifiers.includes(ModifierKey.ALT)) {
@@ -47,7 +43,7 @@ export class HelpScene implements Scene {
         }
         break;
       case 'ESCAPE':
-        session.setScene(SceneName.GAME);
+        state.setScene(SceneName.GAME);
     }
   };
 
@@ -55,9 +51,8 @@ export class HelpScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    const { engine } = this;
-    const session = engine.getSession();
-    session.setScene(SceneName.GAME);
+    const { state } = this.game;
+    state.setScene(SceneName.GAME);
   };
 
   render = async (graphics: Graphics) => {
@@ -66,8 +61,8 @@ export class HelpScene implements Scene {
     graphics.drawScaledImage(image, {
       left: 0,
       top: 0,
-      width: this.gameConfig.screenWidth,
-      height: this.gameConfig.screenHeight
+      width: this.game.config.screenWidth,
+      height: this.game.config.screenHeight
     });
 
     const left = 10;

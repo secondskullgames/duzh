@@ -22,11 +22,11 @@ type Props = Readonly<{
 }>;
 
 export default abstract class GameObject implements Entity {
-  private coordinates: Coordinates;
-  private map: MapInstance;
-  private readonly name: string;
-  private readonly objectType: ObjectType;
-  private readonly sprite: Sprite | null;
+  protected coordinates: Coordinates;
+  protected map: MapInstance;
+  protected readonly name: string;
+  protected readonly objectType: ObjectType;
+  protected readonly sprite: Sprite | null;
 
   protected constructor({ name, coordinates, map, objectType, sprite }: Props) {
     this.name = name;

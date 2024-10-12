@@ -8,9 +8,8 @@ import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { attackObject } from '@main/actions/attackObject';
 import { getSpawner } from '@main/maps/MapUtils';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
+import { Game } from '@main/core/Game';
 
 export class PiercingAttack implements UnitAbility {
   static readonly MANA_COST = 0;
@@ -26,13 +25,8 @@ export class PiercingAttack implements UnitAbility {
     return hasEnemyUnit(unit, coordinates);
   };
 
-  use = async (
-    unit: Unit,
-    coordinates: Coordinates,
-    session: Session,
-    state: GameState
-  ) => {
-    const map = session.getMap();
+  use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+    const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
@@ -57,7 +51,7 @@ export class PiercingAttack implements UnitAbility {
           return `${attackerName} hit ${defenderName} for ${damage} damage!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, session, state);
+      await attackUnit(unit, targetUnit, attack, game);
     }
 
     const nextCoordinates = Coordinates.plusDirection(coordinates, unit.getDirection());
@@ -82,17 +76,17 @@ export class PiercingAttack implements UnitAbility {
           return `${attackerName} hit ${defenderName} for ${damage} damage!`;
         }
       };
-      await attackUnit(unit, nextUnit, attack, session, state);
+      await attackUnit(unit, nextUnit, attack, game);
     }
 
     const spawner = getSpawner(map, coordinates);
     if (spawner && spawner.isBlocking()) {
-      await attackObject(unit, spawner, state);
+      await attackObject(unit, spawner, game);
     }
 
     const nextSpawner = getSpawner(map, nextCoordinates);
     if (nextSpawner && nextSpawner.isBlocking()) {
-      await attackObject(unit, nextSpawner, state);
+      await attackObject(unit, nextSpawner, game);
     }
   };
 }

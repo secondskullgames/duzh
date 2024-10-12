@@ -6,10 +6,9 @@ import { Activity } from '../units/Activity';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { sleep } from '@lib/utils/promises';
-import { Session } from '@main/core/Session';
-import { GameState } from '@main/core/GameState';
 import { isBlocked } from '@main/maps/MapUtils';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { Game } from '@main/core/Game';
 
 const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
   return `${unit.getName()}'s frostbolt hit ${target.getName()} for ${damageTaken} damage!`;
@@ -20,12 +19,12 @@ export const shootFrostbolt = async (
   direction: Direction,
   damage: number,
   freezeDuration: number,
-  session: Session,
-  state: GameState
+  game: Game
 ) => {
+  const { soundPlayer, ticker, state } = game;
   unit.setDirection(direction);
 
-  const map = session.getMap();
+  const map = unit.getMap();
   const coordinatesList = [];
   let coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
   while (map.contains(coordinates) && !isBlocked(coordinates, map)) {
@@ -35,25 +34,23 @@ export const shootFrostbolt = async (
 
   const targetUnit = map.getUnit(coordinates);
   if (targetUnit) {
-    state.getSoundPlayer().playSound(Sounds.PLAYER_HITS_ENEMY);
-    await playFrostboltAnimation(unit, direction, coordinatesList, targetUnit, state);
+    soundPlayer.playSound(Sounds.PLAYER_HITS_ENEMY);
+    await playFrostboltAnimation(unit, direction, coordinatesList, targetUnit, game);
     const adjustedDamage = await dealDamage(damage, {
       sourceUnit: unit,
       targetUnit
     });
     const message = getDamageLogMessage(unit, targetUnit, adjustedDamage);
-    session.getTicker().log(message, { turn: session.getTurn() });
+    ticker.log(message, { turn: state.getTurn() });
     if (targetUnit.getLife() <= 0) {
       await sleep(100);
-      await die(targetUnit, state, session);
+      await die(targetUnit, game);
     } else {
       targetUnit.setFrozen(freezeDuration);
-      session
-        .getTicker()
-        .log(`${targetUnit.getName()} is frozen!`, { turn: session.getTurn() });
+      ticker.log(`${targetUnit.getName()} is frozen!`, { turn: state.getTurn() });
     }
   } else {
-    await playFrostboltAnimation(unit, direction, coordinatesList, null, state);
+    await playFrostboltAnimation(unit, direction, coordinatesList, null, game);
   }
 };
 
@@ -62,8 +59,9 @@ const playFrostboltAnimation = async (
   direction: Direction,
   coordinatesList: Coordinates[],
   target: Unit | null,
-  state: GameState
+  game: Game
 ) => {
+  const { projectileFactory } = game;
   const map = source.getMap();
 
   // first frame
@@ -79,9 +77,11 @@ const playFrostboltAnimation = async (
 
   // frostbolt movement frames
   for (const coordinates of visibleCoordinatesList) {
-    const projectile = await state
-      .getProjectileFactory()
-      .createFrostbolt(coordinates, map, direction);
+    const projectile = await projectileFactory.createFrostbolt(
+      coordinates,
+      map,
+      direction
+    );
     map.addProjectile(projectile);
     await sleep(50);
     map.removeProjectile(projectile);
