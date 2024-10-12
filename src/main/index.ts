@@ -37,6 +37,7 @@ import MusicController from '@main/sounds/MusicController';
 import ObjectFactory from '@main/objects/ObjectFactory';
 import Ticker from '@main/core/Ticker';
 import { InventoryController } from '@main/controllers/InventoryController';
+import { ShrineController } from '@main/controllers/ShrineController';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -71,6 +72,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
     soundPlayer: container.get(SoundPlayer),
     mapController: await container.getAsync(MapController),
     inventoryController: await container.getAsync(InventoryController),
+    shrineController: await container.getAsync(ShrineController),
     ticker: new Ticker()
   };
   container.bind(Game).toConstantValue(game);
