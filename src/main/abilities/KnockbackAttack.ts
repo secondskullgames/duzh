@@ -6,11 +6,10 @@ import Sounds from '@main/sounds/Sounds';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { sleep } from '@lib/utils/promises';
-import { moveUnit } from '@main/actions/moveUnit';
-import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { isBlocked } from '@main/maps/MapUtils';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 import { Game } from '@main/core/Game';
+import { Attack, AttackResult } from '@main/controllers/UnitService';
 
 const TWO_TILES = false;
 
@@ -57,19 +56,19 @@ export class KnockbackAttack implements UnitAbility {
           return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} recoils!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, game);
+      await game.unitService.attackUnit(unit, targetUnit, attack, game);
 
       targetUnit.setStunned(KnockbackAttack.STUN_DURATION);
       if (targetUnit.getLife() > 0) {
         const first = Coordinates.plusDirection(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !isBlocked(first, map)) {
-          await moveUnit(targetUnit, first, game);
+          await game.unitService.moveUnit(targetUnit, first, game);
           if (TWO_TILES) {
             await sleep(75);
             if (targetUnit.getLife() > 0) {
               const second = Coordinates.plusDirection(first, direction);
               if (map.contains(second) && !isBlocked(second, map)) {
-                await moveUnit(targetUnit, second, game);
+                await game.unitService.moveUnit(targetUnit, second, game);
               }
             }
           }

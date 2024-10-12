@@ -3,17 +3,17 @@ import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { check } from '@lib/utils/preconditions';
 import { getDoor, getMovableBlock, getSpawner, isBlocked } from '@main/maps/MapUtils';
-import { attackObject } from '@main/actions/attackObject';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
 import { AttackOrder } from '@main/units/orders/AttackOrder';
 import { MoveOrder } from '@main/units/orders/MoveOrder';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { walk } from '@main/actions/walk';
 import { openDoor } from '@main/actions/openDoor';
 import { pushBlock } from '@main/actions/pushBlock';
 import { SpellOrder } from '@main/units/orders/SpellOrder';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { Game } from '@main/core/Game';
+import { Direction } from '@lib/geometry/Direction';
+import Sounds from '@main/sounds/Sounds';
 
 export class OrderExecutor {
   executeOrder = async (unit: Unit, order: UnitOrder, game: Game) => {
@@ -59,7 +59,7 @@ export class OrderExecutor {
     } else {
       const spawner = getSpawner(map, coordinates);
       if (spawner && spawner.isBlocking()) {
-        await attackObject(unit, spawner, game);
+        await game.unitService.attackObject(unit, spawner, game);
       }
     }
   };
@@ -72,7 +72,7 @@ export class OrderExecutor {
 
     check(map.contains(coordinates));
     if (!isBlocked(coordinates, map)) {
-      await walk(unit, direction, game);
+      await this._walk(unit, direction, game);
       return;
     } else {
       const door = getDoor(map, coordinates);
@@ -92,5 +92,22 @@ export class OrderExecutor {
   private _executeSpellOrder = async (unit: Unit, order: SpellOrder, game: Game) => {
     const { ability, coordinates } = order;
     await ability.use(unit, coordinates, game);
+  };
+
+  private _walk = async (unit: Unit, direction: Direction, game: Game) => {
+    const coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
+
+    const { soundPlayer, state } = game;
+    const map = unit.getMap();
+    if (!map.contains(coordinates) || isBlocked(coordinates, map)) {
+      // do nothing
+    } else {
+      await game.unitService.moveUnit(unit, coordinates, game);
+      const playerUnit = state.getPlayerUnit();
+      if (unit === playerUnit) {
+        soundPlayer.playSound(Sounds.FOOTSTEP);
+      }
+      unit.recordStepTaken();
+    }
   };
 }

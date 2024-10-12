@@ -4,7 +4,6 @@ import Unit from '@main/units/Unit';
 import Sounds from '@main/sounds/Sounds';
 import { Activity } from '@main/units/Activity';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { moveUnit } from '@main/actions/moveUnit';
 import { sleep } from '@lib/utils/promises';
 import { hypotenuse, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
@@ -51,7 +50,7 @@ export class Teleport implements UnitAbility {
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());
       await maybeSleep();
 
-      await moveUnit(unit, coordinates, game);
+      await game.unitService.moveUnit(unit, coordinates, game);
       await maybeSleep();
 
       soundPlayer.playSound(Sounds.WIZARD_APPEAR);

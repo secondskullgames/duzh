@@ -1,9 +1,6 @@
-import { doMapEvents } from '@main/actions/doMapEvents';
-import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 import Unit from '@main/units/Unit';
 import { sortBy } from '@lib/utils/arrays';
 import { Faction } from '@main/units/Faction';
-import { OrderExecutor } from '@main/units/orders/OrderExecutor';
 import GameObject, { ObjectType } from '@main/objects/GameObject';
 import Spawner from '@main/objects/Spawner';
 import { Game } from '@main/core/Game';
@@ -13,8 +10,6 @@ export interface Engine {
 }
 
 export class EngineImpl implements Engine {
-  private readonly orderExecutor = new OrderExecutor();
-
   playTurn = async (game: Game) => {
     const { state } = game;
     state.setTurnInProgress(true);
@@ -23,7 +18,7 @@ export class EngineImpl implements Engine {
     const sortedUnits = this._sortUnits(map.getAllUnits());
     for (const unit of sortedUnits) {
       if (unit.getLife() > 0) {
-        await this._playUnitTurnAction(unit, game);
+        await game.unitService.playUnitTurnAction(unit, game);
       }
     }
 
@@ -31,8 +26,8 @@ export class EngineImpl implements Engine {
       await this._playObjectTurnAction(object, game);
     }
 
-    updateRevealedTiles(map, state.getPlayerUnit());
-    await doMapEvents(map, game);
+    game.mapController.updateRevealedTiles(map, game);
+    await game.mapController.doMapEvents(map, game);
     // TODO weird place to jam this logic
     if (!state.getQueuedAbility()?.isEnabled(state.getPlayerUnit())) {
       state.setQueuedAbility(null);
@@ -40,18 +35,6 @@ export class EngineImpl implements Engine {
 
     state.nextTurn();
     state.setTurnInProgress(false);
-  };
-
-  private _playUnitTurnAction = async (unit: Unit, game: Game) => {
-    await unit.upkeep(game);
-    if (unit.getLife() <= 0) {
-      return;
-    }
-    if (unit.canMove()) {
-      const order = unit.getController().issueOrder(unit);
-      await this.orderExecutor.executeOrder(unit, order, game);
-    }
-    await unit.endOfTurn(game);
   };
 
   private _playObjectTurnAction = async (object: GameObject, game: Game) => {

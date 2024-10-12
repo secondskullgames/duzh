@@ -5,9 +5,9 @@ import { getMeleeDamage } from '@main/units/UnitUtils';
 import Sounds from '@main/sounds/Sounds';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 import { Game } from '@main/core/Game';
+import { Attack, AttackResult } from '@main/controllers/UnitService';
 
 /**
  * A one-turn variant of {@link StunAttack}
@@ -55,7 +55,7 @@ export class MinorStunAttack implements UnitAbility {
           return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} is stunned!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, game);
+      await game.unitService.attackUnit(unit, targetUnit, attack, game);
       targetUnit.setStunned(1);
     }
   };

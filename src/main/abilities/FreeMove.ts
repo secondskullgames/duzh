@@ -3,7 +3,6 @@ import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
 import Sounds from '@main/sounds/Sounds';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { moveUnit } from '@main/actions/moveUnit';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Direction } from '@lib/geometry/Direction';
 import { Game } from '@main/core/Game';
@@ -28,7 +27,7 @@ export class FreeMove implements UnitAbility {
     unit.setDirection(direction);
     const targetCoordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
     if (!isBlocked(targetCoordinates, map)) {
-      await moveUnit(unit, targetCoordinates, game);
+      await game.unitService.moveUnit(unit, targetCoordinates, game);
       unit.spendMana(this.manaCost);
     } else {
       soundPlayer.playSound(Sounds.BLOCKED);

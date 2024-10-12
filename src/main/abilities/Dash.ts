@@ -5,7 +5,6 @@ import Sounds from '../sounds/Sounds';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { sleep } from '@lib/utils/promises';
-import { moveUnit } from '@main/actions/moveUnit';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Direction } from '@lib/geometry/Direction';
 import { Game } from '@main/core/Game';
@@ -40,7 +39,7 @@ export class Dash implements UnitAbility {
       x += dx;
       y += dy;
       if (map.contains({ x, y }) && !isBlocked({ x, y }, map)) {
-        await moveUnit(unit, { x, y }, game);
+        await game.unitService.moveUnit(unit, { x, y }, game);
         moved = true;
         if (map.isTileRevealed({ x, y })) {
           await sleep(100);

@@ -1,19 +1,22 @@
 import MapFactory from './MapFactory';
 import UnitFactory from '../units/UnitFactory';
 import { checkNotNull } from '@lib/utils/preconditions';
-import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 import { SceneName } from '@main/scenes/SceneName';
 import MapInstance from '@main/maps/MapInstance';
 import MusicController from '@main/sounds/MusicController';
 import { MapType } from '@models/MapType';
 import { Game } from '@main/core/Game';
 import { inject, injectable } from 'inversify';
+import { Feature } from '@main/utils/features';
+import { spawnFogUnits } from '@main/actions/spawnFogUnits';
 
 export interface MapController {
   loadFirstMap: (game: Game) => Promise<void>;
   loadNextMap: (game: Game) => Promise<void>;
   loadPreviousMap: (game: Game) => Promise<void>;
   loadDebugMap: (game: Game) => Promise<void>;
+  doMapEvents: (map: MapInstance, game: Game) => Promise<void>;
+  updateRevealedTiles: (map: MapInstance, game: Game) => void;
 }
 
 export const MapController = Symbol('MapController');
@@ -39,7 +42,7 @@ export class MapControllerImpl implements MapController {
     );
     map.addUnit(playerUnit);
     state.addUnit(playerUnit);
-    updateRevealedTiles(map, playerUnit);
+    this.updateRevealedTiles(map, game);
     musicController.stop();
     if (map.music) {
       musicController.playMusic(map.music);
@@ -64,7 +67,7 @@ export class MapControllerImpl implements MapController {
       playerUnit.setCoordinates(map.getStartingCoordinates());
       playerUnit.setMap(map);
       map.addUnit(playerUnit);
-      updateRevealedTiles(map, playerUnit);
+      this.updateRevealedTiles(map, game);
       if (map.music) {
         musicController.playMusic(map.music);
       }
@@ -83,7 +86,7 @@ export class MapControllerImpl implements MapController {
     playerUnit.setMap(map);
     map.addUnit(playerUnit);
     playerUnit.setCoordinates(map.getStartingCoordinates());
-    updateRevealedTiles(map, playerUnit);
+    this.updateRevealedTiles(map, game);
     if (map.music) {
       musicController.playMusic(map.music);
     }
@@ -100,9 +103,32 @@ export class MapControllerImpl implements MapController {
     );
     map.addUnit(playerUnit);
     state.addUnit(playerUnit);
-    updateRevealedTiles(map, playerUnit);
+    this.updateRevealedTiles(map, game);
     musicController.stop();
-    updateRevealedTiles(map, state.getPlayerUnit());
+  };
+
+  doMapEvents = async (map: MapInstance, game: Game) => {
+    if (Feature.isEnabled(Feature.FOG_SHADES)) {
+      await spawnFogUnits(map, game);
+    }
+  };
+
+  /**
+   * Add any tiles the player can currently see to the map's revealed tiles list.
+   */
+  updateRevealedTiles = (map: MapInstance, game: Game) => {
+    const playerUnit = game.state.getPlayerUnit();
+    const { enabled, radius } = map.getFogParams();
+    if (enabled && radius) {
+      const { x: playerX, y: playerY } = playerUnit.getCoordinates();
+      for (let y = playerY - radius; y <= playerY + radius; y++) {
+        for (let x = playerX - radius; x <= playerX + radius; x++) {
+          if (map.contains({ x, y }) && !map.isTileRevealed({ x, y })) {
+            map.revealTile({ x, y });
+          }
+        }
+      }
+    }
   };
 
   private _loadMap = async (mapId: string, game: Game): Promise<MapInstance> => {

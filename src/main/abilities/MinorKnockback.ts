@@ -5,11 +5,10 @@ import { getMeleeDamage } from '@main/units/UnitUtils';
 import Sounds from '@main/sounds/Sounds';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { moveUnit } from '@main/actions/moveUnit';
-import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { isBlocked } from '@main/maps/MapUtils';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 import { Game } from '@main/core/Game';
+import { Attack, AttackResult } from '@main/controllers/UnitService';
 
 export class MinorKnockback implements UnitAbility {
   static readonly MANA_COST = 8;
@@ -54,12 +53,12 @@ export class MinorKnockback implements UnitAbility {
           return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} recoils!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, game);
+      await game.unitService.attackUnit(unit, targetUnit, attack, game);
 
       if (targetUnit.getLife() > 0) {
         const first = Coordinates.plusDirection(targetUnit.getCoordinates(), direction);
         if (map.contains(first) && !isBlocked(first, map)) {
-          await moveUnit(targetUnit, first, game);
+          await game.unitService.moveUnit(targetUnit, first, game);
         }
       }
     }

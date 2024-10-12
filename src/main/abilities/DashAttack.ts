@@ -6,11 +6,10 @@ import Sounds from '@main/sounds/Sounds';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { offsetsToDirection, pointAt } from '@lib/geometry/CoordinatesUtils';
-import { moveUnit } from '@main/actions/moveUnit';
-import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { sleep } from '@lib/utils/promises';
 import { getEnemyUnit, isBlocked } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';
+import { Attack, AttackResult } from '@main/controllers/UnitService';
 
 const attack: Attack = {
   sound: Sounds.SPECIAL_ATTACK,
@@ -87,14 +86,14 @@ export class DashAttack implements UnitAbility {
           if (!isBlocked(behindCoordinates, map)) {
             const direction = offsetsToDirection({ dx, dy });
             await _doKnockback(targetUnit, direction, game);
-            await moveUnit(unit, targetCoordinates, game);
+            await game.unitService.moveUnit(unit, targetCoordinates, game);
           }
           if (i === numTiles - 1) {
-            await attackUnit(unit, targetUnit, attack, game);
+            await game.unitService.attackUnit(unit, targetUnit, attack, game);
             targetUnit.setStunned(DashAttack.STUN_DURATION);
           }
         } else if (!isBlocked(targetCoordinates, map)) {
-          await moveUnit(unit, targetCoordinates, game);
+          await game.unitService.moveUnit(unit, targetCoordinates, game);
         }
         await sleep(100);
       }
@@ -107,5 +106,5 @@ const _doKnockback = async (targetUnit: Unit, direction: Direction, game: Game) 
     targetUnit.getCoordinates(),
     direction
   );
-  await moveUnit(targetUnit, targetCoordinates, game);
+  await game.unitService.moveUnit(targetUnit, targetCoordinates, game);
 };

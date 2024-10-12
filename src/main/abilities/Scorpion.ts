@@ -6,11 +6,10 @@ import { getMeleeDamage } from '@main/units/UnitUtils';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { moveUnit } from '@main/actions/moveUnit';
-import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { sleep } from '@lib/utils/promises';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';
+import { Attack, AttackResult } from '@main/controllers/UnitService';
 
 const attack: Attack = {
   sound: Sounds.PLAYER_HITS_ENEMY,
@@ -67,7 +66,7 @@ export class Scorpion implements UnitAbility {
           targetUnit &&
           Coordinates.equals(currentCoordinates, targetUnit.getCoordinates())
         ) {
-          await attackUnit(unit, targetUnit, attack, game);
+          await game.unitService.attackUnit(unit, targetUnit, attack, game);
         }
         break;
       }
@@ -87,7 +86,7 @@ export class Scorpion implements UnitAbility {
           dx: dx * (i - 1),
           dy: dy * (i - 1)
         });
-        await moveUnit(targetUnit, previousCoordinates, game);
+        await game.unitService.moveUnit(targetUnit, previousCoordinates, game);
         await sleep(75);
       }
     }

@@ -5,9 +5,9 @@ import Sounds from '@main/sounds/Sounds';
 import { getMeleeDamage } from '@main/units/UnitUtils';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 import { Game } from '@main/core/Game';
+import { Attack, AttackResult } from '@main/controllers/UnitService';
 
 export class StunAttack implements UnitAbility {
   static readonly DAMAGE_COEFFICIENT = 1;
@@ -49,7 +49,7 @@ export class StunAttack implements UnitAbility {
           return `${attackerName} hit ${defenderName} for ${damage} damage!  ${defenderName} is stunned!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, game);
+      await game.unitService.attackUnit(unit, targetUnit, attack, game);
       targetUnit.setStunned(StunAttack.STUN_DURATION);
     }
   };

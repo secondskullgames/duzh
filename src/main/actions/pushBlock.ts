@@ -1,4 +1,3 @@
-import { moveUnit } from './moveUnit';
 import { moveObject } from './moveObject';
 import Unit from '@main/units/Unit';
 import Block from '@main/objects/Block';
@@ -15,6 +14,6 @@ export const pushBlock = async (unit: Unit, block: Block, game: Game) => {
   const map = unit.getMap();
   if (map.contains(nextCoordinates) && !isBlocked(nextCoordinates, map)) {
     await moveObject(block, nextCoordinates, map);
-    await moveUnit(unit, coordinates, game);
+    await game.unitService.moveUnit(unit, coordinates, game);
   }
 };

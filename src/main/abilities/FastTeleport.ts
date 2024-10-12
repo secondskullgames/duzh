@@ -4,7 +4,6 @@ import Unit from '@main/units/Unit';
 import Sounds from '@main/sounds/Sounds';
 import { Activity } from '@main/units/Activity';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { moveUnit } from '@main/actions/moveUnit';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';
@@ -30,7 +29,7 @@ export class FastTeleport implements UnitAbility {
     const { soundPlayer } = game;
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
     unit.spendMana(this.manaCost);
-    await moveUnit(unit, coordinates, game);
+    await game.unitService.moveUnit(unit, coordinates, game);
     unit.setActivity(Activity.STANDING, 1, unit.getDirection());
     soundPlayer.playSound(Sounds.FOOTSTEP);
   };

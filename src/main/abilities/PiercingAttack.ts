@@ -5,11 +5,10 @@ import Sounds from '@main/sounds/Sounds';
 import { getMeleeDamage } from '@main/units/UnitUtils';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import { attackObject } from '@main/actions/attackObject';
 import { getSpawner } from '@main/maps/MapUtils';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 import { Game } from '@main/core/Game';
+import { Attack, AttackResult } from '@main/controllers/UnitService';
 
 export class PiercingAttack implements UnitAbility {
   static readonly MANA_COST = 0;
@@ -26,6 +25,7 @@ export class PiercingAttack implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
+    const { unitService } = game;
     const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -51,7 +51,7 @@ export class PiercingAttack implements UnitAbility {
           return `${attackerName} hit ${defenderName} for ${damage} damage!`;
         }
       };
-      await attackUnit(unit, targetUnit, attack, game);
+      await unitService.attackUnit(unit, targetUnit, attack, game);
     }
 
     const nextCoordinates = Coordinates.plusDirection(coordinates, unit.getDirection());
@@ -76,17 +76,17 @@ export class PiercingAttack implements UnitAbility {
           return `${attackerName} hit ${defenderName} for ${damage} damage!`;
         }
       };
-      await attackUnit(unit, nextUnit, attack, game);
+      await unitService.attackUnit(unit, nextUnit, attack, game);
     }
 
     const spawner = getSpawner(map, coordinates);
     if (spawner && spawner.isBlocking()) {
-      await attackObject(unit, spawner, game);
+      await unitService.attackObject(unit, spawner, game);
     }
 
     const nextSpawner = getSpawner(map, nextCoordinates);
     if (nextSpawner && nextSpawner.isBlocking()) {
-      await attackObject(unit, nextSpawner, game);
+      await unitService.attackObject(unit, nextSpawner, game);
     }
   };
 }

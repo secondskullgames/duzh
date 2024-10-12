@@ -38,6 +38,7 @@ import ObjectFactory from '@main/objects/ObjectFactory';
 import Ticker from '@main/core/Ticker';
 import { InventoryController } from '@main/controllers/InventoryController';
 import { ShrineController } from '@main/controllers/ShrineController';
+import { UnitService } from '@main/controllers/UnitService';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -73,6 +74,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
     mapController: await container.getAsync(MapController),
     inventoryController: await container.getAsync(InventoryController),
     shrineController: await container.getAsync(ShrineController),
+    unitService: await container.getAsync(UnitService),
     ticker: new Ticker()
   };
   container.bind(Game).toConstantValue(game);

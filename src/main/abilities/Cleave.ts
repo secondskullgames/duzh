@@ -5,9 +5,9 @@ import { getMeleeDamage } from '@main/units/UnitUtils';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import type { UnitAbility } from './UnitAbility';
 import { Game } from '@main/core/Game';
+import { Attack, AttackResult } from '@main/controllers/UnitService';
 
 const attack: Attack = {
   sound: Sounds.SPECIAL_ATTACK,
@@ -50,7 +50,7 @@ export class Cleave implements UnitAbility {
     for (const targetUnit of targetUnits) {
       const direction = pointAt(unit.getCoordinates(), targetUnit.getCoordinates());
       unit.setDirection(direction);
-      await attackUnit(unit, targetUnit, attack, game);
+      await game.unitService.attackUnit(unit, targetUnit, attack, game);
     }
     unit.setDirection(initialDirection);
   };

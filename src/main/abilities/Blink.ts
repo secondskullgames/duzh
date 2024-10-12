@@ -4,7 +4,6 @@ import Unit from '@main/units/Unit';
 import MapInstance from '@main/maps/MapInstance';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { moveUnit } from '@main/actions/moveUnit';
 import { Feature } from '@main/utils/features';
 import { isBlocked } from '@main/maps/MapUtils';
 import { checkState } from '@lib/utils/preconditions';
@@ -40,7 +39,7 @@ export class Blink implements UnitAbility {
     const blocked = _isBlocked(unit.getCoordinates(), targetCoordinates, map);
     checkState(!blocked);
 
-    await moveUnit(unit, targetCoordinates, game);
+    await game.unitService.moveUnit(unit, targetCoordinates, game);
     unit.spendMana(this.manaCost);
   };
 }

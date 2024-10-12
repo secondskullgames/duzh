@@ -5,9 +5,9 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import Unit, { DefendResult } from '@main/units/Unit';
 import { getMeleeDamage } from '@main/units/UnitUtils';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
-import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 import { Game } from '@main/core/Game';
+import { Attack, AttackResult } from '@main/controllers/UnitService';
 
 const attack: Attack = {
   sound: Sounds.PLAYER_HITS_ENEMY,
@@ -45,7 +45,7 @@ export class NormalAttack implements UnitAbility {
     unit.setDirection(direction);
     const targetUnit = map.getUnit(coordinates);
     if (targetUnit) {
-      await attackUnit(unit, targetUnit, attack, game);
+      await game.unitService.attackUnit(unit, targetUnit, attack, game);
       unit.gainMana(NormalAttack.MANA_RETURNED);
     }
   };
