@@ -9,7 +9,6 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';
 import Entity from '@main/entities/Entity';
-import { DebugController } from '@main/core/DebugController';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { getItem, getMovableBlock } from '@main/maps/MapUtils';
@@ -28,9 +27,7 @@ export default class GameScreenViewportRenderer implements Renderer {
     @inject(ImageFactory)
     private readonly imageFactory: ImageFactory,
     @inject(ShrineMenuRenderer)
-    private readonly shrineMenuRenderer: ShrineMenuRenderer,
-    @inject(DebugController)
-    private readonly debug: DebugController
+    private readonly shrineMenuRenderer: ShrineMenuRenderer
   ) {}
 
   render = async (graphics: Graphics) => {
@@ -149,7 +146,7 @@ export default class GameScreenViewportRenderer implements Renderer {
   };
 
   private _isTileRevealed = (coordinates: Coordinates, map: MapInstance): boolean => {
-    return this.debug.isMapRevealed() || map.isTileRevealed(coordinates);
+    return map.isTileRevealed(coordinates);
   };
 
   private _drawShadow = async (

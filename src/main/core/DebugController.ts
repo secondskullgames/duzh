@@ -10,8 +10,6 @@ import { inject, injectable } from 'inversify';
 
 @injectable()
 export class DebugController {
-  private _isMapRevealed: boolean;
-
   constructor(
     @inject(Game)
     private readonly game: Game,
@@ -19,15 +17,18 @@ export class DebugController {
     private readonly mapController: MapController,
     @inject(ItemFactory)
     private readonly itemFactory: ItemFactory
-  ) {
-    this._isMapRevealed = false;
-  }
+  ) {}
 
-  toggleRevealMap = async () => {
-    this._isMapRevealed = !this._isMapRevealed;
+  revealMap = async () => {
+    const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
+    const map = playerUnit.getMap();
+    for (let y = 0; y < map.height; y++) {
+      for (let x = 0; x < map.width; x++) {
+        map.revealTile({ x, y });
+      }
+    }
   };
-
-  isMapRevealed = () => this._isMapRevealed;
 
   killPlayer = async () => {
     const { state } = this.game;
@@ -61,7 +62,7 @@ export class DebugController {
     const items = [
       {
         label: 'Reveal Map',
-        onClick: () => this.toggleRevealMap()
+        onClick: () => this.revealMap()
       },
       {
         label: 'Kill Enemies',
