@@ -14,6 +14,7 @@ import { showTitleScreen } from '@main/actions/showTitleScreen';
 import { formatTimestamp } from '@lib/utils/time';
 import { Game } from '@main/core/Game';
 import { inject, injectable } from 'inversify';
+import { checkNotNull } from '@lib/utils/preconditions';
 
 const BACKGROUND_FILENAME = 'gameover';
 
@@ -33,6 +34,7 @@ export class GameOverScene implements Scene {
   render = async (graphics: Graphics): Promise<void> => {
     const { imageFactory } = this;
     const { state } = this.game;
+    const gameOverState = checkNotNull(state.getGameOverState());
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
@@ -43,7 +45,7 @@ export class GameOverScene implements Scene {
     const elapsedTurns = state.getTurn();
     const elapsedTime = formatTimestamp(state.getElapsedTime());
     const lines = [
-      `Died on level ${state.getPlayerUnit().getMap().levelNumber}`,
+      `Died on level ${gameOverState.levelNumber}`,
       `in ${elapsedTurns} turns (${elapsedTime})`,
       'PRESS ENTER TO PLAY AGAIN'
     ];

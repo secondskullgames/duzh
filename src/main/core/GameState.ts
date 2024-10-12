@@ -1,4 +1,4 @@
-import { InventoryCategory, InventoryState } from '@main/core/state/InventoryState';
+import { InventoryState } from '@main/core/state/InventoryState';
 import { SceneName } from '../scenes/SceneName';
 import Unit from '../units/Unit';
 import { check, checkNotNull } from '@lib/utils/preconditions';
@@ -9,6 +9,7 @@ import { Scene } from '@main/scenes/Scene';
 import { clear } from '@lib/utils/arrays';
 import { Faction } from '@main/units/Faction';
 import MapInstance from '@main/maps/MapInstance';
+import { GameOverState } from '@main/core/state/GameOverState';
 
 export interface GameState {
   startGameTimer: () => void;
@@ -22,8 +23,10 @@ export interface GameState {
   getShrineMenuState: () => ShrineMenuState;
   isShowingShrineMenu: () => boolean;
   closeShrineMenu: () => void;
-  prepareInventoryScreen: (playerUnit: Unit) => void;
-  getInventoryState: () => InventoryState;
+  getInventoryState: () => InventoryState | null;
+  setInventoryState: (inventoryState: InventoryState | null) => void;
+  getGameOverState: () => GameOverState | null;
+  setGameOverState: (gameOverState: GameOverState | null) => void;
   reset: () => void;
   setTurnInProgress: (val: boolean) => void;
   isTurnInProgress: () => boolean;
@@ -55,6 +58,7 @@ export class GameStateImpl implements GameState {
   private prevScene: Scene | null;
   private inventoryState: InventoryState | null;
   private shrineMenuState: ShrineMenuState | null;
+  private gameOverState: GameOverState | null;
   private _isTurnInProgress: boolean;
   private turn: number;
   private queuedAbility: UnitAbility | null;
@@ -68,6 +72,7 @@ export class GameStateImpl implements GameState {
     this.prevScene = null;
     this.inventoryState = null;
     this.shrineMenuState = null;
+    this.gameOverState = null;
     this._isTurnInProgress = false;
     this.turn = 1;
     this.queuedAbility = null;
@@ -107,35 +112,10 @@ export class GameStateImpl implements GameState {
     }
   };
 
-  prepareInventoryScreen = (playerUnit: Unit): void => {
-    if (this.inventoryState === null) {
-      this.inventoryState = new InventoryState();
-    }
-    switch (this.inventoryState.getSelectedCategory()) {
-      case InventoryCategory.EQUIPMENT: {
-        const equipment = this.inventoryState.getSelectedEquipment();
-        if (equipment !== null && !playerUnit.getEquipment().includes(equipment)) {
-          this.inventoryState.clearSelectedItem();
-        }
-        if (equipment === null) {
-          this.inventoryState.nextItem(playerUnit);
-        }
-        break;
-      }
-      case InventoryCategory.ITEMS: {
-        const selectedItem = this.inventoryState.getSelectedItem();
-        if (selectedItem && !playerUnit.getInventory().includes(selectedItem)) {
-          this.inventoryState.clearSelectedItem();
-        }
-        if (selectedItem === null) {
-          this.inventoryState.nextItem(playerUnit);
-        }
-        break;
-      }
-    }
+  getInventoryState = (): InventoryState | null => this.inventoryState;
+  setInventoryState = (inventoryState: InventoryState | null) => {
+    this.inventoryState = inventoryState;
   };
-
-  getInventoryState = (): InventoryState => checkNotNull(this.inventoryState);
 
   setShrineMenuState = (shrineMenuState: ShrineMenuState) => {
     this.shrineMenuState = shrineMenuState;
@@ -148,6 +128,11 @@ export class GameStateImpl implements GameState {
     this.shrineMenuState = null;
   };
 
+  getGameOverState = (): GameOverState | null => this.gameOverState;
+  setGameOverState = (gameOverState: GameOverState | null) => {
+    this.gameOverState = gameOverState;
+  };
+
   reset = (): void => {
     this.currentScene = null;
     this.prevScene = null;
@@ -156,6 +141,9 @@ export class GameStateImpl implements GameState {
     Object.keys(this.maps).forEach(key => {
       delete this.maps[key];
     });
+    this.shrineMenuState = null;
+    this.inventoryState = null;
+    this.gameOverState = null;
     clear(this.units);
     clear(this.generatedEquipmentIds);
   };

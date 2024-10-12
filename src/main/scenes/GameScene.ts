@@ -67,7 +67,7 @@ export class GameScene implements Scene {
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { state } = this.game;
+    const { state, inventoryController } = this.game;
     const { key, modifiers } = command;
 
     if (state.isShowingShrineMenu()) {
@@ -85,7 +85,7 @@ export class GameScene implements Scene {
       this.soundPlayer.playSound(Sounds.FOOTSTEP);
       await this.game.engine.playTurn(this.game);
     } else if (key === 'TAB') {
-      state.prepareInventoryScreen(state.getPlayerUnit());
+      inventoryController.prepareInventoryScreen(this.game);
       state.setScene(SceneName.INVENTORY);
     } else if (key === 'M') {
       state.setScene(SceneName.MAP);
@@ -308,7 +308,7 @@ export class GameScene implements Scene {
   };
 
   handleClick = async ({ pixel }: ClickCommand) => {
-    const { state } = this.game;
+    const { state, inventoryController } = this.game;
     // TODO I wish we had a widget library...
     const playerUnit = state.getPlayerUnit();
     const abilityRects = this._getAbilityRects(playerUnit);
@@ -328,7 +328,7 @@ export class GameScene implements Scene {
             state.setScene(SceneName.MAP);
             return;
           case TopMenuIcon.INVENTORY:
-            state.prepareInventoryScreen(state.getPlayerUnit());
+            inventoryController.prepareInventoryScreen(this.game);
             state.setScene(SceneName.INVENTORY);
             return;
           case TopMenuIcon.CHARACTER:
