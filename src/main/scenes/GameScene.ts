@@ -29,7 +29,7 @@ import { isAdjacent, offsetsToDirection, pointAt } from '@lib/geometry/Coordinat
 import { Pixel } from '@lib/geometry/Pixel';
 import { LINE_HEIGHT, TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
 import Unit from '@main/units/Unit';
-import { ShrineOption } from '@main/core/state/ShrineMenuState';
+import { ShrineMenuState, ShrineOption } from '@main/core/state/ShrineMenuState';
 import { TextRenderer } from '@main/graphics/TextRenderer';
 import { Renderer } from '@main/graphics/renderers/Renderer';
 import { Graphics } from '@lib/graphics/Graphics';
@@ -302,7 +302,7 @@ export class GameScene implements Scene {
         } else {
           const selectedOption = shrineMenuState.getSelectedOption();
           await selectedOption.onUse(this.game);
-          state.closeShrineMenu();
+          state.setShrineMenuState(null);
         }
     }
   };
@@ -342,11 +342,12 @@ export class GameScene implements Scene {
     }
 
     if (state.isShowingShrineMenu()) {
-      const shrineOptionRects = this._getShrineOptionRects();
+      const shrineMenuState = checkNotNull(state.getShrineMenuState());
+      const shrineOptionRects = this._getShrineOptionRects(shrineMenuState);
       for (const [option, rect] of shrineOptionRects) {
         if (Rect.containsPoint(rect, pixel)) {
           await option.onUse(this.game);
-          state.closeShrineMenu();
+          state.setShrineMenuState(null);
           return;
         }
       }
@@ -436,9 +437,10 @@ export class GameScene implements Scene {
     return abilityRects;
   };
 
-  private _getShrineOptionRects = (): [ShrineOption, Rect][] => {
-    const { state, config } = this.game;
-    const shrineMenuState = state.getShrineMenuState();
+  private _getShrineOptionRects = (
+    shrineMenuState: ShrineMenuState
+  ): [ShrineOption, Rect][] => {
+    const { config } = this.game;
     const shrineOptionRects: [ShrineOption, Rect][] = [];
     const { screenWidth, screenHeight } = config;
     for (let i = 0; i < shrineMenuState.options.length; i++) {

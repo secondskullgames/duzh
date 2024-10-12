@@ -19,10 +19,9 @@ export interface GameState {
   getCurrentScene: () => Scene | null;
   setScene: (sceneName: SceneName) => void;
   showPrevScene: () => void;
-  setShrineMenuState: (shrineMenuState: ShrineMenuState) => void;
-  getShrineMenuState: () => ShrineMenuState;
+  setShrineMenuState: (shrineMenuState: ShrineMenuState | null) => void;
+  getShrineMenuState: () => ShrineMenuState | null;
   isShowingShrineMenu: () => boolean;
-  closeShrineMenu: () => void;
   getInventoryState: () => InventoryState | null;
   setInventoryState: (inventoryState: InventoryState | null) => void;
   getGameOverState: () => GameOverState | null;
@@ -117,16 +116,13 @@ export class GameStateImpl implements GameState {
     this.inventoryState = inventoryState;
   };
 
-  setShrineMenuState = (shrineMenuState: ShrineMenuState) => {
+  setShrineMenuState = (shrineMenuState: ShrineMenuState | null) => {
     this.shrineMenuState = shrineMenuState;
   };
 
-  getShrineMenuState = (): ShrineMenuState => checkNotNull(this.shrineMenuState);
+  getShrineMenuState = (): ShrineMenuState | null => this.shrineMenuState;
 
   isShowingShrineMenu = (): boolean => this.shrineMenuState !== null;
-  closeShrineMenu = (): void => {
-    this.shrineMenuState = null;
-  };
 
   getGameOverState = (): GameOverState | null => this.gameOverState;
   setGameOverState = (gameOverState: GameOverState | null) => {
