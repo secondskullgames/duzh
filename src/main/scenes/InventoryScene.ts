@@ -22,6 +22,7 @@ import { getSlotName, splitTooltipToLines } from '@main/equipment/EquipmentUtils
 import { LINE_HEIGHT } from '@main/graphics/constants';
 import { Game } from '@main/core/Game';
 import { inject, injectable } from 'inversify';
+import { checkNotNull } from '@lib/utils/preconditions';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -51,7 +52,7 @@ export class InventoryScene implements Scene {
     const { state } = this.game;
     const { key, modifiers } = command;
     const playerUnit = state.getPlayerUnit();
-    const inventory = state.getInventoryState();
+    const inventory = checkNotNull(state.getInventoryState());
 
     switch (key) {
       case 'UP':
@@ -90,21 +91,21 @@ export class InventoryScene implements Scene {
   handleKeyUp = async () => {};
 
   private _handleEnter = async () => {
-    const { state } = this.game;
+    const { state, inventoryController } = this.game;
     const playerUnit = state.getPlayerUnit();
-    const inventory = state.getInventoryState();
+    const inventory = checkNotNull(state.getInventoryState());
     const selectedItem = inventory.getSelectedItem();
 
     if (selectedItem) {
       await useItem(playerUnit, selectedItem, this.game);
-      state.prepareInventoryScreen(playerUnit);
+      inventoryController.prepareInventoryScreen(this.game);
     }
   };
 
   handleClick = async ({ pixel }: ClickCommand) => {
-    const { state } = this.game;
+    const { state, inventoryController } = this.game;
     const playerUnit = state.getPlayerUnit();
-    const inventoryState = state.getInventoryState();
+    const inventoryState = checkNotNull(state.getInventoryState());
 
     const itemCategoryRects = this._getItemCategoryRects();
     for (const [category, rect] of itemCategoryRects) {
@@ -119,7 +120,7 @@ export class InventoryScene implements Scene {
       if (Rect.containsPoint(rect, pixel)) {
         if (inventoryState.getSelectedItem() == item) {
           await useItem(playerUnit, item, this.game);
-          state.prepareInventoryScreen(playerUnit);
+          inventoryController.prepareInventoryScreen(this.game);
         } else {
           inventoryState.selectItem(state.getPlayerUnit(), item);
         }
@@ -148,7 +149,7 @@ export class InventoryScene implements Scene {
 
   private _getItemRects = (): [InventoryItem, Rect][] => {
     const { state } = this.game;
-    const inventoryScreenState = state.getInventoryState();
+    const inventoryScreenState = checkNotNull(state.getInventoryState());
     const itemCategory = inventoryScreenState.getSelectedItemCategory();
     const itemRects: [InventoryItem, Rect][] = [];
     if (itemCategory) {
@@ -210,7 +211,7 @@ export class InventoryScene implements Scene {
 
   private _drawEquipment = (graphics: Graphics) => {
     const { state } = this.game;
-    const inventory = state.getInventoryState();
+    const inventory = checkNotNull(state.getInventoryState());
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
 
     this._drawText(
@@ -255,7 +256,7 @@ export class InventoryScene implements Scene {
 
   private _drawInventory = (graphics: Graphics) => {
     const { state } = this.game;
-    const inventory = state.getInventoryState();
+    const inventory = checkNotNull(state.getInventoryState());
     const inventoryCategories = inventory.getItemCategories();
     const categoryWidth = 60;
     const xOffset = 4;
@@ -315,7 +316,7 @@ export class InventoryScene implements Scene {
     const top = Math.round(graphics.getHeight() * 0.6);
 
     const lines: string[] | null = (() => {
-      const inventory = state.getInventoryState();
+      const inventory = checkNotNull(state.getInventoryState());
       const selectedEquipment = inventory.getSelectedEquipment();
       if (selectedEquipment) {
         const lines: string[] = [];

@@ -10,6 +10,8 @@ import ModelLoader from '@main/assets/ModelLoader';
 import SoundPlayer from '@lib/audio/SoundPlayer';
 import Ticker from '@main/core/Ticker';
 import { MapController } from '@main/maps/MapController';
+import { InventoryController } from '@main/controllers/InventoryController';
+import { ShrineController } from '@main/controllers/ShrineController';
 
 export type Game = Readonly<{
   config: GameConfig;
@@ -23,6 +25,8 @@ export type Game = Readonly<{
   modelLoader: ModelLoader;
   soundPlayer: SoundPlayer;
   mapController: MapController;
+  inventoryController: InventoryController;
+  shrineController: ShrineController;
   ticker: Ticker;
 }>;
 

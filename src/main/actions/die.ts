@@ -25,6 +25,7 @@ export const die = async (unit: Unit, game: Game) => {
   state.removeUnit(unit);
   if (unit === playerUnit) {
     await gameOver(game);
+    state.setGameOverState({ levelNumber: map.levelNumber });
     return;
   } else {
     soundPlayer.playSound(Sounds.ENEMY_DIES);
