@@ -8,6 +8,7 @@ import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Scene } from '@main/scenes/Scene';
 import { clear } from '@lib/utils/arrays';
 import { Faction } from '@main/units/Faction';
+import MapInstance from '@main/maps/MapInstance';
 
 export interface GameState {
   startGameTimer: () => void;
@@ -34,6 +35,9 @@ export interface GameState {
   getQueuedAbility: () => UnitAbility | null;
   setQueuedAbility: (ability: UnitAbility | null) => void;
 
+  getMap: (id: string) => MapInstance | null;
+  addMap: (map: MapInstance) => void;
+
   getUnits: () => Unit[];
   getPlayerUnit: () => Unit;
   addUnit: (unit: Unit) => void;
@@ -54,6 +58,7 @@ export class GameStateImpl implements GameState {
   private _isTurnInProgress: boolean;
   private turn: number;
   private queuedAbility: UnitAbility | null;
+  private readonly maps: Record<string, MapInstance>;
   private readonly units: Unit[];
   private readonly generatedEquipmentIds: string[];
 
@@ -68,6 +73,7 @@ export class GameStateImpl implements GameState {
     this.queuedAbility = null;
     this.startTime = null;
     this.endTime = null;
+    this.maps = {};
     this.units = [];
     this.generatedEquipmentIds = [];
   }
@@ -147,6 +153,9 @@ export class GameStateImpl implements GameState {
     this.prevScene = null;
     this.turn = 1;
     this.queuedAbility = null;
+    Object.keys(this.maps).forEach(key => {
+      delete this.maps[key];
+    });
     clear(this.units);
     clear(this.generatedEquipmentIds);
   };
@@ -175,6 +184,15 @@ export class GameStateImpl implements GameState {
     const endTime = this.endTime ?? new Date();
     const milliseconds = endTime.getTime() - startTime.getTime();
     return milliseconds / 1000;
+  };
+
+  getMap = (id: string): MapInstance | null => {
+    return this.maps[id] ?? null;
+  };
+
+  addMap = (map: MapInstance) => {
+    check(!this.maps[map.id]);
+    this.maps[map.id] = map;
   };
 
   getUnits = (): Unit[] => this.units;
