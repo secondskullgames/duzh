@@ -112,6 +112,7 @@ export class GameScene implements Scene {
   private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
     const { state } = this.game;
     const playerUnit = state.getPlayerUnit();
+    const playerController = playerUnit.getController() as PlayerUnitController;
     const direction = getDirection(key);
     const coordinates = Coordinates.plusDirection(playerUnit.getCoordinates(), direction);
 
@@ -156,8 +157,8 @@ export class GameScene implements Scene {
         }
       }
     } else {
-      const ability = state.getQueuedAbility();
-      state.setQueuedAbility(null);
+      const ability = playerController.getQueuedAbility();
+      playerController.setQueuedAbility(null);
       if (ability) {
         if (ability.isEnabled(playerUnit) && ability.isLegal(playerUnit, coordinates)) {
           order = AbilityOrder.create({ ability, direction });
@@ -168,7 +169,6 @@ export class GameScene implements Scene {
     }
 
     if (order) {
-      const playerController = playerUnit.getController() as PlayerUnitController;
       playerController.queueOrder(order);
       await this.game.engine.playTurn(this.game);
     } else {
@@ -190,11 +190,12 @@ export class GameScene implements Scene {
   private _handleAbility = async (ability: UnitAbility) => {
     const { state } = this.game;
     const playerUnit = state.getPlayerUnit();
+    const playerController = playerUnit.getController() as PlayerUnitController;
     if (ability.isEnabled(playerUnit)) {
-      if (state.getQueuedAbility() === ability) {
-        state.setQueuedAbility(null);
+      if (playerController.getQueuedAbility() === ability) {
+        playerController.setQueuedAbility(null);
       } else {
-        state.setQueuedAbility(ability);
+        playerController.setQueuedAbility(ability);
       }
     }
   };
@@ -233,6 +234,8 @@ export class GameScene implements Scene {
   private _handleModifierKeyDown = async (key: ModifierKey) => {
     const { state } = this.game;
     const playerUnit = state.getPlayerUnit();
+    const playerController = playerUnit.getController() as PlayerUnitController;
+
     switch (key) {
       case ModifierKey.SHIFT: {
         for (const abilityName of [
@@ -243,7 +246,7 @@ export class GameScene implements Scene {
           if (playerUnit.hasAbility(abilityName)) {
             const ability = playerUnit.getAbilityForName(abilityName);
             if (ability?.isEnabled(playerUnit)) {
-              state.setQueuedAbility(ability);
+              playerController.setQueuedAbility(ability);
             }
           }
         }
@@ -252,7 +255,7 @@ export class GameScene implements Scene {
       case ModifierKey.ALT: {
         const ability = playerUnit.getAbilityForName(AbilityName.DASH);
         if (ability?.isEnabled(playerUnit)) {
-          state.setQueuedAbility(ability);
+          playerController.setQueuedAbility(ability);
         }
         break;
       }
@@ -261,9 +264,12 @@ export class GameScene implements Scene {
 
   private _handleModifierKeyUp = async (key: ModifierKey) => {
     const { state } = this.game;
+    const playerUnit = state.getPlayerUnit();
+    const playerController = playerUnit.getController() as PlayerUnitController;
+
     switch (key) {
       case ModifierKey.SHIFT: {
-        const queuedAbility = state.getQueuedAbility();
+        const queuedAbility = playerController.getQueuedAbility();
         if (queuedAbility) {
           // TODO need to centralize this logic
           const possibleAbilities = [
@@ -272,14 +278,14 @@ export class GameScene implements Scene {
             AbilityName.SHOOT_FROSTBOLT
           ];
           if (possibleAbilities.includes(queuedAbility.name)) {
-            state.setQueuedAbility(null);
+            playerController.setQueuedAbility(null);
           }
         }
         break;
       }
       case ModifierKey.ALT: {
-        if (state.getQueuedAbility()?.name === AbilityName.DASH) {
-          state.setQueuedAbility(null);
+        if (playerController.getQueuedAbility()?.name === AbilityName.DASH) {
+          playerController.setQueuedAbility(null);
         }
         break;
       }

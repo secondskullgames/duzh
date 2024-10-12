@@ -19,6 +19,7 @@ import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { formatTimestamp } from '@lib/utils/time';
 import { inject, injectable } from 'inversify';
 import { Game } from '@main/core/Game';
+import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
 
 const HUD_FILENAME = 'brick_hud_3';
 
@@ -274,7 +275,8 @@ export default class HUDRenderer implements Renderer {
     const { imageFactory } = this;
     const { state } = this.game;
     const playerUnit = state.getPlayerUnit();
-    const queuedAbility = state.getQueuedAbility();
+    const playerController = playerUnit.getController() as PlayerUnitController;
+    const queuedAbility = playerController.getQueuedAbility();
 
     let borderColor: Color;
 

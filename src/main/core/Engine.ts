@@ -4,6 +4,7 @@ import { Faction } from '@main/units/Faction';
 import GameObject, { ObjectType } from '@main/objects/GameObject';
 import Spawner from '@main/objects/Spawner';
 import { Game } from '@main/core/Game';
+import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
 
 export interface Engine {
   playTurn: (game: Game) => Promise<void>;
@@ -28,9 +29,12 @@ export class EngineImpl implements Engine {
 
     game.mapController.updateRevealedTiles(map, game);
     await game.mapController.doMapEvents(map, game);
+
     // TODO weird place to jam this logic
-    if (!state.getQueuedAbility()?.isEnabled(state.getPlayerUnit())) {
-      state.setQueuedAbility(null);
+    const playerUnit = state.getPlayerUnit();
+    const playerController = playerUnit.getController() as PlayerUnitController;
+    if (!playerController.getQueuedAbility()?.isEnabled(state.getPlayerUnit())) {
+      playerController.setQueuedAbility(null);
     }
 
     state.nextTurn();

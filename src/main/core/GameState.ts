@@ -4,7 +4,6 @@ import Unit from '../units/Unit';
 import { check, checkNotNull } from '@lib/utils/preconditions';
 import { Seconds } from '@lib/utils/time';
 import { ShrineMenuState } from '@main/core/state/ShrineMenuState';
-import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Scene } from '@main/scenes/Scene';
 import { clear } from '@lib/utils/arrays';
 import { Faction } from '@main/units/Faction';
@@ -34,9 +33,6 @@ export interface GameState {
   getTurn: () => number;
   nextTurn: () => void;
 
-  getQueuedAbility: () => UnitAbility | null;
-  setQueuedAbility: (ability: UnitAbility | null) => void;
-
   getMap: (id: string) => MapInstance | null;
   addMap: (map: MapInstance) => void;
 
@@ -60,7 +56,6 @@ export class GameStateImpl implements GameState {
   private gameOverState: GameOverState | null;
   private _isTurnInProgress: boolean;
   private turn: number;
-  private queuedAbility: UnitAbility | null;
   private readonly maps: Record<string, MapInstance>;
   private readonly units: Unit[];
   private readonly generatedEquipmentIds: string[];
@@ -74,7 +69,6 @@ export class GameStateImpl implements GameState {
     this.gameOverState = null;
     this._isTurnInProgress = false;
     this.turn = 1;
-    this.queuedAbility = null;
     this.startTime = null;
     this.endTime = null;
     this.maps = {};
@@ -133,7 +127,6 @@ export class GameStateImpl implements GameState {
     this.currentScene = null;
     this.prevScene = null;
     this.turn = 1;
-    this.queuedAbility = null;
     Object.keys(this.maps).forEach(key => {
       delete this.maps[key];
     });
@@ -156,11 +149,6 @@ export class GameStateImpl implements GameState {
   getTurn = () => this.turn;
   nextTurn = () => {
     this.turn++;
-  };
-
-  getQueuedAbility = (): UnitAbility | null => this.queuedAbility;
-  setQueuedAbility = (ability: UnitAbility | null) => {
-    this.queuedAbility = ability;
   };
 
   getElapsedTime = (): number => {
