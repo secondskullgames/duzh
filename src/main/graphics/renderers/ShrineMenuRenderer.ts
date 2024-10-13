@@ -17,19 +17,17 @@ const BACKGROUND_FILENAME = 'bordered_background';
 @injectable()
 export class ShrineMenuRenderer implements Renderer {
   constructor(
-    @inject(Game)
-    private readonly game: Game,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
     @inject(ImageFactory)
     private readonly imageFactory: ImageFactory
   ) {}
 
-  render = async (graphics: Graphics) => {
+  render = async (game: Game, graphics: Graphics) => {
     const { imageFactory } = this;
-    const { state } = this.game;
+    const { state } = game;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
-    const { screenWidth, screenHeight } = this.game.config;
+    const { screenWidth, screenHeight } = game.config;
     const left = screenWidth / 4;
     const top = screenHeight / 4;
     const width = screenWidth / 2;
@@ -57,7 +55,7 @@ export class ShrineMenuRenderer implements Renderer {
     y += 20;
 
     for (const option of options) {
-      const color = this._getOptionColor(option);
+      const color = this._getOptionColor(option, game);
       this._drawText(
         option.label,
         FontName.APPLE_II,
@@ -70,8 +68,8 @@ export class ShrineMenuRenderer implements Renderer {
     }
   };
 
-  private _getOptionColor = (option: ShrineOption): Color => {
-    const { state } = this.game;
+  private _getOptionColor = (option: ShrineOption, game: Game): Color => {
+    const { state } = game;
     const selectedOption = checkNotNull(state.getShrineMenuState()).getSelectedOption();
     const isSelected = selectedOption.label === option.label;
     return isSelected ? Colors.WHITE : Colors.LIGHT_GRAY;

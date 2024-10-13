@@ -22,8 +22,6 @@ export class TitleScene implements Scene {
   readonly name = SceneName.TITLE;
 
   constructor(
-    @inject(Game)
-    private readonly game: Game,
     @inject(MapController)
     private readonly mapController: MapController,
     @inject(ImageFactory)
@@ -32,13 +30,13 @@ export class TitleScene implements Scene {
     private readonly textRenderer: TextRenderer
   ) {}
 
-  private _handleStartGame = async () => {
+  private _handleStartGame = async (game: Game) => {
     const { mapController } = this;
-    const { state, ticker } = this.game;
+    const { state, ticker } = game;
     if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
-      await mapController.loadDebugMap(this.game);
+      await mapController.loadDebugMap(game);
     } else {
-      await mapController.loadFirstMap(this.game);
+      await mapController.loadFirstMap(game);
     }
     state.startGameTimer();
     state.setScene(SceneName.GAME);
@@ -52,7 +50,7 @@ export class TitleScene implements Scene {
     }
   };
 
-  handleKeyDown = async (command: KeyCommand) => {
+  handleKeyDown = async (command: KeyCommand, game: Game) => {
     const { key, modifiers } = command;
 
     switch (key) {
@@ -60,7 +58,7 @@ export class TitleScene implements Scene {
         if (modifiers.includes(ModifierKey.ALT)) {
           await toggleFullScreen();
         } else {
-          await this._handleStartGame();
+          await this._handleStartGame(game);
         }
         break;
     }
@@ -68,12 +66,11 @@ export class TitleScene implements Scene {
 
   handleKeyUp = async () => {};
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleClick = async (_: ClickCommand) => {
-    await this._handleStartGame();
+  handleClick = async (_: ClickCommand, game: Game) => {
+    await this._handleStartGame(game);
   };
 
-  render = async (graphics: Graphics): Promise<void> => {
+  render = async (_: Game, graphics: Graphics): Promise<void> => {
     const image = await this.imageFactory.getImage({ filename: TITLE_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,

@@ -18,7 +18,7 @@ export const createInputHandler = ({ game }: Props): InputHandler => {
     event.preventDefault();
     const currentScene = state.getCurrentScene();
     if (currentScene) {
-      await currentScene.handleKeyDown(command);
+      await currentScene.handleKeyDown(command, game);
     }
   };
 
@@ -30,7 +30,7 @@ export const createInputHandler = ({ game }: Props): InputHandler => {
     }
     const currentScene = state.getCurrentScene();
     if (currentScene) {
-      await currentScene.handleKeyUp(command);
+      await currentScene.handleKeyUp(command, game);
     }
   };
 
@@ -45,7 +45,7 @@ export const createInputHandler = ({ game }: Props): InputHandler => {
     }
     const currentScene = state.getCurrentScene();
     if (currentScene) {
-      await currentScene.handleClick(command);
+      await currentScene.handleClick(command, game);
     }
   };
 
@@ -60,7 +60,7 @@ export const createInputHandler = ({ game }: Props): InputHandler => {
     }
     const currentScene = state.getCurrentScene();
     if (currentScene) {
-      await currentScene.handleClick(command);
+      await currentScene.handleClick(command, game);
     }
   };
 

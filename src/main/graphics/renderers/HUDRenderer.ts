@@ -20,6 +20,7 @@ import { formatTimestamp } from '@lib/utils/time';
 import { inject, injectable } from 'inversify';
 import { Game } from '@main/core/Game';
 import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
+import { GameConfig } from '@main/core/GameConfig';
 
 const HUD_FILENAME = 'brick_hud_3';
 
@@ -39,30 +40,30 @@ export default class HUDRenderer implements Renderer {
   private readonly MIDDLE_PANE_WIDTH: number;
 
   constructor(
-    @inject(Game)
-    private readonly game: Game,
+    @inject(GameConfig)
+    gameConfig: GameConfig,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
     @inject(ImageFactory)
     private readonly imageFactory: ImageFactory
   ) {
-    this.TOP = game.config.screenHeight - HEIGHT;
-    this.WIDTH = game.config.screenWidth;
-    this.MIDDLE_PANE_WIDTH = game.config.screenWidth - LEFT_PANE_WIDTH - RIGHT_PANE_WIDTH;
+    this.TOP = gameConfig.screenHeight - HEIGHT;
+    this.WIDTH = gameConfig.screenWidth;
+    this.MIDDLE_PANE_WIDTH = gameConfig.screenWidth - LEFT_PANE_WIDTH - RIGHT_PANE_WIDTH;
   }
 
   /**
    * @override {@link Renderer#render}
    */
-  render = async (graphics: Graphics) => {
-    await this._renderFrame(graphics);
-    this._renderLeftPanel(graphics);
-    await this._renderMiddlePanel(graphics);
-    this._renderRightPanel(graphics);
+  render = async (game: Game, graphics: Graphics) => {
+    await this._renderFrame(game, graphics);
+    this._renderLeftPanel(game, graphics);
+    await this._renderMiddlePanel(game, graphics);
+    this._renderRightPanel(game, graphics);
   };
 
-  private _renderFrame = async (graphics: Graphics) => {
-    const { game, imageFactory } = this;
+  private _renderFrame = async (game: Game, graphics: Graphics) => {
+    const { imageFactory } = this;
     const { state } = game;
     const fillColor = (() => {
       const playerUnit = state.getPlayerUnit();
@@ -86,8 +87,8 @@ export default class HUDRenderer implements Renderer {
   /**
    * Renders the bottom-left area of the screen, showing information about the player
    */
-  private _renderLeftPanel = (graphics: Graphics) => {
-    const { state } = this.game;
+  private _renderLeftPanel = (game: Game, graphics: Graphics) => {
+    const { state } = game;
     const playerUnit = state.getPlayerUnit();
 
     const lines = [];
@@ -159,8 +160,8 @@ export default class HUDRenderer implements Renderer {
     );
   };
 
-  private _renderMiddlePanel = async (graphics: Graphics) => {
-    const { state } = this.game;
+  private _renderMiddlePanel = async (game: Game, graphics: Graphics) => {
+    const { state } = game;
     const top = this.TOP + BORDER_MARGIN + BORDER_PADDING;
     const playerUnit = state.getPlayerUnit();
     const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
@@ -180,7 +181,7 @@ export default class HUDRenderer implements Renderer {
         (ABILITIES_INNER_MARGIN + ABILITY_ICON_WIDTH) * i;
 
       if (ability.icon) {
-        await this._renderAbility(ability, { x: left, y: top }, graphics);
+        await this._renderAbility(ability, { x: left, y: top }, game, graphics);
         if (hotkey) {
           this._drawText(
             `${hotkey}`,
@@ -213,7 +214,7 @@ export default class HUDRenderer implements Renderer {
         ABILITIES_INNER_MARGIN * (-4 + i) +
         ABILITY_ICON_WIDTH * (-3 + i);
 
-      await this._renderAbility(ability, { x: left, y: top }, graphics);
+      await this._renderAbility(ability, { x: left, y: top }, game, graphics);
       if (hotkey) {
         this._drawText(
           `${hotkey}`,
@@ -235,8 +236,8 @@ export default class HUDRenderer implements Renderer {
     }
   };
 
-  private _renderRightPanel = (graphics: Graphics) => {
-    const { state } = this.game;
+  private _renderRightPanel = (game: Game, graphics: Graphics) => {
+    const { state } = game;
     const playerUnit = state.getPlayerUnit();
     const turn = state.getTurn();
     const map = playerUnit.getMap();
@@ -270,10 +271,11 @@ export default class HUDRenderer implements Renderer {
   private _renderAbility = async (
     ability: UnitAbility,
     topLeft: Pixel,
+    game: Game,
     graphics: Graphics
   ) => {
     const { imageFactory } = this;
-    const { state } = this.game;
+    const { state } = game;
     const playerUnit = state.getPlayerUnit();
     const playerController = playerUnit.getController() as PlayerUnitController;
     const queuedAbility = playerController.getQueuedAbility();

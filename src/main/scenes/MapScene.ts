@@ -10,7 +10,7 @@ import { TileType } from '@models/TileType';
 import { isHostile } from '@main/units/UnitUtils';
 import { getItem, getShrine } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 
 const backgroundColor = Color.fromHex('#404040');
 
@@ -18,10 +18,8 @@ const backgroundColor = Color.fromHex('#404040');
 export class MapScene implements Scene {
   readonly name = SceneName.MAP;
 
-  constructor(@inject(Game) private readonly game: Game) {}
-
-  handleKeyDown = async (command: KeyCommand) => {
-    const { state } = this.game;
+  handleKeyDown = async (command: KeyCommand, game: Game) => {
+    const { state } = game;
     const { key, modifiers } = command;
 
     switch (key) {
@@ -43,14 +41,13 @@ export class MapScene implements Scene {
 
   handleKeyUp = async () => {};
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleClick = async (_: ClickCommand) => {
-    const { state } = this.game;
+  handleClick = async (_: ClickCommand, game: Game) => {
+    const { state } = game;
     state.setScene(SceneName.GAME);
   };
 
-  render = async (graphics: Graphics) => {
-    const { state } = this.game;
+  render = async (game: Game, graphics: Graphics) => {
+    const { state } = game;
     const playerUnit = state.getPlayerUnit();
     const map = playerUnit.getMap();
 
@@ -64,7 +61,7 @@ export class MapScene implements Scene {
 
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
-        const color = this._getColor({ x, y }, this.game);
+        const color = this._getColor({ x, y }, game);
         const rect = {
           left: x * cellDimension + left,
           top: y * cellDimension + top,

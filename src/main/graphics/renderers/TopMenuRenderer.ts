@@ -3,6 +3,7 @@ import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Graphics } from '@lib/graphics/Graphics';
 import { Rect } from '@lib/geometry/Rect';
 import { inject, injectable } from 'inversify';
+import { Game } from '@main/core/Game';
 
 export enum TopMenuIcon {
   MAP = 'MAP',
@@ -27,7 +28,7 @@ export default class TopMenuRenderer implements Renderer {
   /**
    * @override {@link Renderer#render}
    */
-  render = async (graphics: Graphics) => {
+  render = async (_: Game, graphics: Graphics) => {
     const iconRects = TopMenuRenderer.getIconRects();
     for (let i = 0; i < iconRects.length; i++) {
       const { filename, rect } = iconRects[i];

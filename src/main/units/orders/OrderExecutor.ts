@@ -14,7 +14,9 @@ import { AbilityName } from '@main/abilities/AbilityName';
 import { Game } from '@main/core/Game';
 import { Direction } from '@lib/geometry/Direction';
 import Sounds from '@main/sounds/Sounds';
+import { injectable } from 'inversify';
 
+@injectable()
 export class OrderExecutor {
   executeOrder = async (unit: Unit, order: UnitOrder, game: Game) => {
     switch (order.type) {

@@ -22,36 +22,35 @@ const SHADOW_FILENAME = 'shadow';
 @injectable()
 export default class GameScreenViewportRenderer implements Renderer {
   constructor(
-    @inject(Game)
-    private readonly game: Game,
     @inject(ImageFactory)
     private readonly imageFactory: ImageFactory,
     @inject(ShrineMenuRenderer)
     private readonly shrineMenuRenderer: ShrineMenuRenderer
   ) {}
 
-  render = async (graphics: Graphics) => {
-    const { state } = this.game;
+  render = async (game: Game, graphics: Graphics) => {
+    const { state } = game;
     const map = state.getPlayerUnit().getMap();
     graphics.fill(Colors.BLACK);
 
-    this._renderTiles(map, graphics);
-    await this._renderEntities(map, graphics);
+    this._renderTiles(map, game, graphics);
+    await this._renderEntities(map, game, graphics);
 
     // TODO: consider a generic menu system
     if (state.isShowingShrineMenu()) {
-      await this._renderShrineMenu(graphics);
+      await this._renderShrineMenu(game, graphics);
     }
   };
 
   private _renderElement = (
     element: Entity | Equipment,
     coordinates: Coordinates,
+    game: Game,
     graphics: Graphics
   ) => {
-    const pixel = this._gridToPixel(coordinates);
+    const pixel = this._gridToPixel(coordinates, game);
 
-    if (this._isPixelOnScreen(pixel)) {
+    if (this._isPixelOnScreen(pixel, game)) {
       const sprite = element.getSprite();
       if (sprite) {
         this._drawSprite(sprite, pixel, graphics);
@@ -70,8 +69,8 @@ export default class GameScreenViewportRenderer implements Renderer {
   /**
    * @return the top left pixel
    */
-  private _gridToPixel = ({ x, y }: Coordinates): Pixel => {
-    const { state, config } = this.game;
+  private _gridToPixel = ({ x, y }: Coordinates, game: Game): Pixel => {
+    const { state, config } = game;
     const playerUnit = state.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     return {
@@ -80,14 +79,14 @@ export default class GameScreenViewportRenderer implements Renderer {
     };
   };
 
-  private _renderTiles = (map: MapInstance, graphics: Graphics) => {
+  private _renderTiles = (map: MapInstance, game: Game, graphics: Graphics) => {
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         const coordinates = { x, y };
         if (this._isTileRevealed(coordinates, map)) {
           const tile = map.getTile(coordinates);
           if (tile) {
-            this._renderElement(tile, coordinates, graphics);
+            this._renderElement(tile, coordinates, game, graphics);
           }
         }
       }
@@ -97,24 +96,24 @@ export default class GameScreenViewportRenderer implements Renderer {
   /**
    * Render all entities, one row at a time.
    */
-  private _renderEntities = async (map: MapInstance, graphics: Graphics) => {
+  private _renderEntities = async (map: MapInstance, game: Game, graphics: Graphics) => {
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         const coordinates = { x, y };
         if (this._isTileRevealed(coordinates, map)) {
-          await this._drawShadow(coordinates, map, graphics);
+          await this._drawShadow(coordinates, map, game, graphics);
           for (const object of map.getObjects(coordinates)) {
-            this._renderElement(object, coordinates, graphics);
+            this._renderElement(object, coordinates, game, graphics);
           }
 
           const projectile = map.getProjectile(coordinates);
           if (projectile) {
-            this._renderElement(projectile, coordinates, graphics);
+            this._renderElement(projectile, coordinates, game, graphics);
           }
 
           const unit = map.getUnit(coordinates);
           if (unit) {
-            this._renderUnit(unit, coordinates, graphics);
+            this._renderUnit(unit, coordinates, game, graphics);
           }
         }
       }
@@ -124,7 +123,12 @@ export default class GameScreenViewportRenderer implements Renderer {
   /**
    * Render the unit, all of its equipment, and the corresponding overlay.
    */
-  private _renderUnit = (unit: Unit, coordinates: Coordinates, graphics: Graphics) => {
+  private _renderUnit = (
+    unit: Unit,
+    coordinates: Coordinates,
+    game: Game,
+    graphics: Graphics
+  ) => {
     const behindEquipment: Equipment[] = [];
     const aheadEquipment: Equipment[] = [];
     for (const equipment of unit.getEquipment().getAll()) {
@@ -137,11 +141,11 @@ export default class GameScreenViewportRenderer implements Renderer {
     }
 
     for (const equipment of behindEquipment) {
-      this._renderElement(equipment, coordinates, graphics);
+      this._renderElement(equipment, coordinates, game, graphics);
     }
-    this._renderElement(unit, coordinates, graphics);
+    this._renderElement(unit, coordinates, game, graphics);
     for (const equipment of aheadEquipment) {
-      this._renderElement(equipment, coordinates, graphics);
+      this._renderElement(equipment, coordinates, game, graphics);
     }
   };
 
@@ -152,30 +156,32 @@ export default class GameScreenViewportRenderer implements Renderer {
   private _drawShadow = async (
     coordinates: Coordinates,
     map: MapInstance,
+    game: Game,
     graphics: Graphics
   ) => {
-    const { state } = this.game;
+    const { state } = game;
     const unit = map.getUnit(coordinates);
 
     if (unit) {
       if (unit === state.getPlayerUnit()) {
-        return this._drawEllipse(coordinates, Colors.GREEN, graphics);
+        return this._drawEllipse(coordinates, Colors.GREEN, game, graphics);
       } else {
-        return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);
+        return this._drawEllipse(coordinates, Colors.DARK_GRAY, game, graphics);
       }
     }
 
     if (getItem(map, coordinates) || getMovableBlock(map, coordinates)) {
-      return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);
+      return this._drawEllipse(coordinates, Colors.DARK_GRAY, game, graphics);
     }
   };
 
   private _drawEllipse = async (
     coordinates: Coordinates,
     color: Color,
+    game: Game,
     graphics: Graphics
   ) => {
-    const pixel = this._gridToPixel(coordinates);
+    const pixel = this._gridToPixel(coordinates, game);
     const paletteSwaps = PaletteSwaps.builder().addMapping(Colors.BLACK, color).build();
     const image = await this.imageFactory.getImage({
       filename: SHADOW_FILENAME,
@@ -188,13 +194,13 @@ export default class GameScreenViewportRenderer implements Renderer {
   /**
    * Allow for a one-tile buffer in each direction
    */
-  private _isPixelOnScreen = ({ x, y }: Pixel): boolean =>
+  private _isPixelOnScreen = ({ x, y }: Pixel, game: Game): boolean =>
     x >= -TILE_WIDTH &&
-    x <= this.game.config.screenWidth + TILE_WIDTH &&
+    x <= game.config.screenWidth + TILE_WIDTH &&
     y >= -TILE_HEIGHT &&
-    y <= this.game.config.screenHeight + TILE_HEIGHT;
+    y <= game.config.screenHeight + TILE_HEIGHT;
 
-  private _renderShrineMenu = async (graphics: Graphics) => {
-    await this.shrineMenuRenderer.render(graphics);
+  private _renderShrineMenu = async (game: Game, graphics: Graphics) => {
+    await this.shrineMenuRenderer.render(game, graphics);
   };
 }

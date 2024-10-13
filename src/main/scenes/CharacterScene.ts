@@ -21,16 +21,14 @@ export class CharacterScene implements Scene {
   readonly name = SceneName.CHARACTER;
 
   constructor(
-    @inject(Game)
-    private readonly game: Game,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
     @inject(ImageFactory)
     private readonly imageFactory: ImageFactory
   ) {}
 
-  handleKeyDown = async (command: KeyCommand) => {
-    const { state } = this.game;
+  handleKeyDown = async (command: KeyCommand, game: Game) => {
+    const { state } = game;
 
     switch (command.key) {
       case 'C':
@@ -51,27 +49,26 @@ export class CharacterScene implements Scene {
 
   handleKeyUp = async () => {};
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleClick = async (_: ClickCommand) => {
-    const { state } = this.game;
+  handleClick = async (_: ClickCommand, game: Game) => {
+    const { state } = game;
     state.setScene(SceneName.GAME);
   };
 
-  render = async (graphics: Graphics) => {
+  render = async (game: Game, graphics: Graphics) => {
     const { imageFactory } = this;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
       top: 0,
-      width: this.game.config.screenWidth,
-      height: this.game.config.screenHeight
+      width: game.config.screenWidth,
+      height: game.config.screenHeight
     });
 
-    await this._renderStatistics(graphics);
+    await this._renderStatistics(game, graphics);
   };
 
-  private _renderStatistics = async (graphics: Graphics) => {
-    const { state } = this.game;
+  private _renderStatistics = async (game: Game, graphics: Graphics) => {
+    const { state } = game;
     const playerUnit = state.getPlayerUnit();
     let top = 20;
     this._drawText(

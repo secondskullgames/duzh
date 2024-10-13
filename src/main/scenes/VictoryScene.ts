@@ -25,14 +25,12 @@ export class VictoryScene implements Scene {
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
     @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory,
-    @inject(Game)
-    private readonly game: Game
+    private readonly imageFactory: ImageFactory
   ) {}
 
-  render = async (graphics: Graphics): Promise<void> => {
+  render = async (game: Game, graphics: Graphics): Promise<void> => {
     const { imageFactory } = this;
-    const { state } = this.game;
+    const { state } = game;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
@@ -77,15 +75,15 @@ export class VictoryScene implements Scene {
     drawAligned(imageData, graphics, pixel, textAlign);
   };
 
-  handleKeyDown = async (command: KeyCommand) => {
-    const { state } = this.game;
+  handleKeyDown = async (command: KeyCommand, game: Game) => {
+    const { state } = game;
     const { key, modifiers } = command;
     switch (key) {
       case 'ENTER':
         if (modifiers.includes(ModifierKey.ALT)) {
           await toggleFullScreen();
         } else {
-          await showTitleScreen(this.game);
+          await showTitleScreen(game);
         }
         break;
       case 'ESCAPE':
@@ -95,8 +93,7 @@ export class VictoryScene implements Scene {
 
   handleKeyUp = async () => {};
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  handleClick = async (_: ClickCommand) => {
-    await showTitleScreen(this.game);
+  handleClick = async (_: ClickCommand, game: Game) => {
+    await showTitleScreen(game);
   };
 }

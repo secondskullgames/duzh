@@ -58,6 +58,11 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
   container.bind(AssetLoader).to(AssetLoaderImpl);
   container.bind(MapController).to(MapControllerImpl);
   container.bind(SoundPlayer).toConstantValue(SoundPlayer.forSounds());
+  return container;
+};
+
+const init = async ({ rootElement, gameConfig }: Props) => {
+  const container = await setupContainer({ rootElement, gameConfig });
   const state = new GameStateImpl();
   const engine = new EngineImpl();
   const game: Game = {
@@ -77,15 +82,8 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
     unitService: await container.getAsync(UnitService),
     ticker: new Ticker()
   };
-  container.bind(Game).toConstantValue(game);
   const inputHandler = createInputHandler({ game });
   container.bind(InputHandler).toConstantValue(inputHandler);
-  return container;
-};
-
-const init = async ({ rootElement, gameConfig }: Props) => {
-  const container = await setupContainer({ rootElement, gameConfig });
-  const game = await container.getAsync<Game>(Game);
   const canvas = createCanvas({
     width: gameConfig.screenWidth,
     height: gameConfig.screenHeight
@@ -100,7 +98,7 @@ const init = async ({ rootElement, gameConfig }: Props) => {
   }
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
     const debug = container.get(DebugController);
-    debug.attachToWindow();
+    debug.attachToWindow(game);
   }
 
   const scenes: Record<SceneName, Scene> = {
@@ -113,19 +111,17 @@ const init = async ({ rootElement, gameConfig }: Props) => {
     [SceneName.TITLE]: await container.getAsync(TitleScene),
     [SceneName.VICTORY]: await container.getAsync(VictoryScene)
   };
-  const { state } = game;
   for (const scene of Object.values(scenes)) {
     state.addScene(scene);
   }
 
-  const inputHandler = await container.getAsync(InputHandler);
   inputHandler.addEventListener(canvas);
 
   await showTitleScreen(game);
   setInterval(async () => {
     const currentScene = state.getCurrentScene();
     if (currentScene) {
-      await currentScene.render(canvasGraphics);
+      await currentScene.render(game, canvasGraphics);
     }
   }, 20);
 };

@@ -23,6 +23,7 @@ import { LINE_HEIGHT } from '@main/graphics/constants';
 import { Game } from '@main/core/Game';
 import { inject, injectable } from 'inversify';
 import { checkNotNull } from '@lib/utils/preconditions';
+import { GameConfig } from '@main/core/GameConfig';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -37,19 +38,19 @@ export class InventoryScene implements Scene {
   private readonly inventoryHeight: number;
 
   constructor(
-    @inject(Game)
-    private readonly game: Game,
+    @inject(GameConfig)
+    gameConfig: GameConfig,
     @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
     @inject(ImageFactory)
     private readonly imageFactory: ImageFactory
   ) {
-    this.inventoryWidth = game.config.screenWidth;
-    this.inventoryHeight = game.config.screenHeight;
+    this.inventoryWidth = gameConfig.screenWidth;
+    this.inventoryHeight = gameConfig.screenHeight;
   }
 
-  handleKeyDown = async (command: KeyCommand) => {
-    const { state } = this.game;
+  handleKeyDown = async (command: KeyCommand, game: Game) => {
+    const { state } = game;
     const { key, modifiers } = command;
     const playerUnit = state.getPlayerUnit();
     const inventory = checkNotNull(state.getInventoryState());
@@ -71,7 +72,7 @@ export class InventoryScene implements Scene {
         if (modifiers.includes(ModifierKey.ALT)) {
           await toggleFullScreen();
         } else {
-          await this._handleEnter();
+          await this._handleEnter(game);
         }
         break;
       case 'TAB':
@@ -90,20 +91,20 @@ export class InventoryScene implements Scene {
 
   handleKeyUp = async () => {};
 
-  private _handleEnter = async () => {
-    const { state, inventoryController } = this.game;
+  private _handleEnter = async (game: Game) => {
+    const { state, inventoryController } = game;
     const playerUnit = state.getPlayerUnit();
     const inventory = checkNotNull(state.getInventoryState());
     const selectedItem = inventory.getSelectedItem();
 
     if (selectedItem) {
-      await useItem(playerUnit, selectedItem, this.game);
-      inventoryController.prepareInventoryScreen(this.game);
+      await useItem(playerUnit, selectedItem, game);
+      inventoryController.prepareInventoryScreen(game);
     }
   };
 
-  handleClick = async ({ pixel }: ClickCommand) => {
-    const { state, inventoryController } = this.game;
+  handleClick = async ({ pixel }: ClickCommand, game: Game) => {
+    const { state, inventoryController } = game;
     const playerUnit = state.getPlayerUnit();
     const inventoryState = checkNotNull(state.getInventoryState());
 
@@ -115,12 +116,12 @@ export class InventoryScene implements Scene {
       }
     }
 
-    const itemRects = this._getItemRects();
+    const itemRects = this._getItemRects(game);
     for (const [item, rect] of itemRects) {
       if (Rect.containsPoint(rect, pixel)) {
         if (inventoryState.getSelectedItem() == item) {
-          await useItem(playerUnit, item, this.game);
-          inventoryController.prepareInventoryScreen(this.game);
+          await useItem(playerUnit, item, game);
+          inventoryController.prepareInventoryScreen(game);
         } else {
           inventoryState.selectItem(state.getPlayerUnit(), item);
         }
@@ -147,8 +148,8 @@ export class InventoryScene implements Scene {
     return itemCategoryRects;
   };
 
-  private _getItemRects = (): [InventoryItem, Rect][] => {
-    const { state } = this.game;
+  private _getItemRects = (game: Game): [InventoryItem, Rect][] => {
+    const { state } = game;
     const inventoryScreenState = checkNotNull(state.getInventoryState());
     const itemCategory = inventoryScreenState.getSelectedItemCategory();
     const itemRects: [InventoryItem, Rect][] = [];
@@ -169,11 +170,11 @@ export class InventoryScene implements Scene {
     return itemRects;
   };
 
-  render = async (graphics: Graphics) => {
+  render = async (game: Game, graphics: Graphics) => {
     await this._drawBackground(graphics);
-    this._drawEquipment(graphics);
-    this._drawInventory(graphics);
-    this._drawTooltip(graphics);
+    this._drawEquipment(graphics, game);
+    this._drawInventory(graphics, game);
+    this._drawTooltip(graphics, game);
   };
 
   private _drawText = (
@@ -209,8 +210,8 @@ export class InventoryScene implements Scene {
     });
   };
 
-  private _drawEquipment = (graphics: Graphics) => {
-    const { state } = this.game;
+  private _drawEquipment = (graphics: Graphics, game: Game) => {
+    const { state } = game;
     const inventory = checkNotNull(state.getInventoryState());
     const equipmentLeft = INVENTORY_LEFT + INVENTORY_MARGIN;
 
@@ -254,8 +255,8 @@ export class InventoryScene implements Scene {
     }
   };
 
-  private _drawInventory = (graphics: Graphics) => {
-    const { state } = this.game;
+  private _drawInventory = (graphics: Graphics, game: Game) => {
+    const { state } = game;
     const inventory = checkNotNull(state.getInventoryState());
     const inventoryCategories = inventory.getItemCategories();
     const categoryWidth = 60;
@@ -310,8 +311,8 @@ export class InventoryScene implements Scene {
     }
   };
 
-  private _drawTooltip = (graphics: Graphics) => {
-    const { state } = this.game;
+  private _drawTooltip = (graphics: Graphics, game: Game) => {
+    const { state } = game;
     const left = 10;
     const top = Math.round(graphics.getHeight() * 0.6);
 

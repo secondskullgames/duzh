@@ -31,5 +31,3 @@ export type Game = Readonly<{
   unitService: UnitService;
   ticker: Ticker;
 }>;
-
-export const Game = Symbol('Game');

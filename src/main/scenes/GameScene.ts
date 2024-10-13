@@ -50,8 +50,6 @@ export class GameScene implements Scene {
   readonly name = SceneName.GAME;
 
   constructor(
-    @inject(Game)
-    private readonly game: Game,
     @inject(MapController)
     private readonly mapController: MapController,
     @inject(TextRenderer)
@@ -66,26 +64,26 @@ export class GameScene implements Scene {
     private readonly soundPlayer: SoundPlayer
   ) {}
 
-  handleKeyDown = async (command: KeyCommand) => {
-    const { state, inventoryController } = this.game;
+  handleKeyDown = async (command: KeyCommand, game: Game) => {
+    const { state, inventoryController } = game;
     const { key, modifiers } = command;
 
     if (state.isShowingShrineMenu()) {
-      await this._handleKeyDownInShrineMenu(command);
+      await this._handleKeyDownInShrineMenu(command, game);
       return;
     }
 
     if (isArrowKey(key)) {
-      await this._handleArrowKey(key as ArrowKey, modifiers);
+      await this._handleArrowKey(key as ArrowKey, modifiers, game);
     } else if (isNumberKey(key)) {
-      await this._handleAbilityKey(key);
+      await this._handleAbilityKey(key, game);
     } else if (isModifierKey(key)) {
-      await this._handleModifierKeyDown(key as ModifierKey);
+      await this._handleModifierKeyDown(key as ModifierKey, game);
     } else if (key === 'SPACEBAR') {
       this.soundPlayer.playSound(Sounds.FOOTSTEP);
-      await this.game.engine.playTurn(this.game);
+      await game.engine.playTurn(game);
     } else if (key === 'TAB') {
-      inventoryController.prepareInventoryScreen(this.game);
+      inventoryController.prepareInventoryScreen(game);
       state.setScene(SceneName.INVENTORY);
     } else if (key === 'M') {
       state.setScene(SceneName.MAP);
@@ -95,22 +93,26 @@ export class GameScene implements Scene {
       if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
       } else {
-        await this._handleEnter();
+        await this._handleEnter(game);
       }
     } else if (key === 'F1') {
       state.setScene(SceneName.HELP);
     }
   };
 
-  handleKeyUp = async (command: KeyCommand) => {
+  handleKeyUp = async (command: KeyCommand, game: Game) => {
     const { key } = command;
     if (isModifierKey(key)) {
-      await this._handleModifierKeyUp(key as ModifierKey);
+      await this._handleModifierKeyUp(key as ModifierKey, game);
     }
   };
 
-  private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
-    const { state } = this.game;
+  private _handleArrowKey = async (
+    key: ArrowKey,
+    modifiers: ModifierKey[],
+    game: Game
+  ) => {
+    const { state } = game;
     const playerUnit = state.getPlayerUnit();
     const playerController = playerUnit.getController() as PlayerUnitController;
     const direction = getDirection(key);
@@ -170,25 +172,25 @@ export class GameScene implements Scene {
 
     if (order) {
       playerController.queueOrder(order);
-      await this.game.engine.playTurn(this.game);
+      await game.engine.playTurn(game);
     } else {
       playerUnit.setDirection(direction);
       this.soundPlayer.playSound(Sounds.BLOCKED);
     }
   };
 
-  private _handleAbilityKey = async (hotkey: Key) => {
-    const { state } = this.game;
+  private _handleAbilityKey = async (hotkey: Key, game: Game) => {
+    const { state } = game;
     const playerUnit = state.getPlayerUnit();
     const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
     const ability = playerUnitClass.getAbilityForHotkey(hotkey, playerUnit);
     if (ability) {
-      await this._handleAbility(ability);
+      await this._handleAbility(ability, game);
     }
   };
 
-  private _handleAbility = async (ability: UnitAbility) => {
-    const { state } = this.game;
+  private _handleAbility = async (ability: UnitAbility, game: Game) => {
+    const { state } = game;
     const playerUnit = state.getPlayerUnit();
     const playerController = playerUnit.getController() as PlayerUnitController;
     if (ability.isEnabled(playerUnit)) {
@@ -200,9 +202,9 @@ export class GameScene implements Scene {
     }
   };
 
-  private _handleEnter = async () => {
+  private _handleEnter = async (game: Game) => {
     const { mapController } = this;
-    const { state } = this.game;
+    const { state } = game;
     const playerUnit = state.getPlayerUnit();
     const map = playerUnit.getMap();
     const coordinates = playerUnit.getCoordinates();
@@ -213,26 +215,26 @@ export class GameScene implements Scene {
     const item = getItem(map, coordinates);
     const shrine = map.contains(nextCoordinates) ? getShrine(map, nextCoordinates) : null;
     if (item) {
-      pickupItem(playerUnit, item, this.game);
+      pickupItem(playerUnit, item, game);
       map.removeObject(item);
-      await this.game.engine.playTurn(this.game);
+      await game.engine.playTurn(game);
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_DOWN) {
       this.soundPlayer.playSound(Sounds.DESCEND_STAIRS);
-      await mapController.loadNextMap(this.game);
+      await mapController.loadNextMap(game);
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_UP) {
       this.soundPlayer.playSound(Sounds.DESCEND_STAIRS); // TODO
-      await mapController.loadPreviousMap(this.game);
+      await mapController.loadPreviousMap(game);
     } else if (shrine) {
-      shrine.use(this.game);
+      shrine.use(game);
     } else {
       // this is mostly a hack to support clicks
       this.soundPlayer.playSound(Sounds.FOOTSTEP);
-      await this.game.engine.playTurn(this.game);
+      await game.engine.playTurn(game);
     }
   };
 
-  private _handleModifierKeyDown = async (key: ModifierKey) => {
-    const { state } = this.game;
+  private _handleModifierKeyDown = async (key: ModifierKey, game: Game) => {
+    const { state } = game;
     const playerUnit = state.getPlayerUnit();
     const playerController = playerUnit.getController() as PlayerUnitController;
 
@@ -262,8 +264,8 @@ export class GameScene implements Scene {
     }
   };
 
-  private _handleModifierKeyUp = async (key: ModifierKey) => {
-    const { state } = this.game;
+  private _handleModifierKeyUp = async (key: ModifierKey, game: Game) => {
+    const { state } = game;
     const playerUnit = state.getPlayerUnit();
     const playerController = playerUnit.getController() as PlayerUnitController;
 
@@ -292,8 +294,8 @@ export class GameScene implements Scene {
     }
   };
 
-  private _handleKeyDownInShrineMenu = async (command: KeyCommand) => {
-    const { state } = this.game;
+  private _handleKeyDownInShrineMenu = async (command: KeyCommand, game: Game) => {
+    const { state } = game;
     const shrineMenuState = checkNotNull(state.getShrineMenuState());
     switch (command.key) {
       case 'UP':
@@ -307,21 +309,21 @@ export class GameScene implements Scene {
           await toggleFullScreen();
         } else {
           const selectedOption = shrineMenuState.getSelectedOption();
-          await selectedOption.onUse(this.game);
+          await selectedOption.onUse(game);
           state.setShrineMenuState(null);
         }
     }
   };
 
-  handleClick = async ({ pixel }: ClickCommand) => {
-    const { state, inventoryController } = this.game;
+  handleClick = async ({ pixel }: ClickCommand, game: Game) => {
+    const { state, inventoryController } = game;
     // TODO I wish we had a widget library...
     const playerUnit = state.getPlayerUnit();
     const abilityRects = this._getAbilityRects(playerUnit);
     for (const [abilityName, rect] of abilityRects) {
       if (Rect.containsPoint(rect, pixel)) {
         const ability = playerUnit.getAbilityForName(abilityName);
-        await this._handleAbility(ability);
+        await this._handleAbility(ability, game);
         return;
       }
     }
@@ -334,7 +336,7 @@ export class GameScene implements Scene {
             state.setScene(SceneName.MAP);
             return;
           case TopMenuIcon.INVENTORY:
-            inventoryController.prepareInventoryScreen(this.game);
+            inventoryController.prepareInventoryScreen(game);
             state.setScene(SceneName.INVENTORY);
             return;
           case TopMenuIcon.CHARACTER:
@@ -349,10 +351,10 @@ export class GameScene implements Scene {
 
     if (state.isShowingShrineMenu()) {
       const shrineMenuState = checkNotNull(state.getShrineMenuState());
-      const shrineOptionRects = this._getShrineOptionRects(shrineMenuState);
+      const shrineOptionRects = this._getShrineOptionRects(shrineMenuState, game);
       for (const [option, rect] of shrineOptionRects) {
         if (Rect.containsPoint(rect, pixel)) {
-          await option.onUse(this.game);
+          await option.onUse(game);
           state.setShrineMenuState(null);
           return;
         }
@@ -360,7 +362,7 @@ export class GameScene implements Scene {
       return;
     }
 
-    const coordinates = this._pixelToGrid(pixel);
+    const coordinates = this._pixelToGrid(pixel, game);
 
     const playerCoordinates = playerUnit.getCoordinates();
     const { dx, dy } = Coordinates.difference(playerCoordinates, coordinates);
@@ -389,14 +391,14 @@ export class GameScene implements Scene {
       }
     })();
     if (key === 'ENTER') {
-      await this._handleEnter();
+      await this._handleEnter(game);
     } else if (isArrowKey(key)) {
-      await this._handleArrowKey(key as ArrowKey, []);
+      await this._handleArrowKey(key as ArrowKey, [], game);
     }
   };
 
-  private _pixelToGrid = ({ x: pixelX, y: pixelY }: Pixel): Coordinates => {
-    const { state, config } = this.game;
+  private _pixelToGrid = ({ x: pixelX, y: pixelY }: Pixel, game: Game): Coordinates => {
+    const { state, config } = game;
     const playerUnit = state.getPlayerUnit();
     const { x: playerX, y: playerY } = playerUnit.getCoordinates();
     const { screenWidth, screenHeight } = config;
@@ -444,9 +446,10 @@ export class GameScene implements Scene {
   };
 
   private _getShrineOptionRects = (
-    shrineMenuState: ShrineMenuState
+    shrineMenuState: ShrineMenuState,
+    game: Game
   ): [ShrineOption, Rect][] => {
-    const { config } = this.game;
+    const { config } = game;
     const shrineOptionRects: [ShrineOption, Rect][] = [];
     const { screenWidth, screenHeight } = config;
     for (let i = 0; i < shrineMenuState.options.length; i++) {
@@ -462,8 +465,8 @@ export class GameScene implements Scene {
     return shrineOptionRects;
   };
 
-  render = async (graphics: Graphics) => {
-    const { state } = this.game;
+  render = async (game: Game, graphics: Graphics) => {
+    const { state } = game;
     graphics.fillRect(
       {
         left: 0,
@@ -474,23 +477,23 @@ export class GameScene implements Scene {
       Colors.BLACK
     );
 
-    await this.viewportRenderer.render(graphics);
-    await this.hudRenderer.render(graphics);
-    await this._renderTicker(graphics);
+    await this.viewportRenderer.render(game, graphics);
+    await this.hudRenderer.render(game, graphics);
+    await this._renderTicker(game, graphics);
 
     if (isMobileDevice()) {
-      await this.topMenuRenderer.render(graphics);
+      await this.topMenuRenderer.render(game, graphics);
     }
 
     if (Feature.isEnabled(Feature.BUSY_INDICATOR)) {
       if (state.isTurnInProgress()) {
-        this._drawTurnProgressIndicator(graphics);
+        this._drawTurnProgressIndicator(game, graphics);
       }
     }
   };
 
-  private _renderTicker = async (graphics: Graphics) => {
-    const { state, ticker } = this.game;
+  private _renderTicker = async (game: Game, graphics: Graphics) => {
+    const { state, ticker } = game;
     const messages = ticker.getRecentMessages(state.getTurn());
 
     const left = 0;
@@ -513,8 +516,8 @@ export class GameScene implements Scene {
     }
   };
 
-  private _drawTurnProgressIndicator = (graphics: Graphics) => {
-    const { state } = this.game;
+  private _drawTurnProgressIndicator = (game: Game, graphics: Graphics) => {
+    const { state } = game;
     if (state.isTurnInProgress()) {
       const width = 20;
       const height = 20;

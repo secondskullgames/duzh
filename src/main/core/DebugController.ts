@@ -1,7 +1,6 @@
 import { levelUp as _levelUp } from '../actions/levelUp';
 import Sounds from '../sounds/Sounds';
 import { ItemFactory } from '../items/ItemFactory';
-import MapInstance from '../maps/MapInstance';
 import { die } from '@main/actions/die';
 import { MapController } from '@main/maps/MapController';
 import { Faction } from '@main/units/Faction';
@@ -11,16 +10,14 @@ import { inject, injectable } from 'inversify';
 @injectable()
 export class DebugController {
   constructor(
-    @inject(Game)
-    private readonly game: Game,
     @inject(MapController)
     private readonly mapController: MapController,
     @inject(ItemFactory)
     private readonly itemFactory: ItemFactory
   ) {}
 
-  revealMap = async () => {
-    const { state } = this.game;
+  revealMap = async (game: Game) => {
+    const { state } = game;
     const playerUnit = state.getPlayerUnit();
     const map = playerUnit.getMap();
     for (let y = 0; y < map.height; y++) {
@@ -30,21 +27,21 @@ export class DebugController {
     }
   };
 
-  killPlayer = async () => {
-    const { state } = this.game;
+  killPlayer = async (game: Game) => {
+    const { state } = game;
     const playerUnit = state.getPlayerUnit();
-    await die(playerUnit, this.game);
+    await die(playerUnit, game);
   };
 
-  levelUp = async () => {
-    const { state } = this.game;
+  levelUp = async (game: Game) => {
+    const { state } = game;
     const playerUnit = state.getPlayerUnit();
-    _levelUp(playerUnit, this.game);
+    _levelUp(playerUnit, game);
   };
 
-  awardEquipment = async () => {
+  awardEquipment = async (game: Game) => {
     const { itemFactory } = this;
-    const { soundPlayer, state, ticker } = this.game;
+    const { soundPlayer, state, ticker } = game;
 
     // eslint-disable-next-line no-alert
     const id = prompt('Enter a valid equipment_id')!;
@@ -55,34 +52,43 @@ export class DebugController {
     soundPlayer.playSound(Sounds.PICK_UP_ITEM);
   };
 
-  attachToWindow = () => {
+  killEnemies = async (game: Game) => {
+    const playerUnit = game.state.getPlayerUnit();
+    const map = playerUnit.getMap();
+    for (const unit of map.getAllUnits()) {
+      if (unit.getFaction() === Faction.ENEMY) {
+        await die(unit, game);
+      }
+    }
+  };
+
+  attachToWindow = (game: Game) => {
     const { mapController } = this;
-    const { state } = this.game;
     const rootElelement = document.getElementById('debug');
     const items = [
       {
         label: 'Reveal Map',
-        onClick: () => this.revealMap()
+        onClick: () => this.revealMap(game)
       },
       {
         label: 'Kill Enemies',
-        onClick: () => this.killEnemies(state.getPlayerUnit().getMap())
+        onClick: () => this.killEnemies(game)
       },
       {
         label: 'Kill Player',
-        onClick: () => this.killPlayer()
+        onClick: () => this.killPlayer(game)
       },
       {
         label: 'Level Up',
-        onClick: () => this.levelUp()
+        onClick: () => this.levelUp(game)
       },
       {
         label: 'Next Level',
-        onClick: () => mapController.loadNextMap(this.game)
+        onClick: () => mapController.loadNextMap(game)
       },
       {
         label: 'Award Equipment',
-        onClick: () => this.awardEquipment()
+        onClick: () => this.awardEquipment(game)
       }
     ];
     if (rootElelement) {
@@ -93,14 +99,6 @@ export class DebugController {
         rootElelement.appendChild(button);
       }
       rootElelement.style.display = 'block';
-    }
-  };
-
-  private killEnemies = async (map: MapInstance) => {
-    for (const unit of map.getAllUnits()) {
-      if (unit.getFaction() === Faction.ENEMY) {
-        await die(unit, this.game);
-      }
     }
   };
 }
