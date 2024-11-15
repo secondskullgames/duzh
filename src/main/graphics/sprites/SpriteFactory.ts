@@ -14,7 +14,7 @@ import Colors from '@main/graphics/Colors';
 import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { fillTemplate } from '@lib/utils/templates';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
+import { ImageFactory } from '@lib/graphics/images/ImageFactory';
 import { Image } from '@lib/graphics/images/Image';
 import { ImageEffect } from '@lib/graphics/images/ImageEffect';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';

@@ -1,11 +1,8 @@
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import { MapController } from '@main/maps/MapController';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { isMobileDevice, toggleFullScreen } from '@lib/utils/dom';
 import { Feature } from '@main/utils/features';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
-import { TextRenderer } from '@main/graphics/TextRenderer';
 import { Graphics } from '@lib/graphics/Graphics';
 import { FontName } from '@main/graphics/Fonts';
 import Colors from '@main/graphics/Colors';
@@ -13,26 +10,16 @@ import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Color } from '@lib/graphics/Color';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
 
 const TITLE_FILENAME = 'title2';
 
-@injectable()
 export class TitleScene implements Scene {
   readonly name = SceneName.TITLE;
 
-  constructor(
-    @inject(MapController)
-    private readonly mapController: MapController,
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory,
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer
-  ) {}
+  constructor() {}
 
   private _handleStartGame = async (game: Game) => {
-    const { mapController } = this;
-    const { state, ticker } = game;
+    const { state, ticker, mapController } = game;
     if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
       await mapController.loadDebugMap(game);
     } else {
@@ -70,8 +57,9 @@ export class TitleScene implements Scene {
     await this._handleStartGame(game);
   };
 
-  render = async (_: Game, graphics: Graphics): Promise<void> => {
-    const image = await this.imageFactory.getImage({ filename: TITLE_FILENAME });
+  render = async (game: Game, graphics: Graphics): Promise<void> => {
+    const { imageFactory } = game;
+    const image = await imageFactory.getImage({ filename: TITLE_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
       top: 0,
@@ -86,7 +74,8 @@ export class TitleScene implements Scene {
         { x: 320, y: 300 },
         Colors.WHITE,
         Alignment.CENTER,
-        graphics
+        graphics,
+        game
       );
     }
   };
@@ -97,9 +86,10 @@ export class TitleScene implements Scene {
     pixel: Pixel,
     color: Color,
     textAlign: Alignment,
-    graphics: Graphics
+    graphics: Graphics,
+    game: Game
   ) => {
-    const imageData = this.textRenderer.renderText({
+    const imageData = game.textRenderer.renderText({
       text,
       fontName,
       color,

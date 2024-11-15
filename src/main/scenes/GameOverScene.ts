@@ -1,7 +1,5 @@
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
-import { TextRenderer } from '@main/graphics/TextRenderer';
 import { Graphics } from '@lib/graphics/Graphics';
 import { FontName } from '@main/graphics/Fonts';
 import Colors from '@main/graphics/Colors';
@@ -13,25 +11,15 @@ import { toggleFullScreen } from '@lib/utils/dom';
 import { showTitleScreen } from '@main/actions/showTitleScreen';
 import { formatTimestamp } from '@lib/utils/time';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
 import { checkNotNull } from '@lib/utils/preconditions';
 
 const BACKGROUND_FILENAME = 'gameover';
 
-@injectable()
 export class GameOverScene implements Scene {
   readonly name = SceneName.GAME_OVER;
 
-  constructor(
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory,
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer
-  ) {}
-
   render = async (game: Game, graphics: Graphics): Promise<void> => {
-    const { imageFactory } = this;
-    const { state } = game;
+    const { state, imageFactory } = game;
     const gameOverState = checkNotNull(state.getGameOverState());
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
@@ -55,7 +43,8 @@ export class GameOverScene implements Scene {
         { x: 320, y },
         Colors.WHITE,
         Alignment.CENTER,
-        graphics
+        graphics,
+        game
       );
       y += 20;
     }
@@ -67,9 +56,10 @@ export class GameOverScene implements Scene {
     pixel: Pixel,
     color: Color,
     textAlign: Alignment,
-    graphics: Graphics
+    graphics: Graphics,
+    game: Game
   ) => {
-    const imageData = this.textRenderer.renderText({
+    const imageData = game.textRenderer.renderText({
       text,
       fontName,
       color,

@@ -10,8 +10,6 @@ import {
   InventoryCategory
 } from '@main/core/state/InventoryState';
 import InventoryItem from '@main/items/InventoryItem';
-import { TextRenderer } from '@main/graphics/TextRenderer';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Graphics } from '@lib/graphics/Graphics';
 import { FontName } from '@main/graphics/Fonts';
 import { Pixel } from '@lib/geometry/Pixel';
@@ -21,7 +19,6 @@ import Colors from '@main/graphics/Colors';
 import { getSlotName, splitTooltipToLines } from '@main/equipment/EquipmentUtils';
 import { LINE_HEIGHT } from '@main/graphics/constants';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { GameConfig } from '@main/core/GameConfig';
 
@@ -31,20 +28,12 @@ const INVENTORY_MARGIN = 10;
 
 const INVENTORY_BACKGROUND_FILENAME = 'inventory2';
 
-@injectable()
 export class InventoryScene implements Scene {
   readonly name = SceneName.INVENTORY;
   private readonly inventoryWidth: number;
   private readonly inventoryHeight: number;
 
-  constructor(
-    @inject(GameConfig)
-    gameConfig: GameConfig,
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory
-  ) {
+  constructor(gameConfig: GameConfig) {
     this.inventoryWidth = gameConfig.screenWidth;
     this.inventoryHeight = gameConfig.screenHeight;
   }
@@ -171,7 +160,7 @@ export class InventoryScene implements Scene {
   };
 
   render = async (game: Game, graphics: Graphics) => {
-    await this._drawBackground(graphics);
+    await this._drawBackground(graphics, game);
     this._drawEquipment(graphics, game);
     this._drawInventory(graphics, game);
     this._drawTooltip(graphics, game);
@@ -183,9 +172,10 @@ export class InventoryScene implements Scene {
     pixel: Pixel,
     color: Color,
     textAlign: Alignment,
-    graphics: Graphics
+    graphics: Graphics,
+    game: Game
   ) => {
-    const imageData = this.textRenderer.renderText({
+    const imageData = game.textRenderer.renderText({
       text,
       fontName,
       color,
@@ -194,8 +184,8 @@ export class InventoryScene implements Scene {
     drawAligned(imageData, graphics, pixel, textAlign);
   };
 
-  private _drawBackground = async (graphics: Graphics) => {
-    const { imageFactory } = this;
+  private _drawBackground = async (graphics: Graphics, game: Game) => {
+    const { imageFactory } = game;
     graphics.clear();
 
     const image = await imageFactory.getImage({
@@ -223,7 +213,8 @@ export class InventoryScene implements Scene {
         ? Colors.YELLOW
         : Colors.WHITE,
       Alignment.CENTER,
-      graphics
+      graphics,
+      game
     );
     this._drawText(
       'INVENTORY',
@@ -233,7 +224,8 @@ export class InventoryScene implements Scene {
         ? Colors.YELLOW
         : Colors.WHITE,
       Alignment.CENTER,
-      graphics
+      graphics,
+      game
     );
 
     // draw equipment items
@@ -249,7 +241,8 @@ export class InventoryScene implements Scene {
         { x: equipmentLeft, y },
         inventory.getSelectedEquipment() === equipment ? Colors.YELLOW : Colors.WHITE,
         Alignment.LEFT,
-        graphics
+        graphics,
+        game
       );
       y += LINE_HEIGHT;
     }
@@ -272,7 +265,8 @@ export class InventoryScene implements Scene {
         { x, y: top },
         Colors.WHITE,
         Alignment.CENTER,
-        graphics
+        graphics,
+        game
       );
       if (inventoryCategories[i] === inventory.getSelectedItemCategory()) {
         // TODO can we make a `drawLine`?
@@ -305,7 +299,8 @@ export class InventoryScene implements Scene {
           { x, y },
           color,
           Alignment.LEFT,
-          graphics
+          graphics,
+          game
         );
       }
     }
@@ -353,7 +348,8 @@ export class InventoryScene implements Scene {
             { x: lineLeft, y: lineTop },
             Colors.WHITE,
             Alignment.LEFT,
-            graphics
+            graphics,
+            game
           );
           lineTop += 15;
         }

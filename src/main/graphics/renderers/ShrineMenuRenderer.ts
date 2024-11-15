@@ -1,31 +1,19 @@
 import { Renderer } from './Renderer';
 import { FontName } from '../Fonts';
 import { Alignment, drawAligned } from '../RenderingUtils';
-import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { ShrineOption } from '@main/core/state/ShrineMenuState';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'bordered_background';
 
-@injectable()
 export class ShrineMenuRenderer implements Renderer {
-  constructor(
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory
-  ) {}
-
   render = async (game: Game, graphics: Graphics) => {
-    const { imageFactory } = this;
-    const { state } = game;
+    const { state, imageFactory } = game;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     const { screenWidth, screenHeight } = game.config;
     const left = screenWidth / 4;
@@ -47,7 +35,8 @@ export class ShrineMenuRenderer implements Renderer {
         { x, y },
         Colors.WHITE,
         Alignment.LEFT,
-        graphics
+        graphics,
+        game
       );
       y += 20;
     }
@@ -62,7 +51,8 @@ export class ShrineMenuRenderer implements Renderer {
         { x: x + 10, y },
         color,
         Alignment.LEFT,
-        graphics
+        graphics,
+        game
       );
       y += 20;
     }
@@ -81,9 +71,10 @@ export class ShrineMenuRenderer implements Renderer {
     pixel: Pixel,
     color: Color,
     textAlign: Alignment,
-    graphics: Graphics
+    graphics: Graphics,
+    game: Game
   ) => {
-    const imageData = this.textRenderer.renderText({
+    const imageData = game.textRenderer.renderText({
       text,
       fontName,
       color,

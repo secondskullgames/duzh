@@ -3,29 +3,18 @@ import { SceneName } from '@main/scenes/SceneName';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { Graphics } from '@lib/graphics/Graphics';
 import { toggleFullScreen } from '@lib/utils/dom';
-import { TextRenderer } from '@main/graphics/TextRenderer';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { FontName } from '@main/graphics/Fonts';
 import Colors from '@main/graphics/Colors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Color } from '@lib/graphics/Color';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'bordered_background';
 const LINE_HEIGHT = 15;
 
-@injectable()
 export class CharacterScene implements Scene {
   readonly name = SceneName.CHARACTER;
-
-  constructor(
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory
-  ) {}
 
   handleKeyDown = async (command: KeyCommand, game: Game) => {
     const { state } = game;
@@ -55,7 +44,7 @@ export class CharacterScene implements Scene {
   };
 
   render = async (game: Game, graphics: Graphics) => {
-    const { imageFactory } = this;
+    const { imageFactory } = game;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
@@ -77,7 +66,8 @@ export class CharacterScene implements Scene {
       { x: graphics.getWidth() / 2, y: top },
       Colors.WHITE,
       Alignment.CENTER,
-      graphics
+      graphics,
+      game
     );
 
     top += 20;
@@ -98,7 +88,8 @@ export class CharacterScene implements Scene {
           { x: 20, y: top },
           Colors.WHITE,
           Alignment.LEFT,
-          graphics
+          graphics,
+          game
         );
         top += LINE_HEIGHT;
       }
@@ -121,7 +112,8 @@ export class CharacterScene implements Scene {
           { x: 20, y: top },
           Colors.WHITE,
           Alignment.LEFT,
-          graphics
+          graphics,
+          game
         );
         top += LINE_HEIGHT;
       }
@@ -134,9 +126,10 @@ export class CharacterScene implements Scene {
     pixel: Pixel,
     color: Color,
     textAlign: Alignment,
-    graphics: Graphics
+    graphics: Graphics,
+    game: Game
   ) => {
-    const imageData = this.textRenderer.renderText({
+    const imageData = game.textRenderer.renderText({
       text,
       fontName,
       color,

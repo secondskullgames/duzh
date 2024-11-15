@@ -7,7 +7,7 @@ import { GameStateImpl } from './core/GameState';
 import { MapController, MapControllerImpl } from './maps/MapController';
 import { MapSpec } from '@models/MapSpec';
 import InputHandler from '@lib/input/InputHandler';
-import { AssetLoader, AssetLoaderImpl } from '@lib/assets/AssetLoader';
+import { AssetLoaderImpl } from '@lib/assets/AssetLoader';
 import { createCanvas, enterFullScreen, isMobileDevice } from '@lib/utils/dom';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Graphics } from '@lib/graphics/Graphics';
@@ -39,6 +39,14 @@ import Ticker from '@main/core/Ticker';
 import { InventoryController } from '@main/controllers/InventoryController';
 import { ShrineController } from '@main/controllers/ShrineController';
 import { UnitService } from '@main/controllers/UnitService';
+import { ImageLoader } from '@lib/graphics/images/ImageLoader';
+import { ImageFactory } from '@lib/graphics/images/ImageFactory';
+import { ImageCache } from '@lib/graphics/images/ImageCache';
+import { TextRenderer } from '@main/graphics/TextRenderer';
+import GameScreenViewportRenderer from '@main/graphics/renderers/GameScreenViewportRenderer';
+import TopMenuRenderer from '@main/graphics/renderers/TopMenuRenderer';
+import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
+import { ShrineMenuRenderer } from '@main/graphics/renderers/ShrineMenuRenderer';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -51,13 +59,20 @@ const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
     autoBindInjectable: true
   });
   container.bind(GameConfig).toConstantValue(gameConfig);
-  container.bind<FontBundle>(FontBundle).toDynamicValue(async context => {
-    const fontFactory = context.container.get(FontFactory);
-    return fontFactory.loadFonts();
-  });
-  container.bind(AssetLoader).to(AssetLoaderImpl);
+  const assetLoader = new AssetLoaderImpl();
+  const modelLoader = new ModelLoader(assetLoader);
+  const imageLoader = new ImageLoader(assetLoader);
+  const imageFactory = new ImageFactory(imageLoader, new ImageCache());
+  const fontFactory = new FontFactory(imageFactory);
+  const fontBundle = await fontFactory.loadFonts();
+  container.bind(ModelLoader).toConstantValue(modelLoader);
+  container.bind(ImageFactory).toConstantValue(imageFactory);
+  container.bind(FontBundle).toConstantValue(fontBundle);
   container.bind(MapController).to(MapControllerImpl);
   container.bind(SoundPlayer).toConstantValue(SoundPlayer.forSounds());
+  container
+    .bind(MusicController)
+    .toConstantValue(new MusicController(assetLoader, SoundPlayer.forMusic()));
   return container;
 };
 
@@ -69,12 +84,14 @@ const init = async ({ rootElement, gameConfig }: Props) => {
     engine,
     state,
     config: gameConfig,
+    imageFactory: await container.getAsync(ImageFactory),
     itemFactory: await container.getAsync(ItemFactory),
     unitFactory: await container.getAsync(UnitFactory),
     objectFactory: await container.getAsync(ObjectFactory),
     musicController: await container.getAsync(MusicController),
     projectileFactory: await container.getAsync(ProjectileFactory),
     modelLoader: await container.getAsync(ModelLoader),
+    textRenderer: await container.getAsync(TextRenderer),
     soundPlayer: container.get(SoundPlayer),
     mapController: await container.getAsync(MapController),
     inventoryController: await container.getAsync(InventoryController),
@@ -102,14 +119,18 @@ const init = async ({ rootElement, gameConfig }: Props) => {
   }
 
   const scenes: Record<SceneName, Scene> = {
-    [SceneName.CHARACTER]: await container.getAsync(CharacterScene),
-    [SceneName.GAME]: await container.getAsync(GameScene),
-    [SceneName.GAME_OVER]: await container.getAsync(GameOverScene),
-    [SceneName.HELP]: await container.getAsync(HelpScene),
-    [SceneName.INVENTORY]: await container.getAsync(InventoryScene),
-    [SceneName.MAP]: await container.getAsync(MapScene),
-    [SceneName.TITLE]: await container.getAsync(TitleScene),
-    [SceneName.VICTORY]: await container.getAsync(VictoryScene)
+    [SceneName.CHARACTER]: new CharacterScene(),
+    [SceneName.GAME]: new GameScene(
+      new GameScreenViewportRenderer(new ShrineMenuRenderer()),
+      new HUDRenderer(),
+      new TopMenuRenderer()
+    ),
+    [SceneName.GAME_OVER]: new GameOverScene(),
+    [SceneName.HELP]: new HelpScene(),
+    [SceneName.INVENTORY]: new InventoryScene(),
+    [SceneName.MAP]: new MapScene(),
+    [SceneName.TITLE]: new TitleScene(),
+    [SceneName.VICTORY]: new VictoryScene()
   };
   for (const scene of Object.values(scenes)) {
     state.addScene(scene);

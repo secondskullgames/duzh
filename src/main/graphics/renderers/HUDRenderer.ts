@@ -1,7 +1,6 @@
 import { Renderer } from './Renderer';
 import Colors from '../Colors';
 import { LINE_HEIGHT } from '../constants';
-import { TextRenderer } from '../TextRenderer';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { FontName } from '../Fonts';
 import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
@@ -10,14 +9,12 @@ import { Graphics } from '@lib/graphics/Graphics';
 import { Feature } from '@main/utils/features';
 import Unit from '@main/units/Unit';
 import { Rect } from '@lib/geometry/Rect';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { type UnitAbility } from '@main/abilities/UnitAbility';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { formatTimestamp } from '@lib/utils/time';
-import { inject, injectable } from 'inversify';
 import { Game } from '@main/core/Game';
 import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
 import { GameConfig } from '@main/core/GameConfig';
@@ -33,20 +30,12 @@ const BORDER_PADDING = 5;
 const ABILITIES_INNER_MARGIN = 5;
 const ABILITY_ICON_WIDTH = 20;
 
-@injectable()
-export default class HUDRenderer implements Renderer {
+export class HUDRenderer implements Renderer {
   private readonly TOP: number;
   private readonly WIDTH: number;
   private readonly MIDDLE_PANE_WIDTH: number;
 
-  constructor(
-    @inject(GameConfig)
-    gameConfig: GameConfig,
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory
-  ) {
+  constructor(gameConfig: GameConfig) {
     this.TOP = gameConfig.screenHeight - HEIGHT;
     this.WIDTH = gameConfig.screenWidth;
     this.MIDDLE_PANE_WIDTH = gameConfig.screenWidth - LEFT_PANE_WIDTH - RIGHT_PANE_WIDTH;
@@ -63,8 +52,7 @@ export default class HUDRenderer implements Renderer {
   };
 
   private _renderFrame = async (game: Game, graphics: Graphics) => {
-    const { imageFactory } = this;
-    const { state } = game;
+    const { state, imageFactory } = game;
     const fillColor = (() => {
       const playerUnit = state.getPlayerUnit();
       if (playerUnit.getEffects().hasEffect(StatusEffect.STUNNED)) {
@@ -274,8 +262,7 @@ export default class HUDRenderer implements Renderer {
     game: Game,
     graphics: Graphics
   ) => {
-    const { imageFactory } = this;
-    const { state } = game;
+    const { state, imageFactory } = game;
     const playerUnit = state.getPlayerUnit();
     const playerController = playerUnit.getController() as PlayerUnitController;
     const queuedAbility = playerController.getQueuedAbility();
@@ -308,9 +295,10 @@ export default class HUDRenderer implements Renderer {
     pixel: Pixel,
     color: Color,
     textAlign: Alignment,
-    graphics: Graphics
+    graphics: Graphics,
+    game: Game
   ) => {
-    const imageData = this.textRenderer.renderText({
+    const imageData = game.textRenderer.renderText({
       text,
       fontName,
       color,

@@ -3,7 +3,6 @@ import { ImageEffect } from './ImageEffect';
 import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import { comparing } from '@lib/utils/arrays';
 import { Color } from '@lib/graphics/Color';
-import { injectable } from 'inversify';
 
 type CacheKey = Readonly<{
   filename: string;
@@ -12,7 +11,6 @@ type CacheKey = Readonly<{
   effects?: ImageEffect[];
 }>;
 
-@injectable()
 export class ImageCache {
   private readonly map: Record<string, Image | null>;
 

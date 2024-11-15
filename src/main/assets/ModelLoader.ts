@@ -8,7 +8,7 @@ import { EquipmentModel } from '@models/EquipmentModel';
 import { PredefinedMapModel } from '@models/PredefinedMapModel';
 import { TileSetModel } from '@models/TileSetModel';
 import { StaticSpriteModel } from '@models/StaticSpriteModel';
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import Ajv from 'ajv';
 
 /**
@@ -59,10 +59,7 @@ export default class ModelLoader {
   private readonly ajv = new Ajv();
   private loadedSchemas = false;
 
-  constructor(
-    @inject(AssetLoader)
-    private readonly assetLoader: AssetLoader
-  ) {}
+  constructor(private readonly assetLoader: AssetLoader) {}
 
   private _loadSchemas = async () => {
     for (const schemaName of schemaNames) {

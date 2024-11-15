@@ -13,17 +13,21 @@ import { MapController } from '@main/maps/MapController';
 import { InventoryController } from '@main/controllers/InventoryController';
 import { ShrineController } from '@main/controllers/ShrineController';
 import { UnitService } from '@main/controllers/UnitService';
+import { ImageFactory } from '@lib/graphics/images/ImageFactory';
+import { TextRenderer } from '@main/graphics/TextRenderer';
 
 export type Game = Readonly<{
   config: GameConfig;
   engine: Engine;
   state: GameState;
+  imageFactory: ImageFactory;
   itemFactory: ItemFactory;
   unitFactory: UnitFactory;
   objectFactory: ObjectFactory;
   musicController: MusicController;
   projectileFactory: ProjectileFactory;
   modelLoader: ModelLoader;
+  textRenderer: TextRenderer;
   soundPlayer: SoundPlayer;
   mapController: MapController;
   inventoryController: InventoryController;

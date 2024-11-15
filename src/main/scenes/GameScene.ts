@@ -1,6 +1,5 @@
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import { MapController } from '@main/maps/MapController';
 import {
   ArrowKey,
   ClickCommand,
@@ -30,7 +29,6 @@ import { Pixel } from '@lib/geometry/Pixel';
 import { LINE_HEIGHT, TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
 import Unit from '@main/units/Unit';
 import { ShrineMenuState, ShrineOption } from '@main/core/state/ShrineMenuState';
-import { TextRenderer } from '@main/graphics/TextRenderer';
 import { Renderer } from '@main/graphics/renderers/Renderer';
 import { Graphics } from '@lib/graphics/Graphics';
 import Colors from '@main/graphics/Colors';
@@ -39,33 +37,19 @@ import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Color } from '@lib/graphics/Color';
 import { Direction } from '@lib/geometry/Direction';
 import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
-import SoundPlayer from '@lib/audio/SoundPlayer';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
-import GameScreenViewportRenderer from '@main/graphics/renderers/GameScreenViewportRenderer';
-import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
 
-@injectable()
 export class GameScene implements Scene {
   readonly name = SceneName.GAME;
 
   constructor(
-    @inject(MapController)
-    private readonly mapController: MapController,
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer,
-    @inject(GameScreenViewportRenderer)
     private readonly viewportRenderer: Renderer,
-    @inject(HUDRenderer)
     private readonly hudRenderer: Renderer,
-    @inject(TopMenuRenderer)
-    private readonly topMenuRenderer: Renderer,
-    @inject(SoundPlayer)
-    private readonly soundPlayer: SoundPlayer
+    private readonly topMenuRenderer: Renderer
   ) {}
 
   handleKeyDown = async (command: KeyCommand, game: Game) => {
-    const { state, inventoryController } = game;
+    const { state, inventoryController, soundPlayer } = game;
     const { key, modifiers } = command;
 
     if (state.isShowingShrineMenu()) {
@@ -80,7 +64,7 @@ export class GameScene implements Scene {
     } else if (isModifierKey(key)) {
       await this._handleModifierKeyDown(key as ModifierKey, game);
     } else if (key === 'SPACEBAR') {
-      this.soundPlayer.playSound(Sounds.FOOTSTEP);
+      soundPlayer.playSound(Sounds.FOOTSTEP);
       await game.engine.playTurn(game);
     } else if (key === 'TAB') {
       inventoryController.prepareInventoryScreen(game);
@@ -112,7 +96,7 @@ export class GameScene implements Scene {
     modifiers: ModifierKey[],
     game: Game
   ) => {
-    const { state } = game;
+    const { state, soundPlayer } = game;
     const playerUnit = state.getPlayerUnit();
     const playerController = playerUnit.getController() as PlayerUnitController;
     const direction = getDirection(key);
@@ -175,7 +159,7 @@ export class GameScene implements Scene {
       await game.engine.playTurn(game);
     } else {
       playerUnit.setDirection(direction);
-      this.soundPlayer.playSound(Sounds.BLOCKED);
+      soundPlayer.playSound(Sounds.BLOCKED);
     }
   };
 
@@ -203,8 +187,7 @@ export class GameScene implements Scene {
   };
 
   private _handleEnter = async (game: Game) => {
-    const { mapController } = this;
-    const { state } = game;
+    const { state, mapController, soundPlayer } = game;
     const playerUnit = state.getPlayerUnit();
     const map = playerUnit.getMap();
     const coordinates = playerUnit.getCoordinates();
@@ -219,16 +202,16 @@ export class GameScene implements Scene {
       map.removeObject(item);
       await game.engine.playTurn(game);
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_DOWN) {
-      this.soundPlayer.playSound(Sounds.DESCEND_STAIRS);
+      soundPlayer.playSound(Sounds.DESCEND_STAIRS);
       await mapController.loadNextMap(game);
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_UP) {
-      this.soundPlayer.playSound(Sounds.DESCEND_STAIRS); // TODO
+      soundPlayer.playSound(Sounds.DESCEND_STAIRS); // TODO
       await mapController.loadPreviousMap(game);
     } else if (shrine) {
       shrine.use(game);
     } else {
       // this is mostly a hack to support clicks
-      this.soundPlayer.playSound(Sounds.FOOTSTEP);
+      soundPlayer.playSound(Sounds.FOOTSTEP);
       await game.engine.playTurn(game);
     }
   };
@@ -511,7 +494,8 @@ export class GameScene implements Scene {
         { x: left, y: y + 2 },
         Colors.WHITE,
         Alignment.LEFT,
-        graphics
+        graphics,
+        game
       );
     }
   };
@@ -534,9 +518,10 @@ export class GameScene implements Scene {
     pixel: Pixel,
     color: Color,
     textAlign: Alignment,
-    graphics: Graphics
+    graphics: Graphics,
+    game: Game
   ) => {
-    const imageData = this.textRenderer.renderText({
+    const imageData = game.textRenderer.renderText({
       text,
       fontName,
       color,

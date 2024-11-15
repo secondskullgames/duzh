@@ -1,20 +1,16 @@
 import { createCanvas, createImage, getCanvasContext } from '@lib/utils/dom';
 import { AssetLoader } from '@lib/assets/AssetLoader';
-import { inject, injectable } from 'inversify';
 
-@injectable()
-export default class ImageLoader {
+export class ImageLoader {
   private readonly canvas: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D;
-  private readonly assetLoader: AssetLoader;
 
   private img: HTMLImageElement;
 
   private _listener: (() => void) | null;
   private _errorListener: (() => void) | null;
 
-  constructor(@inject(AssetLoader) assetLoader: AssetLoader) {
-    this.assetLoader = assetLoader;
+  constructor(private readonly assetLoader: AssetLoader) {
     // this is way bigger than the screen because of fonts
     this.canvas = createCanvas({
       width: 2000,

@@ -1,7 +1,5 @@
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import { TextRenderer } from '@main/graphics/TextRenderer';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Graphics } from '@lib/graphics/Graphics';
 import { formatTimestamp } from '@lib/utils/time';
 import { FontName } from '@main/graphics/Fonts';
@@ -13,24 +11,16 @@ import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { showTitleScreen } from '@main/actions/showTitleScreen';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'victory2';
 
-@injectable()
 export class VictoryScene implements Scene {
   readonly name = SceneName.VICTORY;
 
-  constructor(
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory
-  ) {}
+  constructor() {}
 
   render = async (game: Game, graphics: Graphics): Promise<void> => {
-    const { imageFactory } = this;
-    const { state } = game;
+    const { state, imageFactory } = game;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
@@ -52,7 +42,8 @@ export class VictoryScene implements Scene {
         { x: 320, y },
         Colors.WHITE,
         Alignment.CENTER,
-        graphics
+        graphics,
+        game
       );
       y += 20;
     }
@@ -64,9 +55,10 @@ export class VictoryScene implements Scene {
     pixel: Pixel,
     color: Color,
     textAlign: Alignment,
-    graphics: Graphics
+    graphics: Graphics,
+    game: Game
   ) => {
-    const imageData = this.textRenderer.renderText({
+    const imageData = game.textRenderer.renderText({
       text,
       fontName,
       color,

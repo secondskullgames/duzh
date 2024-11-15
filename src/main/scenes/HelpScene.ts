@@ -9,23 +9,14 @@ import { Color } from '@lib/graphics/Color';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import Colors from '@main/graphics/Colors';
 import { LINE_HEIGHT } from '@main/graphics/constants';
-import { TextRenderer } from '@main/graphics/TextRenderer';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'bordered_background';
 
-@injectable()
 export class HelpScene implements Scene {
   readonly name = SceneName.HELP;
 
-  constructor(
-    @inject(TextRenderer)
-    private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory
-  ) {}
+  constructor() {}
 
   handleKeyDown = async (command: KeyCommand, game: Game) => {
     const { state } = game;
@@ -53,7 +44,7 @@ export class HelpScene implements Scene {
   };
 
   render = async (game: Game, graphics: Graphics) => {
-    const { imageFactory } = this;
+    const { imageFactory } = game;
     const image = await imageFactory.getImage({ filename: BACKGROUND_FILENAME });
     graphics.drawScaledImage(image, {
       left: 0,
@@ -79,26 +70,36 @@ export class HelpScene implements Scene {
         { x: left, y },
         Colors.WHITE,
         Alignment.LEFT,
-        graphics
+        graphics,
+        game
       );
     }
 
     if (isMobileDevice()) {
-      this._printMobileInstructions(graphics, {
-        x: left,
-        y: top + (intro.length + 2) * LINE_HEIGHT
-      });
+      this._printMobileInstructions(
+        graphics,
+        {
+          x: left,
+          y: top + (intro.length + 2) * LINE_HEIGHT
+        },
+        game
+      );
     } else {
-      this._printKeyboardInstructions(graphics, {
-        x: left,
-        y: top + (intro.length + 2) * LINE_HEIGHT
-      });
+      this._printKeyboardInstructions(
+        graphics,
+        {
+          x: left,
+          y: top + (intro.length + 2) * LINE_HEIGHT
+        },
+        game
+      );
     }
   };
 
   private _printKeyboardInstructions = (
     graphics: Graphics,
-    { x: left, y: top }: Pixel
+    { x: left, y: top }: Pixel,
+    game: Game
   ) => {
     const keys: [string, string][] = [
       ['WASD / Arrow keys', 'Move around, melee attack'],
@@ -121,7 +122,8 @@ export class HelpScene implements Scene {
         { x: left, y },
         Colors.WHITE,
         Alignment.LEFT,
-        graphics
+        graphics,
+        game
       );
       this._drawText(
         description,
@@ -129,12 +131,17 @@ export class HelpScene implements Scene {
         { x: left + 200, y },
         Colors.WHITE,
         Alignment.LEFT,
-        graphics
+        graphics,
+        game
       );
     }
   };
 
-  private _printMobileInstructions = (graphics: Graphics, { x: left, y: top }: Pixel) => {
+  private _printMobileInstructions = (
+    graphics: Graphics,
+    { x: left, y: top }: Pixel,
+    game: Game
+  ) => {
     const keys: [string, string][] = [
       ['Click on current tile', 'Pick up item, enter portal, go down stairs'],
       ['Click on adjacent tiles', 'Move around, melee attack'],
@@ -153,8 +160,9 @@ export class HelpScene implements Scene {
         FontName.APPLE_II,
         { x: left, y },
         Colors.WHITE,
-        Alignment.LEFT,
-        graphics
+        Alignment.LEFT,i
+        graphics,
+        game
       );
       this._drawText(
         description,
@@ -162,7 +170,8 @@ export class HelpScene implements Scene {
         { x: left + 225, y },
         Colors.WHITE,
         Alignment.LEFT,
-        graphics
+        graphics,
+        game
       );
     }
   };
@@ -173,9 +182,10 @@ export class HelpScene implements Scene {
     pixel: Pixel,
     color: Color,
     textAlign: Alignment,
-    graphics: Graphics
+    graphics: Graphics,
+    game: Game
   ) => {
-    const imageData = this.textRenderer.renderText({
+    const imageData = game.textRenderer.renderText({
       text,
       fontName,
       color,

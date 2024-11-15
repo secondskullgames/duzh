@@ -16,7 +16,7 @@ import { Faction } from '@main/units/Faction';
 import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
 import { Image } from '@lib/graphics/images/Image';
 import { Color } from '@lib/graphics/Color';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
+import { ImageFactory } from '@lib/graphics/images/ImageFactory';
 import { DoorDirection } from '@models/DoorDirection';
 import { injectable } from 'inversify';
 import { Game } from '@main/core/Game';

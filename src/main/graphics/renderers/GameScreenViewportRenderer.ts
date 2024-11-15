@@ -9,7 +9,7 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Graphics } from '@lib/graphics/Graphics';
 import Entity from '@main/entities/Entity';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
+import { ImageFactory } from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';
 import { getItem, getMovableBlock } from '@main/maps/MapUtils';
 import { ShrineMenuRenderer } from '@main/graphics/renderers/ShrineMenuRenderer';
@@ -19,14 +19,8 @@ import MapInstance from '@main/maps/MapInstance';
 
 const SHADOW_FILENAME = 'shadow';
 
-@injectable()
 export default class GameScreenViewportRenderer implements Renderer {
-  constructor(
-    @inject(ImageFactory)
-    private readonly imageFactory: ImageFactory,
-    @inject(ShrineMenuRenderer)
-    private readonly shrineMenuRenderer: ShrineMenuRenderer
-  ) {}
+  constructor(private readonly shrineMenuRenderer: ShrineMenuRenderer) {}
 
   render = async (game: Game, graphics: Graphics) => {
     const { state } = game;
