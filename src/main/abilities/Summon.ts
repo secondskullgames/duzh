@@ -36,7 +36,7 @@ export class Summon implements UnitAbility {
       map
     });
     map.addUnit(summonedUnit);
-    game.state.addUnit(unit);
+    game.state.addUnit(summonedUnit);
     unit.spendMana(this.manaCost);
   };
 }
