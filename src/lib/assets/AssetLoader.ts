@@ -3,10 +3,6 @@ import { AnySchema } from 'ajv';
 
 export interface AssetLoader {
   /**
-   * @param filename Relative to the schema directory, e.g. "EquipmentModel.schema.json"
-   */
-  loadSchemaAsset: (filename: string) => Promise<AnySchema>;
-  /**
    * @param filename Relative to the data directory, e.g. "units/player.json"
    */
   loadDataAsset: <T>(filename: string) => Promise<T>;
@@ -20,17 +16,6 @@ export const AssetLoader = Symbol('AssetLoader');
 
 @injectable()
 export class AssetLoaderImpl implements AssetLoader {
-  loadSchemaAsset = async (filename: string): Promise<AnySchema> => {
-    return (
-      await import(
-        /* webpackInclude: /\.schema\.json$/ */
-        /* webpackMode: "lazy-once" */
-        /* webpackChunkName: "gen-schema" */
-        `/src/gen-schema/${filename}`
-      )
-    ).default;
-  };
-
   loadDataAsset = async <T>(filename: string): Promise<T> => {
     return (
       await import(

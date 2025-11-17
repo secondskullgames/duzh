@@ -1,30 +1,30 @@
 import { UnitType } from './UnitType';
-import { AIParameters } from './AIParameters';
+import { AIParameters, AIParametersSchema } from './AIParameters';
+import z from 'zod';
 
-export type UnitModel = Readonly<{
+export const UnitModelSchema = z.object({
   /**
    * Expected to match the filename
    */
-  id: string;
+  id: z.string(),
   /**
    * Human-readable name for this unit type
    */
-  name: string;
-  abilities: string[];
-  aiParameters?: AIParameters;
-  equipment?: string[];
-  meleeDamage: number;
-  rangedDamage: number;
-  life: number;
-  mana: number;
-  paletteSwaps: {
-    [key: string]: string;
-  };
-  sprite: string;
-  summonedUnitClass?: string;
-  type: UnitType;
+  name: z.string(),
+  abilities: z.array(z.string()),
+  aiParameters: AIParametersSchema.optional(),
+  equipment: z.array(z.string()).optional(),
+  meleeDamage: z.number(),
+  rangedDamage: z.number(),
+  life: z.number(),
+  mana: z.number(),
+  paletteSwaps: z.record(z.string(), z.string()),
+  sprite: z.string(),
+  summonedUnitClass: z.string().optional(),
+  type: z.enum(UnitType),
   /**
    * experience rewarded on death
    */
-  experience?: number;
-}>;
+  experience: z.number().optional(),
+});
+export type UnitModel = z.infer<typeof UnitModelSchema>;

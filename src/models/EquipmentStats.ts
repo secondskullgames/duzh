@@ -1,12 +1,14 @@
-export type EquipmentStats = Readonly<{
+import z from "zod";
+
+export const EquipmentStatsSchema = z.object({
   /**
    * The ratio of damage blocked by this item
    */
-  absorbAmount?: number;
+  absorbAmount: z.number().optional(),
   /**
    * The ratio of frontal melee damage blocked by this item.
    * Mostly used by shields. Additive with absorbAmount.
    */
-  blockAmount?: number;
-  damage?: number;
-}>;
+  blockAmount: z.number().optional(),
+  damage: z.number().optional(),
+});

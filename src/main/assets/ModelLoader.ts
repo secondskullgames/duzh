@@ -1,15 +1,15 @@
 import { SpriteCategory } from '@main/graphics/sprites/SpriteCategory';
 import { AssetLoader } from '@lib/assets/AssetLoader';
-import { GeneratedMapModel } from '@models/GeneratedMapModel';
-import { ConsumableItemModel } from '@models/ConsumableItemModel';
-import { DynamicSpriteModel } from '@models/DynamicSpriteModel';
-import { UnitModel } from '@models/UnitModel';
-import { EquipmentModel } from '@models/EquipmentModel';
-import { PredefinedMapModel } from '@models/PredefinedMapModel';
-import { TileSetModel } from '@models/TileSetModel';
-import { StaticSpriteModel } from '@models/StaticSpriteModel';
+import { GeneratedMapModel, GeneratedMapModelSchema } from '@models/GeneratedMapModel';
+import { ConsumableItemModel, ConsumableItemModelSchema } from '@models/ConsumableItemModel';
+import { DynamicSpriteModel, DynamicSpriteModelSchema } from '@models/DynamicSpriteModel';
+import { UnitModel, UnitModelSchema } from '@models/UnitModel';
+import { EquipmentModel, EquipmentModelSchema } from '@models/EquipmentModel';
+import { PredefinedMapModel, PredefinedMapModelSchema } from '@models/PredefinedMapModel';
+import { TileSetModel, TileSetModelSchema } from '@models/TileSetModel';
+import { StaticSpriteModel, StaticSpriteModelSchema } from '@models/StaticSpriteModel';
 import { inject, injectable } from 'inversify';
-import Ajv from 'ajv';
+import z, { ZodObject } from 'zod';
 
 /**
  * Utility methods for working with models (in /data/) and schemas (in /src/main/schemas)
@@ -56,7 +56,6 @@ type SchemaType =
 
 @injectable()
 export default class ModelLoader {
-  private readonly ajv = new Ajv();
   private loadedSchemas = false;
 
   constructor(
@@ -64,59 +63,37 @@ export default class ModelLoader {
     private readonly assetLoader: AssetLoader
   ) {}
 
-  private _loadSchemas = async () => {
-    for (const schemaName of schemaNames) {
-      const schema = await this.assetLoader.loadSchemaAsset(`${schemaName}.schema.json`);
-      this.ajv.addSchema(schema);
-    }
-  };
-
-  private _loadModel = async <T>(path: string, schema: SchemaType): Promise<T> => {
-    if (!this.loadedSchemas) {
-      await this._loadSchemas();
-      this.loadedSchemas = true;
-    }
-
-    const validate = this.ajv.getSchema(schema);
-    if (!validate) {
-      throw new Error(`Failed to load schema ${schema}`);
-    }
-
+  private _loadModel = async <S extends ZodObject>(path: string, schema: S): Promise<z.infer<S>> => {
     const data = await this.assetLoader.loadDataAsset(`${path}.json`);
-    if (!validate(data)) {
-      throw new Error(
-        `Failed to validate ${path}:\n${JSON.stringify(validate.errors, null, 4)}`
-      );
-    }
-    return data as T;
+    return schema.parse(data);
   };
 
   loadUnitModel = async (id: string): Promise<UnitModel> =>
-    this._loadModel(`units/${id}`, 'UnitModel');
+    this._loadModel(`units/${id}`, UnitModelSchema);
 
   loadEquipmentModel = async (id: string): Promise<EquipmentModel> =>
-    this._loadModel(`equipment/${id}`, 'EquipmentModel');
+    this._loadModel(`equipment/${id}`, EquipmentModelSchema);
 
   loadGeneratedMapModel = async (id: string): Promise<GeneratedMapModel> =>
-    this._loadModel(`maps/generated/${id}`, 'GeneratedMapModel');
+    this._loadModel(`maps/generated/${id}`, GeneratedMapModelSchema);
 
   loadPredefinedMapModel = async (id: string): Promise<PredefinedMapModel> =>
-    this._loadModel(`maps/predefined/${id}`, 'PredefinedMapModel');
+    this._loadModel(`maps/predefined/${id}`, PredefinedMapModelSchema);
 
   loadDynamicSpriteModel = async (
     id: string,
     category: SpriteCategory
   ): Promise<DynamicSpriteModel> =>
-    this._loadModel(`sprites/${category}/${id}`, 'DynamicSpriteModel');
+    this._loadModel(`sprites/${category}/${id}`, DynamicSpriteModelSchema);
 
   loadStaticSpriteModel = async (id: string): Promise<StaticSpriteModel> =>
-    this._loadModel(`sprites/static/${id}`, 'StaticSpriteModel');
+    this._loadModel(`sprites/static/${id}`, StaticSpriteModelSchema);
 
   loadTileSetModel = async (id: string): Promise<TileSetModel> =>
-    this._loadModel(`tilesets/${id}`, 'TileSetModel');
+    this._loadModel(`tilesets/${id}`, TileSetModelSchema);
 
   loadItemModel = async (id: string): Promise<ConsumableItemModel> =>
-    this._loadModel(`items/${id}`, 'ConsumableItemModel');
+    this._loadModel(`items/${id}`, ConsumableItemModelSchema);
 
   loadAllUnitModels = async (): Promise<UnitModel[]> => {
     const requireContext = require.context('../../../data/units', false, /\.json$/i);

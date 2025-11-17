@@ -1,9 +1,8 @@
-export type TileSetModel = Readonly<{
-  path: string;
-  tiles: {
-    [key: string]: (string | null)[];
-  };
-  paletteSwaps?: {
-    [key: string]: string;
-  };
-}>;
+import z from "zod";
+
+export const TileSetModelSchema = z.object({
+  path: z.string(),
+  tiles: z.record(z.string(), z.array(z.string().nullable())),
+  paletteSwaps: z.record(z.string(), z.string()).optional()
+});
+export type TileSetModel = z.infer<typeof TileSetModelSchema>;
