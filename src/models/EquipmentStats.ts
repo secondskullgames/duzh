@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from 'zod';
 
 export const EquipmentStatsSchema = z.object({
   /**
@@ -10,5 +10,5 @@ export const EquipmentStatsSchema = z.object({
    * Mostly used by shields. Additive with absorbAmount.
    */
   blockAmount: z.number().optional(),
-  damage: z.number().optional(),
+  damage: z.number().optional()
 });

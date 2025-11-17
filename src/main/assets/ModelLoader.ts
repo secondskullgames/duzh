@@ -1,7 +1,10 @@
 import { SpriteCategory } from '@main/graphics/sprites/SpriteCategory';
 import { AssetLoader } from '@lib/assets/AssetLoader';
 import { GeneratedMapModel, GeneratedMapModelSchema } from '@models/GeneratedMapModel';
-import { ConsumableItemModel, ConsumableItemModelSchema } from '@models/ConsumableItemModel';
+import {
+  ConsumableItemModel,
+  ConsumableItemModelSchema
+} from '@models/ConsumableItemModel';
 import { DynamicSpriteModel, DynamicSpriteModelSchema } from '@models/DynamicSpriteModel';
 import { UnitModel, UnitModelSchema } from '@models/UnitModel';
 import { EquipmentModel, EquipmentModelSchema } from '@models/EquipmentModel';
@@ -9,51 +12,11 @@ import { PredefinedMapModel, PredefinedMapModelSchema } from '@models/Predefined
 import { TileSetModel, TileSetModelSchema } from '@models/TileSetModel';
 import { StaticSpriteModel, StaticSpriteModelSchema } from '@models/StaticSpriteModel';
 import { inject, injectable } from 'inversify';
-import z, { ZodObject } from 'zod';
+import { z, ZodObject } from 'zod';
 
 /**
  * Utility methods for working with models (in /data/) and schemas (in /src/main/schemas)
  */
-
-export const schemaNames = [
-  'DoorDirection',
-  'UnitType',
-  'TileType',
-  'MapType',
-  'MapSpec',
-  'UnitModel',
-  'EquipmentStats',
-  'EquipmentSlot',
-  'ItemCategory',
-  'EquipmentModel',
-  'PredefinedMapModel',
-  'GeneratedMapModel',
-  'StaticSpriteModel',
-  'DynamicSpriteModel',
-  'TileSetModel',
-  'ConsumableType',
-  'ConsumableItemModel'
-];
-
-type SchemaType =
-  | 'DoorDirection'
-  | 'UnitType'
-  | 'TileType'
-  | 'MapType'
-  | 'MapSpec'
-  | 'UnitModel'
-  | 'EquipmentStats'
-  | 'EquipmentSlot'
-  | 'ItemCategory'
-  | 'EquipmentModel'
-  | 'PredefinedMapModel'
-  | 'GeneratedMapModel'
-  | 'StaticSpriteModel'
-  | 'DynamicSpriteModel'
-  | 'TileSetModel'
-  | 'ConsumableType'
-  | 'ConsumableItemModel';
-
 @injectable()
 export default class ModelLoader {
   private loadedSchemas = false;
@@ -63,7 +26,10 @@ export default class ModelLoader {
     private readonly assetLoader: AssetLoader
   ) {}
 
-  private _loadModel = async <S extends ZodObject>(path: string, schema: S): Promise<z.infer<S>> => {
+  private _loadModel = async <S extends ZodObject>(
+    path: string,
+    schema: S
+  ): Promise<z.infer<S>> => {
     const data = await this.assetLoader.loadDataAsset(`${path}.json`);
     return schema.parse(data);
   };

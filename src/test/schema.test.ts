@@ -1,7 +1,14 @@
-import { schemaNames } from '@main/assets/ModelLoader';
-import Ajv, { AnySchema } from 'ajv';
 import { test } from '@jest/globals';
+import { ConsumableItemModelSchema } from '@models/ConsumableItemModel';
+import { DynamicSpriteModelSchema } from '@models/DynamicSpriteModel';
+import { EquipmentModelSchema } from '@models/EquipmentModel';
+import { GeneratedMapModelSchema } from '@models/GeneratedMapModel';
+import { PredefinedMapModelSchema } from '@models/PredefinedMapModel';
+import { StaticSpriteModelSchema } from '@models/StaticSpriteModel';
+import { TileSetModelSchema } from '@models/TileSetModel';
+import { UnitModelSchema } from '@models/UnitModel';
 import * as fs from 'fs/promises';
+import { ZodObject } from 'zod';
 
 // TODO replace with glob
 const getFilenamesRecursive = async (baseDir: string): Promise<string[]> => {
@@ -20,48 +27,46 @@ const getFilenamesRecursive = async (baseDir: string): Promise<string[]> => {
   return allFilenames;
 };
 
-const loadFile = async (filename: string): Promise<AnySchema> => {
+const loadFile = async (filename: string): Promise<ZodObject> => {
   const buffer = await fs.readFile(filename);
   return JSON.parse(buffer.toString('utf-8'));
 };
 
-const ajv = new Ajv();
-
-const validate = async (schemaName: string, dataFilenames: string[]) => {
-  const validate = ajv.getSchema(schemaName);
-  if (!validate) {
-    throw new Error(`Failed to load schema ${schemaName}`);
-  }
+const validate = async (schema: ZodObject, dataFilenames: string[]) => {
   for (const dataFilename of dataFilenames) {
     const data = await loadFile(dataFilename);
-    const isValid = validate(data);
-    if (!isValid) {
+    const isValid = schema.safeParse(data);
+    if (!isValid.success) {
       throw new Error(
-        `Failed to validate ${dataFilename}:\n${JSON.stringify(validate.errors, null, 4)}`
+        `Failed to validate ${dataFilename}:\n${JSON.stringify(isValid.error, null, 4)}`
       );
     }
   }
 };
 
 test('test validity of JSON data', async () => {
-  for (const schemaName of schemaNames) {
-    const filename = `src/gen-schema/${schemaName}.schema.json`;
-    const schema = await loadFile(filename);
-    ajv.addSchema(schema);
-  }
-  await validate('UnitModel', await getFilenamesRecursive('data/units'));
-  await validate('EquipmentModel', await getFilenamesRecursive('data/equipment'));
+  await validate(UnitModelSchema, await getFilenamesRecursive('data/units'));
+  await validate(EquipmentModelSchema, await getFilenamesRecursive('data/equipment'));
   await validate(
-    'PredefinedMapModel',
+    PredefinedMapModelSchema,
     await getFilenamesRecursive('data/maps/predefined')
   );
-  await validate('GeneratedMapModel', await getFilenamesRecursive('data/maps/generated'));
-  await validate('StaticSpriteModel', await getFilenamesRecursive('data/sprites/static'));
-  await validate('DynamicSpriteModel', await getFilenamesRecursive('data/sprites/units'));
   await validate(
-    'DynamicSpriteModel',
+    GeneratedMapModelSchema,
+    await getFilenamesRecursive('data/maps/generated')
+  );
+  await validate(
+    StaticSpriteModelSchema,
+    await getFilenamesRecursive('data/sprites/static')
+  );
+  await validate(
+    DynamicSpriteModelSchema,
+    await getFilenamesRecursive('data/sprites/units')
+  );
+  await validate(
+    DynamicSpriteModelSchema,
     await getFilenamesRecursive('data/sprites/equipment')
   );
-  await validate('TileSetModel', await getFilenamesRecursive('data/tilesets'));
-  await validate('ConsumableItemModel', await getFilenamesRecursive('data/items'));
+  await validate(TileSetModelSchema, await getFilenamesRecursive('data/tilesets'));
+  await validate(ConsumableItemModelSchema, await getFilenamesRecursive('data/items'));
 });

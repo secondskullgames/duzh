@@ -1,11 +1,10 @@
-import z, { optional } from "zod";
+import { z } from 'zod';
 
 export const StaticSpriteOffsetsSchema = z.object({
   dx: z.number(),
   dy: z.number()
 });
 export type StaticSpriteOffsets = z.infer<typeof StaticSpriteOffsetsSchema>;
-
 
 export const StaticSpriteModelSchema = z.object({
   name: z.string(),

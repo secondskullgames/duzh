@@ -20,6 +20,6 @@ export const EquipmentModelSchema = z.object({
   slot: z.enum(EquipmentSlot),
   sprite: z.string(),
   stats: EquipmentStatsSchema,
-  tooltip: z.string().optional(),
+  tooltip: z.string().optional()
 });
 export type EquipmentModel = z.infer<typeof EquipmentModelSchema>;

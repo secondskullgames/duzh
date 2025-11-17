@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-
 export const DynamicSpriteAnimationSchema = z.object({
   frames: z.array(
     z.object({
@@ -8,7 +7,7 @@ export const DynamicSpriteAnimationSchema = z.object({
       number: z.string()
     })
   ),
-  pattern: z.string().optional(),
+  pattern: z.string().optional()
 });
 export type DynamicSpriteAnimation = z.infer<typeof DynamicSpriteAnimationSchema>;
 

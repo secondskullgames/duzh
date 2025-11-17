@@ -1,4 +1,4 @@
-import z from 'zod';
+import { z } from 'zod';
 import { FogOfWarParamsSchema } from './FogOfWarParams';
 
 export enum Algorithm {
@@ -10,10 +10,9 @@ export enum Algorithm {
 }
 export const RangeSchema = z.object({
   min: z.number(),
-  max: z.number(),
+  max: z.number()
 });
 export type Range = z.infer<typeof RangeSchema>;
-
 
 export const GeneratedMapModelSchema = z.object({
   id: z.string(),
@@ -24,15 +23,17 @@ export const GeneratedMapModelSchema = z.object({
   height: z.number(),
   enemies: z.object({
     /* By convention, these should add up to 1.0 */
-    types: z.array(z.object({
-      chance: z.number(),
-      type: z.string()
-    })),
+    types: z.array(
+      z.object({
+        chance: z.number(),
+        type: z.string()
+      })
+    ),
     min: z.number(),
-    max: z.number(),
+    max: z.number()
   }),
   items: RangeSchema,
   shrines: z.number(),
-  fogOfWar: FogOfWarParamsSchema,
+  fogOfWar: FogOfWarParamsSchema
 });
 export type GeneratedMapModel = z.infer<typeof GeneratedMapModelSchema>;

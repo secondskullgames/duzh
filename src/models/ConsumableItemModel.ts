@@ -13,7 +13,7 @@ export const ConsumableItemModelSchema = z.object({
   paletteSwaps: z.record(z.string(), z.string()).optional(),
   type: z.enum(ConsumableType),
   params: z.record(z.string(), z.string()).optional(),
-  tooltip: z.string().optional(),
+  tooltip: z.string().optional()
 });
 
 export type ConsumableItemModel = z.infer<typeof ConsumableItemModelSchema>;

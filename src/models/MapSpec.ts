@@ -1,4 +1,4 @@
-import z from 'zod';
+import { z } from 'zod';
 import { MapType } from './MapType';
 
 export const MapSpecSchema = z.object({

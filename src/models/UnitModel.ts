@@ -1,6 +1,6 @@
 import { UnitType } from './UnitType';
-import { AIParameters, AIParametersSchema } from './AIParameters';
-import z from 'zod';
+import { AIParametersSchema } from './AIParameters';
+import { z } from 'zod';
 
 export const UnitModelSchema = z.object({
   /**
@@ -25,6 +25,6 @@ export const UnitModelSchema = z.object({
   /**
    * experience rewarded on death
    */
-  experience: z.number().optional(),
+  experience: z.number().optional()
 });
 export type UnitModel = z.infer<typeof UnitModelSchema>;

@@ -18,7 +18,7 @@ export const AIParametersSchema = z.object({
   /**
    * ratio of (current life / max life)
    */
-  fleeThreshold: z.number(),
+  fleeThreshold: z.number()
 });
 
 export type AIParameters = z.infer<typeof AIParametersSchema>;

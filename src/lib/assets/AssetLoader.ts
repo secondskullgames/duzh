@@ -1,5 +1,4 @@
 import { injectable } from 'inversify';
-import { AnySchema } from 'ajv';
 
 export interface AssetLoader {
   /**
