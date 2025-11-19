@@ -1,5 +1,5 @@
 import { SpriteCategory } from '@main/graphics/sprites/SpriteCategory';
-import { AssetLoader } from '@lib/assets/AssetLoader';
+import { AssetLoader, Module } from '@lib/assets/AssetLoader';
 import { GeneratedMapModel, GeneratedMapModelSchema } from '@models/GeneratedMapModel';
 import {
   ConsumableItemModel,
@@ -15,6 +15,8 @@ import { z, ZodObject } from 'zod';
 
 /**
  * Utility methods for working with models (in /data/) and schemas (in /src/models)
+ *
+ * TODO - this class is a mess, unify with AssetLoader
  */
 export default class ModelLoader {
   constructor(private readonly assetLoader: AssetLoader) {}
@@ -55,33 +57,33 @@ export default class ModelLoader {
     this._loadModel(`items/${id}`, ConsumableItemModelSchema);
 
   loadAllUnitModels = async (): Promise<UnitModel[]> => {
-    const requireContext = require.context('../../../data/units', false, /\.json$/i);
+    const globImport = import.meta.glob(`/data/units/**/*.json`, { eager: true });
 
     const models: UnitModel[] = [];
-    for (const filename of requireContext.keys()) {
-      const model = (await requireContext(filename)) as UnitModel;
+    for (const filename of Object.keys(globImport)) {
+      const model = (globImport[filename] as Module).default as UnitModel;
       models.push(model);
     }
     return models;
   };
 
   loadAllConsumableModels = async (): Promise<ConsumableItemModel[]> => {
-    const requireContext = require.context('../../../data/items', false, /\.json$/i);
+    const globImport = import.meta.glob(`/data/items/**/*.json`, { eager: true });
 
     const models: ConsumableItemModel[] = [];
-    for (const filename of requireContext.keys()) {
-      const model = (await requireContext(filename)) as ConsumableItemModel;
+    for (const filename of Object.keys(globImport)) {
+      const model = (globImport[filename] as Module).default as ConsumableItemModel;
       models.push(model);
     }
     return models;
   };
 
   loadAllEquipmentModels = async (): Promise<EquipmentModel[]> => {
-    const requireContext = require.context('../../../data/equipment', false, /\.json$/i);
+    const globImport = import.meta.glob(`/data/equipment/**/*.json`, { eager: true });
 
     const models: EquipmentModel[] = [];
-    for (const filename of requireContext.keys()) {
-      const model = (await requireContext(filename)) as EquipmentModel;
+    for (const filename of Object.keys(globImport)) {
+      const model = (globImport[filename] as Module).default as EquipmentModel;
       models.push(model);
     }
     return models;
