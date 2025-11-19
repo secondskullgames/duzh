@@ -1,4 +1,5 @@
 {
+  "exclude": ["**/*.test.ts"],
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
@@ -20,6 +21,6 @@
     "sourceMap": true,
     "strict": true,
     "plugins": [],
-    "types": ["jest", "webpack-env"]
+    "types": ["vite/client", "jest"]
   }
 }

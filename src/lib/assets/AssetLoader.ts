@@ -9,28 +9,23 @@ export interface AssetLoader {
   loadImageAsset: (filename: string) => Promise<string | null>;
 }
 
+export type Module = Readonly<{
+  default: unknown;
+}>;
+
 export class AssetLoaderImpl implements AssetLoader {
+  private readonly dataAssets = import.meta.glob(`/data/**/*.json`, { eager: true });
+  private readonly imageAssets = import.meta.glob(`/png/**/*.png`, { eager: true });
+
   loadDataAsset = async <T>(filename: string): Promise<T> => {
-    return (
-      await import(
-        /* webpackInclude: /\.json$/ */
-        /* webpackMode: "lazy-once" */
-        /* webpackChunkName: "data" */
-        `/data/${filename}`
-      )
-    ).default;
+    const module = this.dataAssets[`/data/${filename}`] as Module;
+    return module.default as T;
   };
 
   loadImageAsset = async (filename: string): Promise<string | null> => {
     try {
-      return (
-        await import(
-          /* webpackInclude: /\.png$/ */
-          /* webpackMode: "lazy-once" */
-          /* webpackChunkName: "png" */
-          `/png/${filename}`
-        )
-      ).default;
+      const module = this.imageAssets[`/png/${filename}`] as Module;
+      return module.default as string;
     } catch {
       // this is expected for _B filenames
       return null;
