@@ -5,5 +5,3 @@ export interface GameConfig {
   readonly screenWidth: number;
   readonly screenHeight: number;
 }
-
-export const GameConfig = Symbol('GameConfig');

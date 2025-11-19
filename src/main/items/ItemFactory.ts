@@ -22,7 +22,6 @@ import { Feature } from '@main/utils/features';
 import { checkState } from '@lib/utils/preconditions';
 import { weightedRandom, WeightedRandomChoice } from '@lib/utils/random';
 import { radialChainLightning } from '@main/actions/radialChainLightning';
-import { injectable } from 'inversify';
 import type { ItemProc } from './ItemProc';
 import { Game } from '@main/core/Game';
 
@@ -36,7 +35,6 @@ export type ItemSpec = Readonly<{
   id: string;
 }>;
 
-@injectable()
 export class ItemFactory {
   constructor(
     private readonly spriteFactory: SpriteFactory,

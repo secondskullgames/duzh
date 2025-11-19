@@ -21,7 +21,6 @@ import Colors from '@main/graphics/Colors';
 import { getSlotName, splitTooltipToLines } from '@main/equipment/EquipmentUtils';
 import { LINE_HEIGHT } from '@main/graphics/constants';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
 import { checkNotNull } from '@lib/utils/preconditions';
 
 const INVENTORY_LEFT = 0;
@@ -30,18 +29,14 @@ const INVENTORY_MARGIN = 10;
 
 const INVENTORY_BACKGROUND_FILENAME = 'inventory2';
 
-@injectable()
 export class InventoryScene implements Scene {
   readonly name = SceneName.INVENTORY;
   private readonly inventoryWidth: number;
   private readonly inventoryHeight: number;
 
   constructor(
-    @inject(Game)
     private readonly game: Game,
-    @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
     private readonly imageFactory: ImageFactory
   ) {
     this.inventoryWidth = game.config.screenWidth;

@@ -11,21 +11,16 @@ import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Pixel } from '@lib/geometry/Pixel';
 import { Color } from '@lib/graphics/Color';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'bordered_background';
 const LINE_HEIGHT = 15;
 
-@injectable()
 export class CharacterScene implements Scene {
   readonly name = SceneName.CHARACTER;
 
   constructor(
-    @inject(Game)
     private readonly game: Game,
-    @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
     private readonly imageFactory: ImageFactory
   ) {}
 

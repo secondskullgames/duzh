@@ -1,13 +1,12 @@
-import 'reflect-metadata';
 import { DebugController } from './core/DebugController';
 import { showTitleScreen } from './actions/showTitleScreen';
 import { FontFactory } from './graphics/Fonts';
 import { Feature } from './utils/features';
 import { GameStateImpl } from './core/GameState';
-import { MapController, MapControllerImpl } from './maps/MapController';
+import { MapControllerImpl } from './maps/MapController';
 import { MapSpec } from '@models/MapSpec';
 import InputHandler from '@lib/input/InputHandler';
-import { AssetLoader, AssetLoaderImpl } from '@lib/assets/AssetLoader';
+import { AssetLoaderImpl } from '@lib/assets/AssetLoader';
 import { createCanvas, enterFullScreen, isMobileDevice } from '@lib/utils/dom';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Graphics } from '@lib/graphics/Graphics';
@@ -27,7 +26,6 @@ import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
 import { MapScene } from '@main/scenes/MapScene';
 import SoundPlayer from '@lib/audio/SoundPlayer';
-import { Container } from 'inversify';
 import { Game } from '@main/core/Game';
 import UnitFactory from '@main/units/UnitFactory';
 import { ItemFactory } from '@main/items/ItemFactory';
@@ -38,52 +36,145 @@ import ObjectFactory from '@main/objects/ObjectFactory';
 import Ticker from '@main/core/Ticker';
 import { InventoryController } from '@main/controllers/InventoryController';
 import { ShrineController } from '@main/controllers/ShrineController';
+import ImageLoader from '@lib/graphics/images/ImageLoader';
+import ImageFactory from '@lib/graphics/images/ImageFactory';
+import { ImageCache } from '@lib/graphics/images/ImageCache';
+import MapFactory from '@main/maps/MapFactory';
+import { PredefinedMapFactory } from '@main/maps/predefined/PredefinedMapFactory';
+import { GeneratedMapFactory } from '@main/maps/generated/GeneratedMapFactory';
+import TileFactory from '@main/tiles/TileFactory';
+import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
+import { TextRenderer } from '@main/graphics/TextRenderer';
+import GameScreenViewportRenderer from '@main/graphics/renderers/GameScreenViewportRenderer';
+import { ShrineMenuRenderer } from '@main/graphics/renderers/ShrineMenuRenderer';
+import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
+import TopMenuRenderer from '@main/graphics/renderers/TopMenuRenderer';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
   gameConfig: GameConfig;
 }>;
 
-const setupContainer = async ({ gameConfig }: Props): Promise<Container> => {
-  const container = new Container({
-    defaultScope: 'Singleton',
-    autoBindInjectable: true
-  });
-  container.bind(GameConfig).toConstantValue(gameConfig);
-  container.bind<FontBundle>(FontBundle).toDynamicValue(async context => {
-    const fontFactory = context.container.get(FontFactory);
-    return fontFactory.loadFonts();
-  });
-  container.bind(AssetLoader).to(AssetLoaderImpl);
-  container.bind(MapController).to(MapControllerImpl);
-  container.bind(SoundPlayer).toConstantValue(SoundPlayer.forSounds());
+/**
+ * This is just a ball-of-mud to replace the huge pile of injected dependencies.
+ * Not trying to clean it up yet.
+ */
+type GameContainer = Readonly<{
+  gameConfig: GameConfig;
+  fontBundle: FontBundle;
+  game: Game;
+  inputHandler: InputHandler;
+  debugController: DebugController;
+  scenes: Record<SceneName, Scene>;
+}>;
+
+const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => {
+  const assetLoader = new AssetLoaderImpl();
+  const imageLoader = new ImageLoader(assetLoader);
+  const imageFactory = new ImageFactory(imageLoader, new ImageCache());
+  const fontFactory = new FontFactory(imageFactory);
+  const fontBundle = await fontFactory.loadFonts();
+  const textRenderer = new TextRenderer(gameConfig, fontBundle);
+  const soundPlayer = SoundPlayer.forSounds();
+  const musicController = new MusicController(SoundPlayer.forMusic(), assetLoader);
+
+  const modelLoader = new ModelLoader(assetLoader);
+  const spriteFactory = new SpriteFactory(imageFactory, modelLoader);
+  const tileFactory = new TileFactory(spriteFactory, modelLoader);
+  const itemFactory = new ItemFactory(spriteFactory, modelLoader);
+  const unitFactory = new UnitFactory(spriteFactory, itemFactory, modelLoader);
+  const objectFactory = new ObjectFactory(spriteFactory, unitFactory);
+  const projectileFactory = new ProjectileFactory(spriteFactory);
+  const predefinedMapFactory = new PredefinedMapFactory(
+    imageFactory,
+    tileFactory,
+    objectFactory,
+    unitFactory,
+    itemFactory,
+    modelLoader,
+    musicController
+  );
+  const generatedMapFactory = new GeneratedMapFactory(
+    modelLoader,
+    tileFactory,
+    itemFactory,
+    unitFactory,
+    objectFactory
+  );
+  const mapFactory = new MapFactory(predefinedMapFactory, generatedMapFactory);
+  const mapController = new MapControllerImpl(mapFactory, unitFactory, musicController);
+  const inventoryController = new InventoryController();
+  const shrineController = new ShrineController();
   const state = new GameStateImpl();
   const engine = new EngineImpl();
   const game: Game = {
     engine,
     state,
     config: gameConfig,
-    itemFactory: await container.getAsync(ItemFactory),
-    unitFactory: await container.getAsync(UnitFactory),
-    objectFactory: await container.getAsync(ObjectFactory),
-    musicController: await container.getAsync(MusicController),
-    projectileFactory: await container.getAsync(ProjectileFactory),
-    modelLoader: await container.getAsync(ModelLoader),
-    soundPlayer: container.get(SoundPlayer),
-    mapController: await container.getAsync(MapController),
-    inventoryController: await container.getAsync(InventoryController),
-    shrineController: await container.getAsync(ShrineController),
+    itemFactory,
+    unitFactory,
+    objectFactory,
+    musicController,
+    projectileFactory,
+    modelLoader,
+    soundPlayer,
+    mapController,
+    inventoryController,
+    shrineController,
     ticker: new Ticker()
   };
-  container.bind(Game).toConstantValue(game);
   const inputHandler = createInputHandler({ game });
-  container.bind(InputHandler).toConstantValue(inputHandler);
-  return container;
+  const debugController = new DebugController(game, mapController, itemFactory);
+
+  const characterScene = new CharacterScene(game, textRenderer, imageFactory);
+  const shrineMenuRenderer = new ShrineMenuRenderer(game, textRenderer, imageFactory);
+  const viewportRenderer = new GameScreenViewportRenderer(
+    game,
+    imageFactory,
+    shrineMenuRenderer
+  );
+  const hudRenderer = new HUDRenderer(game, textRenderer, imageFactory);
+  const topMenuRenderer = new TopMenuRenderer(imageFactory);
+  const gameScene = new GameScene(
+    game,
+    mapController,
+    textRenderer,
+    viewportRenderer,
+    hudRenderer,
+    topMenuRenderer,
+    soundPlayer
+  );
+  const gameOverScene = new GameOverScene(imageFactory, textRenderer, game);
+  const helpScene = new HelpScene(game, textRenderer, imageFactory);
+  const inventoryScene = new InventoryScene(game, textRenderer, imageFactory);
+  const mapScene = new MapScene(game);
+  const titleScene = new TitleScene(game, mapController, imageFactory, textRenderer);
+  const victoryScene = new VictoryScene(textRenderer, imageFactory, game);
+
+  const scenes = {
+    [SceneName.CHARACTER]: characterScene,
+    [SceneName.GAME]: gameScene,
+    [SceneName.GAME_OVER]: gameOverScene,
+    [SceneName.HELP]: helpScene,
+    [SceneName.INVENTORY]: inventoryScene,
+    [SceneName.MAP]: mapScene,
+    [SceneName.TITLE]: titleScene,
+    [SceneName.VICTORY]: victoryScene
+  };
+
+  return {
+    gameConfig,
+    fontBundle,
+    game,
+    debugController,
+    inputHandler,
+    scenes
+  };
 };
 
 const init = async ({ rootElement, gameConfig }: Props) => {
   const container = await setupContainer({ rootElement, gameConfig });
-  const game = await container.getAsync<Game>(Game);
+  const { game, inputHandler, scenes } = container;
   const canvas = createCanvas({
     width: gameConfig.screenWidth,
     height: gameConfig.screenHeight
@@ -97,26 +188,15 @@ const init = async ({ rootElement, gameConfig }: Props) => {
     await enterFullScreen();
   }
   if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
-    const debug = container.get(DebugController);
+    const debug = container.debugController;
     debug.attachToWindow();
   }
 
-  const scenes: Record<SceneName, Scene> = {
-    [SceneName.CHARACTER]: await container.getAsync(CharacterScene),
-    [SceneName.GAME]: await container.getAsync(GameScene),
-    [SceneName.GAME_OVER]: await container.getAsync(GameOverScene),
-    [SceneName.HELP]: await container.getAsync(HelpScene),
-    [SceneName.INVENTORY]: await container.getAsync(InventoryScene),
-    [SceneName.MAP]: await container.getAsync(MapScene),
-    [SceneName.TITLE]: await container.getAsync(TitleScene),
-    [SceneName.VICTORY]: await container.getAsync(VictoryScene)
-  };
   const { state } = game;
   for (const scene of Object.values(scenes)) {
     state.addScene(scene);
   }
 
-  const inputHandler = await container.getAsync(InputHandler);
   inputHandler.addEventListener(canvas);
 
   await showTitleScreen(game);

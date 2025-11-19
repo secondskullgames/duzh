@@ -6,16 +6,11 @@ import { die } from '@main/actions/die';
 import { MapController } from '@main/maps/MapController';
 import { Faction } from '@main/units/Faction';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
 
-@injectable()
 export class DebugController {
   constructor(
-    @inject(Game)
     private readonly game: Game,
-    @inject(MapController)
     private readonly mapController: MapController,
-    @inject(ItemFactory)
     private readonly itemFactory: ItemFactory
   ) {}
 

@@ -15,15 +15,11 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import Shrine from '@main/objects/Shrine';
 import Door, { DoorState } from '@main/objects/Door';
 import { DoorDirection } from '@models/DoorDirection';
-import { inject, injectable } from 'inversify';
 import { Game } from '@main/core/Game';
 
-@injectable()
 export default class ObjectFactory {
   constructor(
-    @inject(SpriteFactory)
     private readonly spriteFactory: SpriteFactory,
-    @inject(UnitFactory)
     private readonly unitFactory: UnitFactory
   ) {}
 

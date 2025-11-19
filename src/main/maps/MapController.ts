@@ -7,7 +7,6 @@ import MapInstance from '@main/maps/MapInstance';
 import MusicController from '@main/sounds/MusicController';
 import { MapType } from '@models/MapType';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
 
 export interface MapController {
   loadFirstMap: (game: Game) => Promise<void>;
@@ -16,16 +15,10 @@ export interface MapController {
   loadDebugMap: (game: Game) => Promise<void>;
 }
 
-export const MapController = Symbol('MapController');
-
-@injectable()
 export class MapControllerImpl implements MapController {
   constructor(
-    @inject(MapFactory)
     private readonly mapFactory: MapFactory,
-    @inject(UnitFactory)
     private readonly unitFactory: UnitFactory,
-    @inject(MusicController)
     private readonly musicController: MusicController
   ) {}
 

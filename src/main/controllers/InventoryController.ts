@@ -1,9 +1,7 @@
 import { InventoryCategory, InventoryState } from '@main/core/state/InventoryState';
 import { Game } from '@main/core/Game';
-import { injectable } from 'inversify';
 import { checkNotNull } from '@lib/utils/preconditions';
 
-@injectable()
 export class InventoryController {
   prepareInventoryScreen = (game: Game): void => {
     const { state } = game;

@@ -7,7 +7,6 @@ import { replaceColors } from '@lib/graphics/images/ImageUtils';
 import { Color } from '@lib/graphics/Color';
 import { FontBundle, FontInstance } from '@lib/graphics/Fonts';
 import { Graphics } from '@lib/graphics/Graphics';
-import { inject, injectable } from 'inversify';
 
 export type TextParams = Readonly<{
   text: string;
@@ -16,16 +15,13 @@ export type TextParams = Readonly<{
   backgroundColor: Color;
 }>;
 
-@injectable()
 export class TextRenderer {
   private readonly canvas: HTMLCanvasElement;
   private readonly imageCache: Record<string, ImageData> = {};
   private readonly graphics: Graphics;
 
   constructor(
-    @inject(GameConfig)
     gameConfig: GameConfig,
-    @inject(FontBundle)
     private readonly fonts: FontBundle
   ) {
     this.canvas = createCanvas({

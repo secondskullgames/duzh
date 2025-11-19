@@ -14,19 +14,14 @@ import { Color } from '@lib/graphics/Color';
 import { getItem, getMovableBlock } from '@main/maps/MapUtils';
 import { ShrineMenuRenderer } from '@main/graphics/renderers/ShrineMenuRenderer';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
 import MapInstance from '@main/maps/MapInstance';
 
 const SHADOW_FILENAME = 'shadow';
 
-@injectable()
 export default class GameScreenViewportRenderer implements Renderer {
   constructor(
-    @inject(Game)
     private readonly game: Game,
-    @inject(ImageFactory)
     private readonly imageFactory: ImageFactory,
-    @inject(ShrineMenuRenderer)
     private readonly shrineMenuRenderer: ShrineMenuRenderer
   ) {}
 

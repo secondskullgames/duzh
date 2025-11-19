@@ -20,8 +20,6 @@
     "sourceMap": true,
     "strict": true,
     "plugins": [],
-    "types": ["reflect-metadata", "jest", "webpack-env"],
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "types": ["jest", "webpack-env"]
   }
 }

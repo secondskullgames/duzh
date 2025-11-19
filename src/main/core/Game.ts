@@ -29,5 +29,3 @@ export type Game = Readonly<{
   shrineController: ShrineController;
   ticker: Ticker;
 }>;
-
-export const Game = Symbol('Game');

@@ -1,7 +1,6 @@
 import { createCanvas, getCanvasContext } from '@lib/utils/dom';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { FontBundle, FontDefinition, FontInstance } from '@lib/graphics/Fonts';
-import { injectable } from 'inversify';
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126, i.e.
 //  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}
@@ -43,7 +42,6 @@ const fontDefinitions: Record<FontName, FontDefinition> = {
   }
 };
 
-@injectable()
 export class FontFactory {
   constructor(private readonly imageFactory: ImageFactory) {}
 

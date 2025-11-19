@@ -10,19 +10,15 @@ import { checkNotNull } from '@lib/utils/preconditions';
 import { randChoice } from '@lib/utils/random';
 import { Feature } from '@main/utils/features';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
-import { inject, injectable } from 'inversify';
 
 type CreateTileParams = Readonly<{
   tileType: TileType;
   tileSet: TileSet;
 }>;
 
-@injectable()
 export default class TileFactory {
   constructor(
-    @inject(SpriteFactory)
     private readonly spriteFactory: SpriteFactory,
-    @inject(ModelLoader)
     private readonly modelLoader: ModelLoader
   ) {}
 

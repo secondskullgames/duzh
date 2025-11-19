@@ -3,9 +3,7 @@ import { Game } from '@main/core/Game';
 import { checkNotNull } from '@lib/utils/preconditions';
 import Sounds from '@main/sounds/Sounds';
 import { randChoice, sample } from '@lib/utils/random';
-import { injectable } from 'inversify';
 
-@injectable()
 export class ShrineController {
   prepareShrineMenu = (game: Game): ShrineMenuState => {
     const { state } = game;
