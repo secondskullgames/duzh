@@ -31,7 +31,10 @@ module.exports = {
       },
       {
         test: /\.png$/i,
-        type: 'asset/inline'
+        type: 'asset/resource',
+        generator: {
+          filename: "[path][name].[contenthash][ext]"
+        }
       },
       {
         test: /\.json$/i,
