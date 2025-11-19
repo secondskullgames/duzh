@@ -9,7 +9,7 @@ A graphical Roguelike in the browser written in Typescript.
 - `src/` - Typescript source code
   - `lib/` - Library code that is (mostly) not specific to the game
   - `main/` - Main game code
-  - `models/` - Typescript definitions for game data
+  - `models/` - Zod schema definitions for game data
   - `test/` - Unit tests
 - `build/` - Compiled Typescript
 - `data/` - Game data in JSON format
@@ -24,7 +24,7 @@ The corresponding Zod schemas are in `src/main/models/`.
 ## Usage
 Run the game in dev:
 ```
-npm run serve
+npm run dev
 ```
 
 Run the game as an Electron app:
