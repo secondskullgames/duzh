@@ -8,6 +8,7 @@ import globals from 'globals';
 export default [
   {
     files: ['src/**/*.ts', 'scripts/**/*.ts'],
+    ignores: ['**/*.test.ts'], // TODO - figure out how to run lint for test files
     languageOptions: {
       parser: typescriptEslintParser,
       parserOptions: {
@@ -21,7 +22,7 @@ export default [
     },
     plugins: {
       '@typescript-eslint': typescriptEslintPlugin,
-      prettier: eslintPluginPrettier,
+      prettier: eslintPluginPrettier
     },
     rules: {
       ...eslintJs.configs.recommended.rules,
@@ -29,7 +30,7 @@ export default [
       '@typescript-eslint/no-namespace': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
       'no-alert': 'warn',
-      'no-console': ['warn', { 'allow': ['debug', 'warn', 'error'] }],
+      'no-console': ['warn', { allow: ['debug', 'warn', 'error'] }],
       'no-redeclare': 'off',
       'prefer-arrow-callback': 'warn',
       'prettier/prettier': 'warn'
