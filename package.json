@@ -53,9 +53,7 @@
     "webpack-dev-server": "^5.1.0"
   },
   "dependencies": {
-    "inversify": "^6.0.2",
     "pathfinding": "^0.4.18",
-    "reflect-metadata": "^0.2.2",
     "zod": "^4.0.5"
   },
   "overrides": {

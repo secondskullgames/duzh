@@ -18,10 +18,8 @@ import { Image } from '@lib/graphics/images/Image';
 import { Color } from '@lib/graphics/Color';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { DoorDirection } from '@models/DoorDirection';
-import { injectable } from 'inversify';
 import { Game } from '@main/core/Game';
 
-@injectable()
 export class PredefinedMapFactory {
   constructor(
     private readonly imageFactory: ImageFactory,

@@ -41,28 +41,17 @@ import { Direction } from '@lib/geometry/Direction';
 import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
 import SoundPlayer from '@lib/audio/SoundPlayer';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
-import GameScreenViewportRenderer from '@main/graphics/renderers/GameScreenViewportRenderer';
-import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
 
-@injectable()
 export class GameScene implements Scene {
   readonly name = SceneName.GAME;
 
   constructor(
-    @inject(Game)
     private readonly game: Game,
-    @inject(MapController)
     private readonly mapController: MapController,
-    @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
-    @inject(GameScreenViewportRenderer)
     private readonly viewportRenderer: Renderer,
-    @inject(HUDRenderer)
     private readonly hudRenderer: Renderer,
-    @inject(TopMenuRenderer)
     private readonly topMenuRenderer: Renderer,
-    @inject(SoundPlayer)
     private readonly soundPlayer: SoundPlayer
   ) {}
 

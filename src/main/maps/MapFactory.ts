@@ -3,10 +3,8 @@ import { PredefinedMapFactory } from './predefined/PredefinedMapFactory';
 import { GeneratedMapFactory } from './generated/GeneratedMapFactory';
 import { MapSpec } from '@models/MapSpec';
 import { MapType } from '@models/MapType';
-import { injectable } from 'inversify';
 import { Game } from '@main/core/Game';
 
-@injectable()
 export default class MapFactory {
   constructor(
     private readonly predefinedMapFactory: PredefinedMapFactory,

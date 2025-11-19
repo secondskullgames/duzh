@@ -17,7 +17,6 @@ import { AbilityName } from '@main/abilities/AbilityName';
 import { type UnitAbility } from '@main/abilities/UnitAbility';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { formatTimestamp } from '@lib/utils/time';
-import { inject, injectable } from 'inversify';
 import { Game } from '@main/core/Game';
 
 const HUD_FILENAME = 'brick_hud_3';
@@ -31,18 +30,14 @@ const BORDER_PADDING = 5;
 const ABILITIES_INNER_MARGIN = 5;
 const ABILITY_ICON_WIDTH = 20;
 
-@injectable()
 export default class HUDRenderer implements Renderer {
   private readonly TOP: number;
   private readonly WIDTH: number;
   private readonly MIDDLE_PANE_WIDTH: number;
 
   constructor(
-    @inject(Game)
     private readonly game: Game,
-    @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
     private readonly imageFactory: ImageFactory
   ) {
     this.TOP = game.config.screenHeight - HEIGHT;

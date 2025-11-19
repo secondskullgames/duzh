@@ -1,5 +1,3 @@
-import { injectable } from 'inversify';
-
 export interface AssetLoader {
   /**
    * @param filename Relative to the data directory, e.g. "units/player.json"
@@ -11,9 +9,6 @@ export interface AssetLoader {
   loadImageAsset: (filename: string) => Promise<string | null>;
 }
 
-export const AssetLoader = Symbol('AssetLoader');
-
-@injectable()
 export class AssetLoaderImpl implements AssetLoader {
   loadDataAsset = async <T>(filename: string): Promise<T> => {
     return (

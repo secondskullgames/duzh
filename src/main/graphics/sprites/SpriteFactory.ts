@@ -23,9 +23,7 @@ import { DoorDirection } from '@models/DoorDirection';
 import { DynamicSpriteModel } from '@models/DynamicSpriteModel';
 import Shrine from '@main/objects/Shrine';
 import { ShrineSprite } from '@main/graphics/sprites/ShrineSprite';
-import { injectable } from 'inversify';
 
-@injectable()
 export default class SpriteFactory {
   constructor(
     private readonly imageFactory: ImageFactory,

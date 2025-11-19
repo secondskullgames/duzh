@@ -32,21 +32,14 @@ import MapItem from '@main/objects/MapItem';
 import ObjectFactory from '@main/objects/ObjectFactory';
 import { Direction } from '@lib/geometry/Direction';
 import { DoorDirection } from '@models/DoorDirection';
-import { inject, injectable } from 'inversify';
 import { Game } from '@main/core/Game';
 
-@injectable()
 export class GeneratedMapFactory {
   constructor(
-    @inject(ModelLoader)
     private readonly modelLoader: ModelLoader,
-    @inject(TileFactory)
     private readonly tileFactory: TileFactory,
-    @inject(ItemFactory)
     private readonly itemFactory: ItemFactory,
-    @inject(UnitFactory)
     private readonly unitFactory: UnitFactory,
-    @inject(ObjectFactory)
     private readonly objectFactory: ObjectFactory
   ) {}
 

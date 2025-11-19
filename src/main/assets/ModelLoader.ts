@@ -11,20 +11,13 @@ import { EquipmentModel, EquipmentModelSchema } from '@models/EquipmentModel';
 import { PredefinedMapModel, PredefinedMapModelSchema } from '@models/PredefinedMapModel';
 import { TileSetModel, TileSetModelSchema } from '@models/TileSetModel';
 import { StaticSpriteModel, StaticSpriteModelSchema } from '@models/StaticSpriteModel';
-import { inject, injectable } from 'inversify';
 import { z, ZodObject } from 'zod';
 
 /**
- * Utility methods for working with models (in /data/) and schemas (in /src/main/schemas)
+ * Utility methods for working with models (in /data/) and schemas (in /src/models)
  */
-@injectable()
 export default class ModelLoader {
-  private loadedSchemas = false;
-
-  constructor(
-    @inject(AssetLoader)
-    private readonly assetLoader: AssetLoader
-  ) {}
+  constructor(private readonly assetLoader: AssetLoader) {}
 
   private _loadModel = async <S extends ZodObject>(
     path: string,

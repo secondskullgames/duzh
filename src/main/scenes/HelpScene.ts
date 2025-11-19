@@ -12,20 +12,15 @@ import { LINE_HEIGHT } from '@main/graphics/constants';
 import { TextRenderer } from '@main/graphics/TextRenderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'bordered_background';
 
-@injectable()
 export class HelpScene implements Scene {
   readonly name = SceneName.HELP;
 
   constructor(
-    @inject(Game)
     private readonly game: Game,
-    @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
     private readonly imageFactory: ImageFactory
   ) {}
 

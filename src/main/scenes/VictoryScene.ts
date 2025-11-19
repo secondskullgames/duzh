@@ -13,20 +13,15 @@ import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { showTitleScreen } from '@main/actions/showTitleScreen';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
 
 const BACKGROUND_FILENAME = 'victory2';
 
-@injectable()
 export class VictoryScene implements Scene {
   readonly name = SceneName.VICTORY;
 
   constructor(
-    @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
-    @inject(ImageFactory)
     private readonly imageFactory: ImageFactory,
-    @inject(Game)
     private readonly game: Game
   ) {}
 

@@ -10,15 +10,13 @@ import { TileType } from '@models/TileType';
 import { isHostile } from '@main/units/UnitUtils';
 import { getItem, getShrine } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
 
 const backgroundColor = Color.fromHex('#404040');
 
-@injectable()
 export class MapScene implements Scene {
   readonly name = SceneName.MAP;
 
-  constructor(@inject(Game) private readonly game: Game) {}
+  constructor(private readonly game: Game) {}
 
   handleKeyDown = async (command: KeyCommand) => {
     const { state } = this.game;

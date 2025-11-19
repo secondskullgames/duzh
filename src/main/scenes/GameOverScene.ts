@@ -13,21 +13,16 @@ import { toggleFullScreen } from '@lib/utils/dom';
 import { showTitleScreen } from '@main/actions/showTitleScreen';
 import { formatTimestamp } from '@lib/utils/time';
 import { Game } from '@main/core/Game';
-import { inject, injectable } from 'inversify';
 import { checkNotNull } from '@lib/utils/preconditions';
 
 const BACKGROUND_FILENAME = 'gameover';
 
-@injectable()
 export class GameOverScene implements Scene {
   readonly name = SceneName.GAME_OVER;
 
   constructor(
-    @inject(ImageFactory)
     private readonly imageFactory: ImageFactory,
-    @inject(TextRenderer)
     private readonly textRenderer: TextRenderer,
-    @inject(Game)
     private readonly game: Game
   ) {}
 
