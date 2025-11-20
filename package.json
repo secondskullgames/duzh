@@ -21,9 +21,7 @@
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
-    "electron": "cd electron && npm i && npm run make && npx electron .",
-    "lint": "eslint '{src,scripts}/**/*.ts' --max-warnings 0",
-    "lint:fix": "eslint '{src,scripts}/**/*.ts' --fix --max-warnings 0"
+    "electron": "cd electron && npm i && npm run make && npx electron ."
   },
   "devDependencies": {
     "@types/node": "^22.7.4",
