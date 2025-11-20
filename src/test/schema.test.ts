@@ -1,4 +1,3 @@
-import { test } from '@jest/globals';
 import { ConsumableItemModelSchema } from '@models/ConsumableItemModel';
 import { DynamicSpriteModelSchema } from '@models/DynamicSpriteModel';
 import { EquipmentModelSchema } from '@models/EquipmentModel';

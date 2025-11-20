@@ -21,6 +21,6 @@
     "sourceMap": true,
     "strict": true,
     "plugins": [],
-    "types": ["vite/client", "jest"]
+    "types": ["vite/client", "vitest/globals", "node"]
   }
 }

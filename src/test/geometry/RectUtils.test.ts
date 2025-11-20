@@ -1,6 +1,6 @@
 import { Rect } from '@lib/geometry/Rect';
 import { areAdjacent } from '@lib/geometry/RectUtils';
-import { expect, test } from '@jest/globals';
+import { expect, test } from 'vitest';
 
 test('areAdjacent', () => {
   // right-left
