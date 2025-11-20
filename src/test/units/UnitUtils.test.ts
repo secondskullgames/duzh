@@ -7,6 +7,7 @@ import {
   getRangedDamage
 } from '@main/units/UnitUtils';
 import { Direction } from '@lib/geometry/Direction';
+import { vi } from 'vitest';
 
 describe('UnitUtils', () => {
   const sword = {
@@ -34,7 +35,7 @@ describe('UnitUtils', () => {
         getAll: () => [sword, bow, mail, shield]
       }) as EquipmentMap,
     getCoordinates: () => ({ x: 0, y: 0 }),
-    getDirection: jest.fn()
+    getDirection: vi.fn()
   } as unknown as Unit;
 
   test('getMeleeDamage', () => {
@@ -53,13 +54,13 @@ describe('UnitUtils', () => {
     } as Unit;
 
     test('frontal attack', () => {
-      jest.mocked(unit.getDirection).mockReturnValue(Direction.E);
+      vi.mocked(unit.getDirection).mockReturnValue(Direction.E);
       const totalIncomingDamage = calculateTotalIncomingDamage(unit, 10, attacker);
       expect(totalIncomingDamage).toBe(5); // 10 * (1 - 0.5)
     });
 
     test('non-frontal attack', () => {
-      jest.mocked(unit.getDirection).mockReturnValue(Direction.N);
+      vi.mocked(unit.getDirection).mockReturnValue(Direction.N);
       const totalIncomingDamage = calculateTotalIncomingDamage(unit, 10, attacker);
       expect(totalIncomingDamage).toBe(10); // 10 * (1 - 0)
     });

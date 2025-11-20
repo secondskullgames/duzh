@@ -1,11 +1,10 @@
 import Unit from '@main/units/Unit';
 import { Faction } from '@main/units/Faction';
 import MapInstance from '@main/maps/MapInstance';
-import fn = jest.fn;
 
 describe('ControllerUtils', () => {
   describe('getNearestEnemyUnit', () => {
-    const _getUnits = fn();
+    const _getUnits = vi.fn();
     const map = {
       getAllUnits: _getUnits
     } as unknown as MapInstance;
