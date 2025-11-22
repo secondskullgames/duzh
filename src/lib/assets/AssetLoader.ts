@@ -1,3 +1,5 @@
+import { checkNotNull } from '@lib/utils/preconditions';
+
 export interface AssetLoader {
   /**
    * @param filename Relative to the data directory, e.g. "units/player.json"
@@ -18,13 +20,13 @@ export class AssetLoaderImpl implements AssetLoader {
   private readonly imageAssets = import.meta.glob(`/png/**/*.png`, { eager: true });
 
   loadDataAsset = async <T>(filename: string): Promise<T> => {
-    const module = this.dataAssets[`/data/${filename}`] as Module;
+    const module = checkNotNull(this.dataAssets[`/data/${filename}`] as Module);
     return module.default as T;
   };
 
   loadImageAsset = async (filename: string): Promise<string | null> => {
     try {
-      const module = this.imageAssets[`/png/${filename}`] as Module;
+      const module = checkNotNull(this.imageAssets[`/png/${filename}`] as Module);
       return module.default as string;
     } catch {
       // this is expected for _B filenames

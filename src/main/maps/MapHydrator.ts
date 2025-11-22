@@ -130,6 +130,7 @@ export class MapHydrator {
                 map
               );
               objects.push(item);
+              break;
             }
             case 'equipment': {
               const equipment = await this.itemFactory.createMapEquipment(
