@@ -38,10 +38,7 @@ export class ItemController {
       !this.generatedEquipmentIds.has('bronze_sword')
     ) {
       const equipmentModel = await this.modelLoader.loadEquipmentModel('bronze_sword');
-      const object: ObjectTemplate = {
-        type: 'equipment',
-        model: equipmentModel
-      };
+      const object: ObjectTemplate = { type: 'equipment', model: equipmentModel };
       this.generatedEquipmentIds.add('bronze_sword');
       return object;
     }
@@ -51,7 +48,7 @@ export class ItemController {
     const possibleEquipmentModels = allEquipmentModels
       .filter(equipmentModel => {
         if (Feature.isEnabled(Feature.DEDUPLICATE_EQUIPMENT)) {
-          return this.generatedEquipmentIds.has(equipmentModel.id);
+          return !this.generatedEquipmentIds.has(equipmentModel.id);
         }
         return true;
       })
@@ -64,14 +61,8 @@ export class ItemController {
     );
 
     const possibleObjects: ItemOrEquipment[] = [
-      ...possibleEquipmentModels.map(model => ({
-        type: 'equipment' as const,
-        model
-      })),
-      ...possibleItemModels.map(model => ({
-        type: 'item' as const,
-        model
-      }))
+      ...possibleEquipmentModels.map(model => ({ type: 'equipment' as const, model })),
+      ...possibleItemModels.map(model => ({ type: 'item' as const, model }))
     ];
 
     checkState(possibleObjects.length > 0);
