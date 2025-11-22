@@ -1,14 +1,13 @@
 import { AbstractMapGenerator } from './AbstractMapGenerator';
-import TileFactory from '../../tiles/TileFactory';
 import { TileType } from '@models/TileType';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
 import { range } from '@lib/utils/arrays';
 import { randInt } from '@lib/utils/random';
+import Grid from '@lib/geometry/Grid';
 
 type Props = Readonly<{
   numPoints: number;
-  tileFactory: TileFactory;
 }>;
 
 /**
@@ -17,13 +16,13 @@ type Props = Readonly<{
  */
 export class PathMapGenerator extends AbstractMapGenerator {
   private readonly numPoints: number;
-  constructor({ tileFactory, numPoints }: Props) {
-    super(tileFactory);
+  constructor({ numPoints }: Props) {
+    super();
     this.numPoints = numPoints;
   }
 
   /** @override {@link AbstractMapGenerator#generateTiles} */
-  protected generateTiles = (width: number, height: number): TileType[][] => {
+  protected generateTiles = (width: number, height: number): Grid<TileType> => {
     const tiles: TileType[][] = [];
     for (let y = 0; y < height; y++) {
       const row: TileType[] = [];
@@ -67,7 +66,7 @@ export class PathMapGenerator extends AbstractMapGenerator {
 
     _addWalls(tiles);
 
-    return tiles;
+    return Grid.fromArray(tiles);
   };
 }
 

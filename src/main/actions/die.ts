@@ -5,7 +5,6 @@ import { random, weightedRandom } from '@lib/utils/random';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import MapInstance from '@main/maps/MapInstance';
 import GameObject from '@main/objects/GameObject';
-import { ItemType } from '@main/items/ItemFactory';
 import { Game } from '@main/core/Game';
 
 // TODO this should be enemy-specific? add loot tables
@@ -37,11 +36,12 @@ export const die = async (unit: Unit, game: Game) => {
         const globe = await _createGlobe(coordinates, map, game);
         map.addObject(globe);
       } else if (randomRoll < GLOBE_DROP_CHANCE + ITEM_DROP_CHANCE) {
-        const item = await _createItem(coordinates, map, game);
+        // TODO - broken by recent map changes!
+        /*const item = await _createItem(coordinates, map, game);
         map.addObject(item);
         ticker.log(`${unit.getName()} dropped a ${item.getName()}.`, {
           turn: state.getTurn()
-        });
+        });*/
       }
     }
   }
@@ -76,7 +76,8 @@ const _createGlobe = async (
   ])();
 };
 
-const _createItem = async (
+// TODO - broken by recent map changes!
+/*const _createItem = async (
   coordinates: Coordinates,
   map: MapInstance,
   game: Game
@@ -90,4 +91,4 @@ const _createItem = async (
     case ItemType.EQUIPMENT:
       return itemFactory.createMapEquipment(itemSpec.id, coordinates, map);
   }
-};
+};*/

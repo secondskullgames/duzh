@@ -7,8 +7,8 @@ type Props = Readonly<{
 }>;
 
 export default class Grid<T> {
-  private readonly width: number;
-  private readonly height: number;
+  readonly width: number;
+  readonly height: number;
   private readonly array: T[][];
 
   constructor({ width, height }: Props) {
@@ -20,6 +20,18 @@ export default class Grid<T> {
       this.array[y] = [];
     }
   }
+
+  static fromArray = <T>(array: T[][]): Grid<T> => {
+    const width = array[0].length;
+    const height = array.length;
+    const grid = new Grid<T>({ width, height });
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        grid.put({ x, y }, array[y][x]);
+      }
+    }
+    return grid;
+  };
 
   get = (coordinates: Coordinates): T | null => {
     checkArgument(this.contains(coordinates));

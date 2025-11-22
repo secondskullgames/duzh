@@ -44,9 +44,6 @@ export interface GameState {
   getPlayerUnit: () => Unit;
   addUnit: (unit: Unit) => void;
   removeUnit: (unit: Unit) => void;
-
-  getGeneratedEquipmentIds: () => string[];
-  recordEquipmentGenerated: (equipmentId: string) => void;
 }
 
 export class GameStateImpl implements GameState {
@@ -190,11 +187,5 @@ export class GameStateImpl implements GameState {
     const index = this.units.indexOf(unit);
     check(index >= 0);
     this.units.splice(index, 1);
-  };
-
-  getGeneratedEquipmentIds = (): string[] => this.generatedEquipmentIds;
-
-  recordEquipmentGenerated = (equipmentId: string) => {
-    this.generatedEquipmentIds.push(equipmentId);
   };
 }

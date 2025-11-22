@@ -1,12 +1,15 @@
-import MapFactory from './MapFactory';
-import UnitFactory from '../units/UnitFactory';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
-import { SceneName } from '@main/scenes/SceneName';
+import { Game } from '@main/core/Game';
 import MapInstance from '@main/maps/MapInstance';
+import { SceneName } from '@main/scenes/SceneName';
 import MusicController from '@main/sounds/MusicController';
 import { MapType } from '@models/MapType';
-import { Game } from '@main/core/Game';
+import UnitFactory from '../units/UnitFactory';
+import { GeneratedMapFactory } from './generated/GeneratedMapFactory';
+import { MapHydrator } from './MapHydrator';
+import { MapTemplate } from './MapTemplate';
+import { PredefinedMapFactory } from './predefined/PredefinedMapFactory';
 
 export interface MapController {
   loadFirstMap: (game: Game) => Promise<void>;
@@ -15,12 +18,28 @@ export interface MapController {
   loadDebugMap: (game: Game) => Promise<void>;
 }
 
+type Props = Readonly<{
+  predefinedMapFactory: PredefinedMapFactory;
+  generatedMapFactory: GeneratedMapFactory;
+  mapHydrator: MapHydrator;
+  unitFactory: UnitFactory;
+  musicController: MusicController;
+}>;
+
 export class MapControllerImpl implements MapController {
-  constructor(
-    private readonly mapFactory: MapFactory,
-    private readonly unitFactory: UnitFactory,
-    private readonly musicController: MusicController
-  ) {}
+  private readonly predefinedMapFactory: PredefinedMapFactory;
+  private readonly generatedMapFactory: GeneratedMapFactory;
+  private readonly mapHydrator: MapHydrator;
+  private readonly unitFactory: UnitFactory;
+  private readonly musicController: MusicController;
+
+  constructor(props: Props) {
+    this.predefinedMapFactory = props.predefinedMapFactory;
+    this.generatedMapFactory = props.generatedMapFactory;
+    this.mapHydrator = props.mapHydrator;
+    this.unitFactory = props.unitFactory;
+    this.musicController = props.musicController;
+  }
 
   loadFirstMap = async (game: Game) => {
     const { unitFactory, musicController } = this;
@@ -83,10 +102,11 @@ export class MapControllerImpl implements MapController {
   };
 
   loadDebugMap = async (game: Game) => {
-    const { musicController, mapFactory, unitFactory } = this;
+    const { musicController, predefinedMapFactory, mapHydrator, unitFactory } = this;
     const { state } = game;
 
-    const map = await mapFactory.loadMap({ type: MapType.PREDEFINED, id: 'test' }, game);
+    const mapTemplate = await predefinedMapFactory.buildPredefinedMap('test');
+    const map = await mapHydrator.hydrateMap(mapTemplate, game);
     const playerUnit = await unitFactory.createPlayerUnit(
       map.getStartingCoordinates(),
       map
@@ -99,12 +119,21 @@ export class MapControllerImpl implements MapController {
   };
 
   private _loadMap = async (mapId: string, game: Game): Promise<MapInstance> => {
-    const { mapFactory } = this;
+    const { predefinedMapFactory, generatedMapFactory, mapHydrator } = this;
     const { state, config } = game;
     const mapSpec = checkNotNull(config.mapSpecs.find(spec => spec.id === mapId));
     const id = mapSpec.id;
     if (!state.getMap(id)) {
-      const map = await mapFactory.loadMap(mapSpec, game);
+      let template: MapTemplate;
+      switch (mapSpec.type) {
+        case MapType.PREDEFINED:
+          template = await predefinedMapFactory.buildPredefinedMap(id);
+          break;
+        case MapType.GENERATED:
+          template = await generatedMapFactory.buildGeneratedMap(id);
+          break;
+      }
+      const map = await mapHydrator.hydrateMap(template, game);
       state.addMap(map);
     }
     return checkNotNull(state.getMap(id));
