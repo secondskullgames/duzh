@@ -1,7 +1,7 @@
 {
-  "name": "duzh",
+  "name": "@duzh/main",
   "version": "0.1.0",
-  "description": "A graphical Roguelike in the browser, written in Typescript. fnord",
+  "description": "A graphical Roguelike in the browser, written in Typescript.",
   "author": "jwbutler",
   "license": "ISC",
   "type": "module",
@@ -14,12 +14,13 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "build": "pnpm run -r build",
-    "clean": "pnpm run -r clean",
-    "test": "pnpm run -r test",
+    "build": "tsc && vite build",
+    "dev": "vite dev",
+    "preview": "vite preview",
+    "clean": "rimraf build",
+    "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:coverage": "pnpm run -r test:coverage",
-    "electron": "cd electron && npm i && npm run make && npx electron ."
+    "test:coverage": "vitest --coverage"
   },
   "devDependencies": {
     "@types/node": "^22.7.4",
@@ -37,10 +38,5 @@
   "dependencies": {
     "pathfinding": "^0.4.18",
     "zod": "^4.0.5"
-  },
-  "overrides": {
-    "express": {
-      "cookie": "^0.7.1"
-    }
   }
 }

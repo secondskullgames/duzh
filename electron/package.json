@@ -1,7 +1,7 @@
 {
-  "name": "roguelike-electron",
+  "name": "@duzh/electron",
   "version": "1.0.0",
-  "description": "whatever man",
+  "description": "",
   "main": "index.js",
   "author": "jwbutler",
   "license": "ISC",
