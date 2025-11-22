@@ -20,7 +20,8 @@
     "clean": "rimraf build",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:coverage": "vitest --coverage"
+    "test:coverage": "vitest --coverage",
+    "lint": "prettier --write ./src"
   },
   "devDependencies": {
     "@types/node": "^22.7.4",
