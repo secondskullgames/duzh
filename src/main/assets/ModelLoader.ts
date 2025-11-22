@@ -12,6 +12,7 @@ import { PredefinedMapModel, PredefinedMapModelSchema } from '@models/Predefined
 import { TileSetModel, TileSetModelSchema } from '@models/TileSetModel';
 import { StaticSpriteModel, StaticSpriteModelSchema } from '@models/StaticSpriteModel';
 import { z, ZodObject } from 'zod';
+import { checkNotNull } from '@lib/utils/preconditions';
 
 /**
  * Utility methods for working with models (in /data/) and schemas (in /src/models)
@@ -61,7 +62,7 @@ export default class ModelLoader {
 
     const models: UnitModel[] = [];
     for (const filename of Object.keys(globImport)) {
-      const model = (globImport[filename] as Module).default as UnitModel;
+      const model = checkNotNull(globImport[filename] as Module).default as UnitModel;
       models.push(model);
     }
     return models;
@@ -72,7 +73,8 @@ export default class ModelLoader {
 
     const models: ConsumableItemModel[] = [];
     for (const filename of Object.keys(globImport)) {
-      const model = (globImport[filename] as Module).default as ConsumableItemModel;
+      const model = checkNotNull(globImport[filename] as Module)
+        .default as ConsumableItemModel;
       models.push(model);
     }
     return models;
@@ -83,7 +85,8 @@ export default class ModelLoader {
 
     const models: EquipmentModel[] = [];
     for (const filename of Object.keys(globImport)) {
-      const model = (globImport[filename] as Module).default as EquipmentModel;
+      const model = checkNotNull(globImport[filename] as Module)
+        .default as EquipmentModel;
       models.push(model);
     }
     return models;
