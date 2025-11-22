@@ -1,80 +1,57 @@
 import { getUnoccupiedLocations } from './MapGenerationUtils';
-import TileFactory from '../../tiles/TileFactory';
-import MapInstance from '../MapInstance';
 import { TileType } from '@models/TileType';
 import { GeneratedMapModel } from '@models/GeneratedMapModel';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Feature } from '@main/utils/features';
+import { MapTemplate, ObjectTemplate } from '../MapTemplate';
+import Grid from '@lib/geometry/Grid';
+import { UnitModel } from '@models/UnitModel';
+import MultiGrid from '@lib/geometry/MultiGrid';
 
+/**
+ * TODO - OOP is a mess here but we'll fix it later
+ */
 export abstract class AbstractMapGenerator {
-  protected constructor(private readonly tileFactory: TileFactory) {}
+  protected constructor() {}
 
-  generateMap = async (
-    model: GeneratedMapModel,
-    tileSetId: string
-  ): Promise<MapInstance> => {
-    const { tileFactory } = this;
-    const { id, width, height, levelNumber } = model;
+  generateMap = async (model: GeneratedMapModel): Promise<MapTemplate> => {
+    const { width, height, levelNumber } = model;
 
-    const tileTypes = this._generateTiles(width, height, levelNumber);
-    const tileSet = await tileFactory.getTileSet(tileSetId);
+    const tiles = this._generateTiles(width, height, levelNumber);
 
-    const unoccupiedLocations = getUnoccupiedLocations(tileTypes, [TileType.FLOOR], []);
+    const unoccupiedLocations = getUnoccupiedLocations(tiles, [TileType.FLOOR], []);
     const stairsLocation = unoccupiedLocations.shift()!;
-    tileTypes[stairsLocation.y][stairsLocation.x] = TileType.STAIRS_DOWN;
-
-    const tiles: TileType[][] = [];
-    for (let y = 0; y < tileTypes.length; y++) {
-      const row: TileType[] = [];
-      for (let x = 0; x < tileTypes[y].length; x++) {
-        const tileType = tileTypes[y][x];
-        row.push(tileType);
-      }
-
-      tiles.push(row);
-    }
+    tiles.put(stairsLocation, TileType.STAIRS_DOWN);
 
     const candidateLocations = getUnoccupiedLocations(tiles, [TileType.FLOOR], []);
     const startingCoordinates = checkNotNull(candidateLocations.shift());
 
     if (Feature.isEnabled(Feature.STAIRS_UP)) {
-      tiles[startingCoordinates.y][startingCoordinates.x] = TileType.STAIRS_UP;
+      tiles.put(startingCoordinates, TileType.STAIRS_UP);
     }
 
-    const map = new MapInstance({
-      id,
+    return {
+      id: model.id,
       width,
       height,
       levelNumber,
+      tiles,
+      tileSet: model.tileSet,
+      units: new Grid<UnitModel>({ width, height }),
+      objects: new MultiGrid<ObjectTemplate>({ width, height }),
       startingCoordinates,
-      music: null,
-      fogParams: model.fogOfWar
-    });
-
-    for (let y = 0; y < height; y++) {
-      for (let x = 0; x < width; x++) {
-        const tile = tileFactory.createTile(
-          {
-            tileType: tiles[y][x],
-            tileSet
-          },
-          { x, y },
-          map
-        );
-        map.addTile(tile);
-      }
-    }
-
-    return map;
+      fogParams: model.fogOfWar,
+      music: null
+    };
   };
 
-  protected abstract generateTiles(width: number, height: number): TileType[][];
+  protected abstract generateTiles(width: number, height: number): Grid<TileType>;
 
   private _generateTiles = (
     width: number,
     height: number,
     level: number
-  ): TileType[][] => {
+  ): Grid<TileType> => {
     const iterations = 100;
     for (let iteration = 1; iteration <= iterations; iteration++) {
       let tiles;
@@ -107,21 +84,20 @@ export abstract class AbstractMapGenerator {
    * TODO: This used to include a check that all rooms were connected, but that relied on setting `rooms` explicitly
    * which we are no longer doing.
    */
-  private _validateTiles = (tiles: TileType[][]): boolean =>
+  private _validateTiles = (tiles: Grid<TileType>): boolean =>
     this._validateWallPlacement(tiles);
 
   /**
    * Validate that walls are placed correctly:
    * they can't be at the very top of the map, and they must have a "wall top" tile above them
    */
-  private _validateWallPlacement = (tiles: TileType[][]): boolean => {
+  private _validateWallPlacement = (tiles: Grid<TileType>): boolean => {
     const floorTypes = ['FLOOR', 'FLOOR_HALL'];
     const wallTypes = ['WALL', 'WALL_HALL'];
-    const width = tiles[0].length;
-    const height = tiles.length;
+    const { width, height } = tiles;
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        const tileType = tiles[y][x];
+        const tileType = checkNotNull(tiles.get({ x, y }));
         if (floorTypes.includes(tileType)) {
           if (y < 2) {
             // can't place a wall at the top of the map because... reasons
@@ -129,8 +105,9 @@ export abstract class AbstractMapGenerator {
             console.warn("Invalid map: can't place a wall at the top of the map");
             return false;
           }
-          const oneUp = tiles[y - 1][x];
-          const twoUp = tiles[y - 2][x];
+          const oneUp = checkNotNull(tiles.get({ x, y: y - 1 }));
+          const twoUp = checkNotNull(tiles.get({ x, y: y - 2 }));
+
           if (floorTypes.includes(oneUp)) {
             // continue, can't place a wall directly below a floor
             // (because we have to show the top of the wall above it)

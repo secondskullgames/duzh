@@ -5,7 +5,6 @@ import { random, weightedRandom } from '@lib/utils/random';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import MapInstance from '@main/maps/MapInstance';
 import GameObject from '@main/objects/GameObject';
-import { ItemType } from '@main/items/ItemFactory';
 import { Game } from '@main/core/Game';
 
 // TODO this should be enemy-specific? add loot tables
@@ -81,13 +80,14 @@ const _createItem = async (
   map: MapInstance,
   game: Game
 ): Promise<GameObject> => {
-  const { state, itemFactory } = game;
-  const itemSpec = await itemFactory.chooseRandomMapItemForLevel(map.levelNumber, game);
-  state.recordEquipmentGenerated(itemSpec.id);
-  switch (itemSpec.type) {
-    case ItemType.CONSUMABLE:
-      return itemFactory.createMapItem(itemSpec.id, coordinates, map);
-    case ItemType.EQUIPMENT:
-      return itemFactory.createMapEquipment(itemSpec.id, coordinates, map);
+  const { itemFactory, itemController } = game;
+  const objectTemplate = await itemController.chooseRandomMapItemForLevel(
+    map.levelNumber
+  );
+  switch (objectTemplate.type) {
+    case 'item':
+      return itemFactory.createMapItem(objectTemplate.model.id, coordinates, map);
+    case 'equipment':
+      return itemFactory.createMapEquipment(objectTemplate.model.id, coordinates, map);
   }
 };

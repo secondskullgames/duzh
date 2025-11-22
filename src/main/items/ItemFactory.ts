@@ -18,22 +18,9 @@ import { castFreeze } from '@main/actions/castFreeze';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { ConsumableType } from '@models/ConsumableType';
 import { ItemCategory } from '@models/ItemCategory';
-import { Feature } from '@main/utils/features';
-import { checkState } from '@lib/utils/preconditions';
-import { weightedRandom, WeightedRandomChoice } from '@lib/utils/random';
 import { radialChainLightning } from '@main/actions/radialChainLightning';
 import type { ItemProc } from './ItemProc';
 import { Game } from '@main/core/Game';
-
-export enum ItemType {
-  EQUIPMENT = 'equipment',
-  CONSUMABLE = 'consumable'
-}
-
-export type ItemSpec = Readonly<{
-  type: ItemType;
-  id: string;
-}>;
 
 export class ItemFactory {
   constructor(
@@ -272,64 +259,5 @@ export class ItemFactory {
       loadPaletteSwaps(model.paletteSwaps)
     );
     return new MapItem({ name: model.name, coordinates, map, sprite, inventoryItem });
-  };
-
-  chooseRandomMapItemForLevel = async (
-    levelNumber: number,
-    game: Game
-  ): Promise<ItemSpec> => {
-    const { state } = game;
-    const allEquipmentModels = await this.modelLoader.loadAllEquipmentModels();
-    const allConsumableModels = await this.modelLoader.loadAllConsumableModels();
-    const possibleEquipmentModels = allEquipmentModels
-      .filter(equipmentModel => {
-        if (Feature.isEnabled(Feature.DEDUPLICATE_EQUIPMENT)) {
-          return !state.getGeneratedEquipmentIds().includes(equipmentModel.id);
-        }
-        return true;
-      })
-      .filter(
-        equipmentModel => equipmentModel.level && equipmentModel.level <= levelNumber
-      );
-
-    const possibleItemModels = allConsumableModels.filter(
-      itemModel => itemModel.level && itemModel.level <= levelNumber
-    );
-
-    const possibleItemSpecs: ItemSpec[] = [
-      ...possibleEquipmentModels.map(model => ({
-        type: ItemType.EQUIPMENT,
-        id: model.id
-      })),
-      ...possibleItemModels.map(model => ({
-        type: ItemType.CONSUMABLE,
-        id: model.id
-      }))
-    ];
-
-    checkState(possibleItemSpecs.length > 0);
-
-    // weighted random
-    const choices: WeightedRandomChoice<ItemSpec>[] = [];
-
-    for (const itemSpec of possibleItemSpecs) {
-      const key = `${itemSpec.type}_${itemSpec.id}`;
-      const model = (() => {
-        switch (itemSpec.type) {
-          case ItemType.EQUIPMENT:
-            return possibleEquipmentModels.find(
-              equipmentModel => equipmentModel.id === itemSpec.id
-            );
-          case ItemType.CONSUMABLE:
-            return possibleItemModels.find(itemClass => itemClass.id === itemSpec.id);
-        }
-      })();
-
-      // Each rarity is 2x less common than the previous rarity.
-      // So P[rarity] = 2 ^ -rarity
-      const weight = 0.5 ** (model?.rarity ?? 0);
-      choices.push({ weight, key, value: itemSpec });
-    }
-    return weightedRandom(choices);
   };
 }

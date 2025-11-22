@@ -1,97 +1,67 @@
-import Tile from '../../tiles/Tile';
-import Unit from '../../units/Unit';
-import GameObject from '../../objects/GameObject';
-import MapInstance from '../MapInstance';
-import TileFactory from '../../tiles/TileFactory';
-import UnitFactory from '../../units/UnitFactory';
-import ObjectFactory from '../../objects/ObjectFactory';
 import MusicController from '../../sounds/MusicController';
-import { ItemFactory } from '@main/items/ItemFactory';
 import Colors from '@main/graphics/Colors';
 import { PredefinedMapModel } from '@models/PredefinedMapModel';
 import { TileType } from '@models/TileType';
 import ModelLoader from '@main/assets/ModelLoader';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { Faction } from '@main/units/Faction';
-import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
 import { Image } from '@lib/graphics/images/Image';
 import { Color } from '@lib/graphics/Color';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { DoorDirection } from '@models/DoorDirection';
-import { Game } from '@main/core/Game';
+import { MapTemplate, ObjectTemplate } from '../MapTemplate';
+import Grid from '@lib/geometry/Grid';
+import { UnitModel } from '@models/UnitModel';
+import MultiGrid from '@lib/geometry/MultiGrid';
 
 export class PredefinedMapFactory {
   constructor(
     private readonly imageFactory: ImageFactory,
-    private readonly tileFactory: TileFactory,
-    private readonly objectFactory: ObjectFactory,
-    private readonly unitFactory: UnitFactory,
-    private readonly itemFactory: ItemFactory,
     private readonly modelLoader: ModelLoader,
     private readonly musicController: MusicController
   ) {}
 
-  buildPredefinedMap = async (mapId: string, game: Game): Promise<MapInstance> => {
+  buildPredefinedMap = async (mapId: string): Promise<MapTemplate> => {
     const model = await this.modelLoader.loadPredefinedMapModel(mapId);
     const image = await this.imageFactory.getImage({
       filename: `maps/${model.imageFilename}`
     });
 
     const startingCoordinates = await this._loadStartingCoordinates(image, model);
-    const map = new MapInstance({
+    const tiles = await this._loadTiles(model, image);
+    const units = await this._loadUnits(model, image);
+    const objects = await this._loadObjects(model, image);
+    const music = model.music ? await this.musicController.loadMusic(model.music) : null;
+
+    return {
       id: model.id,
-      width: image.bitmap.width,
-      height: image.bitmap.height,
+      width: image.width,
+      height: image.height,
       levelNumber: model.levelNumber,
       startingCoordinates,
-      music: model.music ? await this.musicController.loadMusic(model.music) : null,
+      tiles,
+      tileSet: model.tileset,
+      units,
+      objects,
+      music,
       fogParams: model.fogOfWar
-    });
-
-    const tiles = await this._loadTiles(model, image, map);
-    for (let y = 0; y < map.height; y++) {
-      for (let x = 0; x < map.width; x++) {
-        map.addTile(tiles[y][x]);
-      }
-    }
-
-    const units = await this._loadUnits(model, image, map);
-    for (const unit of units) {
-      map.addUnit(unit);
-      game.state.addUnit(unit);
-    }
-
-    const objects = await this._loadObjects(model, image, map);
-    for (const object of objects) {
-      map.addObject(object);
-    }
-    return map;
+    };
   };
 
   private _loadTiles = async (
     model: PredefinedMapModel,
-    image: Image,
-    map: MapInstance
-  ): Promise<Tile[][]> => {
+    image: Image
+  ): Promise<Grid<TileType>> => {
     const tileColors = this._toHexColors(model.tileColors);
-    const tileSet = await this.tileFactory.getTileSet(model.tileset);
-    const tiles: Tile[][] = [];
-    for (let y = 0; y < image.height; y++) {
-      tiles.push([]);
-      for (let x = 0; x < image.width; x++) {
+    const { width, height } = image;
+    const tiles = new Grid<TileType>({ width, height });
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
         const { r, g, b } = image.getRGB({ x, y });
         const color = Color.fromRGB({ r, g, b });
 
         const tileType = tileColors[color.hex] ?? model.defaultTile ?? null;
         if (tileType !== null) {
-          tiles[y][x] = this.tileFactory.createTile(
-            {
-              tileType: tileType as TileType,
-              tileSet
-            },
-            { x, y },
-            map
-          );
+          tiles.put({ x, y }, tileType as TileType);
         } else {
           throw new Error(
             `unrecognized color ${color.hex} at ${JSON.stringify({ x, y })}`
@@ -130,10 +100,10 @@ export class PredefinedMapFactory {
 
   private _loadUnits = async (
     model: PredefinedMapModel,
-    image: Image,
-    map: MapInstance
-  ): Promise<Unit[]> => {
-    const units: Unit[] = [];
+    image: Image
+  ): Promise<Grid<UnitModel>> => {
+    const { width, height } = image;
+    const units = new Grid<UnitModel>({ width, height });
     const enemyColors = this._toHexColors(model.enemyColors);
 
     for (let y = 0; y < image.height; y++) {
@@ -146,20 +116,10 @@ export class PredefinedMapFactory {
           if (!hexColors.has(color.hex)) {
             hexColors.add(color.hex);
           }
-          const enemyUnitClass = enemyColors[color.hex] ?? null;
-          if (enemyUnitClass !== null) {
-            const enemyUnitModel = await this.modelLoader.loadUnitModel(enemyUnitClass);
-            const controller = chooseUnitController(enemyUnitModel.id);
-            const unit = await this.unitFactory.createUnit({
-              name: enemyUnitModel.name,
-              unitClass: enemyUnitClass,
-              faction: Faction.ENEMY,
-              controller,
-              level: model.levelNumber,
-              coordinates: { x, y },
-              map
-            });
-            units.push(unit);
+          const unitModelId = enemyColors[color.hex] ?? null;
+          if (unitModelId !== null) {
+            const unitModel = await this.modelLoader.loadUnitModel(unitModelId);
+            units.put({ x, y }, unitModel);
           }
         }
       }
@@ -169,10 +129,10 @@ export class PredefinedMapFactory {
 
   private _loadObjects = async (
     model: PredefinedMapModel,
-    image: Image,
-    map: MapInstance
-  ): Promise<GameObject[]> => {
-    const objects: GameObject[] = [];
+    image: Image
+  ): Promise<MultiGrid<ObjectTemplate>> => {
+    const { width, height } = image;
+    const objects = new MultiGrid<ObjectTemplate>({ width, height });
 
     const objectColors = this._toHexColors(model.objectColors);
     const itemColors = this._toHexColors(model.itemColors);
@@ -189,26 +149,20 @@ export class PredefinedMapFactory {
             objectName === 'door_horizontal'
               ? DoorDirection.HORIZONTAL
               : DoorDirection.VERTICAL;
-          const door = await this.objectFactory.createDoor(
+
+          objects.put(
             { x, y },
-            doorDirection,
-            false,
-            map
+            { type: 'door', direction: doorDirection, locked: false }
           );
-          objects.push(door);
         } else {
           if (objectName === 'mirror') {
-            const spawner = await this.objectFactory.createMirror({ x, y }, map);
-            objects.push(spawner);
+            objects.put({ x, y }, { type: 'mirror' });
           } else if (objectName === 'movable_block') {
-            const block = await this.objectFactory.createMovableBlock({ x, y }, map);
-            objects.push(block);
+            objects.put({ x, y }, { type: 'movable_block' });
           } else if (objectName === 'vines') {
-            const vines = await this.objectFactory.createVines({ x, y }, map);
-            objects.push(vines);
+            objects.put({ x, y }, { type: 'vines' });
           } else if (objectName === 'shrine') {
-            const shrine = await this.objectFactory.createShrine({ x, y }, map);
-            objects.push(shrine);
+            objects.put({ x, y }, { type: 'shrine' });
           } else if (objectName) {
             throw new Error(`Unrecognized object name: ${objectName}`);
           }
@@ -216,18 +170,14 @@ export class PredefinedMapFactory {
 
         const itemId = itemColors?.[color.hex] ?? null;
         if (itemId) {
-          const item = await this.itemFactory.createMapItem(itemId, { x, y }, map);
-          objects.push(item);
+          const itemModel = await this.modelLoader.loadItemModel(itemId);
+          objects.put({ x, y }, { type: 'item', model: itemModel });
         }
 
         const equipmentId = equipmentColors?.[color.hex] ?? null;
         if (equipmentId) {
-          const equipment = await this.itemFactory.createMapEquipment(
-            equipmentId,
-            { x, y },
-            map
-          );
-          objects.push(equipment);
+          const equipmentModel = await this.modelLoader.loadEquipmentModel(equipmentId);
+          objects.put({ x, y }, { type: 'equipment', model: equipmentModel });
         }
       }
     }

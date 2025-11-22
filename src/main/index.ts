@@ -39,7 +39,6 @@ import { ShrineController } from '@main/controllers/ShrineController';
 import ImageLoader from '@lib/graphics/images/ImageLoader';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { ImageCache } from '@lib/graphics/images/ImageCache';
-import MapFactory from '@main/maps/MapFactory';
 import { PredefinedMapFactory } from '@main/maps/predefined/PredefinedMapFactory';
 import { GeneratedMapFactory } from '@main/maps/generated/GeneratedMapFactory';
 import TileFactory from '@main/tiles/TileFactory';
@@ -49,6 +48,8 @@ import GameScreenViewportRenderer from '@main/graphics/renderers/GameScreenViewp
 import { ShrineMenuRenderer } from '@main/graphics/renderers/ShrineMenuRenderer';
 import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
 import TopMenuRenderer from '@main/graphics/renderers/TopMenuRenderer';
+import { MapHydrator } from './maps/MapHydrator';
+import { ItemController } from './items/ItemController';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -87,22 +88,24 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
   const projectileFactory = new ProjectileFactory(spriteFactory);
   const predefinedMapFactory = new PredefinedMapFactory(
     imageFactory,
-    tileFactory,
-    objectFactory,
-    unitFactory,
-    itemFactory,
     modelLoader,
     musicController
   );
-  const generatedMapFactory = new GeneratedMapFactory(
-    modelLoader,
+  const itemController = new ItemController({ modelLoader, itemFactory, spriteFactory });
+  const generatedMapFactory = new GeneratedMapFactory({ modelLoader, itemController });
+  const mapHydrator = new MapHydrator(
     tileFactory,
-    itemFactory,
+    objectFactory,
     unitFactory,
-    objectFactory
+    itemFactory
   );
-  const mapFactory = new MapFactory(predefinedMapFactory, generatedMapFactory);
-  const mapController = new MapControllerImpl(mapFactory, unitFactory, musicController);
+  const mapController = new MapControllerImpl({
+    predefinedMapFactory,
+    generatedMapFactory,
+    mapHydrator,
+    unitFactory,
+    musicController
+  });
   const inventoryController = new InventoryController();
   const shrineController = new ShrineController();
   const state = new GameStateImpl();
@@ -121,6 +124,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
     mapController,
     inventoryController,
     shrineController,
+    itemController,
     ticker: new Ticker()
   };
   const inputHandler = createInputHandler({ game });

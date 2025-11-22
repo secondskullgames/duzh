@@ -8,7 +8,6 @@ import ModelLoader from '@main/assets/ModelLoader';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { randChoice } from '@lib/utils/random';
-import { Feature } from '@main/utils/features';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 
 type CreateTileParams = Readonly<{
@@ -55,33 +54,5 @@ export default class TileFactory {
     }
 
     return tileSet as TileSet;
-  };
-
-  /**
-   * TODO hardcoding these
-   */
-  getTileSetNames = (): string[] => {
-    if (Feature.isEnabled(Feature.DARK_DUNGEON)) {
-      return ['dark/dungeon_dark1', 'dark/dungeon_dark2', 'dark/dungeon_dark3'];
-    }
-
-    return [
-      'catacomb',
-      'catacomb_gold',
-      'catacomb_red',
-      'cave',
-      'cave_blue',
-      'dungeon',
-      'dungeon_brown',
-      'dungeon_cga',
-      'dungeon_cga_alt',
-      'dungeon_green',
-      'kroz',
-      'kroz_teal',
-      'kroz_green',
-      'kroz_yellow',
-      'zzt',
-      'zzt_alt'
-    ];
   };
 }

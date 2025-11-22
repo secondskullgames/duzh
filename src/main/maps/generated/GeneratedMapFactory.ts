@@ -1,17 +1,8 @@
-import { AbstractMapGenerator } from './AbstractMapGenerator';
-import { RoomCorridorMapGenerator } from './room_corridor/RoomCorridorMapGenerator';
-import { RoomCorridorMapGenerator2 } from './room_corridor_rewrite/RoomCorridorMapGenerator2';
-import { DefaultMapGenerator } from './DefaultMapGenerator';
-import { BlobMapGenerator } from './BlobMapGenerator';
-import { PathMapGenerator } from './PathMapGenerator';
-import { getUnoccupiedLocations } from './MapGenerationUtils';
-import MapInstance from '../MapInstance';
-import TileFactory from '../../tiles/TileFactory';
-import GameObject from '../../objects/GameObject';
-import { ItemFactory, ItemSpec, ItemType } from '@main/items/ItemFactory';
-import { UnitModel } from '@models/UnitModel';
-import { Algorithm, GeneratedMapModel } from '@models/GeneratedMapModel';
-import ModelLoader from '@main/assets/ModelLoader';
+import { Coordinates } from '@lib/geometry/Coordinates';
+import { Direction } from '@lib/geometry/Direction';
+import Grid from '@lib/geometry/Grid';
+import MultiGrid from '@lib/geometry/MultiGrid';
+import { checkNotNull } from '@lib/utils/preconditions';
 import {
   randChance,
   randChoice,
@@ -20,62 +11,63 @@ import {
   weightedRandom,
   WeightedRandomChoice
 } from '@lib/utils/random';
-import Unit from '@main/units/Unit';
+import ModelLoader from '@main/assets/ModelLoader';
 import { Feature } from '@main/utils/features';
-import UnitFactory from '@main/units/UnitFactory';
-import { Coordinates } from '@lib/geometry/Coordinates';
-import { Faction } from '@main/units/Faction';
-import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
-import { isOccupied } from '@main/maps/MapUtils';
-import { TileType } from '@models/TileType';
-import MapItem from '@main/objects/MapItem';
-import ObjectFactory from '@main/objects/ObjectFactory';
-import { Direction } from '@lib/geometry/Direction';
 import { DoorDirection } from '@models/DoorDirection';
-import { Game } from '@main/core/Game';
+import { Algorithm, GeneratedMapModel } from '@models/GeneratedMapModel';
+import { TileType } from '@models/TileType';
+import { UnitModel } from '@models/UnitModel';
+import { MapTemplate, ObjectTemplate } from '../MapTemplate';
+import { AbstractMapGenerator } from './AbstractMapGenerator';
+import { BlobMapGenerator } from './BlobMapGenerator';
+import { DefaultMapGenerator } from './DefaultMapGenerator';
+import { getUnoccupiedLocations } from './MapGenerationUtils';
+import { PathMapGenerator } from './PathMapGenerator';
+import { RoomCorridorMapGenerator } from './room_corridor/RoomCorridorMapGenerator';
+import { RoomCorridorMapGenerator2 } from './room_corridor_rewrite/RoomCorridorMapGenerator2';
+import { ItemController } from '@main/items/ItemController';
+
+type Props = Readonly<{
+  modelLoader: ModelLoader;
+  itemController: ItemController;
+}>;
 
 export class GeneratedMapFactory {
-  constructor(
-    private readonly modelLoader: ModelLoader,
-    private readonly tileFactory: TileFactory,
-    private readonly itemFactory: ItemFactory,
-    private readonly unitFactory: UnitFactory,
-    private readonly objectFactory: ObjectFactory
-  ) {}
+  private readonly modelLoader: ModelLoader;
+  private readonly itemController: ItemController;
 
-  loadMap = async (mapId: string, game: Game): Promise<MapInstance> => {
+  constructor(props: Props) {
+    this.modelLoader = props.modelLoader;
+    this.itemController = props.itemController;
+  }
+
+  buildGeneratedMap = async (mapId: string): Promise<MapTemplate> => {
     const model = await this.modelLoader.loadGeneratedMapModel(mapId);
     const algorithm = model.algorithm;
     const tileSet =
-      model.tileSet === 'RANDOM'
-        ? randChoice(this.tileFactory.getTileSetNames())
-        : model.tileSet;
+      model.tileSet === 'RANDOM' ? randChoice(this._getTileSetNames()) : model.tileSet;
     const dungeonGenerator = this._getDungeonGenerator(algorithm);
-    const map = await dungeonGenerator.generateMap(model, tileSet);
-    const units = await this._generateUnits(map, model);
-    for (const unit of units) {
-      map.addUnit(unit);
-      game.state.addUnit(unit);
-    }
-    const objects = await this._generateObjects(map, model, game);
-    objects.push(...(await this._addDoors(map, model)));
-    for (const object of objects) {
-      map.addObject(object);
-    }
-    return map;
+    const template = await dungeonGenerator.generateMap(model);
+    const units = await this._generateUnits(model, template);
+    const objects = await this._generateObjects(model, template);
+    return {
+      ...template,
+      tileSet,
+      objects,
+      units
+    };
   };
 
   private _getDungeonGenerator = (algorithm: Algorithm): AbstractMapGenerator => {
-    const { tileFactory } = this;
     switch (algorithm) {
       case Algorithm.ROOMS_AND_CORRIDORS:
-        return this._getRoomsAndCorridorsGenerator(tileFactory);
+        return this._getRoomsAndCorridorsGenerator();
       case Algorithm.DEFAULT:
-        return new DefaultMapGenerator({ tileFactory, fillRate: 0.25 });
+        return new DefaultMapGenerator({ fillRate: 0.25 });
       case Algorithm.BLOB:
-        return new BlobMapGenerator({ tileFactory, fillRate: randFloat(0.3, 0.6) });
+        return new BlobMapGenerator({ fillRate: randFloat(0.3, 0.6) });
       case Algorithm.PATH:
-        return new PathMapGenerator({ tileFactory, numPoints: 20 });
+        return new PathMapGenerator({ numPoints: 20 });
       case Algorithm.RANDOM:
         return this._getDungeonGenerator(
           randChoice([
@@ -90,10 +82,9 @@ export class GeneratedMapFactory {
     }
   };
 
-  private _getRoomsAndCorridorsGenerator = (tileFactory: TileFactory) => {
+  private _getRoomsAndCorridorsGenerator = (): AbstractMapGenerator => {
     if (Feature.isEnabled(Feature.ROOMS_AND_CORRIDORS_2)) {
       return new RoomCorridorMapGenerator2({
-        tileFactory,
         minRoomWidth: 5,
         minRoomHeight: 4
       });
@@ -102,23 +93,21 @@ export class GeneratedMapFactory {
     const maxRoomDimension = 9;
     return new RoomCorridorMapGenerator({
       minRoomDimension,
-      maxRoomDimension,
-      tileFactory
+      maxRoomDimension
     });
   };
 
   private _generateUnits = async (
-    map: MapInstance,
-    model: GeneratedMapModel
-  ): Promise<Unit[]> => {
-    const { unitFactory } = this;
-
-    const units: Unit[] = [];
+    model: GeneratedMapModel,
+    map: MapTemplate
+  ): Promise<Grid<UnitModel>> => {
+    const { width, height } = model;
+    const units = new Grid<UnitModel>({ width, height });
     const candidateLocations = getUnoccupiedLocations(
-      map.getTiles(),
+      map.tiles,
       [TileType.FLOOR],
       []
-    ).filter(coordinates => !isOccupied(map, coordinates));
+    ).filter(coordinates => !this._isOccupied(map, coordinates));
     let unitsRemaining = randInt(model.enemies.min, model.enemies.max);
 
     const enemyUnitModels = await this._getEnemyUnitModels(model);
@@ -131,16 +120,7 @@ export class GeneratedMapFactory {
       const unitModel = weightedRandom(choices);
       const coordinates = randChoice(candidateLocations);
       candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
-      const controller = chooseUnitController(unitModel.id);
-      const unit = await unitFactory.createUnit({
-        unitClass: unitModel.id,
-        controller,
-        faction: Faction.ENEMY,
-        coordinates,
-        level: model.levelNumber,
-        map
-      });
-      units.push(unit);
+      units.put(coordinates, unitModel);
       unitsRemaining--;
     }
     return units;
@@ -158,60 +138,61 @@ export class GeneratedMapFactory {
   };
 
   private _generateObjects = async (
-    map: MapInstance,
-    mapModel: GeneratedMapModel,
-    game: Game
-  ): Promise<GameObject[]> => {
-    const { itemFactory } = this;
-    const { state } = game;
-    const objects: GameObject[] = [];
+    model: GeneratedMapModel,
+    map: MapTemplate
+  ): Promise<MultiGrid<ObjectTemplate>> => {
+    const { width, height } = map;
+    const objects = new MultiGrid<ObjectTemplate>({ width, height });
     const candidateLocations = this._getCandidateObjectLocations(map);
 
-    let itemsRemaining = randInt(mapModel.items.min, mapModel.items.max);
+    let itemsRemaining = randInt(model.items.min, model.items.max);
 
-    const itemSpecs: ItemSpec[] = [];
     while (itemsRemaining > 0) {
-      // TODO: this is a hack to force a bronze sword on the first level
-      // I don't want to design a better DSL for map generation right now
-      if (
-        Feature.isEnabled(Feature.FORCE_BRONZE_SWORD) &&
-        mapModel.levelNumber === 1 &&
-        !state.getGeneratedEquipmentIds().includes('bronze_sword')
-      ) {
-        itemSpecs.push({
-          type: ItemType.EQUIPMENT,
-          id: 'bronze_sword'
-        });
-        itemsRemaining--;
-        state.recordEquipmentGenerated('bronze_sword');
-        continue;
-      } else {
-        const chosenItemSpec = await itemFactory.chooseRandomMapItemForLevel(
-          mapModel.levelNumber,
-          game
-        );
-        itemSpecs.push(chosenItemSpec);
-        if (chosenItemSpec.type === ItemType.EQUIPMENT) {
-          state.recordEquipmentGenerated(chosenItemSpec.id);
-        }
-      }
-      itemsRemaining--;
-    }
-
-    for (const itemSpec of itemSpecs) {
+      const object = await this.itemController.chooseRandomMapItemForLevel(
+        model.levelNumber
+      );
       const coordinates = randChoice(candidateLocations);
-      const item = await this._generateMapItem(itemSpec, coordinates, map);
-      objects.push(item);
+      objects.put(coordinates, object);
       candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
       itemsRemaining--;
     }
 
+    const doorChance = model.algorithm === Algorithm.ROOMS_AND_CORRIDORS ? 1 : 0;
+    for (let y = 0; y < map.height; y++) {
+      for (let x = 0; x < map.width; x++) {
+        const tile = checkNotNull(map.tiles.get({ x, y }));
+        if (tile === TileType.FLOOR_HALL) {
+          const adjacentCoordinatesList = this._getDirectlyAdjacentCoordinates(
+            { x, y },
+            map
+          );
+          for (const adjacentCoordinates of adjacentCoordinatesList) {
+            if (map.tiles.get(adjacentCoordinates) === TileType.FLOOR) {
+              if (randChance(doorChance)) {
+                const direction = Direction.between({ x, y }, adjacentCoordinates);
+                const doorDirection =
+                  direction === Direction.N || direction === Direction.S
+                    ? DoorDirection.VERTICAL
+                    : DoorDirection.HORIZONTAL;
+                const door: ObjectTemplate = {
+                  type: 'door',
+                  direction: doorDirection,
+                  locked: false
+                };
+                objects.put({ x, y }, door);
+              }
+            }
+          }
+        }
+      }
+    }
+
     if (Feature.isEnabled(Feature.SHRINES)) {
-      const numShrines = mapModel.shrines;
+      const numShrines = model.shrines;
       for (let i = 0; i < numShrines; i++) {
         const coordinates = randChoice(candidateLocations);
-        const shrine = await this.objectFactory.createShrine(coordinates, map);
-        objects.push(shrine);
+        const shrine: ObjectTemplate = { type: 'shrine' };
+        objects.put(coordinates, shrine);
         candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
       }
     }
@@ -224,21 +205,21 @@ export class GeneratedMapFactory {
    * This is overkill, but it's to ensure that we never block the path
    * to the exit.
    */
-  private _getCandidateObjectLocations = (map: MapInstance): Coordinates[] => {
-    return getUnoccupiedLocations(map.getTiles(), [TileType.FLOOR], [])
-      .filter(coordinates => !isOccupied(map, coordinates))
+  private _getCandidateObjectLocations = (map: MapTemplate): Coordinates[] => {
+    return getUnoccupiedLocations(map.tiles, [TileType.FLOOR], [])
+      .filter(coordinates => !this._isOccupied(map, coordinates))
       .filter(coordinates => {
         for (let dy = -1; dy <= 1; dy++) {
           for (let dx = -1; dx <= 1; dx++) {
             const adjacentCoordinates = Coordinates.plus(coordinates, { dx, dy });
-            if (!map.contains(adjacentCoordinates)) {
+            if (!this._contains(map, adjacentCoordinates)) {
               return false;
             }
-            const tile = map.getTile(adjacentCoordinates);
-            if (tile.isBlocking()) {
+            const tile = checkNotNull(map.tiles.get(adjacentCoordinates));
+            if (TileType.isBlocking(tile)) {
               return false;
             }
-            if (isOccupied(map, adjacentCoordinates)) {
+            if (this._isOccupied(map, adjacentCoordinates)) {
               return false;
             }
           }
@@ -247,67 +228,54 @@ export class GeneratedMapFactory {
       });
   };
 
-  private _generateMapItem = async (
-    itemSpec: ItemSpec,
-    coordinates: Coordinates,
-    map: MapInstance
-  ): Promise<MapItem> => {
-    switch (itemSpec.type) {
-      case ItemType.EQUIPMENT:
-        return this.itemFactory.createMapEquipment(itemSpec.id, coordinates, map);
-      case ItemType.CONSUMABLE:
-        return this.itemFactory.createMapItem(itemSpec.id, coordinates, map);
-    }
-  };
-
-  private _addDoors = async (
-    map: MapInstance,
-    model: GeneratedMapModel
-  ): Promise<GameObject[]> => {
-    const doorChance = model.algorithm === Algorithm.ROOMS_AND_CORRIDORS ? 1 : 0;
-    const doors = [];
-    for (let y = 0; y < map.height; y++) {
-      for (let x = 0; x < map.width; x++) {
-        if (map.getTile({ x, y }).getTileType() === TileType.FLOOR_HALL) {
-          const adjacentCoordinatesList = this._getDirectlyAdjacentCoordinates(
-            { x, y },
-            map
-          );
-          for (const adjacentCoordinates of adjacentCoordinatesList) {
-            if (map.getTile(adjacentCoordinates).getTileType() === TileType.FLOOR) {
-              if (randChance(doorChance)) {
-                const direction = Direction.between({ x, y }, adjacentCoordinates);
-                const doorDirection =
-                  direction === Direction.N || direction === Direction.S
-                    ? DoorDirection.VERTICAL
-                    : DoorDirection.HORIZONTAL;
-                const door = await this.objectFactory.createDoor(
-                  { x, y },
-                  doorDirection,
-                  false,
-                  map
-                );
-                doors.push(door);
-              }
-            }
-          }
-        }
-      }
-    }
-    return doors;
-  };
-
   private _getDirectlyAdjacentCoordinates = (
     coordinates: Coordinates,
-    map: MapInstance
+    map: MapTemplate
   ): Coordinates[] => {
     const adjacentCoordinatesList = [];
     for (const direction of Direction.values()) {
       const adjacentCoordinates = Coordinates.plusDirection(coordinates, direction);
-      if (map.contains(adjacentCoordinates)) {
+      if (this._contains(map, adjacentCoordinates)) {
         adjacentCoordinatesList.push(adjacentCoordinates);
       }
     }
     return adjacentCoordinatesList;
+  };
+
+  /**
+   * TODO hardcoding these
+   */
+  private _getTileSetNames = (): string[] => {
+    if (Feature.isEnabled(Feature.DARK_DUNGEON)) {
+      return ['dark/dungeon_dark1', 'dark/dungeon_dark2', 'dark/dungeon_dark3'];
+    }
+
+    return [
+      'catacomb',
+      'catacomb_gold',
+      'catacomb_red',
+      'cave',
+      'cave_blue',
+      'dungeon',
+      'dungeon_brown',
+      'dungeon_cga',
+      'dungeon_cga_alt',
+      'dungeon_green',
+      'kroz',
+      'kroz_teal',
+      'kroz_green',
+      'kroz_yellow',
+      'zzt',
+      'zzt_alt'
+    ];
+  };
+
+  private _contains = (map: MapTemplate, coordinates: Coordinates): boolean => {
+    const { x, y } = coordinates;
+    return x >= 0 && x < map.width && y >= 0 && y < map.height;
+  };
+
+  private _isOccupied = (map: MapTemplate, coordinates: Coordinates): boolean => {
+    return map.objects.get(coordinates).length > 0 || map.units.get(coordinates) !== null;
   };
 }

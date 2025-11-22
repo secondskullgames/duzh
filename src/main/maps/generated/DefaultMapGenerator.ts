@@ -1,10 +1,10 @@
 import { AbstractMapGenerator } from './AbstractMapGenerator';
-import TileFactory from '../../tiles/TileFactory';
 import { TileType } from '@models/TileType';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Rect } from '@lib/geometry/Rect';
 import { randInt, shuffle } from '@lib/utils/random';
 import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
+import Grid from '@lib/geometry/Grid';
 
 const minRoomWidth = 4;
 const minRoomHeight = 3;
@@ -13,17 +13,16 @@ const maxRoomHeight = 7;
 
 type Props = Readonly<{
   fillRate: number;
-  tileFactory: TileFactory;
 }>;
 
 export class DefaultMapGenerator extends AbstractMapGenerator {
   private readonly fillRate: number;
-  constructor({ tileFactory, fillRate }: Props) {
-    super(tileFactory);
+  constructor({ fillRate }: Props) {
+    super();
     this.fillRate = fillRate;
   }
 
-  generateTiles = (width: number, height: number): TileType[][] => {
+  generateTiles = (width: number, height: number): Grid<TileType> => {
     const tiles: TileType[][] = [];
     for (let y = 0; y < height; y++) {
       const row: TileType[] = [];
@@ -78,7 +77,7 @@ export class DefaultMapGenerator extends AbstractMapGenerator {
 
     _addWalls(tiles);
 
-    return tiles;
+    return Grid.fromArray(tiles);
   };
 }
 

@@ -1,10 +1,10 @@
 import { AbstractMapGenerator } from './AbstractMapGenerator';
-import TileFactory from '../../tiles/TileFactory';
 import { TileType } from '@models/TileType';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { comparing, range } from '@lib/utils/arrays';
 import { randInt } from '@lib/utils/random';
 import { isAdjacent } from '@lib/geometry/CoordinatesUtils';
+import Grid from '@lib/geometry/Grid';
 
 const minCenterXRatio = 3 / 8;
 const maxCenterXRatio = 5 / 8;
@@ -12,14 +12,13 @@ const minCenterYRatio = 3 / 8;
 const maxCenterYRatio = 5 / 8;
 
 type Props = Readonly<{
-  tileFactory: TileFactory;
   fillRate: number;
 }>;
 
 export class BlobMapGenerator extends AbstractMapGenerator {
   private readonly fillRate: number;
-  constructor({ tileFactory, fillRate }: Props) {
-    super(tileFactory);
+  constructor({ fillRate }: Props) {
+    super();
     this.fillRate = fillRate;
   }
 
@@ -31,7 +30,7 @@ export class BlobMapGenerator extends AbstractMapGenerator {
    * where snakiness is defined as the number of tiles within N units
    * (more adjacent tiles - less snaky).
    */
-  protected generateTiles = (width: number, height: number): TileType[][] => {
+  protected generateTiles = (width: number, height: number): Grid<TileType> => {
     const tiles = this._initTiles(width, height);
 
     this._placeInitialTile(width, height, tiles);
@@ -42,7 +41,7 @@ export class BlobMapGenerator extends AbstractMapGenerator {
       }
     }
     this._addWalls(tiles);
-    return tiles;
+    return Grid.fromArray(tiles);
   };
 
   private _initTiles = (width: number, height: number): TileType[][] => {

@@ -50,15 +50,7 @@ export default class Tile implements Entity {
 
   /** @override */
   isBlocking = (): boolean => {
-    switch (this.tileType) {
-      case TileType.WALL_HALL:
-      case TileType.WALL_TOP:
-      case TileType.WALL:
-      case TileType.NONE:
-        return true;
-      default:
-        return false;
-    }
+    return TileType.isBlocking(this.tileType);
   };
 
   getTileType = (): TileType => this.tileType;

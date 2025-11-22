@@ -6,6 +6,7 @@ import { TileType } from '@models/TileType';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Offsets } from '@lib/geometry/Offsets';
 import { shuffle } from '@lib/utils/random';
+import Grid from '@lib/geometry/Grid';
 
 const generateTiles = (
   width: number,
@@ -13,7 +14,7 @@ const generateTiles = (
   regions: RoomRegion[],
   connections: Connection[],
   emptyRegionConnections: EmptyRegionConnection[]
-): TileType[][] => {
+): Grid<TileType> => {
   const tiles: TileType[][] = [];
   for (let y = 0; y < height; y++) {
     const row: TileType[] = [];
@@ -55,7 +56,7 @@ const generateTiles = (
   _addTilesForEmptyRegionConnections(tiles, emptyRegionConnections, connections);
   _addWallTiles(tiles);
 
-  return tiles;
+  return Grid.fromArray(tiles);
 };
 
 const _addWallTiles = (tiles: TileType[][]) => {

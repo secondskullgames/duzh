@@ -6,13 +6,12 @@ import RegionSplitter from './RegionSplitter';
 import RoomRegion from './RoomRegion';
 import TileGenerator from './TileGenerator';
 import { AbstractMapGenerator } from '../AbstractMapGenerator';
-import TileFactory from '../../../tiles/TileFactory';
 import { TileType } from '@models/TileType';
+import Grid from '@lib/geometry/Grid';
 
 type Props = Readonly<{
   minRoomDimension: number;
   maxRoomDimension: number;
-  tileFactory: TileFactory;
 }>;
 
 const MIN_ROOM_FRACTION = 0.4;
@@ -28,13 +27,13 @@ export class RoomCorridorMapGenerator extends AbstractMapGenerator {
    */
   private readonly maxRoomDimension: number;
 
-  constructor({ minRoomDimension, maxRoomDimension, tileFactory }: Props) {
-    super(tileFactory);
+  constructor({ minRoomDimension, maxRoomDimension }: Props) {
+    super();
     this.minRoomDimension = minRoomDimension;
     this.maxRoomDimension = maxRoomDimension;
   }
 
-  protected generateTiles = (width: number, height: number): TileType[][] => {
+  protected generateTiles = (width: number, height: number): Grid<TileType> => {
     // 1. Recursively subdivide the map into regions.
     //    Each region must fall within the max dimensions.
     // 2. Add rooms within regions, with appropriate padding.
@@ -92,14 +91,12 @@ export class RoomCorridorMapGenerator extends AbstractMapGenerator {
     console.debug(debugOutput);
 
     // Compute the actual tiles based on region/connection specifications.
-    const tiles: TileType[][] = TileGenerator.generateTiles(
+    return TileGenerator.generateTiles(
       width,
       height,
       regions,
       externalConnections,
       emptyRegionConnections
     );
-
-    return tiles;
   };
 }

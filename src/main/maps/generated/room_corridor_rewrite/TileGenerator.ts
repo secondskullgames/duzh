@@ -1,8 +1,9 @@
+import Grid from '@lib/geometry/Grid';
 import Section from './Section';
 import { TileType } from '@models/TileType';
 
 interface TileGenerator {
-  generateTiles: (section: Section) => TileType[][];
+  generateTiles: (section: Section) => Grid<TileType>;
 }
 
 const createTileGenerator = (): TileGenerator => {
@@ -62,10 +63,10 @@ const createTileGenerator = (): TileGenerator => {
     }
   };
 
-  const generateTiles = (section: Section): TileType[][] => {
+  const generateTiles = (section: Section): Grid<TileType> => {
     const tiles = _generateFloorTiles(section);
     _addWallTiles(tiles);
-    return tiles;
+    return Grid.fromArray(tiles);
   };
 
   return { generateTiles };

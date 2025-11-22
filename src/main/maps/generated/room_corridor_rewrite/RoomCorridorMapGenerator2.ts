@@ -3,9 +3,9 @@ import SectionConnector from './SectionConnector';
 import SectionSplitter from './SectionSplitter';
 import TileGenerator from './TileGenerator';
 import { AbstractMapGenerator } from '../AbstractMapGenerator';
-import TileFactory from '../../../tiles/TileFactory';
 import { TileType } from '@models/TileType';
 import { Rect } from '@lib/geometry/Rect';
+import Grid from '@lib/geometry/Grid';
 
 const HORIZONTAL_SECTION_PADDING = 2;
 const VERTICAL_SECTION_PADDING = 2;
@@ -13,7 +13,6 @@ const VERTICAL_SECTION_PADDING = 2;
 type Props = Readonly<{
   minRoomWidth: number;
   minRoomHeight: number;
-  tileFactory: TileFactory;
 }>;
 
 /**
@@ -46,13 +45,13 @@ export class RoomCorridorMapGenerator2 extends AbstractMapGenerator {
   //    |        |
   //    +--------+
 
-  constructor({ minRoomWidth, minRoomHeight, tileFactory }: Props) {
-    super(tileFactory);
+  constructor({ minRoomWidth, minRoomHeight }: Props) {
+    super();
     this.minRoomWidth = minRoomWidth;
     this.minRoomHeight = minRoomHeight;
   }
 
-  generateTiles = (width: number, height: number): TileType[][] => {
+  generateTiles = (width: number, height: number): Grid<TileType> => {
     const rect: Rect = { left: 0, top: 0, width, height };
     let section: Section = new Section({ rect });
     const splitter = this._createSplitter();
