@@ -10,7 +10,7 @@
     "url": "git+https://github.com/secondskullgames/duzh.git"
   },
   "engines": {
-    "npm": ">=7.0.0",
+    "pnpm": ">=8.0.0",
     "node": ">=20.0.0"
   },
   "scripts": {
