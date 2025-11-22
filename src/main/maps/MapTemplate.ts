@@ -21,7 +21,7 @@ export type ObjectTemplate =
   | Readonly<{ type: 'equipment'; model: EquipmentModel }>;
 
 export type ObjectType = ObjectTemplate['type'];
-export type ObjectOrEquipment = ObjectTemplate & { type: 'item' | 'equipment' };
+export type ItemOrEquipment = ObjectTemplate & { type: 'item' | 'equipment' };
 
 export type MapTemplate = Readonly<{
   id: string;

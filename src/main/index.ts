@@ -49,6 +49,7 @@ import { ShrineMenuRenderer } from '@main/graphics/renderers/ShrineMenuRenderer'
 import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
 import TopMenuRenderer from '@main/graphics/renderers/TopMenuRenderer';
 import { MapHydrator } from './maps/MapHydrator';
+import { ItemController } from './items/ItemController';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -90,7 +91,8 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
     modelLoader,
     musicController
   );
-  const generatedMapFactory = new GeneratedMapFactory(modelLoader);
+  const itemController = new ItemController({ modelLoader, itemFactory, spriteFactory });
+  const generatedMapFactory = new GeneratedMapFactory({ modelLoader, itemController });
   const mapHydrator = new MapHydrator(
     tileFactory,
     objectFactory,
@@ -122,6 +124,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
     mapController,
     inventoryController,
     shrineController,
+    itemController,
     ticker: new Ticker()
   };
   const inputHandler = createInputHandler({ game });

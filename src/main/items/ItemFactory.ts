@@ -22,16 +22,6 @@ import { radialChainLightning } from '@main/actions/radialChainLightning';
 import type { ItemProc } from './ItemProc';
 import { Game } from '@main/core/Game';
 
-export enum ItemType {
-  EQUIPMENT = 'equipment',
-  CONSUMABLE = 'consumable'
-}
-
-export type ItemSpec = Readonly<{
-  type: ItemType;
-  id: string;
-}>;
-
 export class ItemFactory {
   constructor(
     private readonly spriteFactory: SpriteFactory,

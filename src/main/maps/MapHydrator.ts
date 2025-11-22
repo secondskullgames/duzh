@@ -132,7 +132,7 @@ export class MapHydrator {
               objects.push(item);
             }
             case 'equipment': {
-              const equipment = await this.itemFactory.createMapItem(
+              const equipment = await this.itemFactory.createMapEquipment(
                 objectTemplate.model.id,
                 { x, y },
                 map

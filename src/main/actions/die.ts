@@ -36,12 +36,11 @@ export const die = async (unit: Unit, game: Game) => {
         const globe = await _createGlobe(coordinates, map, game);
         map.addObject(globe);
       } else if (randomRoll < GLOBE_DROP_CHANCE + ITEM_DROP_CHANCE) {
-        // TODO - broken by recent map changes!
-        /*const item = await _createItem(coordinates, map, game);
+        const item = await _createItem(coordinates, map, game);
         map.addObject(item);
         ticker.log(`${unit.getName()} dropped a ${item.getName()}.`, {
           turn: state.getTurn()
-        });*/
+        });
       }
     }
   }
@@ -76,19 +75,19 @@ const _createGlobe = async (
   ])();
 };
 
-// TODO - broken by recent map changes!
-/*const _createItem = async (
+const _createItem = async (
   coordinates: Coordinates,
   map: MapInstance,
   game: Game
 ): Promise<GameObject> => {
-  const { state, itemFactory } = game;
-  const itemSpec = await itemFactory.chooseRandomMapItemForLevel(map.levelNumber, game);
-  state.recordEquipmentGenerated(itemSpec.id);
-  switch (itemSpec.type) {
-    case ItemType.CONSUMABLE:
-      return itemFactory.createMapItem(itemSpec.id, coordinates, map);
-    case ItemType.EQUIPMENT:
-      return itemFactory.createMapEquipment(itemSpec.id, coordinates, map);
+  const { itemFactory, itemController } = game;
+  const objectTemplate = await itemController.chooseRandomMapItemForLevel(
+    map.levelNumber
+  );
+  switch (objectTemplate.type) {
+    case 'item':
+      return itemFactory.createMapItem(objectTemplate.model.id, coordinates, map);
+    case 'equipment':
+      return itemFactory.createMapEquipment(objectTemplate.model.id, coordinates, map);
   }
-};*/
+};

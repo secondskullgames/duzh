@@ -2,7 +2,7 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { Direction } from '@lib/geometry/Direction';
 import Grid from '@lib/geometry/Grid';
 import MultiGrid from '@lib/geometry/MultiGrid';
-import { checkNotNull, checkState } from '@lib/utils/preconditions';
+import { checkNotNull } from '@lib/utils/preconditions';
 import {
   randChance,
   randChoice,
@@ -17,11 +17,7 @@ import { DoorDirection } from '@models/DoorDirection';
 import { Algorithm, GeneratedMapModel } from '@models/GeneratedMapModel';
 import { TileType } from '@models/TileType';
 import { UnitModel } from '@models/UnitModel';
-import {
-  MapTemplate,
-  ObjectOrEquipment as ItemOrEquipment,
-  ObjectTemplate
-} from '../MapTemplate';
+import { MapTemplate, ObjectTemplate } from '../MapTemplate';
 import { AbstractMapGenerator } from './AbstractMapGenerator';
 import { BlobMapGenerator } from './BlobMapGenerator';
 import { DefaultMapGenerator } from './DefaultMapGenerator';
@@ -29,11 +25,21 @@ import { getUnoccupiedLocations } from './MapGenerationUtils';
 import { PathMapGenerator } from './PathMapGenerator';
 import { RoomCorridorMapGenerator } from './room_corridor/RoomCorridorMapGenerator';
 import { RoomCorridorMapGenerator2 } from './room_corridor_rewrite/RoomCorridorMapGenerator2';
+import { ItemController } from '@main/items/ItemController';
+
+type Props = Readonly<{
+  modelLoader: ModelLoader;
+  itemController: ItemController;
+}>;
 
 export class GeneratedMapFactory {
-  private readonly generatedEquipmentIds = new Set<string>();
+  private readonly modelLoader: ModelLoader;
+  private readonly itemController: ItemController;
 
-  constructor(private readonly modelLoader: ModelLoader) {}
+  constructor(props: Props) {
+    this.modelLoader = props.modelLoader;
+    this.itemController = props.itemController;
+  }
 
   buildGeneratedMap = async (mapId: string): Promise<MapTemplate> => {
     const model = await this.modelLoader.loadGeneratedMapModel(mapId);
@@ -142,25 +148,12 @@ export class GeneratedMapFactory {
     let itemsRemaining = randInt(model.items.min, model.items.max);
 
     while (itemsRemaining > 0) {
-      let object: ItemOrEquipment;
-      // TODO: this is a hack to force a bronze sword on the first level
-      // I don't want to design a better DSL for map generation right now
-      if (
-        Feature.isEnabled(Feature.FORCE_BRONZE_SWORD) &&
-        model.levelNumber === 1 &&
-        !this.generatedEquipmentIds.has('bronze_sword')
-      ) {
-        const equipmentModel = await this.modelLoader.loadEquipmentModel('bronze_sword');
-        object = { type: 'equipment', model: equipmentModel };
-      } else {
-        object = await this._chooseRandomMapItemForLevel(model.levelNumber);
-      }
-
+      const object = await this.itemController.chooseRandomMapItemForLevel(
+        model.levelNumber
+      );
       const coordinates = randChoice(candidateLocations);
+      objects.put(coordinates, object);
       candidateLocations.splice(candidateLocations.indexOf(coordinates), 1);
-      if (object.type === 'equipment') {
-        this.generatedEquipmentIds.add(object.model.id);
-      }
       itemsRemaining--;
     }
 
@@ -284,53 +277,5 @@ export class GeneratedMapFactory {
 
   private _isOccupied = (map: MapTemplate, coordinates: Coordinates): boolean => {
     return map.objects.get(coordinates).length > 0 || map.units.get(coordinates) !== null;
-  };
-
-  private _chooseRandomMapItemForLevel = async (
-    levelNumber: number
-  ): Promise<ItemOrEquipment> => {
-    const allEquipmentModels = await this.modelLoader.loadAllEquipmentModels();
-    const allConsumableModels = await this.modelLoader.loadAllConsumableModels();
-    const possibleEquipmentModels = allEquipmentModels
-      .filter(equipmentModel => {
-        if (Feature.isEnabled(Feature.DEDUPLICATE_EQUIPMENT)) {
-          return this.generatedEquipmentIds.has(equipmentModel.id);
-        }
-        return true;
-      })
-      .filter(
-        equipmentModel => equipmentModel.level && equipmentModel.level <= levelNumber
-      );
-
-    const possibleItemModels = allConsumableModels.filter(
-      itemModel => itemModel.level && itemModel.level <= levelNumber
-    );
-
-    const possibleObjects: ItemOrEquipment[] = [
-      ...possibleEquipmentModels.map(model => ({
-        type: 'equipment' as const,
-        model
-      })),
-      ...possibleItemModels.map(model => ({
-        type: 'item' as const,
-        model
-      }))
-    ];
-
-    checkState(possibleObjects.length > 0);
-
-    // weighted random
-    const choices: WeightedRandomChoice<ItemOrEquipment>[] = [];
-
-    for (let i = 0; i < possibleObjects.length; i++) {
-      const object = possibleObjects[i];
-      const key = `${i}`;
-      const { model } = object;
-      // Each rarity is 2x less common than the previous rarity.
-      // So P[rarity] = 2 ^ -rarity
-      const weight = 0.5 ** (model?.rarity ?? 0);
-      choices.push({ weight, key, value: object });
-    }
-    return weightedRandom(choices);
   };
 }
