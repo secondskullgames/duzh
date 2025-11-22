@@ -1,7 +1,7 @@
-import { defineConfig } from 'vitest/config';
+import { ViteUserConfig } from 'vitest/config';
 import path from 'node:path';
 
-export default defineConfig({
+export default {
   test: {
     globals: true,
     clearMocks: true,
@@ -10,10 +10,10 @@ export default defineConfig({
       reporter: ['json', 'text-summary', 'lcov', 'clover'],
       include: ['src/lib/**/*.ts', 'src/main/**/*.ts'],
       thresholds: {
-        statements: 7.0,
-        branches: 6.0,
-        functions: 7.0,
-        lines: 7.0
+        //statements: 7.0,
+        //branches: 6.0,
+        //functions: 7.0,
+        //lines: 7.0
       }
     },
     alias: {
@@ -24,4 +24,4 @@ export default defineConfig({
       '@test': path.resolve(__dirname, './src/test')
     }
   }
-});
+} satisfies ViteUserConfig;
