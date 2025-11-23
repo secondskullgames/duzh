@@ -1,16 +1,23 @@
 import { SpriteCategory } from '@main/graphics/sprites/SpriteCategory';
 import { AssetLoader, Module } from '@lib/assets/AssetLoader';
-import { GeneratedMapModel, GeneratedMapModelSchema } from '@models/GeneratedMapModel';
 import {
+  GeneratedMapModel,
+  GeneratedMapModelSchema,
   ConsumableItemModel,
-  ConsumableItemModelSchema
-} from '@models/ConsumableItemModel';
-import { DynamicSpriteModel, DynamicSpriteModelSchema } from '@models/DynamicSpriteModel';
-import { UnitModel, UnitModelSchema } from '@models/UnitModel';
-import { EquipmentModel, EquipmentModelSchema } from '@models/EquipmentModel';
-import { PredefinedMapModel, PredefinedMapModelSchema } from '@models/PredefinedMapModel';
-import { TileSetModel, TileSetModelSchema } from '@models/TileSetModel';
-import { StaticSpriteModel, StaticSpriteModelSchema } from '@models/StaticSpriteModel';
+  ConsumableItemModelSchema,
+  DynamicSpriteModel,
+  DynamicSpriteModelSchema,
+  UnitModel,
+  UnitModelSchema,
+  EquipmentModel,
+  EquipmentModelSchema,
+  PredefinedMapModel,
+  PredefinedMapModelSchema,
+  TileSetModel,
+  TileSetModelSchema,
+  StaticSpriteModel,
+  StaticSpriteModelSchema
+} from '@duzh/models';
 import { z, ZodObject } from 'zod';
 import { checkNotNull } from '@lib/utils/preconditions';
 

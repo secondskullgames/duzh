@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ConsumableType } from './ConsumableType';
+import { ConsumableType } from './ConsumableType.js';
 
 export const ConsumableItemModelSchema = z.object({
   id: z.string(),

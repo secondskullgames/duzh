@@ -7,7 +7,7 @@ import Equipment from '@main/equipment/Equipment';
 import { ItemFactory } from '@main/items/ItemFactory';
 import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
 import MapInstance from '@main/maps/MapInstance';
-import { UnitModel } from '@models/UnitModel';
+import { UnitModel } from '@duzh/models';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import ModelLoader from '@main/assets/ModelLoader';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';

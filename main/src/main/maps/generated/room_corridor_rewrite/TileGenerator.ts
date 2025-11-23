@@ -1,6 +1,6 @@
 import Grid from '@lib/geometry/Grid';
 import Section from './Section';
-import { TileType } from '@models/TileType';
+import { TileType } from '@duzh/models';
 
 interface TileGenerator {
   generateTiles: (section: Section) => Grid<TileType>;

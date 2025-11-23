@@ -1,5 +1,4 @@
 {
-  "$schema": "../../src/gen-schema/UnitModel.schema.json",
   "id": "sorceress",
   "name": "Sorceress",
   "type": "HUMAN",
@@ -18,9 +17,7 @@
     "PLAYER_SHINS": "LIGHT_GRAY",
     "PLAYER_FEET": "BLACK"
   },
-  "equipment": [
-    "black_skirt"
-  ],
+  "equipment": ["black_skirt"],
   "life": 60,
   "mana": 10,
   "meleeDamage": 6,

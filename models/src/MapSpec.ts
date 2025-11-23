@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { MapType } from './MapType';
+import { MapType } from './MapType.js';
 
 export const MapSpecSchema = z.object({
   id: z.string(),

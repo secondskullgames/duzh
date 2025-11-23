@@ -1,5 +1,5 @@
 import InventoryItem from './InventoryItem';
-import { ItemCategory } from '@models/ItemCategory';
+import { ItemCategory } from '@duzh/models';
 
 const itemCategories: ItemCategory[] = [
   ItemCategory.WEAPON,

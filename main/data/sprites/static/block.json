@@ -1,5 +1,4 @@
 {
-  "$schema": "../../../src/gen-schema/StaticSpriteModel.schema.json",
   "name": "block",
   "filename": "boulder",
   "offsets": {

@@ -4,7 +4,7 @@ import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { useItem } from '@main/actions/useItem';
 import { Rect } from '@lib/geometry/Rect';
-import { ItemCategory } from '@models/ItemCategory';
+import { ItemCategory } from '@duzh/models';
 import {
   displayableItemCategories,
   InventoryCategory

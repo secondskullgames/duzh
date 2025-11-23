@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { EquipmentSlot } from './EquipmentSlot';
-import { EquipmentStatsSchema } from './EquipmentStats';
-import { ItemCategory } from './ItemCategory';
+import { EquipmentSlot } from './EquipmentSlot.js';
+import { EquipmentStatsSchema } from './EquipmentStats.js';
+import { ItemCategory } from './ItemCategory.js';
 
 export const EquipmentModelSchema = z.object({
   id: z.string(),

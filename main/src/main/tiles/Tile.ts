@@ -1,7 +1,7 @@
 import Sprite from '../graphics/sprites/Sprite';
 import Entity from '../entities/Entity';
 import MapInstance from '../maps/MapInstance';
-import { TileType } from '@models/TileType';
+import { TileType } from '@duzh/models';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { EntityType } from '@main/entities/EntityType';
 
@@ -50,7 +50,7 @@ export default class Tile implements Entity {
 
   /** @override */
   isBlocking = (): boolean => {
-    return TileType.isBlocking(this.tileType);
+    return Tile.isBlocking(this.tileType);
   };
 
   getTileType = (): TileType => this.tileType;
@@ -59,4 +59,16 @@ export default class Tile implements Entity {
    * @override {@link Entity#getType}
    */
   getType = (): EntityType => EntityType.TILE;
+
+  static isBlocking = (tileType: TileType): boolean => {
+    switch (tileType) {
+      case TileType.WALL_HALL:
+      case TileType.WALL_TOP:
+      case TileType.WALL:
+      case TileType.NONE:
+        return true;
+      default:
+        return false;
+    }
+  };
 }

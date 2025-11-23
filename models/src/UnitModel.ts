@@ -1,5 +1,5 @@
-import { UnitType } from './UnitType';
-import { AIParametersSchema } from './AIParameters';
+import { UnitType } from './UnitType.js';
+import { AIParametersSchema } from './AIParameters.js';
 import { z } from 'zod';
 
 export const UnitModelSchema = z.object({

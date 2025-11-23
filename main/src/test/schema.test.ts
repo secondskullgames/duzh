@@ -1,11 +1,11 @@
-import { ConsumableItemModelSchema } from '@models/ConsumableItemModel';
-import { DynamicSpriteModelSchema } from '@models/DynamicSpriteModel';
-import { EquipmentModelSchema } from '@models/EquipmentModel';
-import { GeneratedMapModelSchema } from '@models/GeneratedMapModel';
-import { PredefinedMapModelSchema } from '@models/PredefinedMapModel';
-import { StaticSpriteModelSchema } from '@models/StaticSpriteModel';
-import { TileSetModelSchema } from '@models/TileSetModel';
-import { UnitModelSchema } from '@models/UnitModel';
+import { ConsumableItemModelSchema } from '@duzh/models';
+import { DynamicSpriteModelSchema } from '@duzh/models';
+import { EquipmentModelSchema } from '@duzh/models';
+import { GeneratedMapModelSchema } from '@duzh/models';
+import { PredefinedMapModelSchema } from '@duzh/models';
+import { StaticSpriteModelSchema } from '@duzh/models';
+import { TileSetModelSchema } from '@duzh/models';
+import { UnitModelSchema } from '@duzh/models';
 import * as fs from 'fs/promises';
 import { ZodObject } from 'zod';
 

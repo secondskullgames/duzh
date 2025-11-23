@@ -1,5 +1,4 @@
 {
-  "$schema": "../../src/gen-schema/ConsumableItemModel.schema.json",
   "id": "chain_lightning_scroll",
   "name": "Scroll of Chain Lightning",
   "level": 5,

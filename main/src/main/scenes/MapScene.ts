@@ -6,7 +6,7 @@ import { Color } from '@lib/graphics/Color';
 import { Graphics } from '@lib/graphics/Graphics';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import Colors from '@main/graphics/Colors';
-import { TileType } from '@models/TileType';
+import { TileType } from '@duzh/models';
 import { isHostile } from '@main/units/UnitUtils';
 import { getItem, getShrine } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';

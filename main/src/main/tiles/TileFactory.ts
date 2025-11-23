@@ -3,7 +3,7 @@ import Tile from './Tile';
 import Sprite from '../graphics/sprites/Sprite';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import MapInstance from '../maps/MapInstance';
-import { TileType } from '@models/TileType';
+import { TileType } from '@duzh/models';
 import ModelLoader from '@main/assets/ModelLoader';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { checkNotNull } from '@lib/utils/preconditions';

@@ -4,7 +4,7 @@ import { FontFactory } from './graphics/Fonts';
 import { Feature } from './utils/features';
 import { GameStateImpl } from './core/GameState';
 import { MapControllerImpl } from './maps/MapController';
-import { MapSpec } from '@models/MapSpec';
+import { MapSpec } from '@duzh/models';
 import InputHandler from '@lib/input/InputHandler';
 import { AssetLoaderImpl } from '@lib/assets/AssetLoader';
 import { createCanvas, enterFullScreen, isMobileDevice } from '@lib/utils/dom';

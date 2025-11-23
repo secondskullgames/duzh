@@ -1,5 +1,5 @@
 import Equipment from './Equipment';
-import { EquipmentSlot } from '@models/EquipmentSlot';
+import { EquipmentSlot } from '@duzh/models';
 
 /**
  * Represents a unit's equipment, mapped by slot.

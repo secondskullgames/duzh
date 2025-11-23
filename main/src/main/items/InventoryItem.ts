@@ -1,6 +1,6 @@
 import { ItemProc } from './ItemProc';
 import Unit from '../units/Unit';
-import { ItemCategory } from '@models/ItemCategory';
+import { ItemCategory } from '@duzh/models';
 import { Game } from '@main/core/Game';
 
 type Props = Readonly<{

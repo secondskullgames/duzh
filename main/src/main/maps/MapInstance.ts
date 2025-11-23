@@ -5,7 +5,7 @@ import GameObject from '../objects/GameObject';
 import MultiGrid from '@lib/geometry/MultiGrid';
 import Grid from '@lib/geometry/Grid';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { FogOfWarParams } from '@models/FogOfWarParams';
+import { FogOfWarParams } from '@duzh/models';
 import { Rect } from '@lib/geometry/Rect';
 import type { Figure } from '@lib/audio/types';
 

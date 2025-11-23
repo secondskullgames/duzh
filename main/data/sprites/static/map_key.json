@@ -1,5 +1,4 @@
 {
-  "$schema": "../../../src/gen-schema/StaticSpriteModel.schema.json",
   "name": "map_key",
   "filename": "key_icon",
   "offsets": {

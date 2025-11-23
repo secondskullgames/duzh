@@ -22,7 +22,7 @@ import { checkNotNull } from '@lib/utils/preconditions';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { getItem, getShrine } from '@main/maps/MapUtils';
 import { pickupItem } from '@main/actions/pickupItem';
-import { TileType } from '@models/TileType';
+import { TileType } from '@duzh/models';
 import { Rect } from '@lib/geometry/Rect';
 import TopMenuRenderer, { TopMenuIcon } from '@main/graphics/renderers/TopMenuRenderer';
 import { isAdjacent, offsetsToDirection, pointAt } from '@lib/geometry/CoordinatesUtils';

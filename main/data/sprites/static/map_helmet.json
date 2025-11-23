@@ -1,5 +1,4 @@
 {
-  "$schema": "../../../src/gen-schema/StaticSpriteModel.schema.json",
   "name": "map_helmet",
   "filename": "equipment/helmet/helmet_icon_small",
   "offsets": {

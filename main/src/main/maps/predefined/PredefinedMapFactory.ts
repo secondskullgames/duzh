@@ -1,16 +1,16 @@
 import MusicController from '../../sounds/MusicController';
 import Colors from '@main/graphics/Colors';
-import { PredefinedMapModel } from '@models/PredefinedMapModel';
-import { TileType } from '@models/TileType';
+import { PredefinedMapModel } from '@duzh/models';
+import { TileType } from '@duzh/models';
 import ModelLoader from '@main/assets/ModelLoader';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Image } from '@lib/graphics/images/Image';
 import { Color } from '@lib/graphics/Color';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
-import { DoorDirection } from '@models/DoorDirection';
+import { DoorDirection } from '@duzh/models';
 import { MapTemplate, ObjectTemplate } from '../MapTemplate';
 import Grid from '@lib/geometry/Grid';
-import { UnitModel } from '@models/UnitModel';
+import { UnitModel } from '@duzh/models';
 import MultiGrid from '@lib/geometry/MultiGrid';
 
 export class PredefinedMapFactory {

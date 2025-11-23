@@ -1,5 +1,4 @@
 {
-  "$schema": "../../../src/gen-schema/StaticSpriteModel.schema.json",
   "name": "map_mail",
   "filename": "equipment/mail/mail_icon_small",
   "offsets": {

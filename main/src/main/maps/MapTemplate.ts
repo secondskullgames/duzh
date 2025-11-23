@@ -2,12 +2,12 @@ import { Figure } from '@lib/audio/types';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import Grid from '@lib/geometry/Grid';
 import MultiGrid from '@lib/geometry/MultiGrid';
-import { ConsumableItemModel } from '@models/ConsumableItemModel';
-import { DoorDirection } from '@models/DoorDirection';
-import { EquipmentModel } from '@models/EquipmentModel';
-import { FogOfWarParams } from '@models/FogOfWarParams';
-import { TileType } from '@models/TileType';
-import { UnitModel } from '@models/UnitModel';
+import { ConsumableItemModel } from '@duzh/models';
+import { DoorDirection } from '@duzh/models';
+import { EquipmentModel } from '@duzh/models';
+import { FogOfWarParams } from '@duzh/models';
+import { TileType } from '@duzh/models';
+import { UnitModel } from '@duzh/models';
 
 /** TODO: really need to clean up data representation of other object types */
 export type ObjectTemplate =

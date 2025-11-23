@@ -1,5 +1,4 @@
-import { EquipmentModel } from '@models/EquipmentModel';
-import { EquipmentSlot } from '@models/EquipmentSlot';
+import { EquipmentModel, EquipmentSlot } from '@duzh/models';
 
 export const getEquipmentTooltip = (equipment: EquipmentModel): string => {
   const lines = [];

@@ -1,5 +1,4 @@
 {
-  "$schema": "../../src/gen-schema/UnitModel.schema.json",
   "id": "grunt",
   "name": "Grunt",
   "type": "HUMAN",
@@ -19,11 +18,7 @@
   "rangedDamage": 0,
   "life": 25,
   "mana": 0,
-  "equipment": [
-    "bronze_chain_mail",
-    "iron_helmet",
-    "bronze_sword"
-  ],
+  "equipment": ["bronze_chain_mail", "iron_helmet", "bronze_sword"],
   "aiParameters": {
     "speed": 0.9,
     "visionRange": 8,

@@ -1,5 +1,4 @@
 {
-  "$schema": "../../../src/gen-schema/PredefinedMapModel.schema.json",
   "id": "8",
   "imageFilename": "8",
   "tileset": "dungeon",

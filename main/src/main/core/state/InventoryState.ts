@@ -1,10 +1,10 @@
 import InventoryItem from '../../items/InventoryItem';
 import Unit from '../../units/Unit';
 import Equipment from '../../equipment/Equipment';
-import { EquipmentSlot } from '@models/EquipmentSlot';
+import { EquipmentSlot } from '@duzh/models';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { sortBy } from '@lib/utils/arrays';
-import { ItemCategory } from '@models/ItemCategory';
+import { ItemCategory } from '@duzh/models';
 
 export enum InventoryCategory {
   EQUIPMENT = 'EQUIPMENT',

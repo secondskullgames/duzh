@@ -1,5 +1,4 @@
 {
-  "$schema": "../../../src/gen-schema/DynamicSpriteModel.schema.json",
   "name": "bow",
   "offsets": {
     "dx": -4,
@@ -11,10 +10,12 @@
   ],
   "animations": {
     "shooting": {
-      "frames": [{
-        "activity": "shooting",
-        "number": "2"
-      }]
+      "frames": [
+        {
+          "activity": "shooting",
+          "number": "2"
+        }
+      ]
     }
   }
 }

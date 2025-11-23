@@ -10,7 +10,7 @@ import {
   pointAt
 } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
-import { EquipmentSlot } from '@models/EquipmentSlot';
+import { EquipmentSlot } from '@duzh/models';
 import {
   getNearestEnemyUnit,
   isInVisionRange

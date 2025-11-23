@@ -1,7 +1,7 @@
 import GameObject, { ObjectType } from './GameObject';
 import DynamicSprite from '@main/graphics/sprites/DynamicSprite';
 import MapInstance from '@main/maps/MapInstance';
-import { DoorDirection } from '@models/DoorDirection';
+import { DoorDirection } from '@duzh/models';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { checkState } from '@lib/utils/preconditions';
 
