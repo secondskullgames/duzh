@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import { MapType } from './MapType.js';
+
+export enum MapType {
+  PREDEFINED = 'predefined',
+  GENERATED = 'generated'
+}
 
 export const MapSpecSchema = z.object({
   id: z.string(),

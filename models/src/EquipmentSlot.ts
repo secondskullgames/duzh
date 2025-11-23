@@ -1,9 +1,0 @@
-export enum EquipmentSlot {
-  MELEE_WEAPON = 'MELEE_WEAPON',
-  RANGED_WEAPON = 'RANGED_WEAPON',
-  CHEST = 'CHEST',
-  HEAD = 'HEAD',
-  SHIELD = 'SHIELD',
-  LEGS = 'LEGS',
-  CLOAK = 'CLOAK'
-}

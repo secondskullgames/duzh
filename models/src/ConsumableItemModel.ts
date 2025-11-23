@@ -1,5 +1,11 @@
 import { z } from 'zod';
-import { ConsumableType } from './ConsumableType.js';
+
+export enum ConsumableType {
+  LIFE_POTION = 'life_potion',
+  MANA_POTION = 'mana_potion',
+  KEY = 'key',
+  SCROLL = 'scroll'
+}
 
 export const ConsumableItemModelSchema = z.object({
   id: z.string(),
