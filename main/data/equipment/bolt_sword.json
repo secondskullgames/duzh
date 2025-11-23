@@ -1,5 +1,4 @@
 {
-  "$schema": "../../src/gen-schema/EquipmentModel.schema.json",
   "id": "bolt_sword",
   "name": "Bolt Sword",
   "sprite": "sword",
@@ -11,7 +10,7 @@
     "LIGHT_GRAY": "CYAN"
   },
   "script": "bolt_sword",
-  "rarity":  null,
+  "rarity": null,
   "level": null,
   "stats": {
     "damage": 5

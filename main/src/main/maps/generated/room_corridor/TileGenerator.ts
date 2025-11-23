@@ -2,7 +2,7 @@ import EmptyRegionConnection from './EmptyRegionConnection';
 import RoomRegion from './RoomRegion';
 import SplitDirection from './SplitDirection';
 import { Connection } from './Connection';
-import { TileType } from '@models/TileType';
+import { TileType } from '@duzh/models';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Offsets } from '@lib/geometry/Offsets';
 import { shuffle } from '@lib/utils/random';

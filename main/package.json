@@ -1,18 +1,7 @@
 {
   "name": "@duzh/main",
   "version": "0.1.0",
-  "description": "A graphical Roguelike in the browser, written in Typescript.",
-  "author": "jwbutler",
-  "license": "ISC",
   "type": "module",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/secondskullgames/duzh.git"
-  },
-  "engines": {
-    "npm": ">=7.0.0",
-    "node": ">=20.0.0"
-  },
   "scripts": {
     "build": "tsc && vite build",
     "dev": "vite dev",
@@ -21,7 +10,7 @@
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
-    "lint": "prettier --write ./src"
+    "lint": "prettier --write ./src ./data"
   },
   "devDependencies": {
     "@types/node": "^22.7.4",
@@ -31,12 +20,12 @@
     "globals": "^15.10.0",
     "prettier": "^3.3.3",
     "rimraf": "^6.0.1",
-    "tsx": "^4.20.6",
     "typescript": "~5.5.4",
     "vite": "^7.2.2",
     "vitest": "^4.0.10"
   },
   "dependencies": {
+    "@duzh/models": "workspace:*",
     "pathfinding": "^0.4.18",
     "zod": "^4.0.5"
   }

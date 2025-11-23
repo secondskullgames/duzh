@@ -1,5 +1,5 @@
 import { AbstractMapGenerator } from './AbstractMapGenerator';
-import { TileType } from '@models/TileType';
+import { TileType } from '@duzh/models';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { comparing, range } from '@lib/utils/arrays';
 import { randInt } from '@lib/utils/random';

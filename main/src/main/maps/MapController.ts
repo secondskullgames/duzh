@@ -4,7 +4,7 @@ import { Game } from '@main/core/Game';
 import MapInstance from '@main/maps/MapInstance';
 import { SceneName } from '@main/scenes/SceneName';
 import MusicController from '@main/sounds/MusicController';
-import { MapType } from '@models/MapType';
+import { MapType } from '@duzh/models';
 import UnitFactory from '../units/UnitFactory';
 import { GeneratedMapFactory } from './generated/GeneratedMapFactory';
 import { MapHydrator } from './MapHydrator';

@@ -1,7 +1,7 @@
 import Unit from '../units/Unit';
 import Door from '../objects/Door';
 import Sounds from '../sounds/Sounds';
-import { ItemCategory } from '@models/ItemCategory';
+import { ItemCategory } from '@duzh/models';
 import { Game } from '@main/core/Game';
 
 export const openDoor = async (unit: Unit, door: Door, game: Game) => {

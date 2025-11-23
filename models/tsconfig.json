@@ -1,0 +1,20 @@
+{
+  "include": ["src/**/*.ts"],
+  "exclude": ["**/*.test.ts"],
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
+    "baseUrl": ".",
+    "lib": ["esnext"],
+    "target": "esnext",
+    "module": "nodenext",
+    "outDir": "./build",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "sourceMap": true,
+    "strict": true,
+    "plugins": [],
+    "types": ["vite/client", "vitest/globals", "node"]
+  }
+}

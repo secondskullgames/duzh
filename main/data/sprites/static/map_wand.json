@@ -1,5 +1,4 @@
 {
-  "$schema": "../../../src/gen-schema/StaticSpriteModel.schema.json",
   "name": "map_wand",
   "filename": "equipment/club/club_icon_small",
   "offsets": {

@@ -1,5 +1,5 @@
 import Tile from '../../tiles/Tile';
-import { TileType } from '@models/TileType';
+import { TileType } from '@duzh/models';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { shuffle } from '@lib/utils/random';
 import Grid from '@lib/geometry/Grid';

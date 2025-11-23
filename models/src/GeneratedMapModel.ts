@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FogOfWarParamsSchema } from './FogOfWarParams';
+import { FogOfWarParamsSchema } from './FogOfWarParams.js';
 
 export enum Algorithm {
   ROOMS_AND_CORRIDORS = 'ROOMS_AND_CORRIDORS',

@@ -20,7 +20,6 @@ export default {
       '@data': path.resolve(__dirname, './data'),
       '@lib': path.resolve(__dirname, './src/lib'),
       '@main': path.resolve(__dirname, './src/main'),
-      '@models': path.resolve(__dirname, './src/models'),
       '@test': path.resolve(__dirname, './src/test')
     }
   }

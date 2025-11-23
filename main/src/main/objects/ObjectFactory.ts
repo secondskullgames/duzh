@@ -14,7 +14,7 @@ import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import Shrine from '@main/objects/Shrine';
 import Door, { DoorState } from '@main/objects/Door';
-import { DoorDirection } from '@models/DoorDirection';
+import { DoorDirection } from '@duzh/models';
 import { Game } from '@main/core/Game';
 
 export default class ObjectFactory {

@@ -19,8 +19,8 @@ import { Image } from '@lib/graphics/images/Image';
 import { ImageEffect } from '@lib/graphics/images/ImageEffect';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { ImageEffects } from '@main/graphics/ImageEffects';
-import { DoorDirection } from '@models/DoorDirection';
-import { DynamicSpriteModel } from '@models/DynamicSpriteModel';
+import { DoorDirection } from '@duzh/models';
+import { DynamicSpriteModel } from '@duzh/models';
 import Shrine from '@main/objects/Shrine';
 import { ShrineSprite } from '@main/graphics/sprites/ShrineSprite';
 

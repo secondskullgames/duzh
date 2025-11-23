@@ -13,10 +13,10 @@ import {
 } from '@lib/utils/random';
 import ModelLoader from '@main/assets/ModelLoader';
 import { Feature } from '@main/utils/features';
-import { DoorDirection } from '@models/DoorDirection';
-import { Algorithm, GeneratedMapModel } from '@models/GeneratedMapModel';
-import { TileType } from '@models/TileType';
-import { UnitModel } from '@models/UnitModel';
+import { DoorDirection } from '@duzh/models';
+import { Algorithm, GeneratedMapModel } from '@duzh/models';
+import { TileType } from '@duzh/models';
+import { UnitModel } from '@duzh/models';
 import { MapTemplate, ObjectTemplate } from '../MapTemplate';
 import { AbstractMapGenerator } from './AbstractMapGenerator';
 import { BlobMapGenerator } from './BlobMapGenerator';
@@ -26,6 +26,7 @@ import { PathMapGenerator } from './PathMapGenerator';
 import { RoomCorridorMapGenerator } from './room_corridor/RoomCorridorMapGenerator';
 import { RoomCorridorMapGenerator2 } from './room_corridor_rewrite/RoomCorridorMapGenerator2';
 import { ItemController } from '@main/items/ItemController';
+import Tile from '@main/tiles/Tile';
 
 type Props = Readonly<{
   modelLoader: ModelLoader;
@@ -216,7 +217,7 @@ export class GeneratedMapFactory {
               return false;
             }
             const tile = checkNotNull(map.tiles.get(adjacentCoordinates));
-            if (TileType.isBlocking(tile)) {
+            if (Tile.isBlocking(tile)) {
               return false;
             }
             if (this._isOccupied(map, adjacentCoordinates)) {

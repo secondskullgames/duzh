@@ -1,5 +1,4 @@
 {
-  "$schema": "../../src/gen-schema/EquipmentModel.schema.json",
   "id": "bronze_chain_mail",
   "name": "Bronze Chain Mail",
   "sprite": "mail",

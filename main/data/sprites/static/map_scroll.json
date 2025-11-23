@@ -1,5 +1,4 @@
 {
-  "$schema": "../../../src/gen-schema/StaticSpriteModel.schema.json",
   "name": "map_scroll",
   "filename": "scroll_icon",
   "offsets": {

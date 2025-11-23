@@ -1,5 +1,4 @@
 {
-  "$schema": "../../src/gen-schema/TileSetModel.schema.json",
   "path": "dungeon_cga",
   "tiles": {
     "FLOOR": ["tile_floor", "tile_floor_2"],

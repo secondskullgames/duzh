@@ -1,5 +1,4 @@
 {
-  "$schema": "../../src/gen-schema/UnitModel.schema.json",
   "id": "golem",
   "name": "Golem",
   "type": "GOLEM",

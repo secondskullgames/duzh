@@ -1,6 +1,6 @@
 import Unit from '../units/Unit';
 import InventoryItem from '../items/InventoryItem';
-import { ItemCategory } from '@models/ItemCategory';
+import { ItemCategory } from '@duzh/models';
 import { Game } from '@main/core/Game';
 
 export const useItem = async (unit: Unit, item: InventoryItem, game: Game) => {

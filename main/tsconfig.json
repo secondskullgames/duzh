@@ -8,7 +8,6 @@
       "@data/*": ["data/*"],
       "@main/*": ["src/main/*"],
       "@lib/*": ["src/lib/*"],
-      "@models/*": ["src/models/*"],
       "@png/*": ["png/*"]
     },
     "lib": ["dom", "esnext"],

@@ -6,7 +6,7 @@ import RegionSplitter from './RegionSplitter';
 import RoomRegion from './RoomRegion';
 import TileGenerator from './TileGenerator';
 import { AbstractMapGenerator } from '../AbstractMapGenerator';
-import { TileType } from '@models/TileType';
+import { TileType } from '@duzh/models';
 import Grid from '@lib/geometry/Grid';
 
 type Props = Readonly<{

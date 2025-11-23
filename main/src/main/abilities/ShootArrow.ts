@@ -13,7 +13,7 @@ import { die } from '@main/actions/die';
 import { isBlocked } from '@main/maps/MapUtils';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
-import { EquipmentSlot } from '@models/EquipmentSlot';
+import { EquipmentSlot } from '@duzh/models';
 import { Game } from '@main/core/Game';
 
 export class ShootArrow implements UnitAbility {

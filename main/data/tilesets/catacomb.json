@@ -1,5 +1,4 @@
 {
-  "$schema": "../../src/gen-schema/TileSetModel.schema.json",
   "path": "catacomb",
   "tiles": {
     "FLOOR": ["floor2"],

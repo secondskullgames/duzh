@@ -1,5 +1,5 @@
 import { AbstractMapGenerator } from './AbstractMapGenerator';
-import { TileType } from '@models/TileType';
+import { TileType } from '@duzh/models';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
 import { range } from '@lib/utils/arrays';

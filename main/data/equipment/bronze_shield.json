@@ -1,5 +1,4 @@
 {
-  "$schema": "../../src/gen-schema/EquipmentModel.schema.json",
   "id": "bronze_shield",
   "name": "Bronze Shield",
   "sprite": "shield2",

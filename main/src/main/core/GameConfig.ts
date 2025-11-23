@@ -1,4 +1,4 @@
-import { MapSpec } from '@models/MapSpec';
+import { MapSpec } from '@duzh/models';
 
 export interface GameConfig {
   readonly mapSpecs: MapSpec[];

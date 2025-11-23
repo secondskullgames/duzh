@@ -1,5 +1,6 @@
-import { FogOfWarParamsSchema } from './FogOfWarParams';
+import { FogOfWarParamsSchema } from './FogOfWarParams.js';
 import { z } from 'zod';
+import { TileTypeSchema } from './TileType.js';
 
 const StringMapSchema = z.record(z.string(), z.string());
 
@@ -9,12 +10,12 @@ export const PredefinedMapModelSchema = z.object({
   levelNumber: z.number(),
   music: z.string().optional(),
   startingPointColor: z.string(),
-  tileColors: z.record(z.string(), z.string()), // TODO should be TileTypeSchema
+  tileColors: z.record(z.string(), TileTypeSchema),
   enemyColors: StringMapSchema,
   equipmentColors: StringMapSchema.optional(),
   itemColors: StringMapSchema.optional(),
   objectColors: StringMapSchema.optional(),
-  defaultTile: z.string(), // TODO should be TileTypeSchema
+  defaultTile: TileTypeSchema,
   tileset: z.string(),
   fogOfWar: FogOfWarParamsSchema
 });

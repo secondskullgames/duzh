@@ -1,11 +1,11 @@
 import { getUnoccupiedLocations } from './MapGenerationUtils';
-import { TileType } from '@models/TileType';
-import { GeneratedMapModel } from '@models/GeneratedMapModel';
+import { TileType } from '@duzh/models';
+import { GeneratedMapModel } from '@duzh/models';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Feature } from '@main/utils/features';
 import { MapTemplate, ObjectTemplate } from '../MapTemplate';
 import Grid from '@lib/geometry/Grid';
-import { UnitModel } from '@models/UnitModel';
+import { UnitModel } from '@duzh/models';
 import MultiGrid from '@lib/geometry/MultiGrid';
 
 /**
