@@ -8,12 +8,9 @@ import {
   TileSetModel,
   UnitModel
 } from '@duzh/models';
-import { Image } from '@lib/graphics/images/Image';
 import { checkNotNull } from '@lib/utils/preconditions';
+import { Figure } from '@lib/audio/types';
 
-/**
- * TODO: for now, this does not handle sound/music assets
- */
 export interface AssetBundle {
   getEquipmentModel: (id: string) => EquipmentModel;
   getItemModel: (id: string) => ConsumableItemModel;
@@ -23,13 +20,23 @@ export interface AssetBundle {
   getDynamicSpriteModel: (id: string) => DynamicSpriteModel;
   getTileSetModel: (id: string) => TileSetModel;
   getUnitModel: (id: string) => UnitModel;
+  getSoundModel: (id: string) => Figure;
+  getMusicModel: (id: string) => Figure[];
 
   getAllEquipmentModels: () => EquipmentModel[];
   getAllItemModels: () => ConsumableItemModel[];
   getAllUnitModels: () => UnitModel[];
 
-  getImage: (path: string) => Image;
-  getImageOptional: (path: string) => Image | null;
+  /**
+   * TODO: for now, just mapping from filename => image data URL
+   * In the future, we might preload all the Images/ImageData/ImageBitmap
+   */
+  getImageUrl: (path: string) => string;
+  /**
+   * TODO: for now, just mapping from filename => image data URL
+   * In the future, we might preload all the Images/ImageData/ImageBitmap
+   */
+  getImageUrlOptional: (path: string) => string | null;
 }
 
 type Props = Readonly<{
@@ -45,7 +52,9 @@ type Props = Readonly<{
   }>;
   tileSets: TileSetModel[];
   units: UnitModel[];
-  images: Record<string, Image>;
+  images: Record<string, string>;
+  sounds: Record<string, Figure>;
+  music: Record<string, Figure[]>;
 }>;
 
 const arrayToRecord = <T extends { id: string }>(array: T[]): Record<string, T> => {
@@ -65,7 +74,9 @@ export class AssetBundleImpl implements AssetBundle {
   }>;
   private readonly tileSets: Record<string, TileSetModel>;
   private readonly units: Record<string, UnitModel>;
-  private readonly images: Record<string, Image>;
+  private readonly images: Record<string, string>;
+  private readonly sounds: Record<string, Figure>;
+  private readonly music: Record<string, Figure[]>;
 
   constructor(props: Props) {
     this.equipment = arrayToRecord(props.equipment);
@@ -81,56 +92,60 @@ export class AssetBundleImpl implements AssetBundle {
     this.tileSets = arrayToRecord(props.tileSets);
     this.units = arrayToRecord(props.units);
     this.images = props.images;
+    this.sounds = props.sounds;
+    this.music = props.music;
   }
 
-  getDynamicSpriteModel(id: string): DynamicSpriteModel {
-    return checkNotNull(this.sprites.dynamic[id]);
-  }
+  getDynamicSpriteModel = (id: string): DynamicSpriteModel =>
+    checkNotNull(this.sprites.dynamic[id]);
 
-  getEquipmentModel(id: string): EquipmentModel {
-    return checkNotNull(this.equipment[id]);
-  }
+  getEquipmentModel = (id: string): EquipmentModel => checkNotNull(this.equipment[id]);
 
-  getGeneratedMapModel(id: string): GeneratedMapModel {
-    return checkNotNull(this.maps.generated[id]);
-  }
+  getGeneratedMapModel = (id: string): GeneratedMapModel =>
+    checkNotNull(this.maps.generated[id]);
 
-  getItemModel(id: string): ConsumableItemModel {
-    return checkNotNull(this.items[id]);
-  }
+  getItemModel = (id: string): ConsumableItemModel => checkNotNull(this.items[id]);
 
-  getPredefinedMapModel(id: string): PredefinedMapModel {
+  getPredefinedMapModel = (id: string): PredefinedMapModel => {
     return checkNotNull(this.maps.predefined[id]);
-  }
+  };
 
-  getStaticSpriteModel(id: string): StaticSpriteModel {
+  getStaticSpriteModel = (id: string): StaticSpriteModel => {
     return checkNotNull(this.sprites.static[id]);
-  }
-  getTileSetModel(id: string): TileSetModel {
+  };
+  getTileSetModel = (id: string): TileSetModel => {
     return checkNotNull(this.tileSets[id]);
-  }
+  };
 
-  getUnitModel(id: string): UnitModel {
+  getUnitModel = (id: string): UnitModel => {
     return checkNotNull(this.units[id]);
-  }
+  };
 
-  getAllEquipmentModels(): EquipmentModel[] {
+  getSoundModel = (id: string): Figure => {
+    return checkNotNull(this.sounds[id]);
+  };
+
+  getMusicModel = (id: string): Figure[] => {
+    return checkNotNull(this.music[id]);
+  };
+
+  getAllEquipmentModels = (): EquipmentModel[] => {
     return Object.values(this.equipment);
-  }
+  };
 
-  getAllItemModels(): ConsumableItemModel[] {
+  getAllItemModels = (): ConsumableItemModel[] => {
     return Object.values(this.items);
-  }
+  };
 
-  getAllUnitModels(): UnitModel[] {
+  getAllUnitModels = (): UnitModel[] => {
     return Object.values(this.units);
-  }
+  };
 
-  getImage(path: string): Image {
+  getImageUrl = (path: string): string => {
     return checkNotNull(this.images[path]);
-  }
+  };
 
-  getImageOptional(path: string): Image | null {
-    return this.images[path] ?? null;
-  }
+  getImageUrlOptional = (path: string): string | null => {
+    return this.images[path] || null;
+  };
 }

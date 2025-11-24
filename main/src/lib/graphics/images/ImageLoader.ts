@@ -1,19 +1,19 @@
 import { createCanvas, createImage, getCanvasContext } from '@lib/utils/dom';
-import { AssetLoader } from '@lib/assets/AssetLoader';
 import { checkNotNull } from '@lib/utils/preconditions';
+import { AssetBundle } from '@main/assets/AssetBundle';
 
 export default class ImageLoader {
   private readonly canvas: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D;
-  private readonly assetLoader: AssetLoader;
+  private readonly assetBundle: AssetBundle;
 
   private img: HTMLImageElement;
 
   private _listener: (() => void) | null;
   private _errorListener: (() => void) | null;
 
-  constructor(assetLoader: AssetLoader) {
-    this.assetLoader = assetLoader;
+  constructor(assetBundle: AssetBundle) {
+    this.assetBundle = assetBundle;
     // this is way bigger than the screen because of fonts
     this.canvas = createCanvas({
       width: 2000,
@@ -33,7 +33,7 @@ export default class ImageLoader {
   };
 
   loadImageOptional = async (filename: string): Promise<ImageData | null> => {
-    const imageDataUrl = await this.assetLoader.loadImageAsset(`${filename}.png`);
+    const imageDataUrl = this.assetBundle.getImageUrlOptional(`${filename}.png`);
     if (!imageDataUrl) {
       return null;
     }

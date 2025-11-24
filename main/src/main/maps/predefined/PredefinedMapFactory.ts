@@ -1,4 +1,3 @@
-import MusicController from '../../sounds/MusicController';
 import Colors from '@main/graphics/Colors';
 import { PredefinedMapModel } from '@duzh/models';
 import { TileType } from '@duzh/models';
@@ -16,8 +15,7 @@ import { AssetBundle } from '@main/assets/AssetBundle';
 export class PredefinedMapFactory {
   constructor(
     private readonly imageFactory: ImageFactory,
-    private readonly assetBundle: AssetBundle,
-    private readonly musicController: MusicController
+    private readonly assetBundle: AssetBundle
   ) {}
 
   buildPredefinedMap = async (mapId: string): Promise<MapTemplate> => {
@@ -30,7 +28,7 @@ export class PredefinedMapFactory {
     const tiles = await this._loadTiles(model, image);
     const units = await this._loadUnits(model, image);
     const objects = await this._loadObjects(model, image);
-    const music = model.music ? await this.musicController.loadMusic(model.music) : null;
+    const music = model.music ? this.assetBundle.getMusicModel(model.music) : null;
 
     return {
       id: model.id,

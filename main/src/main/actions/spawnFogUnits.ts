@@ -10,7 +10,7 @@ import { hypotenuse } from '@lib/geometry/CoordinatesUtils';
 import { Game } from '@main/core/Game';
 
 export const spawnFogUnits = async (map: MapInstance, game: Game) => {
-  const { state, unitFactory, modelLoader } = game;
+  const { state, unitFactory, assetBundle } = game;
   const fogParams = map.getFogParams();
 
   const areSpawnsEnabled = fogParams?.enabled && (fogParams.spawnEnemies ?? false);
@@ -27,7 +27,7 @@ export const spawnFogUnits = async (map: MapInstance, game: Game) => {
       const targetSpawnCoordinates = _getFogSpawnCoordinates(map, game);
       if (targetSpawnCoordinates) {
         // TODO would be nice if this was a one-liner
-        const unitModel = await modelLoader.loadUnitModel(unitClass);
+        const unitModel = assetBundle.getUnitModel(unitClass);
         const unit = await unitFactory.createUnit({
           name: unitModel.name,
           modelId: unitClass,

@@ -12,11 +12,13 @@ import { MapController } from '@main/maps/MapController';
 import { InventoryController } from '@main/controllers/InventoryController';
 import { ShrineController } from '@main/controllers/ShrineController';
 import { ItemController } from '@main/items/ItemController';
+import { AssetBundle } from '@main/assets/AssetBundle';
 
 export type Game = Readonly<{
   config: GameConfig;
   engine: Engine;
   state: GameState;
+  assetBundle: AssetBundle;
   itemFactory: ItemFactory;
   unitFactory: UnitFactory;
   objectFactory: ObjectFactory;
