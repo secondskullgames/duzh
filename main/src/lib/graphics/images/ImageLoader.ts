@@ -1,5 +1,6 @@
 import { createCanvas, createImage, getCanvasContext } from '@lib/utils/dom';
 import { AssetLoader } from '@lib/assets/AssetLoader';
+import { checkNotNull } from '@lib/utils/preconditions';
 
 export default class ImageLoader {
   private readonly canvas: HTMLCanvasElement;
@@ -28,6 +29,10 @@ export default class ImageLoader {
   }
 
   loadImage = async (filename: string): Promise<ImageData | null> => {
+    return checkNotNull(this.loadImageOptional(filename));
+  };
+
+  loadImageOptional = async (filename: string): Promise<ImageData | null> => {
     const imageDataUrl = await this.assetLoader.loadImageAsset(`${filename}.png`);
     if (!imageDataUrl) {
       return null;

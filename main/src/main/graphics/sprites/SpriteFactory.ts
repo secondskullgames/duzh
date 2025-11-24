@@ -216,7 +216,7 @@ export default class SpriteFactory {
           // 1-indexed
           const frame = animation.frames[i - 1];
           const variables = {
-            sprite: spriteModel.name,
+            sprite: spriteModel.id,
             activity: frame.activity,
             direction: Direction.toLegacyDirection(direction),
             number: frame.number
@@ -231,7 +231,7 @@ export default class SpriteFactory {
                 : [];
 
           const filenames = patterns
-            .map(pattern => `${spriteCategory}/${spriteModel.name}/${pattern}`)
+            .map(pattern => `${spriteCategory}/${spriteModel.id}/${pattern}`)
             .map(pattern => fillTemplate(pattern, variables));
 
           // TODO - can we get this into the sprite model?

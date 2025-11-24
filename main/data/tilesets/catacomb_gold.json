@@ -1,4 +1,5 @@
 {
+  "id": "catacomb_gold",
   "path": "catacomb",
   "tiles": {
     "FLOOR": ["floor"],

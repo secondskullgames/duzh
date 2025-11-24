@@ -19,7 +19,7 @@ export type DynamicSpriteOffsets = z.infer<typeof DynamicSpriteOffsetsSchema>;
 
 export const DynamicSpriteModelSchema = z.object({
   animations: z.record(z.string(), DynamicSpriteAnimationSchema),
-  name: z.string(),
+  id: z.string(),
   offsets: DynamicSpriteOffsetsSchema,
   pattern: z.string().optional(),
   patterns: z.array(z.string()).optional(),

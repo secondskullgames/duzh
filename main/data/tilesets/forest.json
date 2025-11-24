@@ -1,4 +1,5 @@
 {
+  "id": "forest",
   "path": "forest",
   "tiles": {
     "FLOOR": ["tile_floor"],

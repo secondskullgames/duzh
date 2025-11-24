@@ -50,6 +50,7 @@ import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
 import TopMenuRenderer from '@main/graphics/renderers/TopMenuRenderer';
 import { MapHydrator } from './maps/MapHydrator';
 import { ItemController } from './items/ItemController';
+import { loadAssetBundle } from '@main/assets/loadAssetBundle';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -80,6 +81,8 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
   const musicController = new MusicController(SoundPlayer.forMusic(), assetLoader);
 
   const modelLoader = new ModelLoader(assetLoader);
+  const assetBundle = await loadAssetBundle(imageLoader);
+
   const spriteFactory = new SpriteFactory(imageFactory, modelLoader);
   const tileFactory = new TileFactory(spriteFactory, modelLoader);
   const itemFactory = new ItemFactory(spriteFactory, modelLoader);
