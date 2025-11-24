@@ -4,47 +4,53 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@types/node':
+      specifier: ^22.7.4
+      version: 22.19.1
+    glob:
+      specifier: ^11.0.0
+      version: 11.1.0
+    globals:
+      specifier: ^15.10.0
+      version: 15.15.0
+    prettier:
+      specifier: ^3.3.3
+      version: 3.6.2
+    rimraf:
+      specifier: ^6.0.1
+      version: 6.1.0
+  pathfinding:
+    '@types/pathfinding':
+      specifier: ^0.0.9
+      version: 0.0.9
+    pathfinding:
+      specifier: ^0.4.18
+      version: 0.4.18
+  typescript:
+    typescript:
+      specifier: ~5.5.4
+      version: 5.5.4
+  vite:
+    vite:
+      specifier: ^7.2.2
+      version: 7.2.4
+  vitest:
+    '@vitest/coverage-v8':
+      specifier: ^4.0.10
+      version: 4.0.13
+    vitest:
+      specifier: ^4.0.10
+      version: 4.0.13
+  zod:
+    zod:
+      specifier: ^4.0.5
+      version: 4.1.12
+
 importers:
 
-  .:
-    dependencies:
-      pathfinding:
-        specifier: ^0.4.18
-        version: 0.4.18
-      zod:
-        specifier: ^4.0.5
-        version: 4.1.12
-    devDependencies:
-      '@types/node':
-        specifier: ^22.7.4
-        version: 22.19.1
-      '@types/pathfinding':
-        specifier: ^0.0.9
-        version: 0.0.9
-      '@vitest/coverage-v8':
-        specifier: ^4.0.10
-        version: 4.0.13(vitest@4.0.13(@types/node@22.19.1)(terser@5.44.1)(tsx@4.20.6))
-      glob:
-        specifier: ^11.0.0
-        version: 11.1.0
-      globals:
-        specifier: ^15.10.0
-        version: 15.15.0
-      prettier:
-        specifier: ^3.3.3
-        version: 3.6.2
-      rimraf:
-        specifier: ^6.0.1
-        version: 6.1.0
-      typescript:
-        specifier: ~5.5.4
-        version: 5.5.4
-      vite:
-        specifier: ^7.2.2
-        version: 7.2.4(@types/node@22.19.1)(terser@5.44.1)(tsx@4.20.6)
-      vitest:
-        specifier: ^4.0.10
-        version: 4.0.13(@types/node@22.19.1)(terser@5.44.1)(tsx@4.20.6)
+  .: {}
 
   main:
     dependencies:
@@ -52,66 +58,66 @@ importers:
         specifier: workspace:*
         version: link:../models
       pathfinding:
-        specifier: ^0.4.18
+        specifier: catalog:pathfinding
         version: 0.4.18
       zod:
-        specifier: ^4.0.5
+        specifier: catalog:zod
         version: 4.1.12
     devDependencies:
       '@types/node':
-        specifier: ^22.7.4
+        specifier: 'catalog:'
         version: 22.19.1
       '@types/pathfinding':
-        specifier: ^0.0.9
+        specifier: catalog:pathfinding
         version: 0.0.9
       '@vitest/coverage-v8':
-        specifier: ^4.0.10
+        specifier: catalog:vitest
         version: 4.0.13(vitest@4.0.13(@types/node@22.19.1)(terser@5.44.1)(tsx@4.20.6))
       glob:
-        specifier: ^11.0.0
+        specifier: 'catalog:'
         version: 11.1.0
       globals:
-        specifier: ^15.10.0
+        specifier: 'catalog:'
         version: 15.15.0
       prettier:
-        specifier: ^3.3.3
+        specifier: 'catalog:'
         version: 3.6.2
       rimraf:
-        specifier: ^6.0.1
+        specifier: 'catalog:'
         version: 6.1.0
       typescript:
-        specifier: ~5.5.4
+        specifier: catalog:typescript
         version: 5.5.4
       vite:
-        specifier: ^7.2.2
+        specifier: catalog:vite
         version: 7.2.4(@types/node@22.19.1)(terser@5.44.1)(tsx@4.20.6)
       vitest:
-        specifier: ^4.0.10
+        specifier: catalog:vitest
         version: 4.0.13(@types/node@22.19.1)(terser@5.44.1)(tsx@4.20.6)
 
   models:
     dependencies:
       zod:
-        specifier: ^4.0.5
+        specifier: catalog:zod
         version: 4.1.12
     devDependencies:
       '@types/node':
-        specifier: ^22.7.4
+        specifier: 'catalog:'
         version: 22.19.1
       glob:
-        specifier: ^11.0.0
+        specifier: 'catalog:'
         version: 11.1.0
       globals:
-        specifier: ^15.10.0
+        specifier: 'catalog:'
         version: 15.15.0
       prettier:
-        specifier: ^3.3.3
+        specifier: 'catalog:'
         version: 3.6.2
       rimraf:
-        specifier: ^6.0.1
+        specifier: 'catalog:'
         version: 6.1.0
       typescript:
-        specifier: ~5.5.4
+        specifier: catalog:typescript
         version: 5.5.4
 
 packages:
