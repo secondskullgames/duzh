@@ -68,7 +68,7 @@ export class MapHydrator {
           const controller = chooseUnitController(unitModel.id);
           const unit = await this.unitFactory.createUnit({
             name: unitModel.name,
-            unitClass: unitModel.id,
+            modelId: unitModel.id,
             faction: Faction.ENEMY,
             controller,
             level: map.levelNumber,

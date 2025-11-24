@@ -11,7 +11,6 @@ import {
   weightedRandom,
   WeightedRandomChoice
 } from '@lib/utils/random';
-import ModelLoader from '@main/assets/ModelLoader';
 import { Feature } from '@main/utils/features';
 import { DoorDirection } from '@duzh/models';
 import { Algorithm, GeneratedMapModel } from '@duzh/models';
@@ -27,23 +26,24 @@ import { RoomCorridorMapGenerator } from './room_corridor/RoomCorridorMapGenerat
 import { RoomCorridorMapGenerator2 } from './room_corridor_rewrite/RoomCorridorMapGenerator2';
 import { ItemController } from '@main/items/ItemController';
 import Tile from '@main/tiles/Tile';
+import { AssetBundle } from '@main/assets/AssetBundle';
 
 type Props = Readonly<{
-  modelLoader: ModelLoader;
+  assetBundle: AssetBundle;
   itemController: ItemController;
 }>;
 
 export class GeneratedMapFactory {
-  private readonly modelLoader: ModelLoader;
+  private readonly assetBundle: AssetBundle;
   private readonly itemController: ItemController;
 
   constructor(props: Props) {
-    this.modelLoader = props.modelLoader;
+    this.assetBundle = props.assetBundle;
     this.itemController = props.itemController;
   }
 
   buildGeneratedMap = async (mapId: string): Promise<MapTemplate> => {
-    const model = await this.modelLoader.loadGeneratedMapModel(mapId);
+    const model = this.assetBundle.getGeneratedMapModel(mapId);
     const algorithm = model.algorithm;
     const tileSet =
       model.tileSet === 'RANDOM' ? randChoice(this._getTileSetNames()) : model.tileSet;
@@ -133,7 +133,7 @@ export class GeneratedMapFactory {
   ): Promise<[UnitModel, number][]> => {
     return Promise.all(
       model.enemies.types.map(async ({ chance, type }) => {
-        return [await this.modelLoader.loadUnitModel(type), chance];
+        return [this.assetBundle.getUnitModel(type), chance];
       })
     );
   };

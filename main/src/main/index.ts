@@ -29,7 +29,6 @@ import SoundPlayer from '@lib/audio/SoundPlayer';
 import { Game } from '@main/core/Game';
 import UnitFactory from '@main/units/UnitFactory';
 import { ItemFactory } from '@main/items/ItemFactory';
-import ModelLoader from '@main/assets/ModelLoader';
 import ProjectileFactory from '@main/objects/ProjectileFactory';
 import MusicController from '@main/sounds/MusicController';
 import ObjectFactory from '@main/objects/ObjectFactory';
@@ -80,22 +79,21 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
   const soundPlayer = SoundPlayer.forSounds();
   const musicController = new MusicController(SoundPlayer.forMusic(), assetLoader);
 
-  const modelLoader = new ModelLoader(assetLoader);
   const assetBundle = await loadAssetBundle(imageLoader);
 
-  const spriteFactory = new SpriteFactory(imageFactory, modelLoader);
-  const tileFactory = new TileFactory(spriteFactory, modelLoader);
-  const itemFactory = new ItemFactory(spriteFactory, modelLoader);
-  const unitFactory = new UnitFactory(spriteFactory, itemFactory, modelLoader);
+  const spriteFactory = new SpriteFactory(assetBundle, imageFactory);
+  const tileFactory = new TileFactory(assetBundle, spriteFactory);
+  const itemFactory = new ItemFactory(assetBundle, spriteFactory);
+  const unitFactory = new UnitFactory(assetBundle, spriteFactory, itemFactory);
   const objectFactory = new ObjectFactory(spriteFactory, unitFactory);
   const projectileFactory = new ProjectileFactory(spriteFactory);
   const predefinedMapFactory = new PredefinedMapFactory(
     imageFactory,
-    modelLoader,
+    assetBundle,
     musicController
   );
-  const itemController = new ItemController({ modelLoader, itemFactory, spriteFactory });
-  const generatedMapFactory = new GeneratedMapFactory({ modelLoader, itemController });
+  const itemController = new ItemController({ assetBundle });
+  const generatedMapFactory = new GeneratedMapFactory({ assetBundle, itemController });
   const mapHydrator = new MapHydrator(
     tileFactory,
     objectFactory,
@@ -122,7 +120,6 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
     objectFactory,
     musicController,
     projectileFactory,
-    modelLoader,
     soundPlayer,
     mapController,
     inventoryController,

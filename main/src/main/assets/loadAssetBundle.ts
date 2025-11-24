@@ -23,8 +23,9 @@ export const loadAssetBundle = async (imageLoader: ImageLoader): Promise<AssetBu
   const predefinedMapAssets = import.meta.glob(
     `/data/maps/predefined/**/*.json`
   ) as AssetGlob;
-  const dynamicSpriteAssets = import.meta.glob(
-    `/data/sprites/dynamic/**/*.json`
+  const unitSpriteAssets = import.meta.glob(`/data/sprites/units/**/*.json`) as AssetGlob;
+  const equipmentSpriteAssets = import.meta.glob(
+    `/data/sprites/equipment/**/*.json`
   ) as AssetGlob;
   const staticSpriteAssets = import.meta.glob(
     `/data/sprites/static/**/*.json`
@@ -43,7 +44,10 @@ export const loadAssetBundle = async (imageLoader: ImageLoader): Promise<AssetBu
     },
     sprites: {
       static: await loadAssets(staticSpriteAssets, StaticSpriteModelSchema),
-      dynamic: await loadAssets(dynamicSpriteAssets, DynamicSpriteModelSchema)
+      dynamic: [
+        ...(await loadAssets(unitSpriteAssets, DynamicSpriteModelSchema)),
+        ...(await loadAssets(equipmentSpriteAssets, DynamicSpriteModelSchema))
+      ]
     },
     tileSets: await loadAssets(tileSetAssets, TileSetModelSchema),
     units: await loadAssets(unitAssets, UnitModelSchema)

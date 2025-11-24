@@ -30,7 +30,7 @@ export const spawnFogUnits = async (map: MapInstance, game: Game) => {
         const unitModel = await modelLoader.loadUnitModel(unitClass);
         const unit = await unitFactory.createUnit({
           name: unitModel.name,
-          unitClass,
+          modelId: unitClass,
           faction: Faction.ENEMY,
           controller: chooseUnitController(unitClass),
           level: map.levelNumber,

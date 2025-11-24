@@ -7,17 +7,16 @@ import Equipment from '@main/equipment/Equipment';
 import { ItemFactory } from '@main/items/ItemFactory';
 import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
 import MapInstance from '@main/maps/MapInstance';
-import { UnitModel } from '@duzh/models';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import ModelLoader from '@main/assets/ModelLoader';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
+import { AssetBundle } from '@main/assets/AssetBundle';
 
 type CreateUnitParams = Readonly<{
   /**
    * if undefined, default to unit model's name
    */
   name?: string;
-  unitClass: string;
+  modelId: string;
   faction: Faction;
   controller: UnitController;
   level: number;
@@ -28,14 +27,14 @@ type CreateUnitParams = Readonly<{
 
 export default class UnitFactory {
   constructor(
+    private readonly assetBundle: AssetBundle,
     private readonly spriteFactory: SpriteFactory,
-    private readonly itemFactory: ItemFactory,
-    private readonly modelLoader: ModelLoader
+    private readonly itemFactory: ItemFactory
   ) {}
 
   createUnit = async (params: CreateUnitParams): Promise<Unit> => {
     const { itemFactory, spriteFactory } = this;
-    const model: UnitModel = await this.modelLoader.loadUnitModel(params.unitClass);
+    const model = this.assetBundle.getUnitModel(params.modelId);
     const sprite = await spriteFactory.createUnitSprite(
       model.sprite,
       loadPaletteSwaps(model.paletteSwaps)
@@ -62,7 +61,7 @@ export default class UnitFactory {
 
   createPlayerUnit = async (coordinates: Coordinates, map: MapInstance): Promise<Unit> =>
     this.createUnit({
-      unitClass: 'player',
+      modelId: 'player',
       faction: Faction.PLAYER,
       controller: new PlayerUnitController(),
       level: 1,

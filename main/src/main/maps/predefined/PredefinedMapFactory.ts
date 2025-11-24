@@ -2,7 +2,6 @@ import MusicController from '../../sounds/MusicController';
 import Colors from '@main/graphics/Colors';
 import { PredefinedMapModel } from '@duzh/models';
 import { TileType } from '@duzh/models';
-import ModelLoader from '@main/assets/ModelLoader';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Image } from '@lib/graphics/images/Image';
 import { Color } from '@lib/graphics/Color';
@@ -12,16 +11,17 @@ import { MapTemplate, ObjectTemplate } from '../MapTemplate';
 import Grid from '@lib/geometry/Grid';
 import { UnitModel } from '@duzh/models';
 import MultiGrid from '@lib/geometry/MultiGrid';
+import { AssetBundle } from '@main/assets/AssetBundle';
 
 export class PredefinedMapFactory {
   constructor(
     private readonly imageFactory: ImageFactory,
-    private readonly modelLoader: ModelLoader,
+    private readonly assetBundle: AssetBundle,
     private readonly musicController: MusicController
   ) {}
 
   buildPredefinedMap = async (mapId: string): Promise<MapTemplate> => {
-    const model = await this.modelLoader.loadPredefinedMapModel(mapId);
+    const model = this.assetBundle.getPredefinedMapModel(mapId);
     const image = await this.imageFactory.getImage({
       filename: `maps/${model.imageFilename}`
     });
@@ -118,7 +118,7 @@ export class PredefinedMapFactory {
           }
           const unitModelId = enemyColors[color.hex] ?? null;
           if (unitModelId !== null) {
-            const unitModel = await this.modelLoader.loadUnitModel(unitModelId);
+            const unitModel = await this.assetBundle.getUnitModel(unitModelId);
             units.put({ x, y }, unitModel);
           }
         }
@@ -170,13 +170,13 @@ export class PredefinedMapFactory {
 
         const itemId = itemColors?.[color.hex] ?? null;
         if (itemId) {
-          const itemModel = await this.modelLoader.loadItemModel(itemId);
+          const itemModel = this.assetBundle.getItemModel(itemId);
           objects.put({ x, y }, { type: 'item', model: itemModel });
         }
 
         const equipmentId = equipmentColors?.[color.hex] ?? null;
         if (equipmentId) {
-          const equipmentModel = await this.modelLoader.loadEquipmentModel(equipmentId);
+          const equipmentModel = this.assetBundle.getEquipmentModel(equipmentId);
           objects.put({ x, y }, { type: 'equipment', model: equipmentModel });
         }
       }

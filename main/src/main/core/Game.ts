@@ -6,7 +6,6 @@ import UnitFactory from '@main/units/UnitFactory';
 import ObjectFactory from '@main/objects/ObjectFactory';
 import MusicController from '@main/sounds/MusicController';
 import ProjectileFactory from '@main/objects/ProjectileFactory';
-import ModelLoader from '@main/assets/ModelLoader';
 import SoundPlayer from '@lib/audio/SoundPlayer';
 import Ticker from '@main/core/Ticker';
 import { MapController } from '@main/maps/MapController';
@@ -23,7 +22,6 @@ export type Game = Readonly<{
   objectFactory: ObjectFactory;
   musicController: MusicController;
   projectileFactory: ProjectileFactory;
-  modelLoader: ModelLoader;
   soundPlayer: SoundPlayer;
   mapController: MapController;
   inventoryController: InventoryController;

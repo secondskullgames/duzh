@@ -1,15 +1,11 @@
-import ModelLoader from '@main/assets/ModelLoader';
-import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
-import { ItemFactory } from './ItemFactory';
 import { ItemOrEquipment, ObjectTemplate } from '@main/maps/MapTemplate';
 import { Feature } from '@main/utils/features';
 import { checkState } from '@lib/utils/preconditions';
-import { WeightedRandomChoice, weightedRandom } from '@lib/utils/random';
+import { weightedRandom, WeightedRandomChoice } from '@lib/utils/random';
+import { AssetBundle } from '@main/assets/AssetBundle';
 
 type Props = Readonly<{
-  spriteFactory: SpriteFactory;
-  modelLoader: ModelLoader;
-  itemFactory: ItemFactory;
+  assetBundle: AssetBundle;
 }>;
 
 /**
@@ -17,15 +13,11 @@ type Props = Readonly<{
  * just choosing them
  */
 export class ItemController {
-  private readonly spriteFactory: SpriteFactory;
-  private readonly modelLoader: ModelLoader;
-  private readonly itemFactory: ItemFactory;
+  private readonly assetBundle: AssetBundle;
   private readonly generatedEquipmentIds: Set<string>;
 
   constructor(props: Props) {
-    this.spriteFactory = props.spriteFactory;
-    this.modelLoader = props.modelLoader;
-    this.itemFactory = props.itemFactory;
+    this.assetBundle = props.assetBundle;
     this.generatedEquipmentIds = new Set<string>();
   }
 
@@ -37,14 +29,14 @@ export class ItemController {
       levelNumber === 1 &&
       !this.generatedEquipmentIds.has('bronze_sword')
     ) {
-      const equipmentModel = await this.modelLoader.loadEquipmentModel('bronze_sword');
+      const equipmentModel = this.assetBundle.getEquipmentModel('bronze_sword');
       const object: ObjectTemplate = { type: 'equipment', model: equipmentModel };
       this.generatedEquipmentIds.add('bronze_sword');
       return object;
     }
 
-    const allEquipmentModels = await this.modelLoader.loadAllEquipmentModels();
-    const allConsumableModels = await this.modelLoader.loadAllConsumableModels();
+    const allEquipmentModels = this.assetBundle.getAllEquipmentModels();
+    const allConsumableModels = this.assetBundle.getAllItemModels();
     const possibleEquipmentModels = allEquipmentModels
       .filter(equipmentModel => {
         if (Feature.isEnabled(Feature.DEDUPLICATE_EQUIPMENT)) {
