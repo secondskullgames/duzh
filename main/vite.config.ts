@@ -12,5 +12,6 @@ export default {
   },
   build: {
     outDir: 'build'
-  }
+  },
+  base: './'
 } satisfies UserConfig;

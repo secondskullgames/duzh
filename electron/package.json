@@ -3,8 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "author": "jwbutler",
-  "license": "ISC",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
