@@ -16,7 +16,7 @@ import { UnitAbility } from '@main/abilities/UnitAbility';
 import { AIParameters, UnitType, UnitModel } from '@duzh/models';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { check, checkArgument, checkNotNull } from '@lib/utils/preconditions';
+import { check, checkArgument, checkNotNull } from '@duzh/utils/preconditions';
 import { die } from '@main/actions/die';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { UnitStatusEffects } from '@main/units/effects/UnitStatusEffects';

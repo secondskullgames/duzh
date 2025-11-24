@@ -1,7 +1,7 @@
 import { Image } from './Image';
 import { ImageEffect } from './ImageEffect';
 import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
-import { comparing } from '@lib/utils/arrays';
+import { comparing } from '@duzh/utils/arrays';
 import { Color } from '@lib/graphics/Color';
 
 type CacheKey = Readonly<{

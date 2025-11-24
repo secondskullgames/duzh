@@ -7,8 +7,8 @@ import { StayBehavior } from '../behaviors/StayBehavior';
 import { ShootNearestEnemyBehavior } from '../behaviors/ShootNearestEnemyBehavior';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
 import Unit from '@main/units/Unit';
-import { randBoolean, randChance } from '@lib/utils/random';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { randBoolean, randChance } from '@duzh/utils/random';
+import { checkNotNull } from '@duzh/utils/preconditions';
 
 export default class ArcherController implements UnitController {
   /**

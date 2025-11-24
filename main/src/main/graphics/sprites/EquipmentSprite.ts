@@ -2,10 +2,10 @@ import DynamicSprite from './DynamicSprite';
 import Equipment from '../../equipment/Equipment';
 import { Activity } from '../../units/Activity';
 import { Offsets } from '@lib/geometry/Offsets';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { checkNotNull } from '@duzh/utils/preconditions';
 import Unit from '@main/units/Unit';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
-import { maxBy } from '@lib/utils/arrays';
+import { maxBy } from '@duzh/utils/arrays';
 import { Image } from '@lib/graphics/images/Image';
 
 type Props = Readonly<{

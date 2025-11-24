@@ -7,7 +7,7 @@ import { MapControllerImpl } from './maps/MapController';
 import { MapSpec } from '@duzh/models';
 import InputHandler from '@lib/input/InputHandler';
 import { createCanvas, enterFullScreen, isMobileDevice } from '@lib/utils/dom';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { checkNotNull } from '@duzh/utils/preconditions';
 import { Graphics } from '@lib/graphics/Graphics';
 import { GameConfig } from '@main/core/GameConfig';
 import mapSpecsJson from '@data/maps.json';

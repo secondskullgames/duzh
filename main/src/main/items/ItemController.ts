@@ -1,7 +1,7 @@
 import { ItemOrEquipment, ObjectTemplate } from '@main/maps/MapTemplate';
 import { Feature } from '@main/utils/features';
-import { checkState } from '@lib/utils/preconditions';
-import { weightedRandom, WeightedRandomChoice } from '@lib/utils/random';
+import { checkState } from '@duzh/utils/preconditions';
+import { weightedRandom, WeightedRandomChoice } from '@duzh/utils/random';
 import { AssetBundle } from '@main/assets/AssetBundle';
 
 type Props = Readonly<{

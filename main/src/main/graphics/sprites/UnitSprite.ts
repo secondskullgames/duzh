@@ -3,7 +3,7 @@ import { Activity } from '../../units/Activity';
 import Unit from '../../units/Unit';
 import { Offsets } from '@lib/geometry/Offsets';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
-import { maxBy } from '@lib/utils/arrays';
+import { maxBy } from '@duzh/utils/arrays';
 import { Image } from '@lib/graphics/images/Image';
 
 type Props = Readonly<{

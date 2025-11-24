@@ -1,6 +1,6 @@
 import { InventoryCategory, InventoryState } from '@main/core/state/InventoryState';
 import { Game } from '@main/core/Game';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { checkNotNull } from '@duzh/utils/preconditions';
 
 export class InventoryController {
   prepareInventoryScreen = (game: Game): void => {

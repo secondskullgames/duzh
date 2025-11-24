@@ -9,7 +9,7 @@ import { Faction } from '@main/units/Faction';
 import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
 import { Game } from '@main/core/Game';
 import { MapTemplate } from './MapTemplate';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { checkNotNull } from '@duzh/utils/preconditions';
 
 /**
  * Responsible for turning a {@code MapTemplate} into a real map.

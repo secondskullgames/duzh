@@ -1,6 +1,6 @@
 import MapInstance from '@main/maps/MapInstance';
-import { checkNotNull } from '@lib/utils/preconditions';
-import { randChance, randChoice } from '@lib/utils/random';
+import { checkNotNull } from '@duzh/utils/preconditions';
+import { randChance, randChoice } from '@duzh/utils/random';
 import { Faction } from '@main/units/Faction';
 import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
 import { Coordinates } from '@lib/geometry/Coordinates';

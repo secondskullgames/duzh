@@ -1,5 +1,5 @@
-import { head } from '@lib/utils/arrays';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { head } from './arrays.js';
+import { checkNotNull } from './preconditions.js';
 
 /**
  * @param max inclusive

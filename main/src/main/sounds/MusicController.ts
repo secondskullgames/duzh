@@ -1,7 +1,7 @@
 import { transpose8vb } from '@lib/audio/AudioUtils';
 import SoundPlayer from '@lib/audio/SoundPlayer';
 import { Figure, Suite } from '@lib/audio/types';
-import { randChoice } from '@lib/utils/random';
+import { randChoice } from '@duzh/utils/random';
 
 export default class MusicController {
   private activeMusic: Suite | Figure[] | null = null;

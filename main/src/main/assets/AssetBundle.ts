@@ -8,7 +8,7 @@ import {
   TileSetModel,
   UnitModel
 } from '@duzh/models';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { checkNotNull } from '@duzh/utils/preconditions';
 import { Figure } from '@lib/audio/types';
 
 export interface AssetBundle {

@@ -11,7 +11,7 @@ import {
 import { AbilityName } from '@main/abilities/AbilityName';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import Unit from '@main/units/Unit';
-import { randChoice } from '@lib/utils/random';
+import { randChoice } from '@duzh/utils/random';
 import { findPath } from '@main/maps/MapUtils';
 import { pointAt } from '@lib/geometry/CoordinatesUtils';
 

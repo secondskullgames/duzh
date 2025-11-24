@@ -1,0 +1,35 @@
+{
+  "name": "@duzh/utils",
+  "version": "0.1.0",
+  "type": "module",
+  "files": ["build"],
+  "exports": {
+    "./arrays": {
+      "import": "./build/arrays.js",
+      "types": "./build/arrays.d.ts"
+    },
+    "./preconditions": {
+      "import": "./build/preconditions.js",
+      "types": "./build/preconditions.d.ts"
+    },
+    "./random": {
+      "import": "./build/random.js",
+      "types": "./build/random.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf build",
+    "lint": "prettier --write ./src"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "glob": "catalog:",
+    "globals": "catalog:",
+    "prettier": "catalog:",
+    "rimraf": "catalog:",
+    "typescript": "catalog:typescript"
+  },
+  "dependencies": {
+  }
+}

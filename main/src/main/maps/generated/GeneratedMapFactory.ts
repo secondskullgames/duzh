@@ -2,7 +2,7 @@ import { Coordinates } from '@lib/geometry/Coordinates';
 import { Direction } from '@lib/geometry/Direction';
 import Grid from '@lib/geometry/Grid';
 import MultiGrid from '@lib/geometry/MultiGrid';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { checkNotNull } from '@duzh/utils/preconditions';
 import {
   randChance,
   randChoice,
@@ -10,7 +10,7 @@ import {
   randInt,
   weightedRandom,
   WeightedRandomChoice
-} from '@lib/utils/random';
+} from '@duzh/utils/random';
 import { Feature } from '@main/utils/features';
 import { DoorDirection } from '@duzh/models';
 import { Algorithm, GeneratedMapModel } from '@duzh/models';

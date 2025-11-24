@@ -57,6 +57,9 @@ importers:
       '@duzh/models':
         specifier: workspace:*
         version: link:../models
+      '@duzh/utils':
+        specifier: workspace:*
+        version: link:../utils
       pathfinding:
         specifier: catalog:pathfinding
         version: 0.4.18
@@ -100,6 +103,27 @@ importers:
       zod:
         specifier: catalog:zod
         version: 4.1.12
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.19.1
+      glob:
+        specifier: 'catalog:'
+        version: 11.1.0
+      globals:
+        specifier: 'catalog:'
+        version: 15.15.0
+      prettier:
+        specifier: 'catalog:'
+        version: 3.6.2
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.0
+      typescript:
+        specifier: catalog:typescript
+        version: 5.5.4
+
+  utils:
     devDependencies:
       '@types/node':
         specifier: 'catalog:'

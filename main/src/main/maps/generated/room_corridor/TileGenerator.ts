@@ -5,7 +5,7 @@ import { Connection } from './Connection';
 import { TileType } from '@duzh/models';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Offsets } from '@lib/geometry/Offsets';
-import { shuffle } from '@lib/utils/random';
+import { shuffle } from '@duzh/utils/random';
 import Grid from '@lib/geometry/Grid';
 
 const generateTiles = (

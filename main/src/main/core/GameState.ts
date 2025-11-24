@@ -1,12 +1,12 @@
 import { InventoryState } from '@main/core/state/InventoryState';
 import { SceneName } from '../scenes/SceneName';
 import Unit from '../units/Unit';
-import { check, checkNotNull } from '@lib/utils/preconditions';
+import { check, checkNotNull } from '@duzh/utils/preconditions';
 import { Seconds } from '@lib/utils/time';
 import { ShrineMenuState } from '@main/core/state/ShrineMenuState';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Scene } from '@main/scenes/Scene';
-import { clear } from '@lib/utils/arrays';
+import { clear } from '@duzh/utils/arrays';
 import { Faction } from '@main/units/Faction';
 import MapInstance from '@main/maps/MapInstance';
 import { GameOverState } from '@main/core/state/GameOverState';

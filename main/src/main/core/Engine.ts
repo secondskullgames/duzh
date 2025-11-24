@@ -1,7 +1,7 @@
 import { doMapEvents } from '@main/actions/doMapEvents';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 import Unit from '@main/units/Unit';
-import { sortBy } from '@lib/utils/arrays';
+import { sortBy } from '@duzh/utils/arrays';
 import { Faction } from '@main/units/Faction';
 import { OrderExecutor } from '@main/units/orders/OrderExecutor';
 import GameObject, { ObjectType } from '@main/objects/GameObject';
