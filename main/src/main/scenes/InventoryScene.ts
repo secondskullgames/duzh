@@ -21,7 +21,7 @@ import Colors from '@main/graphics/Colors';
 import { getSlotName, splitTooltipToLines } from '@main/equipment/EquipmentUtils';
 import { LINE_HEIGHT } from '@main/graphics/constants';
 import { Game } from '@main/core/Game';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { checkNotNull } from '@duzh/utils/preconditions';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;

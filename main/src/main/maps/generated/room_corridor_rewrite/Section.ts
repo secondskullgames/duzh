@@ -1,7 +1,7 @@
 import Connection from './Connection';
 import SplitDirection from '../room_corridor_rewrite/SplitDirection';
 import { Rect } from '@lib/geometry/Rect';
-import { checkArgument, checkState } from '@lib/utils/preconditions';
+import { checkArgument, checkState } from '@duzh/utils/preconditions';
 
 type Props = Readonly<{
   rect: Rect;

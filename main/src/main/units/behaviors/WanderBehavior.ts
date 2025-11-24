@@ -2,7 +2,7 @@ import { UnitBehavior } from './UnitBehavior';
 import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { randChoice } from '@lib/utils/random';
+import { randChoice } from '@duzh/utils/random';
 import { isBlocked } from '@main/maps/MapUtils';
 import { UnitOrder } from '@main/units/orders/UnitOrder';
 import { StayOrder } from '@main/units/orders/StayOrder';

@@ -8,10 +8,10 @@ import { AbilityName } from '@main/abilities/AbilityName';
 import Unit from '@main/units/Unit';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { hypotenuse, manhattanDistance } from '@lib/geometry/CoordinatesUtils';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { checkNotNull } from '@duzh/utils/preconditions';
 import { isBlocked } from '@main/maps/MapUtils';
 import { SorceressController } from '@main/units/controllers/SorceressController';
-import { minBy } from '@lib/utils/arrays';
+import { minBy } from '@duzh/utils/arrays';
 import { isHostile } from '@main/units/UnitUtils';
 import { RoboTurtleController } from '@main/units/controllers/RoboTurtleController';
 

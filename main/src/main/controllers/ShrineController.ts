@@ -1,8 +1,8 @@
 import { ShrineMenuState, ShrineOption } from '@main/core/state/ShrineMenuState';
 import { Game } from '@main/core/Game';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { checkNotNull } from '@duzh/utils/preconditions';
 import Sounds from '@main/sounds/Sounds';
-import { randChoice, sample } from '@lib/utils/random';
+import { randChoice, sample } from '@duzh/utils/random';
 
 export class ShrineController {
   prepareShrineMenu = (game: Game): ShrineMenuState => {

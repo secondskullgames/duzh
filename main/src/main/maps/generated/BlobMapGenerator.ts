@@ -1,8 +1,8 @@
 import { AbstractMapGenerator } from './AbstractMapGenerator';
 import { TileType } from '@duzh/models';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { comparing, range } from '@lib/utils/arrays';
-import { randInt } from '@lib/utils/random';
+import { comparing, range } from '@duzh/utils/arrays';
+import { randInt } from '@duzh/utils/random';
 import { isAdjacent } from '@lib/geometry/CoordinatesUtils';
 import Grid from '@lib/geometry/Grid';
 

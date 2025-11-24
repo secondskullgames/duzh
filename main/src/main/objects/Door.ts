@@ -3,7 +3,7 @@ import DynamicSprite from '@main/graphics/sprites/DynamicSprite';
 import MapInstance from '@main/maps/MapInstance';
 import { DoorDirection } from '@duzh/models';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { checkState } from '@lib/utils/preconditions';
+import { checkState } from '@duzh/utils/preconditions';
 
 export enum DoorState {
   OPEN = 'OPEN',

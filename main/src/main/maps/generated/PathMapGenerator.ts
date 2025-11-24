@@ -2,8 +2,8 @@ import { AbstractMapGenerator } from './AbstractMapGenerator';
 import { TileType } from '@duzh/models';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
-import { range } from '@lib/utils/arrays';
-import { randInt } from '@lib/utils/random';
+import { range } from '@duzh/utils/arrays';
+import { randInt } from '@duzh/utils/random';
 import Grid from '@lib/geometry/Grid';
 
 type Props = Readonly<{

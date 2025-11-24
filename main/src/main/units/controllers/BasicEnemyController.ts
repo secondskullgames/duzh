@@ -5,8 +5,8 @@ import { AvoidNearestEnemyBehavior } from '../behaviors/AvoidNearestEnemyBehavio
 import { AttackNearestEnemyBehavior } from '../behaviors/AttackNearestEnemyBehavior';
 import { WanderBehavior } from '../behaviors/WanderBehavior';
 import Unit from '@main/units/Unit';
-import { randBoolean, randChance } from '@lib/utils/random';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { randBoolean, randChance } from '@duzh/utils/random';
+import { checkNotNull } from '@duzh/utils/preconditions';
 import { UnitBehavior } from '@main/units/behaviors/UnitBehavior';
 import { StayBehavior } from '@main/units/behaviors/StayBehavior';
 

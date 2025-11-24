@@ -2,7 +2,7 @@ import { AbstractMapGenerator } from './AbstractMapGenerator';
 import { TileType } from '@duzh/models';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { Rect } from '@lib/geometry/Rect';
-import { randInt, shuffle } from '@lib/utils/random';
+import { randInt, shuffle } from '@duzh/utils/random';
 import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
 import Grid from '@lib/geometry/Grid';
 

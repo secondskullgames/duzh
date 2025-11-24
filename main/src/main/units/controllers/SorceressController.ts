@@ -5,7 +5,7 @@ import { ShootUnitStationaryBehavior } from '../behaviors/ShootUnitStationaryBeh
 import Unit from '@main/units/Unit';
 import { isInStraightLine } from '@lib/geometry/CoordinatesUtils';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
-import { randChance } from '@lib/utils/random';
+import { randChance } from '@duzh/utils/random';
 import { KnightMoveBehavior } from '@main/units/behaviors/KnightMoveBehavior';
 import { AvoidNearestEnemyBehavior } from '@main/units/behaviors/AvoidNearestEnemyBehavior';
 import { WanderBehavior } from '@main/units/behaviors/WanderBehavior';

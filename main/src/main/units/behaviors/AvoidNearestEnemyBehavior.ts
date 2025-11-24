@@ -7,7 +7,7 @@ import { Teleport } from '@main/abilities/Teleport';
 import Unit from '@main/units/Unit';
 import { Direction } from '@lib/geometry/Direction';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { maxBy } from '@lib/utils/arrays';
+import { maxBy } from '@duzh/utils/arrays';
 import { manhattanDistance, pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';

@@ -18,7 +18,7 @@ import { UnitAbility } from '@main/abilities/UnitAbility';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
 import { Feature } from '@main/utils/features';
 import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { checkNotNull } from '@duzh/utils/preconditions';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { getItem, getShrine } from '@main/maps/MapUtils';
 import { pickupItem } from '@main/actions/pickupItem';

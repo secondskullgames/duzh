@@ -1,6 +1,7 @@
 packages:
   - 'main'
   - 'models'
+  - 'utils'
 
 catalog:
   "@types/node": "^22.7.4"

@@ -13,7 +13,7 @@ import { toggleFullScreen } from '@lib/utils/dom';
 import { showTitleScreen } from '@main/actions/showTitleScreen';
 import { formatTimestamp } from '@lib/utils/time';
 import { Game } from '@main/core/Game';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { checkNotNull } from '@duzh/utils/preconditions';
 
 const BACKGROUND_FILENAME = 'gameover';
 

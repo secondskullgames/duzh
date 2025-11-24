@@ -7,7 +7,7 @@ import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Feature } from '@main/utils/features';
 import { isBlocked } from '@main/maps/MapUtils';
-import { checkState } from '@lib/utils/preconditions';
+import { checkState } from '@duzh/utils/preconditions';
 import { Direction } from '@lib/geometry/Direction';
 import { Game } from '@main/core/Game';
 

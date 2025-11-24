@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@duzh/models": "workspace:*",
+    "@duzh/utils": "workspace:*",
     "pathfinding": "catalog:pathfinding",
     "zod": "catalog:zod"
   }

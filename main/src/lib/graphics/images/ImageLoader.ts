@@ -1,5 +1,5 @@
 import { createCanvas, createImage, getCanvasContext } from '@lib/utils/dom';
-import { checkNotNull } from '@lib/utils/preconditions';
+import { checkNotNull } from '@duzh/utils/preconditions';
 import { AssetBundle } from '@main/assets/AssetBundle';
 
 export default class ImageLoader {

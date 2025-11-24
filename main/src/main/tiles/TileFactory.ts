@@ -5,8 +5,8 @@ import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import MapInstance from '../maps/MapInstance';
 import { TileType } from '@duzh/models';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import { checkNotNull } from '@lib/utils/preconditions';
-import { randChoice } from '@lib/utils/random';
+import { checkNotNull } from '@duzh/utils/preconditions';
+import { randChoice } from '@duzh/utils/random';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { AssetBundle } from '@main/assets/AssetBundle';
 

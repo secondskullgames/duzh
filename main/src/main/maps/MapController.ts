@@ -1,4 +1,4 @@
-import { checkNotNull } from '@lib/utils/preconditions';
+import { checkNotNull } from '@duzh/utils/preconditions';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 import { Game } from '@main/core/Game';
 import MapInstance from '@main/maps/MapInstance';
