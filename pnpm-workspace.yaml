@@ -1,4 +1,3 @@
 packages:
   - 'main'
   - 'models'
-  - 'electron'
