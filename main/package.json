@@ -13,20 +13,20 @@
     "lint": "prettier --write ./src ./data"
   },
   "devDependencies": {
-    "@types/node": "^22.7.4",
-    "@types/pathfinding": "^0.0.9",
-    "@vitest/coverage-v8": "^4.0.10",
-    "glob": "^11.0.0",
-    "globals": "^15.10.0",
-    "prettier": "^3.3.3",
-    "rimraf": "^6.0.1",
-    "typescript": "~5.5.4",
-    "vite": "^7.2.2",
-    "vitest": "^4.0.10"
+    "@types/node": "catalog:",
+    "@types/pathfinding": "catalog:pathfinding",
+    "@vitest/coverage-v8": "catalog:vitest",
+    "glob": "catalog:",
+    "globals": "catalog:",
+    "prettier": "catalog:",
+    "rimraf": "catalog:",
+    "typescript": "catalog:typescript",
+    "vite": "catalog:vite",
+    "vitest": "catalog:vitest"
   },
   "dependencies": {
     "@duzh/models": "workspace:*",
-    "pathfinding": "^0.4.18",
-    "zod": "^4.0.5"
+    "pathfinding": "catalog:pathfinding",
+    "zod": "catalog:zod"
   }
 }
