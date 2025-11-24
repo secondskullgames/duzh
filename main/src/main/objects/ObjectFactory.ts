@@ -29,7 +29,7 @@ export default class ObjectFactory {
     const sprite = await spriteFactory.createMirrorSprite();
     const spawnFunction = (coordinates: Coordinates) =>
       unitFactory.createUnit({
-        unitClass: 'shade',
+        modelId: 'shade',
         coordinates: coordinates,
         map,
         level: 1,

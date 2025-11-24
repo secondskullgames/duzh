@@ -28,7 +28,7 @@ export class Summon implements UnitAbility {
     soundPlayer.playSound(Sounds.WIZARD_APPEAR);
 
     const summonedUnit = await unitFactory.createUnit({
-      unitClass,
+      modelId: unitClass,
       faction: unit.getFaction(),
       controller: new BasicEnemyController(),
       level: 1,

@@ -1,4 +1,5 @@
 {
+  "id": "kroz_green",
   "path": "kroz",
   "tiles": {
     "FLOOR": ["floor"],

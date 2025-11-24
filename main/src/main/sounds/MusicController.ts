@@ -2,15 +2,11 @@ import { transpose8vb } from '@lib/audio/AudioUtils';
 import SoundPlayer from '@lib/audio/SoundPlayer';
 import { Figure, Suite } from '@lib/audio/types';
 import { randChoice } from '@lib/utils/random';
-import { AssetLoader } from '@lib/assets/AssetLoader';
 
 export default class MusicController {
   private activeMusic: Suite | Figure[] | null = null;
 
-  constructor(
-    private readonly soundPlayer: SoundPlayer,
-    private readonly assetLoader: AssetLoader
-  ) {}
+  constructor(private readonly soundPlayer: SoundPlayer) {}
 
   playSuite = (suite: Suite) => {
     this.activeMusic = suite;
@@ -81,7 +77,4 @@ export default class MusicController {
     this.soundPlayer.stop();
     this.activeMusic = null;
   };
-
-  loadMusic = async (filename: string): Promise<Figure[]> =>
-    this.assetLoader.loadDataAsset(`music/${filename}.json`);
 }

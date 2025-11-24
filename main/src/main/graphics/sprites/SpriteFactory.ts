@@ -8,7 +8,6 @@ import { EquipmentSprite } from './EquipmentSprite';
 import { UnitSprite } from './UnitSprite';
 import Door, { DoorState } from '../../objects/Door';
 import Spawner, { SpawnerState } from '../../objects/Spawner';
-import ModelLoader from '@main/assets/ModelLoader';
 import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import Colors from '@main/graphics/Colors';
 import Unit from '@main/units/Unit';
@@ -23,11 +22,12 @@ import { DoorDirection } from '@duzh/models';
 import { DynamicSpriteModel } from '@duzh/models';
 import Shrine from '@main/objects/Shrine';
 import { ShrineSprite } from '@main/graphics/sprites/ShrineSprite';
+import { AssetBundle } from '@main/assets/AssetBundle';
 
 export default class SpriteFactory {
   constructor(
-    private readonly imageFactory: ImageFactory,
-    private readonly modelLoader: ModelLoader
+    private readonly assetBundle: AssetBundle,
+    private readonly imageFactory: ImageFactory
   ) {}
 
   /**
@@ -49,10 +49,10 @@ export default class SpriteFactory {
   };
 
   createStaticSprite = async (
-    spriteName: string,
+    modelId: string,
     paletteSwaps?: PaletteSwaps
   ): Promise<Sprite> => {
-    const model = await this.modelLoader.loadStaticSpriteModel(spriteName);
+    const model = this.assetBundle.getStaticSpriteModel(modelId);
     const { filename, offsets, transparentColor } = model;
     if (!paletteSwaps) {
       paletteSwaps = loadPaletteSwaps(model.paletteSwaps);
@@ -66,13 +66,10 @@ export default class SpriteFactory {
   };
 
   createUnitSprite = async (
-    spriteName: string,
+    modelId: string,
     paletteSwaps: PaletteSwaps
   ): Promise<DynamicSprite<Unit>> => {
-    const model = await this.modelLoader.loadDynamicSpriteModel(
-      spriteName,
-      SpriteCategory.UNITS
-    );
+    const model = this.assetBundle.getDynamicSpriteModel(modelId);
     const imageMap = await this._loadAnimations(
       SpriteCategory.UNITS,
       model,
@@ -80,17 +77,14 @@ export default class SpriteFactory {
     );
 
     return new UnitSprite({
-      spriteName,
+      spriteName: modelId,
       imageMap,
       offsets: model.offsets
     });
   };
 
-  createEquipmentSprite = async (spriteName: string, paletteSwaps: PaletteSwaps) => {
-    const model = await this.modelLoader.loadDynamicSpriteModel(
-      spriteName,
-      SpriteCategory.EQUIPMENT
-    );
+  createEquipmentSprite = async (modelId: string, paletteSwaps: PaletteSwaps) => {
+    const model = this.assetBundle.getDynamicSpriteModel(modelId);
     const imageMap = await this._loadAnimations(
       SpriteCategory.EQUIPMENT,
       model,
@@ -98,7 +92,7 @@ export default class SpriteFactory {
     );
 
     return new EquipmentSprite({
-      spriteName,
+      spriteName: modelId,
       imageMap,
       offsets: model.offsets
     });
@@ -216,7 +210,7 @@ export default class SpriteFactory {
           // 1-indexed
           const frame = animation.frames[i - 1];
           const variables = {
-            sprite: spriteModel.name,
+            sprite: spriteModel.id,
             activity: frame.activity,
             direction: Direction.toLegacyDirection(direction),
             number: frame.number
@@ -231,7 +225,7 @@ export default class SpriteFactory {
                 : [];
 
           const filenames = patterns
-            .map(pattern => `${spriteCategory}/${spriteModel.name}/${pattern}`)
+            .map(pattern => `${spriteCategory}/${spriteModel.id}/${pattern}`)
             .map(pattern => fillTemplate(pattern, variables));
 
           // TODO - can we get this into the sprite model?

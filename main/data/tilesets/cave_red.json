@@ -1,4 +1,5 @@
 {
+  "id": "cave_red",
   "path": "cave",
   "tiles": {
     "FLOOR": ["tile_floor", "tile_floor_2"],

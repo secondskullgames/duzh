@@ -4,11 +4,11 @@ import Sprite from '../graphics/sprites/Sprite';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
 import MapInstance from '../maps/MapInstance';
 import { TileType } from '@duzh/models';
-import ModelLoader from '@main/assets/ModelLoader';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { randChoice } from '@lib/utils/random';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
+import { AssetBundle } from '@main/assets/AssetBundle';
 
 type CreateTileParams = Readonly<{
   tileType: TileType;
@@ -17,8 +17,8 @@ type CreateTileParams = Readonly<{
 
 export default class TileFactory {
   constructor(
-    private readonly spriteFactory: SpriteFactory,
-    private readonly modelLoader: ModelLoader
+    private readonly assetBundle: AssetBundle,
+    private readonly spriteFactory: SpriteFactory
   ) {}
 
   createTile = (
@@ -32,7 +32,7 @@ export default class TileFactory {
   };
 
   getTileSet = async (id: string): Promise<TileSet> => {
-    const model = await this.modelLoader.loadTileSetModel(id);
+    const model = this.assetBundle.getTileSetModel(id);
     const tileSet: {
       [key in TileType]?: (Sprite | null)[];
     } = {};

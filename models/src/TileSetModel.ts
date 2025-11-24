@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { TileTypeSchema } from './TileType.js';
 
 export const TileSetModelSchema = z.object({
+  id: z.string(),
   path: z.string(),
   tiles: z.record(TileTypeSchema, z.array(z.string().nullable())),
   paletteSwaps: z.record(z.string(), z.string()).optional()

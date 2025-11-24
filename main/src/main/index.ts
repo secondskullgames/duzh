@@ -6,7 +6,6 @@ import { GameStateImpl } from './core/GameState';
 import { MapControllerImpl } from './maps/MapController';
 import { MapSpec } from '@duzh/models';
 import InputHandler from '@lib/input/InputHandler';
-import { AssetLoaderImpl } from '@lib/assets/AssetLoader';
 import { createCanvas, enterFullScreen, isMobileDevice } from '@lib/utils/dom';
 import { checkNotNull } from '@lib/utils/preconditions';
 import { Graphics } from '@lib/graphics/Graphics';
@@ -29,7 +28,6 @@ import SoundPlayer from '@lib/audio/SoundPlayer';
 import { Game } from '@main/core/Game';
 import UnitFactory from '@main/units/UnitFactory';
 import { ItemFactory } from '@main/items/ItemFactory';
-import ModelLoader from '@main/assets/ModelLoader';
 import ProjectileFactory from '@main/objects/ProjectileFactory';
 import MusicController from '@main/sounds/MusicController';
 import ObjectFactory from '@main/objects/ObjectFactory';
@@ -50,6 +48,7 @@ import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
 import TopMenuRenderer from '@main/graphics/renderers/TopMenuRenderer';
 import { MapHydrator } from './maps/MapHydrator';
 import { ItemController } from './items/ItemController';
+import { loadAssetBundle } from '@main/assets/loadAssetBundle';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -70,29 +69,24 @@ type GameContainer = Readonly<{
 }>;
 
 const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => {
-  const assetLoader = new AssetLoaderImpl();
-  const imageLoader = new ImageLoader(assetLoader);
+  const assetBundle = await loadAssetBundle();
+  const imageLoader = new ImageLoader(assetBundle);
   const imageFactory = new ImageFactory(imageLoader, new ImageCache());
   const fontFactory = new FontFactory(imageFactory);
   const fontBundle = await fontFactory.loadFonts();
   const textRenderer = new TextRenderer(gameConfig, fontBundle);
   const soundPlayer = SoundPlayer.forSounds();
-  const musicController = new MusicController(SoundPlayer.forMusic(), assetLoader);
+  const musicController = new MusicController(SoundPlayer.forMusic());
 
-  const modelLoader = new ModelLoader(assetLoader);
-  const spriteFactory = new SpriteFactory(imageFactory, modelLoader);
-  const tileFactory = new TileFactory(spriteFactory, modelLoader);
-  const itemFactory = new ItemFactory(spriteFactory, modelLoader);
-  const unitFactory = new UnitFactory(spriteFactory, itemFactory, modelLoader);
+  const spriteFactory = new SpriteFactory(assetBundle, imageFactory);
+  const tileFactory = new TileFactory(assetBundle, spriteFactory);
+  const itemFactory = new ItemFactory(assetBundle, spriteFactory);
+  const unitFactory = new UnitFactory(assetBundle, spriteFactory, itemFactory);
   const objectFactory = new ObjectFactory(spriteFactory, unitFactory);
   const projectileFactory = new ProjectileFactory(spriteFactory);
-  const predefinedMapFactory = new PredefinedMapFactory(
-    imageFactory,
-    modelLoader,
-    musicController
-  );
-  const itemController = new ItemController({ modelLoader, itemFactory, spriteFactory });
-  const generatedMapFactory = new GeneratedMapFactory({ modelLoader, itemController });
+  const predefinedMapFactory = new PredefinedMapFactory(imageFactory, assetBundle);
+  const itemController = new ItemController({ assetBundle });
+  const generatedMapFactory = new GeneratedMapFactory({ assetBundle, itemController });
   const mapHydrator = new MapHydrator(
     tileFactory,
     objectFactory,
@@ -114,12 +108,12 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
     engine,
     state,
     config: gameConfig,
+    assetBundle,
     itemFactory,
     unitFactory,
     objectFactory,
     musicController,
     projectileFactory,
-    modelLoader,
     soundPlayer,
     mapController,
     inventoryController,

@@ -1,4 +1,5 @@
 {
+  "id": "zzt_alt",
   "path": "zzt",
   "tiles": {
     "FLOOR": ["tile_floor"],

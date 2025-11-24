@@ -1,4 +1,5 @@
 {
+  "id": "dungeon",
   "path": "dungeon",
   "tiles": {
     "FLOOR": ["floor", "floor_2"],

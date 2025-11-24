@@ -7,7 +7,6 @@ import MapItem from '../objects/MapItem';
 import MapInstance from '../maps/MapInstance';
 import { ConsumableItemModel, ConsumableType, ItemCategory } from '@duzh/models';
 import { Coordinates } from '@lib/geometry/Coordinates';
-import ModelLoader from '@main/assets/ModelLoader';
 import { equipItem } from '@main/actions/equipItem';
 import { getEquipmentTooltip } from '@main/equipment/EquipmentUtils';
 import { shootFireball } from '@main/actions/shootFireball';
@@ -19,11 +18,12 @@ import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { radialChainLightning } from '@main/actions/radialChainLightning';
 import type { ItemProc } from './ItemProc';
 import { Game } from '@main/core/Game';
+import { AssetBundle } from '@main/assets/AssetBundle';
 
 export class ItemFactory {
   constructor(
-    private readonly spriteFactory: SpriteFactory,
-    private readonly modelLoader: ModelLoader
+    private readonly assetBundle: AssetBundle,
+    private readonly spriteFactory: SpriteFactory
   ) {}
 
   createLifePotion = (lifeRestored: number): InventoryItem => {
@@ -155,13 +155,13 @@ export class ItemFactory {
     });
   };
 
-  createInventoryEquipment = async (modelName: string): Promise<InventoryItem> => {
+  createInventoryEquipment = async (modelId: string): Promise<InventoryItem> => {
     const onUse: ItemProc = async (_: InventoryItem, unit: Unit, game: Game) => {
-      const equipment = await this.createEquipment(modelName);
+      const equipment = await this.createEquipment(modelId);
       return equipItem(equipment, unit, game);
     };
 
-    const model = await this.modelLoader.loadEquipmentModel(modelName);
+    const model = this.assetBundle.getEquipmentModel(modelId);
     return new InventoryItem({
       name: model.name,
       category: model.itemCategory,
@@ -171,16 +171,16 @@ export class ItemFactory {
   };
 
   createMapEquipment = async (
-    modelName: string,
+    modelId: string,
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<MapItem> => {
-    const model = await this.modelLoader.loadEquipmentModel(modelName);
+    const model = this.assetBundle.getEquipmentModel(modelId);
     const sprite = await this.spriteFactory.createStaticSprite(
       model.mapIcon,
       loadPaletteSwaps(model.paletteSwaps)
     );
-    const inventoryItem: InventoryItem = await this.createInventoryEquipment(modelName);
+    const inventoryItem: InventoryItem = await this.createInventoryEquipment(modelId);
     return new MapItem({
       name: inventoryItem.name,
       coordinates,
@@ -190,8 +190,8 @@ export class ItemFactory {
     });
   };
 
-  createEquipment = async (modelName: string): Promise<Equipment> => {
-    const model = await this.modelLoader.loadEquipmentModel(modelName);
+  createEquipment = async (modelId: string): Promise<Equipment> => {
+    const model = this.assetBundle.getEquipmentModel(modelId);
     const spriteName = model.sprite;
     const sprite = await this.spriteFactory.createEquipmentSprite(
       spriteName,
@@ -199,7 +199,7 @@ export class ItemFactory {
     );
 
     // TODO wtf is this
-    const inventoryItem = await this.createInventoryEquipment(modelName);
+    const inventoryItem = await this.createInventoryEquipment(modelId);
     const equipment = new Equipment({ model, sprite, inventoryItem });
     sprite.bind(equipment);
     return equipment;
@@ -250,7 +250,7 @@ export class ItemFactory {
   };
 
   createMapItem = async (itemId: string, coordinates: Coordinates, map: MapInstance) => {
-    const model: ConsumableItemModel = await this.modelLoader.loadItemModel(itemId);
+    const model = this.assetBundle.getItemModel(itemId);
     const inventoryItem = await this.createInventoryItem(model);
     const sprite = await this.spriteFactory.createStaticSprite(
       model.mapSprite,

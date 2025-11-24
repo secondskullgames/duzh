@@ -7,7 +7,7 @@ export const StaticSpriteOffsetsSchema = z.object({
 export type StaticSpriteOffsets = z.infer<typeof StaticSpriteOffsetsSchema>;
 
 export const StaticSpriteModelSchema = z.object({
-  name: z.string(),
+  id: z.string(),
   filename: z.string(),
   offsets: StaticSpriteOffsetsSchema,
   transparentColor: z.string(),
