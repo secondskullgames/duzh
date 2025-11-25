@@ -1,5 +1,5 @@
-import { Rect } from '@lib/geometry/Rect';
-import { areAdjacent } from '@lib/geometry/RectUtils';
+import { Rect } from '../Rect.js';
+import { areAdjacent } from '../RectUtils.js';
 import { expect, test } from 'vitest';
 
 test('areAdjacent', () => {

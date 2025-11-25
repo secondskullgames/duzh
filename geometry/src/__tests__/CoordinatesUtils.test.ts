@@ -4,8 +4,9 @@ import {
   isInStraightLine,
   manhattanDistance,
   pointAt
-} from '@lib/geometry/CoordinatesUtils';
-import { Direction } from '@lib/geometry/Direction';
+} from '../CoordinatesUtils.js';
+import { Direction } from '../Direction.js';
+import { describe, expect, test } from 'vitest';
 
 describe('CoordinatesUtils', () => {
   test('manhattanDistance', () => {
