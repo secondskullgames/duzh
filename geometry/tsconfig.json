@@ -1,20 +1,12 @@
 {
-  "include": ["src/**/*.ts"],
+  "extends": "../tsconfig.base.json",
+  "include": ["src"],
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "alwaysStrict": true,
     "baseUrl": ".",
     "lib": ["dom", "esnext"],
     "target": "esnext",
     "module": "nodenext",
     "outDir": "./build",
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "declaration": true,
-    "sourceMap": true,
-    "strict": true,
-    "plugins": [],
-    "types": ["node", "vitest/config"]
+    "types": ["node", "vitest/config", "vitest/globals"]
   }
 }
