@@ -3,10 +3,9 @@ import { checkNotNull } from '@duzh/utils/preconditions';
 import { randChance, randChoice } from '@duzh/utils/random';
 import { Faction } from '@main/units/Faction';
 import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
-import { Coordinates } from '@duzh/geometry';
+import { Coordinates, hypotenuse } from '@duzh/geometry';
 import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
 import { Feature } from '@main/utils/features';
-import { hypotenuse } from '@duzh/geometry';
 import { Game } from '@main/core/Game';
 
 export const spawnFogUnits = async (map: MapInstance, game: Game) => {
@@ -26,8 +25,7 @@ export const spawnFogUnits = async (map: MapInstance, game: Game) => {
     if (randChance(spawnRate)) {
       const targetSpawnCoordinates = _getFogSpawnCoordinates(map, game);
       if (targetSpawnCoordinates) {
-        // TODO would be nice if this was a one-liner
-        const unitModel = assetBundle.getUnitModel(unitClass);
+        const unitModel = checkNotNull(assetBundle.units[unitClass]);
         const unit = await unitFactory.createUnit({
           name: unitModel.name,
           modelId: unitClass,

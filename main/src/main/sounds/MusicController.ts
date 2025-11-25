@@ -1,7 +1,8 @@
-import { AssetBundle } from '@main/assets/AssetBundle';
+import { AssetBundle } from '@duzh/assets';
 import { MusicPlayer } from '@duzh/audio';
 import { Suite } from '@duzh/models';
 import { MusicName } from '@main/sounds/MusicName';
+import { checkNotNull } from '@duzh/utils/preconditions';
 
 export class MusicController {
   constructor(
@@ -10,7 +11,7 @@ export class MusicController {
   ) {}
 
   playMusic = (name: MusicName) => {
-    const music = this.assetBundle.getMusicModel(name);
+    const music = checkNotNull(this.assetBundle.music[name]);
     this.musicPlayer.playMusic(music);
   };
 

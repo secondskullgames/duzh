@@ -26,7 +26,7 @@ import { RoomCorridorMapGenerator } from './room_corridor/RoomCorridorMapGenerat
 import { RoomCorridorMapGenerator2 } from './room_corridor_rewrite/RoomCorridorMapGenerator2';
 import { ItemController } from '@main/items/ItemController';
 import Tile from '@main/tiles/Tile';
-import { AssetBundle } from '@main/assets/AssetBundle';
+import { AssetBundle } from '@duzh/assets';
 
 type Props = Readonly<{
   assetBundle: AssetBundle;
@@ -43,7 +43,7 @@ export class GeneratedMapFactory {
   }
 
   buildGeneratedMap = async (mapId: string): Promise<MapTemplate> => {
-    const model = this.assetBundle.getGeneratedMapModel(mapId);
+    const model = checkNotNull(this.assetBundle.generatedMaps[mapId]);
     const algorithm = model.algorithm;
     const tileSet =
       model.tileSet === 'RANDOM' ? randChoice(this._getTileSetNames()) : model.tileSet;
@@ -133,7 +133,8 @@ export class GeneratedMapFactory {
   ): Promise<[UnitModel, number][]> => {
     return Promise.all(
       model.enemies.types.map(async ({ chance, type }) => {
-        return [this.assetBundle.getUnitModel(type), chance];
+        const unitModel = checkNotNull(this.assetBundle.units[type]);
+        return [unitModel, chance];
       })
     );
   };

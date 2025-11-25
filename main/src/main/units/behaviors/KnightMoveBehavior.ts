@@ -1,6 +1,5 @@
 import Unit from '@main/units/Unit';
-import { Coordinates } from '@duzh/geometry';
-import { Direction } from '@duzh/geometry';
+import { Coordinates, Direction } from '@duzh/geometry';
 import { isBlocked } from '@main/maps/MapUtils';
 import { isEmpty } from '@duzh/utils/arrays';
 import { randChoice } from '@duzh/utils/random';

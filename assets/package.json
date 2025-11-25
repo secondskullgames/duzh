@@ -1,0 +1,34 @@
+{
+  "name": "@duzh/assets",
+  "version": "0.1.0",
+  "type": "module",
+  "files": [
+    "build"
+  ],
+  "exports": {
+    ".": {
+      "import": "./build/index.js",
+      "types": "./build/index.d.ts"
+    },
+    "./assets.json": "./build/assets.json"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && tsx src/buildAssetBundle.ts",
+    "clean": "rimraf build",
+    "lint": "prettier --write ./src"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "globals": "catalog:",
+    "prettier": "catalog:",
+    "rimraf": "catalog:",
+    "tsx": "catalog:tsx",
+    "typescript": "catalog:typescript"
+  },
+  "dependencies": {
+    "@duzh/models": "workspace:*",
+    "@duzh/utils": "workspace:*",
+    "glob": "catalog:",
+    "zod": "catalog:zod"
+  }
+}

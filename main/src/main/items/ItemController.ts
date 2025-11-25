@@ -2,7 +2,7 @@ import { ItemOrEquipment, ObjectTemplate } from '@main/maps/MapTemplate';
 import { Feature } from '@main/utils/features';
 import { checkState } from '@duzh/utils/preconditions';
 import { weightedRandom, WeightedRandomChoice } from '@duzh/utils/random';
-import { AssetBundle } from '@main/assets/AssetBundle';
+import { AssetBundle } from '@duzh/assets';
 
 type Props = Readonly<{
   assetBundle: AssetBundle;
@@ -29,14 +29,14 @@ export class ItemController {
       levelNumber === 1 &&
       !this.generatedEquipmentIds.has('bronze_sword')
     ) {
-      const equipmentModel = this.assetBundle.getEquipmentModel('bronze_sword');
+      const equipmentModel = this.assetBundle.equipment['bronze_sword'];
       const object: ObjectTemplate = { type: 'equipment', model: equipmentModel };
       this.generatedEquipmentIds.add('bronze_sword');
       return object;
     }
 
-    const allEquipmentModels = this.assetBundle.getAllEquipmentModels();
-    const allConsumableModels = this.assetBundle.getAllItemModels();
+    const allEquipmentModels = Object.values(this.assetBundle.equipment);
+    const allConsumableModels = Object.values(this.assetBundle.items);
     const possibleEquipmentModels = allEquipmentModels
       .filter(equipmentModel => {
         if (Feature.isEnabled(Feature.DEDUPLICATE_EQUIPMENT)) {

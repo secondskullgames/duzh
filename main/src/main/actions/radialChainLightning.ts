@@ -3,11 +3,10 @@ import { die } from './die';
 import { dealDamage } from './dealDamage';
 import Unit from '../units/Unit';
 import { Activity } from '../units/Activity';
-import { Coordinates } from '@duzh/geometry';
+import { Coordinates, Direction } from '@duzh/geometry';
 import { sleep } from '@lib/utils/promises';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import MapInstance from '@main/maps/MapInstance';
-import { Direction } from '@duzh/geometry';
 import { Faction } from '@main/units/Faction';
 import { Game } from '@main/core/Game';
 

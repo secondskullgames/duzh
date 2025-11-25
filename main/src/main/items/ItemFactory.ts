@@ -17,7 +17,8 @@ import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { radialChainLightning } from '@main/actions/radialChainLightning';
 import type { ItemProc } from './ItemProc';
 import { Game } from '@main/core/Game';
-import { AssetBundle } from '@main/assets/AssetBundle';
+import { AssetBundle } from '@duzh/assets';
+import { checkNotNull } from '@duzh/utils/preconditions';
 
 export class ItemFactory {
   constructor(
@@ -160,7 +161,7 @@ export class ItemFactory {
       return equipItem(equipment, unit, game);
     };
 
-    const model = this.assetBundle.getEquipmentModel(modelId);
+    const model = checkNotNull(this.assetBundle.equipment[modelId]);
     return new InventoryItem({
       name: model.name,
       category: model.itemCategory,
@@ -174,7 +175,7 @@ export class ItemFactory {
     coordinates: Coordinates,
     map: MapInstance
   ): Promise<MapItem> => {
-    const model = this.assetBundle.getEquipmentModel(modelId);
+    const model = checkNotNull(this.assetBundle.equipment[modelId]);
     const sprite = await this.spriteFactory.createStaticSprite(
       model.mapIcon,
       loadPaletteSwaps(model.paletteSwaps, this.assetBundle)
@@ -190,7 +191,7 @@ export class ItemFactory {
   };
 
   createEquipment = async (modelId: string): Promise<Equipment> => {
-    const model = this.assetBundle.getEquipmentModel(modelId);
+    const model = checkNotNull(this.assetBundle.equipment[modelId]);
     const spriteName = model.sprite;
     const sprite = await this.spriteFactory.createEquipmentSprite(
       spriteName,
@@ -249,7 +250,7 @@ export class ItemFactory {
   };
 
   createMapItem = async (itemId: string, coordinates: Coordinates, map: MapInstance) => {
-    const model = this.assetBundle.getItemModel(itemId);
+    const model = checkNotNull(this.assetBundle.items[itemId]);
     const inventoryItem = await this.createInventoryItem(model);
     const sprite = await this.spriteFactory.createStaticSprite(
       model.mapSprite,

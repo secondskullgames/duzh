@@ -23,7 +23,5 @@
     "test:watch": "vitest --watch",
     "test:coverage": "pnpm run -r test:coverage",
     "electron": "cd electron && npm i && npm run make && npx electron ."
-  },
-  "devDependencies": {},
-  "dependencies": {}
+  }
 }

@@ -10,7 +10,7 @@
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
-    "lint": "prettier --write ./src ./data"
+    "lint": "prettier --write ./src"
   },
   "devDependencies": {
     "@types/node": "catalog:",
@@ -24,6 +24,7 @@
     "vitest": "catalog:vitest"
   },
   "dependencies": {
+    "@duzh/assets": "workspace:*",
     "@duzh/audio": "workspace:*",
     "@duzh/geometry": "workspace:*",
     "@duzh/models": "workspace:*",

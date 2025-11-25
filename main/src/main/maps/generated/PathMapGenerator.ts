@@ -1,6 +1,6 @@
 import { AbstractMapGenerator } from './AbstractMapGenerator';
 import { TileType } from '@duzh/models';
-import { Grid, Coordinates, Heuristic, Pathfinder } from '@duzh/geometry';
+import { Coordinates, Grid, Heuristic, Pathfinder } from '@duzh/geometry';
 import { range } from '@duzh/utils/arrays';
 import { randInt } from '@duzh/utils/random';
 

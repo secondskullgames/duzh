@@ -1,6 +1,6 @@
 import { AbstractMapGenerator } from './AbstractMapGenerator';
 import { TileType } from '@duzh/models';
-import { Grid, Coordinates, Rect, Pathfinder, Heuristic } from '@duzh/geometry';
+import { Coordinates, Grid, Heuristic, Pathfinder, Rect } from '@duzh/geometry';
 import { randInt, shuffle } from '@duzh/utils/random';
 
 const minRoomWidth = 4;

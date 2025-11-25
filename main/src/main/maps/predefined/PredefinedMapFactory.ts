@@ -4,7 +4,8 @@ import { Image } from '@lib/graphics/images/Image';
 import { Color } from '@lib/graphics/Color';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { MapTemplate, ObjectTemplate } from '../MapTemplate';
-import { AssetBundle, AssetBundleImpl } from '@main/assets/AssetBundle';
+import { AssetBundle } from '@duzh/assets';
+import { checkNotNull } from '@duzh/utils/preconditions';
 
 export class PredefinedMapFactory {
   constructor(
@@ -13,7 +14,7 @@ export class PredefinedMapFactory {
   ) {}
 
   buildPredefinedMap = async (mapId: string): Promise<MapTemplate> => {
-    const model = this.assetBundle.getPredefinedMapModel(mapId);
+    const model = checkNotNull(this.assetBundle.predefinedMaps[mapId]);
     const image = await this.imageFactory.getImage({
       filename: `maps/${model.imageFilename}`
     });
@@ -22,7 +23,7 @@ export class PredefinedMapFactory {
     const tiles = await this._loadTiles(model, image);
     const units = await this._loadUnits(model, image);
     const objects = await this._loadObjects(model, image);
-    const music = model.music ? this.assetBundle.getMusicModel(model.music) : null;
+    const music = model.music ? checkNotNull(this.assetBundle.music[model.music]) : null;
 
     return {
       id: model.id,
@@ -79,8 +80,8 @@ export class PredefinedMapFactory {
           if (!hexColors.has(color.hex)) {
             hexColors.add(color.hex);
           }
-          const startingPointColor = this.assetBundle.colorForName(
-            model.startingPointColor
+          const startingPointColor = Color.fromHex(
+            checkNotNull(this.assetBundle.colors[model.startingPointColor])
           );
           if (Color.equals(color, startingPointColor)) {
             return { x, y };
@@ -112,7 +113,7 @@ export class PredefinedMapFactory {
           }
           const unitModelId = enemyColors[color.hex] ?? null;
           if (unitModelId !== null) {
-            const unitModel = await this.assetBundle.getUnitModel(unitModelId);
+            const unitModel = checkNotNull(this.assetBundle.units[unitModelId]);
             units.put({ x, y }, unitModel);
           }
         }
@@ -164,13 +165,13 @@ export class PredefinedMapFactory {
 
         const itemId = itemColors?.[color.hex] ?? null;
         if (itemId) {
-          const itemModel = this.assetBundle.getItemModel(itemId);
+          const itemModel = checkNotNull(this.assetBundle.items[itemId]);
           objects.put({ x, y }, { type: 'item', model: itemModel });
         }
 
         const equipmentId = equipmentColors?.[color.hex] ?? null;
         if (equipmentId) {
-          const equipmentModel = this.assetBundle.getEquipmentModel(equipmentId);
+          const equipmentModel = checkNotNull(this.assetBundle.equipment[equipmentId]);
           objects.put({ x, y }, { type: 'equipment', model: equipmentModel });
         }
       }
@@ -187,8 +188,8 @@ export class PredefinedMapFactory {
     } = {};
 
     for (const [colorName, unitClass] of Object.entries(source ?? {})) {
-      const color = this.assetBundle.colorForName(colorName);
-      hexColors[color.hex] = unitClass;
+      const hexColor = checkNotNull(this.assetBundle.colors[colorName]);
+      hexColors[hexColor] = unitClass;
     }
     return hexColors;
   };

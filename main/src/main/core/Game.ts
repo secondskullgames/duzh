@@ -1,4 +1,3 @@
-import { AssetBundle } from '@main/assets/AssetBundle';
 import { InventoryController } from '@main/controllers/InventoryController';
 import { ShrineController } from '@main/controllers/ShrineController';
 import { Engine } from '@main/core/Engine';
@@ -13,6 +12,7 @@ import ProjectileFactory from '@main/objects/ProjectileFactory';
 import UnitFactory from '@main/units/UnitFactory';
 import { SoundController } from '@main/sounds/SoundController';
 import { MusicController } from '@main/sounds/MusicController';
+import { AssetBundle } from '@duzh/assets';
 
 export type Game = Readonly<{
   config: GameConfig;

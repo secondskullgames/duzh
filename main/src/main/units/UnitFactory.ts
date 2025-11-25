@@ -9,7 +9,8 @@ import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
 import MapInstance from '@main/maps/MapInstance';
 import { Coordinates } from '@duzh/geometry';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
-import { AssetBundle } from '@main/assets/AssetBundle';
+import { AssetBundle } from '@duzh/assets';
+import { checkNotNull } from '@duzh/utils/preconditions';
 
 type CreateUnitParams = Readonly<{
   /**
@@ -34,7 +35,7 @@ export default class UnitFactory {
 
   createUnit = async (params: CreateUnitParams): Promise<Unit> => {
     const { itemFactory, spriteFactory } = this;
-    const model = this.assetBundle.getUnitModel(params.modelId);
+    const model = checkNotNull(this.assetBundle.units[params.modelId]);
     const sprite = await spriteFactory.createUnitSprite(
       model.sprite,
       loadPaletteSwaps(model.paletteSwaps, this.assetBundle)

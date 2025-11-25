@@ -1,7 +1,6 @@
 import { moveUnit } from './moveUnit';
 import Unit from '../units/Unit';
-import { Direction } from '@duzh/geometry';
-import { Coordinates } from '@duzh/geometry';
+import { Coordinates, Direction } from '@duzh/geometry';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';
 

@@ -17,12 +17,12 @@ import { Image } from '@lib/graphics/images/Image';
 import { ImageEffect } from '@lib/graphics/images/ImageEffect';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { ImageEffects } from '@main/graphics/ImageEffects';
-import { DoorDirection } from '@duzh/models';
-import { DynamicSpriteModel } from '@duzh/models';
+import { DoorDirection, DynamicSpriteModel } from '@duzh/models';
 import Shrine from '@main/objects/Shrine';
 import { ShrineSprite } from '@main/graphics/sprites/ShrineSprite';
-import { AssetBundle } from '@main/assets/AssetBundle';
+import { AssetBundle } from '@duzh/assets';
 import { Color } from '@lib/graphics/Color';
+import { checkNotNull } from '@duzh/utils/preconditions';
 
 export default class SpriteFactory {
   constructor(
@@ -53,7 +53,7 @@ export default class SpriteFactory {
     paletteSwaps?: PaletteSwaps
   ): Promise<Sprite> => {
     const { assetBundle, imageFactory } = this;
-    const model = assetBundle.getStaticSpriteModel(modelId);
+    const model = checkNotNull(assetBundle.staticSprites[modelId]);
     const { filename, offsets, transparentColor } = model;
     if (!paletteSwaps) {
       paletteSwaps = loadPaletteSwaps(model.paletteSwaps, assetBundle);
@@ -62,7 +62,7 @@ export default class SpriteFactory {
       filename,
       paletteSwaps,
       transparentColor: transparentColor
-        ? assetBundle.colorForName(transparentColor)
+        ? Color.fromHex(checkNotNull(assetBundle.colors[transparentColor]))
         : null
     });
     return new StaticSprite(image, offsets);
@@ -72,7 +72,7 @@ export default class SpriteFactory {
     modelId: string,
     paletteSwaps: PaletteSwaps
   ): Promise<DynamicSprite<Unit>> => {
-    const model = this.assetBundle.getDynamicSpriteModel(modelId);
+    const model = checkNotNull(this.assetBundle.dynamicSprites[modelId]);
     const imageMap = await this._loadAnimations(
       SpriteCategory.UNITS,
       model,
@@ -87,7 +87,7 @@ export default class SpriteFactory {
   };
 
   createEquipmentSprite = async (modelId: string, paletteSwaps: PaletteSwaps) => {
-    const model = this.assetBundle.getDynamicSpriteModel(modelId);
+    const model = checkNotNull(this.assetBundle.dynamicSprites[modelId]);
     const imageMap = await this._loadAnimations(
       SpriteCategory.EQUIPMENT,
       model,

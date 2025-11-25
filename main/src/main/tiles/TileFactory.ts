@@ -8,7 +8,7 @@ import { Coordinates } from '@duzh/geometry';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { randChoice } from '@duzh/utils/random';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
-import { AssetBundle } from '@main/assets/AssetBundle';
+import { AssetBundle } from '@duzh/assets';
 
 type CreateTileParams = Readonly<{
   tileType: TileType;
@@ -32,7 +32,7 @@ export default class TileFactory {
   };
 
   getTileSet = async (id: string): Promise<TileSet> => {
-    const model = this.assetBundle.getTileSetModel(id);
+    const model = checkNotNull(this.assetBundle.tileSets[id]);
     const tileSet: {
       [key in TileType]?: (Sprite | null)[];
     } = {};
