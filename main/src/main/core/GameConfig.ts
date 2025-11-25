@@ -1,4 +1,4 @@
-import { AssetBundle } from '@main/assets/AssetBundle';
+import { AssetBundle } from '@duzh/assets';
 import { ImageBundle } from '@main/assets/ImageBundle';
 
 export type GameConfig = Readonly<{

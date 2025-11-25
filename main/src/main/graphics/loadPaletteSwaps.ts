@@ -1,5 +1,7 @@
 import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
-import { AssetBundle } from '@main/assets/AssetBundle';
+import { AssetBundle } from '@duzh/assets';
+import { checkNotNull } from '@duzh/utils/preconditions';
+import { Color } from '@lib/graphics/Color';
 
 /**
  * @param paletteSwaps Contains a map of color names, to be converted to hex format
@@ -11,8 +13,8 @@ export const loadPaletteSwaps = (
   const builder = PaletteSwaps.builder();
   if (paletteSwaps) {
     for (const [srcName, destName] of Object.entries(paletteSwaps)) {
-      const srcColor = assetBundle.colorForName(srcName);
-      const destColor = assetBundle.colorForName(destName);
+      const srcColor = Color.fromHex(checkNotNull(assetBundle.colors[srcName]));
+      const destColor = Color.fromHex(checkNotNull(assetBundle.colors[destName]));
       builder.addMapping(srcColor, destColor);
     }
   }

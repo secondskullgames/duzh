@@ -1,8 +1,7 @@
 import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
 import Projectile from '@main/entities/Projectile';
 import MapInstance from '@main/maps/MapInstance';
-import { Direction } from '@duzh/geometry';
-import { Coordinates } from '@duzh/geometry';
+import { Coordinates, Direction } from '@duzh/geometry';
 import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 
 export default class ProjectileFactory {

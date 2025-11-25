@@ -1,7 +1,6 @@
 import { UnitBehavior } from './UnitBehavior';
 import Unit from '@main/units/Unit';
-import { Direction } from '@duzh/geometry';
-import { Coordinates } from '@duzh/geometry';
+import { Coordinates, Direction } from '@duzh/geometry';
 import { randChoice } from '@duzh/utils/random';
 import { isBlocked } from '@main/maps/MapUtils';
 import { UnitOrder } from '@main/units/orders/UnitOrder';

@@ -1,4 +1,5 @@
 packages:
+  - 'assets'
   - 'audio'
   - 'geometry'
   - 'main'
@@ -16,6 +17,8 @@ catalogs:
   pathfinding:
     'pathfinding': '^0.4.18'
     '@types/pathfinding': '^0.0.9'
+  tsx:
+    'tsx': '^4.20.6'
   typescript:
     'typescript': '~5.5.4'
   vite:

@@ -2,8 +2,7 @@ import Entity from './Entity';
 import { EntityType } from './EntityType';
 import Sprite from '../graphics/sprites/Sprite';
 import MapInstance from '../maps/MapInstance';
-import { Direction } from '@duzh/geometry';
-import { Coordinates } from '@duzh/geometry';
+import { Coordinates, Direction } from '@duzh/geometry';
 
 type Props = Readonly<{
   name: string;

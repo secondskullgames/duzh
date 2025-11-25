@@ -3,7 +3,7 @@ import { SceneName } from '@main/scenes/SceneName';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { useItem } from '@main/actions/useItem';
-import { Rect } from '@duzh/geometry';
+import { Pixel, Rect } from '@duzh/geometry';
 import { ItemCategory } from '@duzh/models';
 import {
   displayableItemCategories,
@@ -14,7 +14,6 @@ import { TextRenderer } from '@main/graphics/TextRenderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Graphics } from '@lib/graphics/Graphics';
 import { FontName } from '@main/graphics/Fonts';
-import { Pixel } from '@duzh/geometry';
 import { Color } from '@lib/graphics/Color';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { getSlotName, splitTooltipToLines } from '@main/equipment/EquipmentUtils';

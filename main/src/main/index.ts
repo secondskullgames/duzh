@@ -7,7 +7,6 @@ import ImageFactory from '@lib/graphics/images/ImageFactory';
 import ImageLoader from '@lib/graphics/images/ImageLoader';
 import InputHandler from '@lib/input/InputHandler';
 import { createCanvas, enterFullScreen, isMobileDevice } from '@lib/utils/dom';
-import { loadAssetBundle } from '@main/assets/loadAssetBundle';
 import { InventoryController } from '@main/controllers/InventoryController';
 import { ShrineController } from '@main/controllers/ShrineController';
 import { EngineImpl } from '@main/core/Engine';
@@ -49,6 +48,7 @@ import { Feature } from './utils/features';
 import { SoundController } from '@main/sounds/SoundController';
 import { MusicController } from '@main/sounds/MusicController';
 import { loadImageBundle } from '@main/assets/loadImageBundle';
+import { AssetBundleSchema } from '@duzh/assets';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -211,7 +211,7 @@ const init = async ({ rootElement, gameConfig }: Props) => {
 
 const main = async () => {
   const rootElement = checkNotNull(document.getElementById('container'));
-  const assetBundle = await loadAssetBundle();
+  const assetBundle = AssetBundleSchema.parse(await import('@duzh/assets/assets.json'));
   const imageBundle = await loadImageBundle();
   const gameConfig: GameConfig = {
     assetBundle,

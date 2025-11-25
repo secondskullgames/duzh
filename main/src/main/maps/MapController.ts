@@ -10,7 +10,7 @@ import { GeneratedMapFactory } from './generated/GeneratedMapFactory';
 import { MapHydrator } from './MapHydrator';
 import { MapTemplate } from './MapTemplate';
 import { PredefinedMapFactory } from './predefined/PredefinedMapFactory';
-import { AssetBundle } from '@main/assets/AssetBundle';
+import { AssetBundle } from '@duzh/assets';
 
 export interface MapController {
   loadFirstMap: (game: Game) => Promise<void>;
@@ -48,7 +48,7 @@ export class MapControllerImpl implements MapController {
   loadFirstMap = async (game: Game) => {
     const { unitFactory, musicPlayer, assetBundle } = this;
     const { state } = game;
-    const map = await this._loadMap(assetBundle.getMapList()[0].id, game);
+    const map = await this._loadMap(assetBundle.maps[0].id, game);
     const playerUnit = await unitFactory.createPlayerUnit(
       map.getStartingCoordinates(),
       map
@@ -67,7 +67,7 @@ export class MapControllerImpl implements MapController {
     const { state } = game;
     const currentMap = state.getPlayerUnit().getMap();
     musicPlayer.stop();
-    const mapSpecs = assetBundle.getMapList();
+    const mapSpecs = assetBundle.maps;
     const nextMapIndex = mapSpecs.findIndex(spec => spec.id === currentMap.id) + 1;
     if (nextMapIndex >= mapSpecs.length) {
       state.endGameTimer();
@@ -90,7 +90,7 @@ export class MapControllerImpl implements MapController {
   loadPreviousMap = async (game: Game) => {
     const { musicPlayer, assetBundle } = this;
     const { state } = game;
-    const mapSpecs = assetBundle.getMapList();
+    const mapSpecs = assetBundle.maps;
     const playerUnit = state.getPlayerUnit();
     const currentMap = playerUnit.getMap();
     const previousMapIndex = mapSpecs.findIndex(spec => spec.id === currentMap.id) - 1;
@@ -125,7 +125,7 @@ export class MapControllerImpl implements MapController {
   private _loadMap = async (mapId: string, game: Game): Promise<MapInstance> => {
     const { predefinedMapFactory, generatedMapFactory, mapHydrator, assetBundle } = this;
     const { state } = game;
-    const mapSpecs = assetBundle.getMapList();
+    const mapSpecs = assetBundle.maps;
     const mapSpec = checkNotNull(mapSpecs.find(spec => spec.id === mapId));
     const id = mapSpec.id;
     if (!state.getMap(id)) {

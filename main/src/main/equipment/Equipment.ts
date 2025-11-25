@@ -3,8 +3,7 @@ import { getEquipmentTooltip } from './EquipmentUtils';
 import Sprite from '../graphics/sprites/Sprite';
 import Unit from '../units/Unit';
 import InventoryItem from '../items/InventoryItem';
-import { EquipmentSlot } from '@duzh/models';
-import { EquipmentModel } from '@duzh/models';
+import { EquipmentModel, EquipmentSlot } from '@duzh/models';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import { AbilityName } from '@main/abilities/AbilityName';
 

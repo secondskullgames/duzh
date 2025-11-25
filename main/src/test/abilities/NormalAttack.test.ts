@@ -3,8 +3,7 @@ import { GameState } from '@main/core/GameState';
 import MapInstance from '@main/maps/MapInstance';
 import { Direction } from '@duzh/geometry';
 import { Game } from '@main/core/Game';
-import { vi } from 'vitest';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 
 /**
  * TODO - I'm disabling this because it relied on weird Jest wizardry, and I'm not
