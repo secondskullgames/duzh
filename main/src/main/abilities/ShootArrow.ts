@@ -1,6 +1,5 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
-import Sounds from '@main/sounds/Sounds';
 import { Activity } from '@main/units/Activity';
 import Unit from '@main/units/Unit';
 import { getRangedDamage } from '@main/units/UnitUtils';
@@ -36,7 +35,7 @@ export class ShootArrow implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { soundPlayer, state, ticker } = game;
+    const { soundController, state, ticker } = game;
     if (!unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON)) {
       throw new Error('ShootArrow requires a ranged weapon!');
     }
@@ -58,7 +57,7 @@ export class ShootArrow implements UnitAbility {
     if (targetUnit) {
       const damage = getRangedDamage(unit);
       await this._playArrowAnimation(unit, direction, coordinatesList, targetUnit, game);
-      soundPlayer.playSound(Sounds.PLAYER_HITS_ENEMY);
+      soundController.playSound('player_hits_enemy');
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,
         targetUnit

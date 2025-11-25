@@ -1,7 +1,6 @@
 import { ShrineMenuState, ShrineOption } from '@main/core/state/ShrineMenuState';
 import { Game } from '@main/core/Game';
 import { checkNotNull } from '@duzh/utils/preconditions';
-import Sounds from '@main/sounds/Sounds';
 import { randChoice, sample } from '@duzh/utils/random';
 
 export class ShrineController {
@@ -18,7 +17,7 @@ export class ShrineController {
           onUse: async (game: Game) => {
             playerUnit.increaseMaxMana(5);
             // TODO
-            game.soundPlayer.playSound(Sounds.USE_POTION);
+            game.soundController.playSound('use_potion');
           }
         }
       ],
@@ -28,7 +27,7 @@ export class ShrineController {
           onUse: async (game: Game) => {
             playerUnit.increaseMaxLife(10);
             // TODO
-            game.soundPlayer.playSound(Sounds.USE_POTION);
+            game.soundController.playSound('use_potion');
           }
         }
       ],
@@ -38,7 +37,7 @@ export class ShrineController {
           onUse: async (game: Game) => {
             playerUnit.increaseLifePerTurn(0.5);
             // TODO
-            game.soundPlayer.playSound(Sounds.USE_POTION);
+            game.soundController.playSound('use_potion');
           }
         }
       ],
@@ -48,7 +47,7 @@ export class ShrineController {
           onUse: async (game: Game) => {
             playerUnit.increaseManaPerTurn(0.5);
             // TODO
-            game.soundPlayer.playSound(Sounds.USE_POTION);
+            game.soundController.playSound('use_potion');
           }
         }
       ],
@@ -58,7 +57,7 @@ export class ShrineController {
           onUse: async (game: Game) => {
             playerUnit.increaseMeleeDamage(1);
             // TODO
-            game.soundPlayer.playSound(Sounds.USE_POTION);
+            game.soundController.playSound('use_potion');
           }
         }
       ],
@@ -68,7 +67,7 @@ export class ShrineController {
           onUse: async (game: Game) => {
             playerUnit.increaseRangedDamage(2);
             // TODO
-            game.soundPlayer.playSound(Sounds.USE_POTION);
+            game.soundController.playSound('use_potion');
           }
         }
       ]

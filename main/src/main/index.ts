@@ -1,4 +1,4 @@
-import { MusicController, SoundPlayer } from '@duzh/audio';
+import { MusicPlayer, SoundPlayer } from '@duzh/audio';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { FontBundle } from '@lib/graphics/Fonts';
 import { Graphics } from '@lib/graphics/Graphics';
@@ -46,6 +46,8 @@ import { ItemController } from './items/ItemController';
 import { MapControllerImpl } from './maps/MapController';
 import { MapHydrator } from './maps/MapHydrator';
 import { Feature } from './utils/features';
+import { SoundController } from '@main/sounds/SoundController';
+import { MusicController } from '@main/sounds/MusicController';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -73,7 +75,9 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
   const fontBundle = await fontFactory.loadFonts();
   const textRenderer = new TextRenderer(gameConfig, fontBundle);
   const soundPlayer = SoundPlayer.forSounds();
-  const musicController = new MusicController(SoundPlayer.forMusic());
+  const soundController = new SoundController(assetBundle, soundPlayer);
+  const musicPlayer = new MusicPlayer(SoundPlayer.forMusic());
+  const musicController = new MusicController(assetBundle, musicPlayer);
 
   const spriteFactory = new SpriteFactory(assetBundle, imageFactory);
   const tileFactory = new TileFactory(assetBundle, spriteFactory);
@@ -96,7 +100,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
     generatedMapFactory,
     mapHydrator,
     unitFactory,
-    musicController
+    musicPlayer
   });
   const inventoryController = new InventoryController();
   const shrineController = new ShrineController();
@@ -110,9 +114,9 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
     itemFactory,
     unitFactory,
     objectFactory,
-    musicController,
     projectileFactory,
-    soundPlayer,
+    soundController,
+    musicController,
     mapController,
     inventoryController,
     shrineController,
@@ -138,7 +142,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
     viewportRenderer,
     hudRenderer,
     topMenuRenderer,
-    soundPlayer
+    soundController
   );
   const gameOverScene = new GameOverScene(imageFactory, textRenderer, game);
   const helpScene = new HelpScene(game, textRenderer, imageFactory);

@@ -1,5 +1,4 @@
 import { levelUp as _levelUp } from '../actions/levelUp';
-import Sounds from '../sounds/Sounds';
 import { ItemFactory } from '../items/ItemFactory';
 import MapInstance from '../maps/MapInstance';
 import { die } from '@main/actions/die';
@@ -39,7 +38,7 @@ export class DebugController {
 
   awardEquipment = async () => {
     const { itemFactory } = this;
-    const { soundPlayer, state, ticker } = this.game;
+    const { soundController, state, ticker } = this.game;
 
     // eslint-disable-next-line no-alert
     const id = prompt('Enter a valid equipment_id')!;
@@ -47,7 +46,7 @@ export class DebugController {
     const playerUnit = state.getPlayerUnit();
     playerUnit.getInventory().add(item);
     ticker.log(`Picked up a ${item.name}.`, { turn: state.getTurn() });
-    soundPlayer.playSound(Sounds.PICK_UP_ITEM);
+    soundController.playSound('pick_up_item');
   };
 
   attachToWindow = () => {

@@ -1,7 +1,6 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
-import Sounds from '@main/sounds/Sounds';
 import { Activity } from '@main/units/Activity';
 import { Coordinates, hypotenuse, pointAt } from '@duzh/geometry';
 import { moveUnit } from '@main/actions/moveUnit';
@@ -27,7 +26,7 @@ export class Teleport implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { soundPlayer } = game;
+    const { soundController } = game;
     const map = unit.getMap();
 
     const maybeSleep = async () => {
@@ -40,7 +39,7 @@ export class Teleport implements UnitAbility {
 
     if (map.contains(coordinates) && !isBlocked(coordinates, map)) {
       unit.spendMana(this.manaCost);
-      soundPlayer.playSound(Sounds.WIZARD_VANISH);
+      soundController.playSound('wizard_vanish');
 
       for (let i = 1; i <= 4; i++) {
         unit.setActivity(Activity.VANISHING, i, unit.getDirection());
@@ -53,7 +52,7 @@ export class Teleport implements UnitAbility {
       await moveUnit(unit, coordinates, game);
       await maybeSleep();
 
-      soundPlayer.playSound(Sounds.WIZARD_APPEAR);
+      soundController.playSound('wizard_appear');
       for (let i = 1; i <= 4; i++) {
         unit.setActivity(Activity.APPEARING, i, unit.getDirection());
         await maybeSleep();
@@ -61,7 +60,7 @@ export class Teleport implements UnitAbility {
 
       unit.setActivity(Activity.STANDING, 1, unit.getDirection());
     } else {
-      soundPlayer.playSound(Sounds.BLOCKED);
+      soundController.playSound('blocked');
     }
   };
 }

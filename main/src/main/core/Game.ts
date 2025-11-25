@@ -1,4 +1,3 @@
-import { MusicController, SoundPlayer } from '@duzh/audio';
 import { AssetBundle } from '@main/assets/AssetBundle';
 import { InventoryController } from '@main/controllers/InventoryController';
 import { ShrineController } from '@main/controllers/ShrineController';
@@ -12,6 +11,8 @@ import { MapController } from '@main/maps/MapController';
 import ObjectFactory from '@main/objects/ObjectFactory';
 import ProjectileFactory from '@main/objects/ProjectileFactory';
 import UnitFactory from '@main/units/UnitFactory';
+import { SoundController } from '@main/sounds/SoundController';
+import { MusicController } from '@main/sounds/MusicController';
 
 export type Game = Readonly<{
   config: GameConfig;
@@ -21,9 +22,9 @@ export type Game = Readonly<{
   itemFactory: ItemFactory;
   unitFactory: UnitFactory;
   objectFactory: ObjectFactory;
-  musicController: MusicController;
   projectileFactory: ProjectileFactory;
-  soundPlayer: SoundPlayer;
+  soundController: SoundController;
+  musicController: MusicController;
   mapController: MapController;
   inventoryController: InventoryController;
   shrineController: ShrineController;

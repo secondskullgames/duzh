@@ -1,6 +1,5 @@
 import { AbilityName } from './AbilityName';
 import Unit, { DefendResult } from '@main/units/Unit';
-import Sounds from '@main/sounds/Sounds';
 import { getMeleeDamage } from '@main/units/UnitUtils';
 import { Coordinates, pointAt } from '@duzh/geometry';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
@@ -9,7 +8,7 @@ import type { UnitAbility } from './UnitAbility';
 import { Game } from '@main/core/Game';
 
 const attack: Attack = {
-  sound: Sounds.SPECIAL_ATTACK,
+  sound: 'special_attack',
   calculateAttackResult: (unit: Unit): AttackResult => {
     const damage = Math.round(getMeleeDamage(unit) * BurningAttack.DAMAGE_COEFFICIENT);
     return { damage };

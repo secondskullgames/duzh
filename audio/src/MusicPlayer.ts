@@ -6,7 +6,7 @@ import { transpose8vb } from './utils.js';
 /**
  * TODO our object hierarchy is kinda fucked up
  */
-export class MusicController {
+export class MusicPlayer {
   private activeMusic: Suite | MusicModel | null = null;
 
   constructor(private readonly soundPlayer: SoundPlayer) {}
@@ -71,10 +71,6 @@ export class MusicController {
 
   playFigure = (figure: Figure) => {
     this.soundPlayer.playSamples(figure, false);
-  };
-
-  stopMusic = () => {
-    this.soundPlayer.stop();
   };
 
   stop = () => {

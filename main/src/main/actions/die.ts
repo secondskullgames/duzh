@@ -1,6 +1,5 @@
 import { gameOver } from './gameOver';
 import Unit from '@main/units/Unit';
-import Sounds from '@main/sounds/Sounds';
 import { random, weightedRandom } from '@duzh/utils/random';
 import { Coordinates } from '@duzh/geometry';
 import MapInstance from '@main/maps/MapInstance';
@@ -15,7 +14,7 @@ const MANA_GLOBE_DROP_CHANCE = 0;
 const VISION_GLOBE_DROP_CHANCE = 0;
 
 export const die = async (unit: Unit, game: Game) => {
-  const { soundPlayer, state, ticker } = game;
+  const { soundController, state, ticker } = game;
   const playerUnit = state.getPlayerUnit();
   const coordinates = unit.getCoordinates();
   const map = unit.getMap();
@@ -27,7 +26,7 @@ export const die = async (unit: Unit, game: Game) => {
     state.setGameOverState({ levelNumber: map.levelNumber });
     return;
   } else {
-    soundPlayer.playSound(Sounds.ENEMY_DIES);
+    soundController.playSound('enemy_dies');
     ticker.log(`${unit.getName()} dies!`, { turn: state.getTurn() });
 
     if (_canDropItems(unit)) {

@@ -5,7 +5,6 @@ import Bonus from './Bonus';
 import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
 import UnitFactory from '@main/units/UnitFactory';
 import { Faction } from '@main/units/Faction';
-import Sounds from '@main/sounds/Sounds';
 import Unit from '@main/units/Unit';
 import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
 import MapInstance from '@main/maps/MapInstance';
@@ -91,11 +90,11 @@ export default class ObjectFactory {
     const lifeToGain = 10;
 
     const onUse = async (unit: Unit, game: Game) => {
-      const { soundPlayer, state, ticker } = game;
+      const { soundController, state, ticker } = game;
       if (unit === state.getPlayerUnit()) {
         if (unit.getLife() < unit.getMaxLife()) {
           const lifeGained = unit.gainLife(lifeToGain);
-          soundPlayer.playSound(Sounds.HEALTH_GLOBE);
+          soundController.playSound('health_globe');
           ticker.log(
             `${unit.getName()} used a health globe and gained ${lifeGained} life.`,
             {
@@ -136,11 +135,11 @@ export default class ObjectFactory {
     const manaToGain = 10;
 
     const onUse = async (unit: Unit, game: Game) => {
-      const { soundPlayer, state, ticker } = game;
+      const { soundController, state, ticker } = game;
       if (unit === state.getPlayerUnit()) {
         if (unit.getMana() < unit.getMaxMana()) {
           const manaGained = unit.gainMana(manaToGain);
-          soundPlayer.playSound(Sounds.HEALTH_GLOBE);
+          soundController.playSound('health_globe');
           ticker.log(
             `${unit.getName()} used a mana globe and gained ${manaGained} mana.`,
             {
@@ -182,7 +181,7 @@ export default class ObjectFactory {
     const radius = 7;
 
     const onUse = async (unit: Unit, game: Game) => {
-      const { soundPlayer, ticker, state } = game;
+      const { soundController, ticker, state } = game;
       if (unit === state.getPlayerUnit()) {
         const playerX = unit.getCoordinates().x;
         const playerY = unit.getCoordinates().y;
@@ -195,7 +194,7 @@ export default class ObjectFactory {
             }
           }
         }
-        soundPlayer.playSound(Sounds.HEALTH_GLOBE);
+        soundController.playSound('health_globe');
         ticker.log(`${unit.getName()} used a vision globe and revealed nearby tiles.`, {
           turn: state.getTurn()
         });

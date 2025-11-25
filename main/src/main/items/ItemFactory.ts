@@ -1,6 +1,5 @@
 import InventoryItem from './InventoryItem';
 import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import Sounds from '../sounds/Sounds';
 import Unit from '../units/Unit';
 import Equipment from '../equipment/Equipment';
 import MapItem from '../objects/MapItem';
@@ -28,8 +27,8 @@ export class ItemFactory {
 
   createLifePotion = (lifeRestored: number): InventoryItem => {
     const onUse: ItemProc = async (item: InventoryItem, unit: Unit, game: Game) => {
-      const { soundPlayer, state, ticker } = game;
-      soundPlayer.playSound(Sounds.USE_POTION);
+      const { soundController, state, ticker } = game;
+      soundController.playSound('use_potion');
       const lifeGained = unit.gainLife(lifeRestored);
       ticker.log(`${unit.getName()} used ${item.name} and gained ${lifeGained} life.`, {
         turn: state.getTurn()
@@ -46,8 +45,8 @@ export class ItemFactory {
 
   createManaPotion = (name: string, manaRestored: number): InventoryItem => {
     const onUse: ItemProc = async (item: InventoryItem, unit: Unit, game: Game) => {
-      const { soundPlayer, state, ticker } = game;
-      soundPlayer.playSound(Sounds.USE_POTION);
+      const { soundController, state, ticker } = game;
+      soundController.playSound('use_potion');
       const manaGained = unit.gainMana(manaRestored);
       ticker.log(`${unit.getName()} used ${item.name} and gained ${manaGained} mana.`, {
         turn: state.getTurn()

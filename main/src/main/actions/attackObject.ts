@@ -1,14 +1,13 @@
 import Unit from '../units/Unit';
 import Spawner, { SpawnerState } from '../objects/Spawner';
-import Sounds from '../sounds/Sounds';
 import GameObject, { ObjectType } from '../objects/GameObject';
 import { Activity } from '../units/Activity';
 import { sleep } from '@lib/utils/promises';
 import { Game } from '@main/core/Game';
 
 export const attackObject = async (unit: Unit, target: GameObject, game: Game) => {
-  const { soundPlayer } = game;
-  soundPlayer.playSound(Sounds.SPECIAL_ATTACK);
+  const { soundController } = game;
+  soundController.playSound('special_attack');
   unit.setActivity(Activity.ATTACKING, 1, unit.getDirection());
   await sleep(300);
   if (target.getObjectType() === ObjectType.SPAWNER) {

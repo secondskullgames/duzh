@@ -2,7 +2,6 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit, { DefendResult } from '@main/units/Unit';
 import { getMeleeDamage } from '@main/units/UnitUtils';
-import Sounds from '@main/sounds/Sounds';
 import { Coordinates, pointAt } from '@duzh/geometry';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
@@ -36,7 +35,7 @@ export class MinorStunAttack implements UnitAbility {
       unit.spendMana(this.manaCost);
 
       const attack: Attack = {
-        sound: Sounds.SPECIAL_ATTACK,
+        sound: 'special_attack',
         calculateAttackResult: (unit: Unit): AttackResult => {
           const damage = Math.round(
             getMeleeDamage(unit) * MinorStunAttack.DAMAGE_COEFFICIENT
