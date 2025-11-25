@@ -6,7 +6,7 @@ import {
   getMeleeDamage,
   getRangedDamage
 } from '@main/units/UnitUtils';
-import { Direction } from '@lib/geometry/Direction';
+import { Direction } from '@duzh/geometry';
 import { vi } from 'vitest';
 
 describe('UnitUtils', () => {

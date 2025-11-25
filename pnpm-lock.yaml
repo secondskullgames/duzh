@@ -85,10 +85,16 @@ importers:
       '@duzh/utils':
         specifier: workspace:*
         version: link:../utils
+      pathfinding:
+        specifier: catalog:pathfinding
+        version: 0.4.18
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
         version: 22.19.1
+      '@types/pathfinding':
+        specifier: catalog:pathfinding
+        version: 0.0.9
       glob:
         specifier: 'catalog:'
         version: 11.1.0
@@ -104,6 +110,9 @@ importers:
       typescript:
         specifier: catalog:typescript
         version: 5.5.4
+      vitest:
+        specifier: catalog:vitest
+        version: 4.0.13(@types/node@22.19.1)(terser@5.44.1)(tsx@4.20.6)
 
   main:
     dependencies:
@@ -119,9 +128,6 @@ importers:
       '@duzh/utils':
         specifier: workspace:*
         version: link:../utils
-      pathfinding:
-        specifier: catalog:pathfinding
-        version: 0.4.18
       zod:
         specifier: catalog:zod
         version: 4.1.12
@@ -129,9 +135,6 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 22.19.1
-      '@types/pathfinding':
-        specifier: catalog:pathfinding
-        version: 0.0.9
       '@vitest/coverage-v8':
         specifier: catalog:vitest
         version: 4.0.13(vitest@4.0.13(@types/node@22.19.1)(terser@5.44.1)(tsx@4.20.6))

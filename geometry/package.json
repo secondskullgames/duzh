@@ -12,13 +12,16 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "@types/pathfinding": "catalog:pathfinding",
     "glob": "catalog:",
     "globals": "catalog:",
     "prettier": "catalog:",
     "rimraf": "catalog:",
-    "typescript": "catalog:typescript"
+    "typescript": "catalog:typescript",
+    "vitest": "catalog:vitest"
   },
   "dependencies": {
-    "@duzh/utils": "workspace:*"
+    "@duzh/utils": "workspace:*",
+    "pathfinding": "catalog:pathfinding"
   }
 }

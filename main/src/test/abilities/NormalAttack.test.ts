@@ -1,7 +1,7 @@
 import Unit from '@main/units/Unit';
 import { GameState } from '@main/core/GameState';
 import MapInstance from '@main/maps/MapInstance';
-import { Direction } from '@lib/geometry/Direction';
+import { Direction } from '@duzh/geometry';
 import { Game } from '@main/core/Game';
 import { vi } from 'vitest';
 

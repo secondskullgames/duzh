@@ -4,6 +4,7 @@ export * from './Direction.js';
 export * from './Grid.js';
 export * from './MultiGrid.js';
 export * from './Offsets.js';
+export * from './Pathfinder.js';
 export * from './Pixel.js';
 export * from './Rect.js';
 export * from './RectUtils.js';
