@@ -1,7 +1,7 @@
-import { MapSpec } from '@duzh/models';
+import { AssetBundle } from '@main/assets/AssetBundle';
 
-export interface GameConfig {
-  readonly mapSpecs: MapSpec[];
-  readonly screenWidth: number;
-  readonly screenHeight: number;
-}
+export type GameConfig = Readonly<{
+  assetBundle: AssetBundle;
+  screenWidth: number;
+  screenHeight: number;
+}>;

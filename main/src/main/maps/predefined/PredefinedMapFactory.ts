@@ -1,11 +1,10 @@
-import Colors from '@main/graphics/Colors';
 import { DoorDirection, PredefinedMapModel, TileType, UnitModel } from '@duzh/models';
 import { Coordinates, Grid, MultiGrid } from '@duzh/geometry';
 import { Image } from '@lib/graphics/images/Image';
 import { Color } from '@lib/graphics/Color';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { MapTemplate, ObjectTemplate } from '../MapTemplate';
-import { AssetBundle } from '@main/assets/AssetBundle';
+import { AssetBundle, AssetBundleImpl } from '@main/assets/AssetBundle';
 
 export class PredefinedMapFactory {
   constructor(
@@ -80,7 +79,9 @@ export class PredefinedMapFactory {
           if (!hexColors.has(color.hex)) {
             hexColors.add(color.hex);
           }
-          const startingPointColor = Colors.colorForName(model.startingPointColor);
+          const startingPointColor = this.assetBundle.colorForName(
+            model.startingPointColor
+          );
           if (Color.equals(color, startingPointColor)) {
             return { x, y };
           }
@@ -186,7 +187,7 @@ export class PredefinedMapFactory {
     } = {};
 
     for (const [colorName, unitClass] of Object.entries(source ?? {})) {
-      const color = Colors.colorForName(colorName);
+      const color = this.assetBundle.colorForName(colorName);
       hexColors[color.hex] = unitClass;
     }
     return hexColors;

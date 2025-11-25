@@ -178,7 +178,7 @@ export class ItemFactory {
     const model = this.assetBundle.getEquipmentModel(modelId);
     const sprite = await this.spriteFactory.createStaticSprite(
       model.mapIcon,
-      loadPaletteSwaps(model.paletteSwaps)
+      loadPaletteSwaps(model.paletteSwaps, this.assetBundle)
     );
     const inventoryItem: InventoryItem = await this.createInventoryEquipment(modelId);
     return new MapItem({
@@ -195,7 +195,7 @@ export class ItemFactory {
     const spriteName = model.sprite;
     const sprite = await this.spriteFactory.createEquipmentSprite(
       spriteName,
-      loadPaletteSwaps(model.paletteSwaps)
+      loadPaletteSwaps(model.paletteSwaps, this.assetBundle)
     );
 
     // TODO wtf is this
@@ -254,7 +254,7 @@ export class ItemFactory {
     const inventoryItem = await this.createInventoryItem(model);
     const sprite = await this.spriteFactory.createStaticSprite(
       model.mapSprite,
-      loadPaletteSwaps(model.paletteSwaps)
+      loadPaletteSwaps(model.paletteSwaps, this.assetBundle)
     );
     return new MapItem({ name: model.name, coordinates, map, sprite, inventoryItem });
   };

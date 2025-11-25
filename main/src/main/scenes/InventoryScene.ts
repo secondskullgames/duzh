@@ -17,11 +17,11 @@ import { FontName } from '@main/graphics/Fonts';
 import { Pixel } from '@duzh/geometry';
 import { Color } from '@lib/graphics/Color';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
-import Colors from '@main/graphics/Colors';
 import { getSlotName, splitTooltipToLines } from '@main/equipment/EquipmentUtils';
 import { LINE_HEIGHT } from '@main/graphics/constants';
 import { Game } from '@main/core/Game';
 import { checkNotNull } from '@duzh/utils/preconditions';
+import { InterfaceColors } from '@main/graphics/InterfaceColors';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -183,7 +183,7 @@ export class InventoryScene implements Scene {
       text,
       fontName,
       color,
-      backgroundColor: Colors.BLACK
+      backgroundColor: InterfaceColors.BLACK
     });
     drawAligned(imageData, graphics, pixel, textAlign);
   };
@@ -214,8 +214,8 @@ export class InventoryScene implements Scene {
       FontName.APPLE_II,
       { x: this.inventoryWidth / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
       inventory.getSelectedCategory() === InventoryCategory.EQUIPMENT
-        ? Colors.YELLOW
-        : Colors.WHITE,
+        ? InterfaceColors.YELLOW
+        : InterfaceColors.WHITE,
       Alignment.CENTER,
       graphics
     );
@@ -224,8 +224,8 @@ export class InventoryScene implements Scene {
       FontName.APPLE_II,
       { x: (this.inventoryWidth * 3) / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
       inventory.getSelectedCategory() === InventoryCategory.ITEMS
-        ? Colors.YELLOW
-        : Colors.WHITE,
+        ? InterfaceColors.YELLOW
+        : InterfaceColors.WHITE,
       Alignment.CENTER,
       graphics
     );
@@ -241,7 +241,9 @@ export class InventoryScene implements Scene {
         text,
         FontName.APPLE_II,
         { x: equipmentLeft, y },
-        inventory.getSelectedEquipment() === equipment ? Colors.YELLOW : Colors.WHITE,
+        inventory.getSelectedEquipment() === equipment
+          ? InterfaceColors.YELLOW
+          : InterfaceColors.WHITE,
         Alignment.LEFT,
         graphics
       );
@@ -264,7 +266,7 @@ export class InventoryScene implements Scene {
         inventoryCategories[i],
         FontName.APPLE_II,
         { x, y: top },
-        Colors.WHITE,
+        InterfaceColors.WHITE,
         Alignment.CENTER,
         graphics
       );
@@ -276,7 +278,7 @@ export class InventoryScene implements Scene {
           width: categoryWidth - 8,
           height: 1
         };
-        graphics.fillRect(rect, Colors.WHITE);
+        graphics.fillRect(rect, InterfaceColors.WHITE);
       }
     }
 
@@ -289,9 +291,9 @@ export class InventoryScene implements Scene {
         const y = INVENTORY_TOP + 64 + LINE_HEIGHT * i;
         let color;
         if (items[i] === inventory.getSelectedItem()) {
-          color = Colors.YELLOW;
+          color = InterfaceColors.YELLOW;
         } else {
-          color = Colors.WHITE;
+          color = InterfaceColors.WHITE;
         }
         this._drawText(
           items[i].name,
@@ -345,7 +347,7 @@ export class InventoryScene implements Scene {
             line,
             FontName.APPLE_II,
             { x: lineLeft, y: lineTop },
-            Colors.WHITE,
+            InterfaceColors.WHITE,
             Alignment.LEFT,
             graphics
           );

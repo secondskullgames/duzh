@@ -1,15 +1,18 @@
-import Colors from '@main/graphics/Colors';
 import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
+import { AssetBundle } from '@main/assets/AssetBundle';
 
 /**
  * @param paletteSwaps Contains a map of color names, to be converted to hex format
  */
-export const loadPaletteSwaps = (paletteSwaps?: Record<string, string>): PaletteSwaps => {
+export const loadPaletteSwaps = (
+  paletteSwaps: Record<string, string> | undefined,
+  assetBundle: AssetBundle
+): PaletteSwaps => {
   const builder = PaletteSwaps.builder();
   if (paletteSwaps) {
     for (const [srcName, destName] of Object.entries(paletteSwaps)) {
-      const srcColor = Colors.colorForName(srcName);
-      const destColor = Colors.colorForName(destName);
+      const srcColor = assetBundle.colorForName(srcName);
+      const destColor = assetBundle.colorForName(destName);
       builder.addMapping(srcColor, destColor);
     }
   }

@@ -6,11 +6,11 @@ import { toggleFullScreen } from '@lib/utils/dom';
 import { TextRenderer } from '@main/graphics/TextRenderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { FontName } from '@main/graphics/Fonts';
-import Colors from '@main/graphics/Colors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Pixel } from '@duzh/geometry';
 import { Color } from '@lib/graphics/Color';
 import { Game } from '@main/core/Game';
+import { InterfaceColors } from '@main/graphics/InterfaceColors';
 
 const BACKGROUND_FILENAME = 'bordered_background';
 const LINE_HEIGHT = 15;
@@ -73,7 +73,7 @@ export class CharacterScene implements Scene {
       'Character Statistics',
       FontName.APPLE_II,
       { x: graphics.getWidth() / 2, y: top },
-      Colors.WHITE,
+      InterfaceColors.WHITE,
       Alignment.CENTER,
       graphics
     );
@@ -94,7 +94,7 @@ export class CharacterScene implements Scene {
           line,
           FontName.APPLE_II,
           { x: 20, y: top },
-          Colors.WHITE,
+          InterfaceColors.WHITE,
           Alignment.LEFT,
           graphics
         );
@@ -117,7 +117,7 @@ export class CharacterScene implements Scene {
           line,
           FontName.APPLE_II,
           { x: 20, y: top },
-          Colors.WHITE,
+          InterfaceColors.WHITE,
           Alignment.LEFT,
           graphics
         );
@@ -138,7 +138,7 @@ export class CharacterScene implements Scene {
       text,
       fontName,
       color,
-      backgroundColor: Colors.BLACK
+      backgroundColor: InterfaceColors.BLACK
     });
     drawAligned(imageData, graphics, pixel, textAlign);
   };

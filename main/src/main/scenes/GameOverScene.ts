@@ -4,7 +4,6 @@ import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { TextRenderer } from '@main/graphics/TextRenderer';
 import { Graphics } from '@lib/graphics/Graphics';
 import { FontName } from '@main/graphics/Fonts';
-import Colors from '@main/graphics/Colors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Pixel } from '@duzh/geometry';
 import { Color } from '@lib/graphics/Color';
@@ -14,6 +13,7 @@ import { showTitleScreen } from '@main/actions/showTitleScreen';
 import { formatTimestamp } from '@lib/utils/time';
 import { Game } from '@main/core/Game';
 import { checkNotNull } from '@duzh/utils/preconditions';
+import { InterfaceColors } from '@main/graphics/InterfaceColors';
 
 const BACKGROUND_FILENAME = 'gameover';
 
@@ -50,7 +50,7 @@ export class GameOverScene implements Scene {
         line,
         FontName.APPLE_II,
         { x: 320, y },
-        Colors.WHITE,
+        InterfaceColors.WHITE,
         Alignment.CENTER,
         graphics
       );
@@ -70,7 +70,7 @@ export class GameOverScene implements Scene {
       text,
       fontName,
       color,
-      backgroundColor: Colors.BLACK
+      backgroundColor: InterfaceColors.BLACK
     });
     drawAligned(imageData, graphics, pixel, textAlign);
   };

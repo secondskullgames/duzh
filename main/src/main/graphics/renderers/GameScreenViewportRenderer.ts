@@ -1,7 +1,6 @@
 import { Renderer } from './Renderer';
 import Equipment from '../../equipment/Equipment';
 import Unit from '../../units/Unit';
-import Colors from '../Colors';
 import { TILE_HEIGHT, TILE_WIDTH } from '../constants';
 import Sprite from '../sprites/Sprite';
 import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
@@ -15,6 +14,7 @@ import { getItem, getMovableBlock } from '@main/maps/MapUtils';
 import { ShrineMenuRenderer } from '@main/graphics/renderers/ShrineMenuRenderer';
 import { Game } from '@main/core/Game';
 import MapInstance from '@main/maps/MapInstance';
+import { InterfaceColors } from '@main/graphics/InterfaceColors';
 
 const SHADOW_FILENAME = 'shadow';
 
@@ -28,7 +28,7 @@ export default class GameScreenViewportRenderer implements Renderer {
   render = async (graphics: Graphics) => {
     const { state } = this.game;
     const map = state.getPlayerUnit().getMap();
-    graphics.fill(Colors.BLACK);
+    graphics.fill(InterfaceColors.BLACK);
 
     this._renderTiles(map, graphics);
     await this._renderEntities(map, graphics);
@@ -154,14 +154,14 @@ export default class GameScreenViewportRenderer implements Renderer {
 
     if (unit) {
       if (unit === state.getPlayerUnit()) {
-        return this._drawEllipse(coordinates, Colors.GREEN, graphics);
+        return this._drawEllipse(coordinates, InterfaceColors.GREEN, graphics);
       } else {
-        return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);
+        return this._drawEllipse(coordinates, InterfaceColors.DARK_GRAY, graphics);
       }
     }
 
     if (getItem(map, coordinates) || getMovableBlock(map, coordinates)) {
-      return this._drawEllipse(coordinates, Colors.DARK_GRAY, graphics);
+      return this._drawEllipse(coordinates, InterfaceColors.DARK_GRAY, graphics);
     }
   };
 
@@ -171,10 +171,12 @@ export default class GameScreenViewportRenderer implements Renderer {
     graphics: Graphics
   ) => {
     const pixel = this._gridToPixel(coordinates);
-    const paletteSwaps = PaletteSwaps.builder().addMapping(Colors.BLACK, color).build();
+    const paletteSwaps = PaletteSwaps.builder()
+      .addMapping(InterfaceColors.BLACK, color)
+      .build();
     const image = await this.imageFactory.getImage({
       filename: SHADOW_FILENAME,
-      transparentColor: Colors.WHITE,
+      transparentColor: InterfaceColors.WHITE,
       paletteSwaps
     });
     graphics.drawImage(image, pixel);

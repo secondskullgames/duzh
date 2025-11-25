@@ -37,7 +37,7 @@ export default class UnitFactory {
     const model = this.assetBundle.getUnitModel(params.modelId);
     const sprite = await spriteFactory.createUnitSprite(
       model.sprite,
-      loadPaletteSwaps(model.paletteSwaps)
+      loadPaletteSwaps(model.paletteSwaps, this.assetBundle)
     );
     const equipmentList: Equipment[] = [];
     for (const equipmentClass of model.equipment ?? []) {

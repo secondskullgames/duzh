@@ -5,7 +5,6 @@ import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Graphics } from '@lib/graphics/Graphics';
 import { formatTimestamp } from '@lib/utils/time';
 import { FontName } from '@main/graphics/Fonts';
-import Colors from '@main/graphics/Colors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Pixel } from '@duzh/geometry';
 import { Color } from '@lib/graphics/Color';
@@ -13,6 +12,7 @@ import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { showTitleScreen } from '@main/actions/showTitleScreen';
 import { Game } from '@main/core/Game';
+import { InterfaceColors } from '@main/graphics/InterfaceColors';
 
 const BACKGROUND_FILENAME = 'victory2';
 
@@ -47,7 +47,7 @@ export class VictoryScene implements Scene {
         line,
         FontName.APPLE_II,
         { x: 320, y },
-        Colors.WHITE,
+        InterfaceColors.WHITE,
         Alignment.CENTER,
         graphics
       );
@@ -67,7 +67,7 @@ export class VictoryScene implements Scene {
       text,
       fontName,
       color,
-      backgroundColor: Colors.BLACK
+      backgroundColor: InterfaceColors.BLACK
     });
     drawAligned(imageData, graphics, pixel, textAlign);
   };

@@ -1,4 +1,3 @@
-import Colors from './Colors';
 import { FontName } from './Fonts';
 import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import { createCanvas } from '@lib/utils/dom';
@@ -7,6 +6,7 @@ import { replaceColors } from '@lib/graphics/images/ImageUtils';
 import { Color } from '@lib/graphics/Color';
 import { FontBundle, FontInstance } from '@lib/graphics/Fonts';
 import { Graphics } from '@lib/graphics/Graphics';
+import { InterfaceColors } from '@main/graphics/InterfaceColors';
 
 export type TextParams = Readonly<{
   text: string;
@@ -41,7 +41,7 @@ export class TextRenderer {
 
     const width = text.length * font.letterWidth;
     const height = font.letterHeight;
-    this.graphics.fill(Colors.WHITE);
+    this.graphics.fill(InterfaceColors.WHITE);
 
     for (let i = 0; i < text.length; i++) {
       const char = text.charAt(i);
@@ -52,8 +52,8 @@ export class TextRenderer {
     const imageData = this.graphics.getImageData({ left: 0, top: 0, width, height });
 
     const paletteSwaps = PaletteSwaps.builder()
-      .addMapping(Colors.BLACK, color)
-      .addMapping(Colors.WHITE, backgroundColor)
+      .addMapping(InterfaceColors.BLACK, color)
+      .addMapping(InterfaceColors.WHITE, backgroundColor)
       .build();
     const swapped = replaceColors(imageData, paletteSwaps);
 

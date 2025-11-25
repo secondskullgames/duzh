@@ -61,7 +61,7 @@ export class FontFactory {
     const width = NUM_CHARACTERS * fontDefinition.letterWidth;
     const image = await this.imageFactory.getImage({
       filename: `fonts/${fontDefinition.src}`
-      //transparentColor: Colors.WHITE
+      //transparentColor: InterfaceColors.WHITE
     });
 
     const canvas = createCanvas({

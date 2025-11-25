@@ -10,6 +10,7 @@ import { GeneratedMapFactory } from './generated/GeneratedMapFactory';
 import { MapHydrator } from './MapHydrator';
 import { MapTemplate } from './MapTemplate';
 import { PredefinedMapFactory } from './predefined/PredefinedMapFactory';
+import { AssetBundle } from '@main/assets/AssetBundle';
 
 export interface MapController {
   loadFirstMap: (game: Game) => Promise<void>;
@@ -19,6 +20,7 @@ export interface MapController {
 }
 
 type Props = Readonly<{
+  assetBundle: AssetBundle;
   predefinedMapFactory: PredefinedMapFactory;
   generatedMapFactory: GeneratedMapFactory;
   mapHydrator: MapHydrator;
@@ -27,6 +29,7 @@ type Props = Readonly<{
 }>;
 
 export class MapControllerImpl implements MapController {
+  private readonly assetBundle: AssetBundle;
   private readonly predefinedMapFactory: PredefinedMapFactory;
   private readonly generatedMapFactory: GeneratedMapFactory;
   private readonly mapHydrator: MapHydrator;
@@ -34,6 +37,7 @@ export class MapControllerImpl implements MapController {
   private readonly musicController: MusicController;
 
   constructor(props: Props) {
+    this.assetBundle = props.assetBundle;
     this.predefinedMapFactory = props.predefinedMapFactory;
     this.generatedMapFactory = props.generatedMapFactory;
     this.mapHydrator = props.mapHydrator;
@@ -42,9 +46,9 @@ export class MapControllerImpl implements MapController {
   }
 
   loadFirstMap = async (game: Game) => {
-    const { unitFactory, musicController } = this;
+    const { unitFactory, musicController, assetBundle } = this;
     const { state } = game;
-    const map = await this._loadMap(game.config.mapSpecs[0].id, game);
+    const map = await this._loadMap(assetBundle.getMapList()[0].id, game);
     const playerUnit = await unitFactory.createPlayerUnit(
       map.getStartingCoordinates(),
       map
@@ -59,11 +63,11 @@ export class MapControllerImpl implements MapController {
   };
 
   loadNextMap = async (game: Game) => {
-    const { musicController } = this;
+    const { musicController, assetBundle } = this;
     const { state } = game;
     const currentMap = state.getPlayerUnit().getMap();
     musicController.stop();
-    const { mapSpecs } = game.config;
+    const mapSpecs = assetBundle.getMapList();
     const nextMapIndex = mapSpecs.findIndex(spec => spec.id === currentMap.id) + 1;
     if (nextMapIndex >= mapSpecs.length) {
       state.endGameTimer();
@@ -84,9 +88,9 @@ export class MapControllerImpl implements MapController {
   };
 
   loadPreviousMap = async (game: Game) => {
-    const { musicController } = this;
+    const { musicController, assetBundle } = this;
     const { state } = game;
-    const { mapSpecs } = game.config;
+    const mapSpecs = assetBundle.getMapList();
     const playerUnit = state.getPlayerUnit();
     const currentMap = playerUnit.getMap();
     const previousMapIndex = mapSpecs.findIndex(spec => spec.id === currentMap.id) - 1;
@@ -119,9 +123,10 @@ export class MapControllerImpl implements MapController {
   };
 
   private _loadMap = async (mapId: string, game: Game): Promise<MapInstance> => {
-    const { predefinedMapFactory, generatedMapFactory, mapHydrator } = this;
-    const { state, config } = game;
-    const mapSpec = checkNotNull(config.mapSpecs.find(spec => spec.id === mapId));
+    const { predefinedMapFactory, generatedMapFactory, mapHydrator, assetBundle } = this;
+    const { state } = game;
+    const mapSpecs = assetBundle.getMapList();
+    const mapSpec = checkNotNull(mapSpecs.find(spec => spec.id === mapId));
     const id = mapSpec.id;
     if (!state.getMap(id)) {
       let template: MapTemplate;

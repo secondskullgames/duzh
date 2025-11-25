@@ -16,9 +16,11 @@ import Shrine from '@main/objects/Shrine';
 import Door, { DoorState } from '@main/objects/Door';
 import { DoorDirection } from '@duzh/models';
 import { Game } from '@main/core/Game';
+import { AssetBundle } from '@main/assets/AssetBundle';
 
 export default class ObjectFactory {
   constructor(
+    private readonly assetBundle: AssetBundle,
     private readonly spriteFactory: SpriteFactory,
     private readonly unitFactory: UnitFactory
   ) {}
@@ -122,10 +124,13 @@ export default class ObjectFactory {
   ): Promise<GameObject> => {
     const sprite = await this.spriteFactory.createStaticSprite(
       'map_health_globe',
-      loadPaletteSwaps({
-        DARK_RED: 'DARK_BLUE',
-        RED: 'BLUE'
-      })
+      loadPaletteSwaps(
+        {
+          DARK_RED: 'DARK_BLUE',
+          RED: 'BLUE'
+        },
+        this.assetBundle
+      )
     );
 
     const manaToGain = 10;
@@ -165,10 +170,13 @@ export default class ObjectFactory {
     // TODO same colors as mana globe
     const sprite = await this.spriteFactory.createStaticSprite(
       'map_health_globe',
-      loadPaletteSwaps({
-        DARK_RED: 'DARK_BLUE',
-        RED: 'BLUE'
-      })
+      loadPaletteSwaps(
+        {
+          DARK_RED: 'DARK_BLUE',
+          RED: 'BLUE'
+        },
+        this.assetBundle
+      )
     );
 
     const radius = 7;
