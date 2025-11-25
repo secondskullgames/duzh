@@ -1,4 +1,4 @@
-import { Pixel } from '@lib/geometry/Pixel';
+import { Pixel } from '@duzh/geometry';
 import { Graphics } from '@lib/graphics/Graphics';
 
 export enum Alignment {

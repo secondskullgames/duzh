@@ -1,5 +1,5 @@
-import { Heuristic, Pathfinder } from './Pathfinder';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Heuristic, Pathfinder } from './Pathfinder.js';
+import { Coordinates } from './Coordinates.js';
 import * as PF from 'pathfinding';
 import { DiagonalMovement } from 'pathfinding';
 

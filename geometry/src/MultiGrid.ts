@@ -1,4 +1,4 @@
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from './Coordinates.js';
 import { checkArgument, checkState } from '@duzh/utils/preconditions';
 
 type Props = Readonly<{
@@ -6,7 +6,7 @@ type Props = Readonly<{
   height: number;
 }>;
 
-export default class MultiGrid<T> {
+export class MultiGrid<T> {
   private readonly width: number;
   private readonly height: number;
   private readonly array: T[][][];

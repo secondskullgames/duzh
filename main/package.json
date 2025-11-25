@@ -14,7 +14,6 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "@types/pathfinding": "catalog:pathfinding",
     "@vitest/coverage-v8": "catalog:vitest",
     "glob": "catalog:",
     "globals": "catalog:",
@@ -26,9 +25,9 @@
   },
   "dependencies": {
     "@duzh/audio": "workspace:*",
+    "@duzh/geometry": "workspace:*",
     "@duzh/models": "workspace:*",
     "@duzh/utils": "workspace:*",
-    "pathfinding": "catalog:pathfinding",
     "zod": "catalog:zod"
   }
 }

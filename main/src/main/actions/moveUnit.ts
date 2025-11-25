@@ -1,5 +1,5 @@
 import Unit from '../units/Unit';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
 import { getBonus } from '@main/maps/MapUtils';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';

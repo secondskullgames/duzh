@@ -1,11 +1,11 @@
 import { SoundPlayer } from '@duzh/audio';
 import { TileType } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
-import { Coordinates } from '@lib/geometry/Coordinates';
-import { isAdjacent, offsetsToDirection, pointAt } from '@lib/geometry/CoordinatesUtils';
-import { Direction } from '@lib/geometry/Direction';
-import { Pixel } from '@lib/geometry/Pixel';
-import { Rect } from '@lib/geometry/Rect';
+import { Coordinates } from '@duzh/geometry';
+import { isAdjacent, offsetsToDirection, pointAt } from '@duzh/geometry';
+import { Direction } from '@duzh/geometry';
+import { Pixel } from '@duzh/geometry';
+import { Rect } from '@duzh/geometry';
 import { Color } from '@lib/graphics/Color';
 import { Graphics } from '@lib/graphics/Graphics';
 import {

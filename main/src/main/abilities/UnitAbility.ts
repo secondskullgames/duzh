@@ -20,7 +20,7 @@ import { Teleport } from './Teleport';
 import { Scorpion } from './Scorpion';
 import { Cleave } from './Cleave';
 import Unit from '@main/units/Unit';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import { BurningAttack } from '@main/abilities/BurningAttack';
 import { FastTeleport } from '@main/abilities/FastTeleport';
 import { ShootFrostbolt } from '@main/abilities/ShootFrostbolt';

@@ -2,7 +2,7 @@ import GameObject, { ObjectType } from './GameObject';
 import Unit from '@main/units/Unit';
 import Sprite from '@main/graphics/sprites/Sprite';
 import MapInstance from '@main/maps/MapInstance';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import { Game } from '@main/core/Game';
 
 export enum SpawnerState {

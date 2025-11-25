@@ -3,10 +3,10 @@ import { checkNotNull } from '@duzh/utils/preconditions';
 import { randChance, randChoice } from '@duzh/utils/random';
 import { Faction } from '@main/units/Faction';
 import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
 import { Feature } from '@main/utils/features';
-import { hypotenuse } from '@lib/geometry/CoordinatesUtils';
+import { hypotenuse } from '@duzh/geometry';
 import { Game } from '@main/core/Game';
 
 export const spawnFogUnits = async (map: MapInstance, game: Game) => {

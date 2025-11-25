@@ -1,7 +1,6 @@
 import Connection from './Connection';
 import Section from './Section';
-import { Coordinates } from '@lib/geometry/Coordinates';
-import { Rect } from '@lib/geometry/Rect';
+import { Coordinates, Rect } from '@duzh/geometry';
 import { max, min } from '@duzh/utils/arrays';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { randInt } from '@duzh/utils/random';

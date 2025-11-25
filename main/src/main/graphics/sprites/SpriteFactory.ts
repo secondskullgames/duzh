@@ -11,7 +11,7 @@ import Spawner, { SpawnerState } from '../../objects/Spawner';
 import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import Colors from '@main/graphics/Colors';
 import Unit from '@main/units/Unit';
-import { Direction } from '@lib/geometry/Direction';
+import { Direction } from '@duzh/geometry';
 import { fillTemplate } from '@lib/utils/templates';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Image } from '@lib/graphics/images/Image';

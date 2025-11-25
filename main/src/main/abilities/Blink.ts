@@ -2,13 +2,11 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
 import MapInstance from '@main/maps/MapInstance';
-import { Coordinates } from '@lib/geometry/Coordinates';
-import { pointAt } from '@lib/geometry/CoordinatesUtils';
+import { Coordinates, Direction, pointAt } from '@duzh/geometry';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Feature } from '@main/utils/features';
 import { isBlocked } from '@main/maps/MapUtils';
 import { checkState } from '@duzh/utils/preconditions';
-import { Direction } from '@lib/geometry/Direction';
 import { Game } from '@main/core/Game';
 
 export class Blink implements UnitAbility {

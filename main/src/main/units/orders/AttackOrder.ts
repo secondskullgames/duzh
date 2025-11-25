@@ -1,5 +1,5 @@
 import { OrderType } from './UnitOrder';
-import { Direction } from '@lib/geometry/Direction';
+import { Direction } from '@duzh/geometry';
 
 /**
  * An order in which the unit moves in the specified direction,

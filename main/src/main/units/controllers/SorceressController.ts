@@ -3,7 +3,7 @@ import { UnitOrder } from '../orders/UnitOrder';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
 import { ShootUnitStationaryBehavior } from '../behaviors/ShootUnitStationaryBehavior';
 import Unit from '@main/units/Unit';
-import { isInStraightLine } from '@lib/geometry/CoordinatesUtils';
+import { isInStraightLine } from '@duzh/geometry';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { randChance } from '@duzh/utils/random';
 import { KnightMoveBehavior } from '@main/units/behaviors/KnightMoveBehavior';

@@ -7,7 +7,7 @@ import { formatTimestamp } from '@lib/utils/time';
 import { FontName } from '@main/graphics/Fonts';
 import Colors from '@main/graphics/Colors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
-import { Pixel } from '@lib/geometry/Pixel';
+import { Pixel } from '@duzh/geometry';
 import { Color } from '@lib/graphics/Color';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';

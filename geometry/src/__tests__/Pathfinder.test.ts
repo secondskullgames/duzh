@@ -1,6 +1,7 @@
-import { Coordinates } from '@lib/geometry/Coordinates';
-import { PathFinder_3rdParty } from '@main/geometry/PathFinder_3rdParty';
-import { Heuristic } from '@main/geometry/Pathfinder';
+import { Coordinates } from '../Coordinates.js';
+import { PathFinder_3rdParty } from '../PathFinder_3rdParty.js';
+import { Heuristic } from '../Pathfinder.js';
+import { describe, expect, test } from 'vitest';
 
 describe('Pathfinder', () => {
   describe('example scenario', () => {

@@ -1,4 +1,4 @@
-import { Pixel } from '@lib/geometry/Pixel';
+import { Pixel } from '@duzh/geometry';
 
 export type ArrowKey = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
 export type NumberKey = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '0';

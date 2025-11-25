@@ -2,7 +2,7 @@ import Sprite from '../graphics/sprites/Sprite';
 import Entity from '../entities/Entity';
 import MapInstance from '../maps/MapInstance';
 import { TileType } from '@duzh/models';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import { EntityType } from '@main/entities/EntityType';
 
 type Props = Readonly<{

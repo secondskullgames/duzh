@@ -1,5 +1,6 @@
 packages:
   - 'audio'
+  - 'geometry'
   - 'main'
   - 'models'
   - 'utils'

@@ -1,5 +1,5 @@
 import Equipment from './Equipment';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { isBlocked } from '@main/maps/MapUtils';
 import { ShootBolt } from '@main/abilities/ShootBolt';

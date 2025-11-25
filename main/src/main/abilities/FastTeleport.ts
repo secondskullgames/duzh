@@ -3,9 +3,8 @@ import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
 import Sounds from '@main/sounds/Sounds';
 import { Activity } from '@main/units/Activity';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates, pointAt } from '@duzh/geometry';
 import { moveUnit } from '@main/actions/moveUnit';
-import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';
 

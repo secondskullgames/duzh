@@ -3,7 +3,7 @@ import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
 import Sounds from '@main/sounds/Sounds';
 import BasicEnemyController from '@main/units/controllers/BasicEnemyController';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';

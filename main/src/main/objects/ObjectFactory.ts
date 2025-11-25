@@ -11,7 +11,7 @@ import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
 import MapInstance from '@main/maps/MapInstance';
 import { getBonus } from '@main/maps/MapUtils';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import Shrine from '@main/objects/Shrine';
 import Door, { DoorState } from '@main/objects/Door';
 import { DoorDirection } from '@duzh/models';

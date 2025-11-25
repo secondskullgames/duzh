@@ -7,7 +7,7 @@ import RoomRegion from './RoomRegion';
 import TileGenerator from './TileGenerator';
 import { AbstractMapGenerator } from '../AbstractMapGenerator';
 import { TileType } from '@duzh/models';
-import Grid from '@lib/geometry/Grid';
+import { Grid } from '@duzh/geometry';
 
 type Props = Readonly<{
   minRoomDimension: number;

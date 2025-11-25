@@ -1,4 +1,4 @@
-import { Direction } from '@lib/geometry/Direction';
+import { Direction } from '@duzh/geometry';
 import { ArrowKey, ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 
 export const mapToKeyCommand = (e: KeyboardEvent): KeyCommand | null => {

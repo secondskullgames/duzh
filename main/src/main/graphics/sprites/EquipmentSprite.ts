@@ -1,7 +1,7 @@
 import DynamicSprite from './DynamicSprite';
 import Equipment from '../../equipment/Equipment';
 import { Activity } from '../../units/Activity';
-import { Offsets } from '@lib/geometry/Offsets';
+import { Offsets } from '@duzh/geometry';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import Unit from '@main/units/Unit';
 import { StatusEffect } from '@main/units/effects/StatusEffect';

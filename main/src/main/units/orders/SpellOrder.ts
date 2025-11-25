@@ -1,6 +1,6 @@
 import { OrderType } from './UnitOrder';
 import { UnitAbility } from '@main/abilities/UnitAbility';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 
 export type SpellOrder = Readonly<{
   type: OrderType.SPELL;

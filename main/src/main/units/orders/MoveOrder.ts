@@ -1,4 +1,4 @@
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import { OrderType } from '@main/units/orders/UnitOrder';
 
 export type MoveOrder = Readonly<{

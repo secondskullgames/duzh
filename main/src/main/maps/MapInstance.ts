@@ -1,8 +1,5 @@
 import { FogOfWarParams, MusicModel } from '@duzh/models';
-import { Coordinates } from '@lib/geometry/Coordinates';
-import Grid from '@lib/geometry/Grid';
-import MultiGrid from '@lib/geometry/MultiGrid';
-import { Rect } from '@lib/geometry/Rect';
+import { Coordinates, Grid, MultiGrid, Rect } from '@duzh/geometry';
 import Projectile from '../entities/Projectile';
 import GameObject from '../objects/GameObject';
 import Tile from '../tiles/Tile';

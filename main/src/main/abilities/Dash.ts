@@ -2,12 +2,10 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../units/Unit';
 import Sounds from '../sounds/Sounds';
-import { Coordinates } from '@lib/geometry/Coordinates';
-import { pointAt } from '@lib/geometry/CoordinatesUtils';
+import { Coordinates, Direction, pointAt } from '@duzh/geometry';
 import { sleep } from '@lib/utils/promises';
 import { moveUnit } from '@main/actions/moveUnit';
 import { isBlocked } from '@main/maps/MapUtils';
-import { Direction } from '@lib/geometry/Direction';
 import { Game } from '@main/core/Game';
 
 export class Dash implements UnitAbility {

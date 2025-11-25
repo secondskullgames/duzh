@@ -1,13 +1,13 @@
 import { OrderType, UnitOrder } from '@main/units/orders/UnitOrder';
 import Unit from '@main/units/Unit';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import { check } from '@duzh/utils/preconditions';
 import { getDoor, getMovableBlock, getSpawner, isBlocked } from '@main/maps/MapUtils';
 import { attackObject } from '@main/actions/attackObject';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
 import { AttackOrder } from '@main/units/orders/AttackOrder';
 import { MoveOrder } from '@main/units/orders/MoveOrder';
-import { pointAt } from '@lib/geometry/CoordinatesUtils';
+import { pointAt } from '@duzh/geometry';
 import { walk } from '@main/actions/walk';
 import { openDoor } from '@main/actions/openDoor';
 import { pushBlock } from '@main/actions/pushBlock';

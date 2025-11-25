@@ -6,8 +6,8 @@ import {
   getMeleeDamage,
   getRangedDamage
 } from '@main/units/UnitUtils';
-import { Direction } from '@lib/geometry/Direction';
-import { vi } from 'vitest';
+import { Direction } from '@duzh/geometry';
+import { describe, expect, test, vi } from 'vitest';
 
 describe('UnitUtils', () => {
   const sword = {

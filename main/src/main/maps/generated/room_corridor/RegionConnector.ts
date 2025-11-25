@@ -1,9 +1,8 @@
 import EmptyRegionConnection from './EmptyRegionConnection';
 import { Connection } from './Connection';
 import RoomRegion from './RoomRegion';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { areAdjacent, Coordinates } from '@duzh/geometry';
 import { randChoice, randInt, shuffle } from '@duzh/utils/random';
-import { areAdjacent } from '@lib/geometry/RectUtils';
 
 const MIN_BORDER_LENGTH = 5;
 

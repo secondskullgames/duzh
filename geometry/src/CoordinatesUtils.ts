@@ -1,7 +1,7 @@
-import { Coordinates } from '@lib/geometry/Coordinates';
-import { Direction } from '@lib/geometry/Direction';
+import { Coordinates } from './Coordinates.js';
+import { Direction } from './Direction.js';
 import { checkState } from '@duzh/utils/preconditions';
-import { Offsets } from '@lib/geometry/Offsets';
+import { Offsets } from './Offsets.js';
 
 export const manhattanDistance = (first: Coordinates, second: Coordinates): number =>
   Math.abs(first.x - second.x) + Math.abs(first.y - second.y);

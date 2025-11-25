@@ -1,5 +1,5 @@
-import { Offsets } from '@lib/geometry/Offsets';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Offsets } from './Offsets.js';
+import { Coordinates } from './Coordinates.js';
 
 export enum Direction {
   N = 'N',

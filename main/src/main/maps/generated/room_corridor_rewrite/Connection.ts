@@ -1,4 +1,4 @@
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 
 type Connection = Readonly<{
   connectedCoordinates: Coordinates[];

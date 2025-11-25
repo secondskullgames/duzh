@@ -1,8 +1,8 @@
 import { moveUnit } from './moveUnit';
 import Unit from '../units/Unit';
 import Sounds from '../sounds/Sounds';
-import { Direction } from '@lib/geometry/Direction';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Direction } from '@duzh/geometry';
+import { Coordinates } from '@duzh/geometry';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';
 
