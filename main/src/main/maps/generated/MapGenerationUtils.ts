@@ -1,8 +1,7 @@
 import Tile from '../../tiles/Tile';
 import { TileType } from '@duzh/models';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates, Grid } from '@duzh/geometry';
 import { shuffle } from '@duzh/utils/random';
-import Grid from '@lib/geometry/Grid';
 
 export const getUnoccupiedLocations = (
   tiles: Grid<Tile> | Grid<TileType>,

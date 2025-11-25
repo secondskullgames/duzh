@@ -1,10 +1,8 @@
 import { AbstractMapGenerator } from './AbstractMapGenerator';
 import { TileType } from '@duzh/models';
-import { Coordinates } from '@lib/geometry/Coordinates';
 import { comparing, range } from '@duzh/utils/arrays';
 import { randInt } from '@duzh/utils/random';
-import { isAdjacent } from '@lib/geometry/CoordinatesUtils';
-import Grid from '@lib/geometry/Grid';
+import { Coordinates, Grid, isAdjacent } from '@duzh/geometry';
 
 const minCenterXRatio = 3 / 8;
 const maxCenterXRatio = 5 / 8;

@@ -3,7 +3,7 @@ import { FontName } from '../Fonts';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { TextRenderer } from '../TextRenderer';
 import Colors from '../Colors';
-import { Pixel } from '@lib/geometry/Pixel';
+import { Pixel } from '@duzh/geometry';
 import { Graphics } from '@lib/graphics/Graphics';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Color } from '@lib/graphics/Color';

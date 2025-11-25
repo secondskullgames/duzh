@@ -2,7 +2,7 @@ import { gameOver } from './gameOver';
 import Unit from '@main/units/Unit';
 import Sounds from '@main/sounds/Sounds';
 import { random, weightedRandom } from '@duzh/utils/random';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import MapInstance from '@main/maps/MapInstance';
 import GameObject from '@main/objects/GameObject';
 import { Game } from '@main/core/Game';

@@ -4,11 +4,7 @@ import { UnitOrder } from '../orders/UnitOrder';
 import { AbilityOrder } from '../orders/AbilityOrder';
 import { AbilityName } from '@main/abilities/AbilityName';
 import Unit from '@main/units/Unit';
-import {
-  isInStraightLine,
-  manhattanDistance,
-  pointAt
-} from '@lib/geometry/CoordinatesUtils';
+import { isInStraightLine, manhattanDistance, pointAt } from '@duzh/geometry';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { EquipmentSlot } from '@duzh/models';
 import {

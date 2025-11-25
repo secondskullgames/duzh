@@ -1,7 +1,4 @@
-import { Coordinates } from '@lib/geometry/Coordinates';
-import { Direction } from '@lib/geometry/Direction';
-import Grid from '@lib/geometry/Grid';
-import MultiGrid from '@lib/geometry/MultiGrid';
+import { Coordinates, Direction, Grid, MultiGrid } from '@duzh/geometry';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import {
   randChance,
@@ -12,10 +9,13 @@ import {
   WeightedRandomChoice
 } from '@duzh/utils/random';
 import { Feature } from '@main/utils/features';
-import { DoorDirection } from '@duzh/models';
-import { Algorithm, GeneratedMapModel } from '@duzh/models';
-import { TileType } from '@duzh/models';
-import { UnitModel } from '@duzh/models';
+import {
+  Algorithm,
+  DoorDirection,
+  GeneratedMapModel,
+  TileType,
+  UnitModel
+} from '@duzh/models';
 import { MapTemplate, ObjectTemplate } from '../MapTemplate';
 import { AbstractMapGenerator } from './AbstractMapGenerator';
 import { BlobMapGenerator } from './BlobMapGenerator';

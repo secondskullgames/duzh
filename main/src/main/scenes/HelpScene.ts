@@ -4,7 +4,7 @@ import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { Graphics } from '@lib/graphics/Graphics';
 import { isMobileDevice, toggleFullScreen } from '@lib/utils/dom';
 import { FontName } from '@main/graphics/Fonts';
-import { Pixel } from '@lib/geometry/Pixel';
+import { Pixel } from '@duzh/geometry';
 import { Color } from '@lib/graphics/Color';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import Colors from '@main/graphics/Colors';

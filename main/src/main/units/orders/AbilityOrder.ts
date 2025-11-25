@@ -1,5 +1,5 @@
 import { UnitAbility } from '@main/abilities/UnitAbility';
-import { Direction } from '@lib/geometry/Direction';
+import { Direction } from '@duzh/geometry';
 import { OrderType } from '@main/units/orders/UnitOrder';
 
 export type AbilityOrder = Readonly<{

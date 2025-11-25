@@ -1,7 +1,7 @@
 import { EntityType } from './EntityType';
 import Sprite from '../graphics/sprites/Sprite';
 import MapInstance from '../maps/MapInstance';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 
 /**
  * An Entity is basically anything that goes on the game grid.

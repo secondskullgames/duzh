@@ -1,15 +1,10 @@
 import Colors from '@main/graphics/Colors';
-import { PredefinedMapModel } from '@duzh/models';
-import { TileType } from '@duzh/models';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { DoorDirection, PredefinedMapModel, TileType, UnitModel } from '@duzh/models';
+import { Coordinates, Grid, MultiGrid } from '@duzh/geometry';
 import { Image } from '@lib/graphics/images/Image';
 import { Color } from '@lib/graphics/Color';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
-import { DoorDirection } from '@duzh/models';
 import { MapTemplate, ObjectTemplate } from '../MapTemplate';
-import Grid from '@lib/geometry/Grid';
-import { UnitModel } from '@duzh/models';
-import MultiGrid from '@lib/geometry/MultiGrid';
 import { AssetBundle } from '@main/assets/AssetBundle';
 
 export class PredefinedMapFactory {

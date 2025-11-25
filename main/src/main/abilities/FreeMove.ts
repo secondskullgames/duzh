@@ -2,10 +2,9 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
 import Sounds from '@main/sounds/Sounds';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates, Direction } from '@duzh/geometry';
 import { moveUnit } from '@main/actions/moveUnit';
 import { isBlocked } from '@main/maps/MapUtils';
-import { Direction } from '@lib/geometry/Direction';
 import { Game } from '@main/core/Game';
 
 export class FreeMove implements UnitAbility {

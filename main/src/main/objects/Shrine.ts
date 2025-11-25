@@ -1,6 +1,6 @@
 import GameObject, { ObjectType } from './GameObject';
 import MapInstance from '@main/maps/MapInstance';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import DynamicSprite from '@main/graphics/sprites/DynamicSprite';
 import { Game } from '@main/core/Game';
 

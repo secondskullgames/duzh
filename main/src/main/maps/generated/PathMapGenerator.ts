@@ -1,10 +1,9 @@
 import { AbstractMapGenerator } from './AbstractMapGenerator';
 import { TileType } from '@duzh/models';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Grid, Coordinates } from '@duzh/geometry';
 import { Heuristic, Pathfinder } from '@main/geometry/Pathfinder';
 import { range } from '@duzh/utils/arrays';
 import { randInt } from '@duzh/utils/random';
-import Grid from '@lib/geometry/Grid';
 
 type Props = Readonly<{
   numPoints: number;

@@ -1,7 +1,7 @@
 import { Renderer } from '@main/graphics/renderers/Renderer';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Graphics } from '@lib/graphics/Graphics';
-import { Rect } from '@lib/geometry/Rect';
+import { Rect } from '@duzh/geometry';
 
 export enum TopMenuIcon {
   MAP = 'MAP',

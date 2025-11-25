@@ -4,7 +4,7 @@ import { AbilityOrder } from '../orders/AbilityOrder';
 import { StayOrder } from '../orders/StayOrder';
 import { AbilityName } from '@main/abilities/AbilityName';
 import Unit from '@main/units/Unit';
-import { isInStraightLine, pointAt } from '@lib/geometry/CoordinatesUtils';
+import { isInStraightLine, pointAt } from '@duzh/geometry';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import {
   getNearestEnemyUnit,

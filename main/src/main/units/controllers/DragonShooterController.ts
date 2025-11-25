@@ -4,7 +4,7 @@ import { StayBehavior } from '../behaviors/StayBehavior';
 import { UnitBehavior } from '../behaviors/UnitBehavior';
 import { ShootUnitStationaryBehavior } from '../behaviors/ShootUnitStationaryBehavior';
 import Unit from '@main/units/Unit';
-import { hypotenuse, isInStraightLine } from '@lib/geometry/CoordinatesUtils';
+import { hypotenuse, isInStraightLine } from '@duzh/geometry';
 import { hasUnblockedStraightLineBetween } from '@main/maps/MapUtils';
 import { randChance } from '@duzh/utils/random';
 import { KnightMoveBehavior } from '@main/units/behaviors/KnightMoveBehavior';

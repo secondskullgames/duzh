@@ -2,7 +2,7 @@ import GameObject, { ObjectType } from './GameObject';
 import DynamicSprite from '@main/graphics/sprites/DynamicSprite';
 import MapInstance from '@main/maps/MapInstance';
 import { DoorDirection } from '@duzh/models';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import { checkState } from '@duzh/utils/preconditions';
 
 export enum DoorState {

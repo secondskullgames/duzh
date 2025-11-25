@@ -1,5 +1,5 @@
-import { Offsets } from '@lib/geometry/Offsets';
-import { Direction } from '@lib/geometry/Direction';
+import { Offsets } from './Offsets.js';
+import { Direction } from './Direction.js';
 
 export type Coordinates = Readonly<{
   x: number;

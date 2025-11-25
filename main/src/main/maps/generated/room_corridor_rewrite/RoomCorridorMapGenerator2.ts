@@ -4,8 +4,7 @@ import SectionSplitter from './SectionSplitter';
 import TileGenerator from './TileGenerator';
 import { AbstractMapGenerator } from '../AbstractMapGenerator';
 import { TileType } from '@duzh/models';
-import { Rect } from '@lib/geometry/Rect';
-import Grid from '@lib/geometry/Grid';
+import { Grid, Rect } from '@duzh/geometry';
 
 const HORIZONTAL_SECTION_PADDING = 2;
 const VERTICAL_SECTION_PADDING = 2;

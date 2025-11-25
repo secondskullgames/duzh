@@ -80,11 +80,39 @@ importers:
         specifier: catalog:typescript
         version: 5.5.4
 
+  geometry:
+    dependencies:
+      '@duzh/utils':
+        specifier: workspace:*
+        version: link:../utils
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.19.1
+      glob:
+        specifier: 'catalog:'
+        version: 11.1.0
+      globals:
+        specifier: 'catalog:'
+        version: 15.15.0
+      prettier:
+        specifier: 'catalog:'
+        version: 3.6.2
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.0
+      typescript:
+        specifier: catalog:typescript
+        version: 5.5.4
+
   main:
     dependencies:
       '@duzh/audio':
         specifier: workspace:*
         version: link:../audio
+      '@duzh/geometry':
+        specifier: workspace:*
+        version: link:../geometry
       '@duzh/models':
         specifier: workspace:*
         version: link:../models

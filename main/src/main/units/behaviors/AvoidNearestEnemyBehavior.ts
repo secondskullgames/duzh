@@ -5,10 +5,10 @@ import { AbilityOrder } from '../orders/AbilityOrder';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { Teleport } from '@main/abilities/Teleport';
 import Unit from '@main/units/Unit';
-import { Direction } from '@lib/geometry/Direction';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Direction } from '@duzh/geometry';
+import { Coordinates } from '@duzh/geometry';
 import { maxBy } from '@duzh/utils/arrays';
-import { manhattanDistance, pointAt } from '@lib/geometry/CoordinatesUtils';
+import { manhattanDistance, pointAt } from '@duzh/geometry';
 import { isBlocked } from '@main/maps/MapUtils';
 import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
 import {

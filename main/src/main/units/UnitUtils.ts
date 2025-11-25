@@ -1,6 +1,6 @@
 import Unit from './Unit';
 import { EquipmentSlot } from '@duzh/models';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 
 export const getMeleeDamage = (unit: Unit): number => {
   let damage = unit.getMeleeDamage();

@@ -6,7 +6,7 @@ import Equipment from '../equipment/Equipment';
 import MapItem from '../objects/MapItem';
 import MapInstance from '../maps/MapInstance';
 import { ConsumableItemModel, ConsumableType, ItemCategory } from '@duzh/models';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import { equipItem } from '@main/actions/equipItem';
 import { getEquipmentTooltip } from '@main/equipment/EquipmentUtils';
 import { shootFireball } from '@main/actions/shootFireball';

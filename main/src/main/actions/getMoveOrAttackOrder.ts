@@ -1,6 +1,6 @@
-import { Direction } from '@lib/geometry/Direction';
+import { Direction } from '@duzh/geometry';
 import Unit from '@main/units/Unit';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import { StayOrder } from '@main/units/orders/StayOrder';
 import { getDoor, getEnemyUnit, isBlocked } from '@main/maps/MapUtils';
 import { MoveOrder } from '@main/units/orders/MoveOrder';

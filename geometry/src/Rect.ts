@@ -1,4 +1,4 @@
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from './Coordinates.js';
 
 export type Rect = Readonly<{
   left: number;

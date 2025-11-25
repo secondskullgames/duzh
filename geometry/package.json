@@ -1,0 +1,24 @@
+{
+  "name": "@duzh/geometry",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "files": ["build"],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rimraf build",
+    "lint": "prettier --write ./src"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "glob": "catalog:",
+    "globals": "catalog:",
+    "prettier": "catalog:",
+    "rimraf": "catalog:",
+    "typescript": "catalog:typescript"
+  },
+  "dependencies": {
+    "@duzh/utils": "workspace:*"
+  }
+}

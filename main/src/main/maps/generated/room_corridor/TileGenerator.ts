@@ -3,10 +3,8 @@ import RoomRegion from './RoomRegion';
 import SplitDirection from './SplitDirection';
 import { Connection } from './Connection';
 import { TileType } from '@duzh/models';
-import { Coordinates } from '@lib/geometry/Coordinates';
-import { Offsets } from '@lib/geometry/Offsets';
+import { Grid, Coordinates, Offsets } from '@duzh/geometry';
 import { shuffle } from '@duzh/utils/random';
-import Grid from '@lib/geometry/Grid';
 
 const generateTiles = (
   width: number,

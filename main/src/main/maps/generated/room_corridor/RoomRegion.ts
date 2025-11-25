@@ -1,4 +1,5 @@
-import { Rect } from '@lib/geometry/Rect';
+import { Rect } from '@duzh/geometry';
+
 /**
  * An area of a map where a room can potentially be placed, possibly with some amount of padding.
  */

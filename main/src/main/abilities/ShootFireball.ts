@@ -1,9 +1,8 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates, pointAt } from '@duzh/geometry';
 import { shootFireball } from '@main/actions/shootFireball';
-import { pointAt } from '@lib/geometry/CoordinatesUtils';
 import { Game } from '@main/core/Game';
 
 export class ShootFireball implements UnitAbility {

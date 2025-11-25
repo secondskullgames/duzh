@@ -1,4 +1,4 @@
-import Grid from '@lib/geometry/Grid';
+import { Grid } from '@duzh/geometry';
 import Section from './Section';
 import { TileType } from '@duzh/models';
 

@@ -13,7 +13,7 @@ import { UnitAbility } from '@main/abilities/UnitAbility';
 import Unit from '@main/units/Unit';
 import { randChoice } from '@duzh/utils/random';
 import { findPath } from '@main/maps/MapUtils';
-import { pointAt } from '@lib/geometry/CoordinatesUtils';
+import { pointAt } from '@duzh/geometry';
 
 const allowedSpecialAbilityNames = [
   AbilityName.BURNING_ATTACK,

@@ -1,6 +1,6 @@
 import GameObject from '../objects/GameObject';
 import MapInstance from '../maps/MapInstance';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 
 /** TODO - should define Object#getMap and use that instead of a parameter */
 export const moveObject = async (

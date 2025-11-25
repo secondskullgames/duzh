@@ -4,7 +4,7 @@ import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { Color } from '@lib/graphics/Color';
 import { Graphics } from '@lib/graphics/Graphics';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import Colors from '@main/graphics/Colors';
 import { TileType } from '@duzh/models';
 import { isHostile } from '@main/units/UnitUtils';

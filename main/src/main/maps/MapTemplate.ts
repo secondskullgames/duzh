@@ -7,9 +7,7 @@ import {
   TileType,
   UnitModel
 } from '@duzh/models';
-import { Coordinates } from '@lib/geometry/Coordinates';
-import Grid from '@lib/geometry/Grid';
-import MultiGrid from '@lib/geometry/MultiGrid';
+import { Coordinates, Grid, MultiGrid } from '@duzh/geometry';
 
 /** TODO: really need to clean up data representation of other object types */
 export type ObjectTemplate =

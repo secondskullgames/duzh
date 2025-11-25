@@ -1,7 +1,7 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import { moveUnit } from '@main/actions/moveUnit';
 import { isBlocked } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';

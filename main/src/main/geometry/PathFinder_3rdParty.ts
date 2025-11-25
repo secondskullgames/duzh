@@ -1,5 +1,5 @@
 import { Heuristic, Pathfinder } from './Pathfinder';
-import { Coordinates } from '@lib/geometry/Coordinates';
+import { Coordinates } from '@duzh/geometry';
 import * as PF from 'pathfinding';
 import { DiagonalMovement } from 'pathfinding';
 
