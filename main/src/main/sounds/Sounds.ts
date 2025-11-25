@@ -1,4 +1,3 @@
-import { SoundEffect } from '@lib/audio/types';
 import BLOCKED from '@data/sounds/blocked.json';
 import DEFLECTED_HIT from '@data/sounds/deflected_hit.json';
 import DESCEND_STAIRS from '@data/sounds/descend_stairs.json';
@@ -16,6 +15,7 @@ import SPECIAL_ATTACK from '@data/sounds/special_attack.json';
 import USE_POTION from '@data/sounds/use_potion.json';
 import WIZARD_APPEAR from '@data/sounds/wizard_appear.json';
 import WIZARD_VANISH from '@data/sounds/wizard_vanish.json';
+import { SoundEffect } from '@duzh/models';
 
 const sounds = {
   BLOCKED,

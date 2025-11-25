@@ -7,6 +7,7 @@ export * from './GeneratedMapModel.js';
 export * from './ItemCategory.js';
 export * from './MapSpec.js';
 export * from './PredefinedMapModel.js';
+export * from './SoundModels.js';
 export * from './StaticSpriteModel.js';
 export * from './TileSetModel.js';
 export * from './TileType.js';

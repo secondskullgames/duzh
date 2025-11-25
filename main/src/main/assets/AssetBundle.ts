@@ -3,13 +3,14 @@ import {
   DynamicSpriteModel,
   EquipmentModel,
   GeneratedMapModel,
+  MusicModel,
   PredefinedMapModel,
+  SoundEffect,
   StaticSpriteModel,
   TileSetModel,
   UnitModel
 } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
-import { Figure } from '@lib/audio/types';
 
 export interface AssetBundle {
   getEquipmentModel: (id: string) => EquipmentModel;
@@ -20,8 +21,8 @@ export interface AssetBundle {
   getDynamicSpriteModel: (id: string) => DynamicSpriteModel;
   getTileSetModel: (id: string) => TileSetModel;
   getUnitModel: (id: string) => UnitModel;
-  getSoundModel: (id: string) => Figure;
-  getMusicModel: (id: string) => Figure[];
+  getSoundModel: (id: string) => SoundEffect;
+  getMusicModel: (id: string) => MusicModel;
 
   getAllEquipmentModels: () => EquipmentModel[];
   getAllItemModels: () => ConsumableItemModel[];
@@ -53,11 +54,11 @@ type Props = Readonly<{
   tileSets: TileSetModel[];
   units: UnitModel[];
   images: Record<string, string>;
-  sounds: Record<string, Figure>;
-  music: Record<string, Figure[]>;
+  sounds: SoundEffect[];
+  music: MusicModel[];
 }>;
 
-const arrayToRecord = <T extends { id: string }>(array: T[]): Record<string, T> => {
+const mapById = <T extends { id: string }>(array: T[]): Record<string, T> => {
   return Object.fromEntries(array.map(t => [t.id, t]));
 };
 
@@ -75,25 +76,25 @@ export class AssetBundleImpl implements AssetBundle {
   private readonly tileSets: Record<string, TileSetModel>;
   private readonly units: Record<string, UnitModel>;
   private readonly images: Record<string, string>;
-  private readonly sounds: Record<string, Figure>;
-  private readonly music: Record<string, Figure[]>;
+  private readonly sounds: Record<string, SoundEffect>;
+  private readonly music: Record<string, MusicModel>;
 
   constructor(props: Props) {
-    this.equipment = arrayToRecord(props.equipment);
-    this.items = arrayToRecord(props.items);
+    this.equipment = mapById(props.equipment);
+    this.items = mapById(props.items);
     this.maps = {
-      predefined: arrayToRecord(props.maps.predefined),
-      generated: arrayToRecord(props.maps.generated)
+      predefined: mapById(props.maps.predefined),
+      generated: mapById(props.maps.generated)
     };
     this.sprites = {
-      static: arrayToRecord(props.sprites.static),
-      dynamic: arrayToRecord(props.sprites.dynamic)
+      static: mapById(props.sprites.static),
+      dynamic: mapById(props.sprites.dynamic)
     };
-    this.tileSets = arrayToRecord(props.tileSets);
-    this.units = arrayToRecord(props.units);
+    this.tileSets = mapById(props.tileSets);
+    this.units = mapById(props.units);
     this.images = props.images;
-    this.sounds = props.sounds;
-    this.music = props.music;
+    this.sounds = mapById(props.sounds);
+    this.music = mapById(props.music);
   }
 
   getDynamicSpriteModel = (id: string): DynamicSpriteModel =>
@@ -121,11 +122,11 @@ export class AssetBundleImpl implements AssetBundle {
     return checkNotNull(this.units[id]);
   };
 
-  getSoundModel = (id: string): Figure => {
+  getSoundModel = (id: string): SoundEffect => {
     return checkNotNull(this.sounds[id]);
   };
 
-  getMusicModel = (id: string): Figure[] => {
+  getMusicModel = (id: string): MusicModel => {
     return checkNotNull(this.music[id]);
   };
 

@@ -1,4 +1,4 @@
-import type { Sample } from './types';
+import { Sample } from '@duzh/models';
 
 export default class CustomOscillator {
   private readonly delegate: OscillatorNode;

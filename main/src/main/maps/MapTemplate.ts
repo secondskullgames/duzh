@@ -1,13 +1,15 @@
-import { Figure } from '@lib/audio/types';
+import {
+  ConsumableItemModel,
+  DoorDirection,
+  EquipmentModel,
+  FogOfWarParams,
+  MusicModel,
+  TileType,
+  UnitModel
+} from '@duzh/models';
 import { Coordinates } from '@lib/geometry/Coordinates';
 import Grid from '@lib/geometry/Grid';
 import MultiGrid from '@lib/geometry/MultiGrid';
-import { ConsumableItemModel } from '@duzh/models';
-import { DoorDirection } from '@duzh/models';
-import { EquipmentModel } from '@duzh/models';
-import { FogOfWarParams } from '@duzh/models';
-import { TileType } from '@duzh/models';
-import { UnitModel } from '@duzh/models';
 
 /** TODO: really need to clean up data representation of other object types */
 export type ObjectTemplate =
@@ -33,6 +35,6 @@ export type MapTemplate = Readonly<{
   tileSet: string;
   units: Grid<UnitModel>;
   objects: MultiGrid<ObjectTemplate>;
-  music: Figure[] | null;
+  music: MusicModel | null;
   fogParams: FogOfWarParams;
 }>;

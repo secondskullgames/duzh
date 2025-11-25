@@ -1,5 +1,5 @@
+import { Figure, Sample, Suite } from '@duzh/models';
 import { transpose8va } from '@lib/audio/AudioUtils';
-import { Figure, Sample, Suite } from '@lib/audio/types';
 
 const _duplicate = (samples: Sample[]): Sample[] => [...samples, ...samples];
 
