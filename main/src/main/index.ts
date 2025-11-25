@@ -48,6 +48,7 @@ import { MapHydrator } from './maps/MapHydrator';
 import { Feature } from './utils/features';
 import { SoundController } from '@main/sounds/SoundController';
 import { MusicController } from '@main/sounds/MusicController';
+import { loadImageBundle } from '@main/assets/loadImageBundle';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -68,8 +69,8 @@ type GameContainer = Readonly<{
 }>;
 
 const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => {
-  const { assetBundle } = gameConfig;
-  const imageLoader = new ImageLoader(assetBundle);
+  const { assetBundle, imageBundle } = gameConfig;
+  const imageLoader = new ImageLoader(imageBundle);
   const imageFactory = new ImageFactory(imageLoader, new ImageCache());
   const fontFactory = new FontFactory(imageFactory);
   const fontBundle = await fontFactory.loadFonts();
@@ -211,8 +212,10 @@ const init = async ({ rootElement, gameConfig }: Props) => {
 const main = async () => {
   const rootElement = checkNotNull(document.getElementById('container'));
   const assetBundle = await loadAssetBundle();
+  const imageBundle = await loadImageBundle();
   const gameConfig: GameConfig = {
     assetBundle,
+    imageBundle,
     screenWidth: 640,
     screenHeight: 360
   };

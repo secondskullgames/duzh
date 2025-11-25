@@ -1,19 +1,19 @@
 import { createCanvas, createImage, getCanvasContext } from '@lib/utils/dom';
 import { checkNotNull } from '@duzh/utils/preconditions';
-import { AssetBundle } from '@main/assets/AssetBundle';
+import { ImageBundle } from '@main/assets/ImageBundle';
 
 export default class ImageLoader {
   private readonly canvas: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D;
-  private readonly assetBundle: AssetBundle;
+  private readonly imageBundle: ImageBundle;
 
   private img: HTMLImageElement;
 
   private _listener: (() => void) | null;
   private _errorListener: (() => void) | null;
 
-  constructor(assetBundle: AssetBundle) {
-    this.assetBundle = assetBundle;
+  constructor(imageBundle: ImageBundle) {
+    this.imageBundle = imageBundle;
     // this is way bigger than the screen because of fonts
     this.canvas = createCanvas({
       width: 2000,
@@ -33,7 +33,7 @@ export default class ImageLoader {
   };
 
   loadImageOptional = async (filename: string): Promise<ImageData | null> => {
-    const imageDataUrl = this.assetBundle.getImageUrlOptional(`${filename}.png`);
+    const imageDataUrl = this.imageBundle.getImageUrlOptional(`${filename}.png`);
     if (!imageDataUrl) {
       return null;
     }

@@ -37,14 +37,12 @@ export const loadAssetBundle = async (): Promise<AssetBundle> => {
   const unitAssets = import.meta.glob(`/data/units/**/*.json`) as AssetGlob;
   const soundAssets = import.meta.glob('/data/sounds/**/*.json') as AssetGlob;
   const musicAssets = import.meta.glob('/data/music/**/*.json') as AssetGlob;
-  const imageAssets = import.meta.glob(`/png/**/*.png`) as AssetGlob;
   const colors = Object.fromEntries(
     Object.entries(colorsJson).map(([name, hexColor]) => [name, Color.fromHex(hexColor)])
   );
 
   return new AssetBundleImpl({
     equipment: await loadAssets(equipmentAssets, EquipmentModelSchema),
-    images: await loadImageAssets(imageAssets),
     items: await loadAssets(itemAssets, ConsumableItemModelSchema),
     maps: {
       predefined: await loadAssets(predefinedMapAssets, PredefinedMapModelSchema),
@@ -77,17 +75,5 @@ const loadAssets = async <S extends ZodObject>(
       const value = (await module()).default;
       return schema.parse(value);
     })
-  );
-};
-
-const loadImageAssets = async (assetGlob: AssetGlob): Promise<Record<string, string>> => {
-  return Object.fromEntries(
-    await Promise.all(
-      Object.entries(assetGlob).map(async ([filename, module]) => {
-        const dataUrl = (await module()).default as string;
-        const relativeFilename = filename.replaceAll(/^\/png\//g, '');
-        return [relativeFilename, dataUrl];
-      })
-    )
   );
 };
