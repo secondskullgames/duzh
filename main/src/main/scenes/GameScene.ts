@@ -1,6 +1,13 @@
-import { Scene } from '@main/scenes/Scene';
-import { SceneName } from '@main/scenes/SceneName';
-import { MapController } from '@main/maps/MapController';
+import { SoundPlayer } from '@duzh/audio';
+import { TileType } from '@duzh/models';
+import { checkNotNull } from '@duzh/utils/preconditions';
+import { Coordinates } from '@lib/geometry/Coordinates';
+import { isAdjacent, offsetsToDirection, pointAt } from '@lib/geometry/CoordinatesUtils';
+import { Direction } from '@lib/geometry/Direction';
+import { Pixel } from '@lib/geometry/Pixel';
+import { Rect } from '@lib/geometry/Rect';
+import { Color } from '@lib/graphics/Color';
+import { Graphics } from '@lib/graphics/Graphics';
 import {
   ArrowKey,
   ClickCommand,
@@ -9,38 +16,31 @@ import {
   ModifierKey
 } from '@lib/input/inputTypes';
 import { isArrowKey, isModifierKey, isNumberKey } from '@lib/input/InputUtils';
-import Sounds from '@main/sounds/Sounds';
 import { isMobileDevice, toggleFullScreen } from '@lib/utils/dom';
-import { getDirection } from '@main/input/inputMappers';
-import { UnitOrder } from '@main/units/orders/UnitOrder';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { UnitAbility } from '@main/abilities/UnitAbility';
-import { AbilityOrder } from '@main/units/orders/AbilityOrder';
-import { Feature } from '@main/utils/features';
-import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
-import { checkNotNull } from '@duzh/utils/preconditions';
-import { Coordinates } from '@lib/geometry/Coordinates';
-import { getItem, getShrine } from '@main/maps/MapUtils';
-import { pickupItem } from '@main/actions/pickupItem';
-import { TileType } from '@duzh/models';
-import { Rect } from '@lib/geometry/Rect';
-import TopMenuRenderer, { TopMenuIcon } from '@main/graphics/renderers/TopMenuRenderer';
-import { isAdjacent, offsetsToDirection, pointAt } from '@lib/geometry/CoordinatesUtils';
-import { Pixel } from '@lib/geometry/Pixel';
-import { LINE_HEIGHT, TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
-import Unit from '@main/units/Unit';
-import { ShrineMenuState, ShrineOption } from '@main/core/state/ShrineMenuState';
-import { TextRenderer } from '@main/graphics/TextRenderer';
-import { Renderer } from '@main/graphics/renderers/Renderer';
-import { Graphics } from '@lib/graphics/Graphics';
-import Colors from '@main/graphics/Colors';
-import { FontName } from '@main/graphics/Fonts';
-import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
-import { Color } from '@lib/graphics/Color';
-import { Direction } from '@lib/geometry/Direction';
 import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
-import SoundPlayer from '@lib/audio/SoundPlayer';
+import { pickupItem } from '@main/actions/pickupItem';
 import { Game } from '@main/core/Game';
+import { ShrineMenuState, ShrineOption } from '@main/core/state/ShrineMenuState';
+import Colors from '@main/graphics/Colors';
+import { LINE_HEIGHT, TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
+import { FontName } from '@main/graphics/Fonts';
+import { Renderer } from '@main/graphics/renderers/Renderer';
+import TopMenuRenderer, { TopMenuIcon } from '@main/graphics/renderers/TopMenuRenderer';
+import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
+import { TextRenderer } from '@main/graphics/TextRenderer';
+import { getDirection } from '@main/input/inputMappers';
+import { MapController } from '@main/maps/MapController';
+import { getItem, getShrine } from '@main/maps/MapUtils';
+import { Scene } from '@main/scenes/Scene';
+import { SceneName } from '@main/scenes/SceneName';
+import Sounds from '@main/sounds/Sounds';
+import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
+import { AbilityOrder } from '@main/units/orders/AbilityOrder';
+import { UnitOrder } from '@main/units/orders/UnitOrder';
+import Unit from '@main/units/Unit';
+import { Feature } from '@main/utils/features';
 
 export class GameScene implements Scene {
   readonly name = SceneName.GAME;

@@ -1,10 +1,10 @@
+import { MusicController } from '@duzh/audio';
+import { MapType } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 import { Game } from '@main/core/Game';
 import MapInstance from '@main/maps/MapInstance';
 import { SceneName } from '@main/scenes/SceneName';
-import MusicController from '@main/sounds/MusicController';
-import { MapType } from '@duzh/models';
 import UnitFactory from '../units/UnitFactory';
 import { GeneratedMapFactory } from './generated/GeneratedMapFactory';
 import { MapHydrator } from './MapHydrator';

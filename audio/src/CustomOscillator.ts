@@ -1,6 +1,6 @@
 import { Sample } from '@duzh/models';
 
-export default class CustomOscillator {
+export class CustomOscillator {
   private readonly delegate: OscillatorNode;
   private readonly isRepeating: boolean;
   private _isComplete: boolean;

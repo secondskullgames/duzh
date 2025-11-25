@@ -1,12 +1,12 @@
 import { Figure, MusicModel, Suite } from '@duzh/models';
 import { randChoice } from '@duzh/utils/random';
-import { transpose8vb } from '@lib/audio/AudioUtils';
-import SoundPlayer from '@lib/audio/SoundPlayer';
+import { SoundPlayer } from './SoundPlayer.js';
+import { transpose8vb } from './utils.js';
 
 /**
  * TODO our object hierarchy is kinda fucked up
  */
-export default class MusicController {
+export class MusicController {
   private activeMusic: Suite | MusicModel | null = null;
 
   constructor(private readonly soundPlayer: SoundPlayer) {}

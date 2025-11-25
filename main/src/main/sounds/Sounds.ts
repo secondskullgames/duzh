@@ -17,7 +17,7 @@ import WIZARD_APPEAR from '@data/sounds/wizard_appear.json';
 import WIZARD_VANISH from '@data/sounds/wizard_vanish.json';
 import { SoundEffect } from '@duzh/models';
 
-const sounds = {
+const Sounds = {
   BLOCKED,
   DEFLECTED_HIT,
   DESCEND_STAIRS,
@@ -37,6 +37,6 @@ const sounds = {
   WIZARD_VANISH
 };
 
-type SoundName = keyof typeof sounds;
+type SoundName = keyof typeof Sounds;
 
-export default sounds as Record<SoundName, SoundEffect>;
+export default Sounds as Record<SoundName, SoundEffect>;
