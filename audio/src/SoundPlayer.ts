@@ -1,12 +1,12 @@
 import { Sample, SoundEffect } from '@duzh/models';
-import CustomOscillator from './CustomOscillator';
+import { CustomOscillator } from './CustomOscillator.js';
 
 type Props = Readonly<{
   polyphony: number;
   gain: number;
 }>;
 
-export default class SoundPlayer {
+export class SoundPlayer {
   private readonly context: AudioContext;
   private readonly gainNode: GainNode;
   private oscillators: CustomOscillator[];

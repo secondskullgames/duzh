@@ -1,18 +1,17 @@
-import { Engine } from '@main/core/Engine';
-import { GameState } from '@main/core/GameState';
-import { GameConfig } from '@main/core/GameConfig';
-import { ItemFactory } from '@main/items/ItemFactory';
-import UnitFactory from '@main/units/UnitFactory';
-import ObjectFactory from '@main/objects/ObjectFactory';
-import MusicController from '@main/sounds/MusicController';
-import ProjectileFactory from '@main/objects/ProjectileFactory';
-import SoundPlayer from '@lib/audio/SoundPlayer';
-import Ticker from '@main/core/Ticker';
-import { MapController } from '@main/maps/MapController';
+import { MusicController, SoundPlayer } from '@duzh/audio';
+import { AssetBundle } from '@main/assets/AssetBundle';
 import { InventoryController } from '@main/controllers/InventoryController';
 import { ShrineController } from '@main/controllers/ShrineController';
+import { Engine } from '@main/core/Engine';
+import { GameConfig } from '@main/core/GameConfig';
+import { GameState } from '@main/core/GameState';
+import Ticker from '@main/core/Ticker';
 import { ItemController } from '@main/items/ItemController';
-import { AssetBundle } from '@main/assets/AssetBundle';
+import { ItemFactory } from '@main/items/ItemFactory';
+import { MapController } from '@main/maps/MapController';
+import ObjectFactory from '@main/objects/ObjectFactory';
+import ProjectileFactory from '@main/objects/ProjectileFactory';
+import UnitFactory from '@main/units/UnitFactory';
 
 export type Game = Readonly<{
   config: GameConfig;

@@ -25,6 +25,7 @@
     "vitest": "catalog:vitest"
   },
   "dependencies": {
+    "@duzh/audio": "workspace:*",
     "@duzh/models": "workspace:*",
     "@duzh/utils": "workspace:*",
     "pathfinding": "catalog:pathfinding",
