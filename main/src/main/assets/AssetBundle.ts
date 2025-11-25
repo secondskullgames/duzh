@@ -30,17 +30,6 @@ export interface AssetBundle {
   getAllItemModels: () => ConsumableItemModel[];
   getAllUnitModels: () => UnitModel[];
 
-  /**
-   * TODO: for now, just mapping from filename => image data URL
-   * In the future, we might preload all the Images/ImageData/ImageBitmap
-   */
-  getImageUrl: (path: string) => string;
-  /**
-   * TODO: for now, just mapping from filename => image data URL
-   * In the future, we might preload all the Images/ImageData/ImageBitmap
-   */
-  getImageUrlOptional: (path: string) => string | null;
-
   colorForName: (name: string) => Color;
   getMapList: () => MapSpec[];
 }
@@ -58,7 +47,6 @@ type Props = Readonly<{
   }>;
   tileSets: TileSetModel[];
   units: UnitModel[];
-  images: Record<string, string>;
   sounds: SoundEffect[];
   music: MusicModel[];
   colors: Record<string, Color>;
@@ -82,7 +70,6 @@ export class AssetBundleImpl implements AssetBundle {
   }>;
   private readonly tileSets: Record<string, TileSetModel>;
   private readonly units: Record<string, UnitModel>;
-  private readonly images: Record<string, string>;
   private readonly sounds: Record<string, SoundEffect>;
   private readonly music: Record<string, MusicModel>;
   private readonly colors: Record<string, Color>;
@@ -101,7 +88,6 @@ export class AssetBundleImpl implements AssetBundle {
     };
     this.tileSets = mapById(props.tileSets);
     this.units = mapById(props.units);
-    this.images = props.images;
     this.sounds = mapById(props.sounds);
     this.music = mapById(props.music);
     this.colors = props.colors;
@@ -151,14 +137,6 @@ export class AssetBundleImpl implements AssetBundle {
 
   getAllUnitModels = (): UnitModel[] => {
     return Object.values(this.units);
-  };
-
-  getImageUrl = (path: string): string => {
-    return checkNotNull(this.images[path]);
-  };
-
-  getImageUrlOptional = (path: string): string | null => {
-    return this.images[path] || null;
   };
 
   colorForName = (name: string): Color => checkNotNull(this.colors[name]);
