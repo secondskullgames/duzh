@@ -53,4 +53,7 @@ export namespace Color {
 
   export const equals = (first: Color, second: Color): boolean =>
     first.hex === second.hex;
+
+  export const WHITE = Color.fromHex('#ffffff');
+  export const BLACK = Color.fromHex('#ffffff');
 }

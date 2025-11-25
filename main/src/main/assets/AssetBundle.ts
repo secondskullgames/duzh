@@ -3,6 +3,7 @@ import {
   DynamicSpriteModel,
   EquipmentModel,
   GeneratedMapModel,
+  MapSpec,
   MusicModel,
   PredefinedMapModel,
   SoundEffect,
@@ -11,6 +12,7 @@ import {
   UnitModel
 } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
+import { Color } from '@lib/graphics/Color';
 
 export interface AssetBundle {
   getEquipmentModel: (id: string) => EquipmentModel;
@@ -38,6 +40,9 @@ export interface AssetBundle {
    * In the future, we might preload all the Images/ImageData/ImageBitmap
    */
   getImageUrlOptional: (path: string) => string | null;
+
+  colorForName: (name: string) => Color;
+  getMapList: () => MapSpec[];
 }
 
 type Props = Readonly<{
@@ -56,6 +61,8 @@ type Props = Readonly<{
   images: Record<string, string>;
   sounds: SoundEffect[];
   music: MusicModel[];
+  colors: Record<string, Color>;
+  mapList: MapSpec[];
 }>;
 
 const mapById = <T extends { id: string }>(array: T[]): Record<string, T> => {
@@ -78,6 +85,8 @@ export class AssetBundleImpl implements AssetBundle {
   private readonly images: Record<string, string>;
   private readonly sounds: Record<string, SoundEffect>;
   private readonly music: Record<string, MusicModel>;
+  private readonly colors: Record<string, Color>;
+  private readonly mapList: MapSpec[];
 
   constructor(props: Props) {
     this.equipment = mapById(props.equipment);
@@ -95,6 +104,8 @@ export class AssetBundleImpl implements AssetBundle {
     this.images = props.images;
     this.sounds = mapById(props.sounds);
     this.music = mapById(props.music);
+    this.colors = props.colors;
+    this.mapList = props.mapList;
   }
 
   getDynamicSpriteModel = (id: string): DynamicSpriteModel =>
@@ -149,4 +160,7 @@ export class AssetBundleImpl implements AssetBundle {
   getImageUrlOptional = (path: string): string | null => {
     return this.images[path] || null;
   };
+
+  colorForName = (name: string): Color => checkNotNull(this.colors[name]);
+  getMapList = (): MapSpec[] => this.mapList;
 }

@@ -3,6 +3,7 @@ import {
   DynamicSpriteModelSchema,
   EquipmentModelSchema,
   GeneratedMapModelSchema,
+  MapSpecSchema,
   MusicModelSchema,
   PredefinedMapModelSchema,
   SoundEffectSchema,
@@ -12,6 +13,9 @@ import {
 } from '@duzh/models';
 import { AssetBundle, AssetBundleImpl } from '@main/assets/AssetBundle';
 import { z, ZodObject } from 'zod';
+import colorsJson from '@data/colors.json';
+import mapsJson from '@data/maps.json';
+import { Color } from '@lib/graphics/Color';
 
 export const loadAssetBundle = async (): Promise<AssetBundle> => {
   const equipmentAssets = import.meta.glob('/data/equipment/**/*.json') as AssetGlob;
@@ -34,6 +38,9 @@ export const loadAssetBundle = async (): Promise<AssetBundle> => {
   const soundAssets = import.meta.glob('/data/sounds/**/*.json') as AssetGlob;
   const musicAssets = import.meta.glob('/data/music/**/*.json') as AssetGlob;
   const imageAssets = import.meta.glob(`/png/**/*.png`) as AssetGlob;
+  const colors = Object.fromEntries(
+    Object.entries(colorsJson).map(([name, hexColor]) => [name, Color.fromHex(hexColor)])
+  );
 
   return new AssetBundleImpl({
     equipment: await loadAssets(equipmentAssets, EquipmentModelSchema),
@@ -53,7 +60,9 @@ export const loadAssetBundle = async (): Promise<AssetBundle> => {
     tileSets: await loadAssets(tileSetAssets, TileSetModelSchema),
     units: await loadAssets(unitAssets, UnitModelSchema),
     sounds: await loadAssets(soundAssets, SoundEffectSchema),
-    music: await loadAssets(musicAssets, MusicModelSchema)
+    music: await loadAssets(musicAssets, MusicModelSchema),
+    colors,
+    mapList: mapsJson.map(mapSpec => MapSpecSchema.parse(mapSpec))
   });
 };
 

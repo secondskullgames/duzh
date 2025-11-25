@@ -1,5 +1,4 @@
 import { Renderer } from './Renderer';
-import Colors from '../Colors';
 import { LINE_HEIGHT } from '../constants';
 import { TextRenderer } from '../TextRenderer';
 import { Alignment, drawAligned } from '../RenderingUtils';
@@ -18,6 +17,7 @@ import { type UnitAbility } from '@main/abilities/UnitAbility';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { formatTimestamp } from '@lib/utils/time';
 import { Game } from '@main/core/Game';
+import { InterfaceColors } from '@main/graphics/InterfaceColors';
 
 const HUD_FILENAME = 'brick_hud_3';
 
@@ -61,9 +61,9 @@ export default class HUDRenderer implements Renderer {
     const fillColor = (() => {
       const playerUnit = state.getPlayerUnit();
       if (playerUnit.getEffects().hasEffect(StatusEffect.STUNNED)) {
-        return Colors.GRAY_128;
+        return InterfaceColors.GRAY_128;
       } else {
-        return Colors.BLACK;
+        return InterfaceColors.BLACK;
       }
     })();
     graphics.fillRect(
@@ -72,7 +72,7 @@ export default class HUDRenderer implements Renderer {
     );
     const image = await imageFactory.getImage({
       filename: HUD_FILENAME,
-      transparentColor: Colors.BLACK
+      transparentColor: InterfaceColors.BLACK
     });
     graphics.drawImage(image, { x: 0, y: this.TOP });
   };
@@ -115,7 +115,7 @@ export default class HUDRenderer implements Renderer {
         lines[i],
         FontName.APPLE_II,
         { x: left, y },
-        Colors.WHITE,
+        InterfaceColors.WHITE,
         Alignment.LEFT,
         graphics
       );
@@ -141,7 +141,7 @@ export default class HUDRenderer implements Renderer {
     const width = Math.round((unit.getLife() / unit.getMaxLife()) * rect.width);
     graphics.fillRect(
       { left: rect.left, top: rect.top, width, height: rect.height },
-      Colors.GREEN_255
+      InterfaceColors.GREEN_255
     );
   };
 
@@ -149,7 +149,7 @@ export default class HUDRenderer implements Renderer {
     const width = Math.round((unit.getMana() / unit.getMaxMana()) * rect.width);
     graphics.fillRect(
       { left: rect.left, top: rect.top, width, height: rect.height },
-      Colors.CYAN
+      InterfaceColors.CYAN
     );
   };
 
@@ -180,7 +180,7 @@ export default class HUDRenderer implements Renderer {
             `${hotkey}`,
             FontName.APPLE_II,
             { x: left + 10, y: top + 24 },
-            Colors.WHITE,
+            InterfaceColors.WHITE,
             Alignment.CENTER,
             graphics
           );
@@ -189,7 +189,7 @@ export default class HUDRenderer implements Renderer {
           `${ability.manaCost}`,
           FontName.APPLE_II,
           { x: left + 10, y: top + 24 + LINE_HEIGHT },
-          Colors.LIGHT_GRAY,
+          InterfaceColors.LIGHT_GRAY,
           Alignment.CENTER,
           graphics
         );
@@ -213,7 +213,7 @@ export default class HUDRenderer implements Renderer {
           `${hotkey}`,
           FontName.APPLE_II,
           { x: left + 10, y: top + 24 },
-          Colors.WHITE,
+          InterfaceColors.WHITE,
           Alignment.CENTER,
           graphics
         );
@@ -222,7 +222,7 @@ export default class HUDRenderer implements Renderer {
         `${ability.manaCost}`,
         FontName.APPLE_II,
         { x: left + 10, y: top + 24 + LINE_HEIGHT },
-        Colors.LIGHT_GRAY,
+        InterfaceColors.LIGHT_GRAY,
         Alignment.CENTER,
         graphics
       );
@@ -254,7 +254,7 @@ export default class HUDRenderer implements Renderer {
         lines[i],
         FontName.APPLE_II,
         { x: left, y },
-        Colors.WHITE,
+        InterfaceColors.WHITE,
         Alignment.LEFT,
         graphics
       );
@@ -274,15 +274,15 @@ export default class HUDRenderer implements Renderer {
     let borderColor: Color;
 
     if (queuedAbility === ability) {
-      borderColor = Colors.GREEN;
+      borderColor = InterfaceColors.GREEN;
     } else if (ability.isEnabled(playerUnit)) {
-      borderColor = Colors.WHITE;
+      borderColor = InterfaceColors.WHITE;
     } else {
-      borderColor = Colors.DARK_GRAY;
+      borderColor = InterfaceColors.DARK_GRAY;
     }
 
     const paletteSwaps = PaletteSwaps.builder()
-      .addMapping(Colors.DARK_GRAY, borderColor)
+      .addMapping(InterfaceColors.DARK_GRAY, borderColor)
       .build();
     if (ability.icon) {
       const icon = await imageFactory.getImage({
@@ -305,7 +305,7 @@ export default class HUDRenderer implements Renderer {
       text,
       fontName,
       color,
-      backgroundColor: Colors.BLACK
+      backgroundColor: InterfaceColors.BLACK
     });
     drawAligned(imageData, graphics, pixel, textAlign);
   };

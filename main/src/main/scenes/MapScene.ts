@@ -5,11 +5,11 @@ import { toggleFullScreen } from '@lib/utils/dom';
 import { Color } from '@lib/graphics/Color';
 import { Graphics } from '@lib/graphics/Graphics';
 import { Coordinates } from '@duzh/geometry';
-import Colors from '@main/graphics/Colors';
 import { TileType } from '@duzh/models';
 import { isHostile } from '@main/units/UnitUtils';
 import { getItem, getShrine } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';
+import { InterfaceColors } from '@main/graphics/InterfaceColors';
 
 const backgroundColor = Color.fromHex('#404040');
 
@@ -79,36 +79,36 @@ export class MapScene implements Scene {
     const map = playerUnit.getMap();
 
     if (Coordinates.equals(playerUnit.getCoordinates(), coordinates)) {
-      return Colors.GREEN;
+      return InterfaceColors.GREEN;
     }
 
     if (map.isTileRevealed(coordinates)) {
       const tileType = map.getTile(coordinates).getTileType();
       switch (tileType) {
         case TileType.STAIRS_DOWN:
-          return Colors.BLUE;
+          return InterfaceColors.BLUE;
         case TileType.FLOOR:
         case TileType.FLOOR_HALL: {
           const unit = map.getUnit(coordinates);
           if (unit && isHostile(unit, playerUnit)) {
-            return Colors.RED;
+            return InterfaceColors.RED;
           } else if (getItem(map, coordinates)) {
-            return Colors.YELLOW;
+            return InterfaceColors.YELLOW;
           } else if (getShrine(map, coordinates)) {
-            return Colors.DARK_RED;
+            return InterfaceColors.DARK_RED;
           }
-          return Colors.LIGHT_GRAY;
+          return InterfaceColors.LIGHT_GRAY;
         }
         case TileType.WALL:
         case TileType.WALL_HALL:
-          return Colors.DARK_GRAY;
+          return InterfaceColors.DARK_GRAY;
         case TileType.NONE:
         case TileType.WALL_TOP:
         default:
-          return Colors.BLACK;
+          return InterfaceColors.BLACK;
       }
     } else {
-      return Colors.DARKER_GRAY;
+      return InterfaceColors.DARKER_GRAY;
     }
   };
 }

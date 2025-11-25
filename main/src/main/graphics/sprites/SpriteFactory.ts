@@ -9,7 +9,6 @@ import { UnitSprite } from './UnitSprite';
 import Door, { DoorState } from '../../objects/Door';
 import Spawner, { SpawnerState } from '../../objects/Spawner';
 import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
-import Colors from '@main/graphics/Colors';
 import Unit from '@main/units/Unit';
 import { Direction } from '@duzh/geometry';
 import { fillTemplate } from '@lib/utils/templates';
@@ -23,6 +22,7 @@ import { DynamicSpriteModel } from '@duzh/models';
 import Shrine from '@main/objects/Shrine';
 import { ShrineSprite } from '@main/graphics/sprites/ShrineSprite';
 import { AssetBundle } from '@main/assets/AssetBundle';
+import { Color } from '@lib/graphics/Color';
 
 export default class SpriteFactory {
   constructor(
@@ -39,7 +39,7 @@ export default class SpriteFactory {
   ): Promise<Sprite> => {
     const { imageFactory } = this;
     const offsets = { dx: 0, dy: 0 };
-    const transparentColor = Colors.WHITE;
+    const transparentColor = Color.WHITE;
     const image = await imageFactory.getImage({
       filename: `tiles/${filename}`,
       paletteSwaps,
@@ -52,15 +52,18 @@ export default class SpriteFactory {
     modelId: string,
     paletteSwaps?: PaletteSwaps
   ): Promise<Sprite> => {
-    const model = this.assetBundle.getStaticSpriteModel(modelId);
+    const { assetBundle, imageFactory } = this;
+    const model = assetBundle.getStaticSpriteModel(modelId);
     const { filename, offsets, transparentColor } = model;
     if (!paletteSwaps) {
-      paletteSwaps = loadPaletteSwaps(model.paletteSwaps);
+      paletteSwaps = loadPaletteSwaps(model.paletteSwaps, assetBundle);
     }
-    const image = await this.imageFactory.getImage({
+    const image = await imageFactory.getImage({
       filename,
       paletteSwaps,
-      transparentColor: transparentColor ? Colors.colorForName(transparentColor) : null
+      transparentColor: transparentColor
+        ? assetBundle.colorForName(transparentColor)
+        : null
     });
     return new StaticSprite(image, offsets);
   };
@@ -119,7 +122,7 @@ export default class SpriteFactory {
     const image = await this.imageFactory.getImage({
       filename,
       paletteSwaps,
-      transparentColor: Colors.WHITE
+      transparentColor: Color.WHITE
     });
     return new StaticSprite(image, offsets);
   };
@@ -132,9 +135,10 @@ export default class SpriteFactory {
     const offsets = { dx: 0, dy: -24 };
     // TODO hardcoded
     const paletteSwaps = PaletteSwaps.builder()
-      .addMapping(Colors.DARK_RED, Colors.YELLOW_CGA)
-      .addMapping(Colors.DARK_BROWN, Colors.LIGHT_MAGENTA_CGA)
-      .addMapping(Colors.BLACK, Colors.BLACK_CGA)
+      // DARK_RED -> YELLOW_CGA
+      .addMapping(Color.fromHex('#800000'), Color.fromHex('#ffff55'))
+      // DARK_BROWN -> LIGHT_MAGENTA_CGA
+      .addMapping(Color.fromHex('#804000'), Color.fromHex('#ff55ff'))
       .build();
     const imageMap: Record<string, Image> = {};
     for (const direction of [DoorDirection.HORIZONTAL, DoorDirection.VERTICAL]) {
@@ -144,7 +148,7 @@ export default class SpriteFactory {
         const image = await this.imageFactory.getImage({
           filename,
           paletteSwaps,
-          transparentColor: Colors.WHITE
+          transparentColor: Color.WHITE
         });
         imageMap[key] = image;
       }
@@ -169,7 +173,7 @@ export default class SpriteFactory {
 
       const image = await this.imageFactory.getImage({
         filename,
-        transparentColor: Colors.WHITE
+        transparentColor: Color.WHITE
       });
       imageMap[key] = image;
     }
@@ -182,15 +186,17 @@ export default class SpriteFactory {
     const imageMap: Record<string, Image> = {};
     const image = await this.imageFactory.getImage({
       filename: 'shrine',
-      transparentColor: Colors.WHITE
+      transparentColor: Color.WHITE
     });
     imageMap['shrine'] = image;
     const depletedImage = await this.imageFactory.getImage({
       filename: 'shrine',
-      transparentColor: Colors.WHITE,
+      transparentColor: Color.WHITE,
       paletteSwaps: PaletteSwaps.builder()
-        .addMapping(Colors.RED, Colors.GRAY_192)
-        .addMapping(Colors.DARK_RED, Colors.GRAY_128)
+        // RED -> GRAY_192
+        .addMapping(Color.fromHex('#ff0000'), Color.fromHex('#c0c0c0'))
+        // DARK_RED -> GRAY_128
+        .addMapping(Color.fromHex('#800000'), Color.fromHex('#808080'))
         .build()
     });
     imageMap['shrine_depleted'] = depletedImage;
@@ -248,7 +254,7 @@ export default class SpriteFactory {
           const frameKey = `${animationName}_${direction}_${i}`;
           const image = await this.imageFactory.getImage({
             filenames,
-            transparentColor: Colors.WHITE,
+            transparentColor: Color.WHITE,
             paletteSwaps,
             effects
           });

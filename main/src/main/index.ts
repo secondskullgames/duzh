@@ -1,6 +1,4 @@
-import mapSpecsJson from '@data/maps.json';
 import { MusicController, SoundPlayer } from '@duzh/audio';
-import { MapSpec } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { FontBundle } from '@lib/graphics/Fonts';
 import { Graphics } from '@lib/graphics/Graphics';
@@ -68,7 +66,7 @@ type GameContainer = Readonly<{
 }>;
 
 const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => {
-  const assetBundle = await loadAssetBundle();
+  const { assetBundle } = gameConfig;
   const imageLoader = new ImageLoader(assetBundle);
   const imageFactory = new ImageFactory(imageLoader, new ImageCache());
   const fontFactory = new FontFactory(imageFactory);
@@ -81,7 +79,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
   const tileFactory = new TileFactory(assetBundle, spriteFactory);
   const itemFactory = new ItemFactory(assetBundle, spriteFactory);
   const unitFactory = new UnitFactory(assetBundle, spriteFactory, itemFactory);
-  const objectFactory = new ObjectFactory(spriteFactory, unitFactory);
+  const objectFactory = new ObjectFactory(assetBundle, spriteFactory, unitFactory);
   const projectileFactory = new ProjectileFactory(spriteFactory);
   const predefinedMapFactory = new PredefinedMapFactory(imageFactory, assetBundle);
   const itemController = new ItemController({ assetBundle });
@@ -93,6 +91,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
     itemFactory
   );
   const mapController = new MapControllerImpl({
+    assetBundle,
     predefinedMapFactory,
     generatedMapFactory,
     mapHydrator,
@@ -207,8 +206,9 @@ const init = async ({ rootElement, gameConfig }: Props) => {
 
 const main = async () => {
   const rootElement = checkNotNull(document.getElementById('container'));
+  const assetBundle = await loadAssetBundle();
   const gameConfig: GameConfig = {
-    mapSpecs: mapSpecsJson as MapSpec[],
+    assetBundle,
     screenWidth: 640,
     screenHeight: 360
   };

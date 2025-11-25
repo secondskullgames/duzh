@@ -2,7 +2,6 @@ import { Renderer } from './Renderer';
 import { FontName } from '../Fonts';
 import { Alignment, drawAligned } from '../RenderingUtils';
 import { TextRenderer } from '../TextRenderer';
-import Colors from '../Colors';
 import { Pixel } from '@duzh/geometry';
 import { Graphics } from '@lib/graphics/Graphics';
 import ImageFactory from '@lib/graphics/images/ImageFactory';
@@ -10,6 +9,7 @@ import { Color } from '@lib/graphics/Color';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { ShrineOption } from '@main/core/state/ShrineMenuState';
 import { Game } from '@main/core/Game';
+import { InterfaceColors } from '@main/graphics/InterfaceColors';
 
 const BACKGROUND_FILENAME = 'bordered_background';
 
@@ -42,7 +42,7 @@ export class ShrineMenuRenderer implements Renderer {
         line,
         FontName.APPLE_II,
         { x, y },
-        Colors.WHITE,
+        InterfaceColors.WHITE,
         Alignment.LEFT,
         graphics
       );
@@ -69,7 +69,7 @@ export class ShrineMenuRenderer implements Renderer {
     const { state } = this.game;
     const selectedOption = checkNotNull(state.getShrineMenuState()).getSelectedOption();
     const isSelected = selectedOption.label === option.label;
-    return isSelected ? Colors.WHITE : Colors.LIGHT_GRAY;
+    return isSelected ? InterfaceColors.WHITE : InterfaceColors.LIGHT_GRAY;
   };
 
   private _drawText = (
@@ -84,7 +84,7 @@ export class ShrineMenuRenderer implements Renderer {
       text,
       fontName,
       color,
-      backgroundColor: Colors.BLACK
+      backgroundColor: InterfaceColors.BLACK
     });
     drawAligned(imageData, graphics, pixel, textAlign);
   };

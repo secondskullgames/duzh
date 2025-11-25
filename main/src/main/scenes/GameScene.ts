@@ -23,7 +23,6 @@ import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
 import { pickupItem } from '@main/actions/pickupItem';
 import { Game } from '@main/core/Game';
 import { ShrineMenuState, ShrineOption } from '@main/core/state/ShrineMenuState';
-import Colors from '@main/graphics/Colors';
 import { LINE_HEIGHT, TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
 import { FontName } from '@main/graphics/Fonts';
 import { Renderer } from '@main/graphics/renderers/Renderer';
@@ -41,6 +40,7 @@ import { AbilityOrder } from '@main/units/orders/AbilityOrder';
 import { UnitOrder } from '@main/units/orders/UnitOrder';
 import Unit from '@main/units/Unit';
 import { Feature } from '@main/utils/features';
+import { InterfaceColors } from '@main/graphics/InterfaceColors';
 
 export class GameScene implements Scene {
   readonly name = SceneName.GAME;
@@ -454,7 +454,7 @@ export class GameScene implements Scene {
         width: graphics.getWidth(),
         height: graphics.getHeight()
       },
-      Colors.BLACK
+      InterfaceColors.BLACK
     );
 
     await this.viewportRenderer.render(graphics);
@@ -483,13 +483,13 @@ export class GameScene implements Scene {
       const y = top + LINE_HEIGHT * i;
       graphics.fillRect(
         { left, top: y, width: graphics.getWidth(), height: LINE_HEIGHT },
-        Colors.BLACK
+        InterfaceColors.BLACK
       );
       this._drawText(
         messages[i],
         FontName.APPLE_II,
         { x: left, y: y + 2 },
-        Colors.WHITE,
+        InterfaceColors.WHITE,
         Alignment.LEFT,
         graphics
       );
@@ -504,7 +504,7 @@ export class GameScene implements Scene {
       const left = graphics.getWidth() - width;
       const top = 0;
       const rect = { left, top, width, height };
-      graphics.fillRect(rect, Colors.DARK_GRAY);
+      graphics.fillRect(rect, InterfaceColors.DARK_GRAY);
     }
   };
 
@@ -520,7 +520,7 @@ export class GameScene implements Scene {
       text,
       fontName,
       color,
-      backgroundColor: Colors.BLACK
+      backgroundColor: InterfaceColors.BLACK
     });
     drawAligned(imageData, graphics, pixel, textAlign);
   };

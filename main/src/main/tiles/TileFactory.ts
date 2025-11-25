@@ -42,7 +42,10 @@ export default class TileFactory {
       for (let index = 0; index < filenames.length; index++) {
         const filename = filenames[index];
         if (filename) {
-          const paletteSwaps = loadPaletteSwaps(model.paletteSwaps ?? {});
+          const paletteSwaps = loadPaletteSwaps(
+            model.paletteSwaps ?? {},
+            this.assetBundle
+          );
           const tileSprite = await this.spriteFactory.createTileSprite(
             `${model.path}/${filename}`,
             paletteSwaps
