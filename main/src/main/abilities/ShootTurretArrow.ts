@@ -1,7 +1,6 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
-import Sounds from '@main/sounds/Sounds';
 import { getRangedDamage } from '@main/units/UnitUtils';
 import { Activity } from '@main/units/Activity';
 import { Coordinates, Direction, pointAt } from '@duzh/geometry';
@@ -24,7 +23,7 @@ export class ShootTurretArrow implements UnitAbility {
   isLegal = () => true; // TODO
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { soundPlayer, state, ticker } = game;
+    const { soundController, state, ticker } = game;
     const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -41,7 +40,7 @@ export class ShootTurretArrow implements UnitAbility {
     const targetUnit = map.getUnit(targetCoordinates);
     if (targetUnit) {
       const damage = getRangedDamage(unit);
-      soundPlayer.playSound(Sounds.PLAYER_HITS_ENEMY);
+      soundController.playSound('player_hits_enemy');
       await this._playArrowAnimation(unit, direction, coordinatesList, targetUnit, game);
       const adjustedDamage = await dealDamage(damage, {
         sourceUnit: unit,

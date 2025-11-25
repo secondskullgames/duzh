@@ -1,5 +1,4 @@
 import Unit from '../units/Unit';
-import Sounds from '../sounds/Sounds';
 import { isHostile } from '@main/units/UnitUtils';
 import { Game } from '@main/core/Game';
 
@@ -13,11 +12,11 @@ export const castFreeze = async (
   duration: number,
   game: Game
 ) => {
-  const { soundPlayer, state, ticker } = game;
+  const { soundController, state, ticker } = game;
   const targetUnits = _getTargetUnits(unit, radius);
   for (const targetUnit of targetUnits) {
     targetUnit.setFrozen(duration);
-    soundPlayer.playSound(Sounds.SPECIAL_ATTACK); // TODO
+    soundController.playSound('special_attack'); // TODO
     const message = getLogMessage(unit, targetUnit, duration);
     ticker.log(message, { turn: state.getTurn() });
   }

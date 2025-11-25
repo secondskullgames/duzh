@@ -2,7 +2,6 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit, { DefendResult } from '@main/units/Unit';
 import { getMeleeDamage } from '@main/units/UnitUtils';
-import Sounds from '@main/sounds/Sounds';
 import { Coordinates, Direction, offsetsToDirection, pointAt } from '@duzh/geometry';
 import { moveUnit } from '@main/actions/moveUnit';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
@@ -11,7 +10,7 @@ import { getEnemyUnit, isBlocked } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';
 
 const attack: Attack = {
-  sound: Sounds.SPECIAL_ATTACK,
+  sound: 'special_attack',
   calculateAttackResult: (unit: Unit): AttackResult => {
     const damage = Math.round(getMeleeDamage(unit) * DashAttack.DAMAGE_COEFFICIENT);
     return { damage };

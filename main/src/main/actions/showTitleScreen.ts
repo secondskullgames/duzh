@@ -1,6 +1,5 @@
 import { Game } from '@main/core/Game';
 import { SceneName } from '@main/scenes/SceneName';
-import Music from '@main/sounds/Music';
 import { Feature } from '@main/utils/features';
 
 /**
@@ -11,6 +10,6 @@ export const showTitleScreen = async (game: Game) => {
   state.reset();
   state.setScene(SceneName.TITLE);
   if (Feature.isEnabled(Feature.TITLE_MUSIC)) {
-    musicController.playMusic(Music.EVIL);
+    musicController.playMusic('evil');
   }
 };

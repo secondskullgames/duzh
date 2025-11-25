@@ -1,7 +1,6 @@
 import { dealDamage } from './dealDamage';
 import { die } from './die';
 import Unit from '../units/Unit';
-import Sounds from '../sounds/Sounds';
 import { Activity } from '../units/Activity';
 import { Direction } from '@duzh/geometry';
 import { Coordinates } from '@duzh/geometry';
@@ -23,7 +22,7 @@ export const shootFirebolt = async (
 ) => {
   unit.setDirection(direction);
 
-  const { soundPlayer, state, ticker } = game;
+  const { soundController, state, ticker } = game;
   const map = unit.getMap();
   const coordinatesList = [];
   let coordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
@@ -34,7 +33,7 @@ export const shootFirebolt = async (
 
   const targetUnit = map.getUnit(coordinates);
   if (targetUnit) {
-    soundPlayer.playSound(Sounds.PLAYER_HITS_ENEMY);
+    soundController.playSound('player_hits_enemy');
     await playFireboltAnimation(unit, direction, coordinatesList, targetUnit, game);
     const adjustedDamage = await dealDamage(damage, {
       sourceUnit: unit,

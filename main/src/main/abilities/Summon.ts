@@ -1,7 +1,6 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
-import Sounds from '@main/sounds/Sounds';
 import BasicEnemyController from '@main/units/controllers/BasicEnemyController';
 import { Coordinates } from '@duzh/geometry';
 import { checkNotNull } from '@duzh/utils/preconditions';
@@ -21,11 +20,11 @@ export class Summon implements UnitAbility {
     !isBlocked(coordinates, unit.getMap());
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { soundPlayer, unitFactory } = game;
+    const { soundController, unitFactory } = game;
     const map = unit.getMap();
     const unitClass = checkNotNull(unit.getSummonedUnitClass());
 
-    soundPlayer.playSound(Sounds.WIZARD_APPEAR);
+    soundController.playSound('wizard_appear');
 
     const summonedUnit = await unitFactory.createUnit({
       modelId: unitClass,

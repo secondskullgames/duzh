@@ -1,4 +1,3 @@
-import { SoundPlayer } from '@duzh/audio';
 import { TileType } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { Coordinates } from '@duzh/geometry';
@@ -34,13 +33,13 @@ import { MapController } from '@main/maps/MapController';
 import { getItem, getShrine } from '@main/maps/MapUtils';
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import Sounds from '@main/sounds/Sounds';
 import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
 import { UnitOrder } from '@main/units/orders/UnitOrder';
 import Unit from '@main/units/Unit';
 import { Feature } from '@main/utils/features';
 import { InterfaceColors } from '@main/graphics/InterfaceColors';
+import { SoundController } from '@main/sounds/SoundController';
 
 export class GameScene implements Scene {
   readonly name = SceneName.GAME;
@@ -52,7 +51,7 @@ export class GameScene implements Scene {
     private readonly viewportRenderer: Renderer,
     private readonly hudRenderer: Renderer,
     private readonly topMenuRenderer: Renderer,
-    private readonly soundPlayer: SoundPlayer
+    private readonly soundController: SoundController
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
@@ -71,7 +70,7 @@ export class GameScene implements Scene {
     } else if (isModifierKey(key)) {
       await this._handleModifierKeyDown(key as ModifierKey);
     } else if (key === 'SPACEBAR') {
-      this.soundPlayer.playSound(Sounds.FOOTSTEP);
+      this.soundController.playSound('footstep');
       await this.game.engine.playTurn(this.game);
     } else if (key === 'TAB') {
       inventoryController.prepareInventoryScreen(this.game);
@@ -162,7 +161,7 @@ export class GameScene implements Scene {
       await this.game.engine.playTurn(this.game);
     } else {
       playerUnit.setDirection(direction);
-      this.soundPlayer.playSound(Sounds.BLOCKED);
+      this.soundController.playSound('blocked');
     }
   };
 
@@ -205,16 +204,16 @@ export class GameScene implements Scene {
       map.removeObject(item);
       await this.game.engine.playTurn(this.game);
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_DOWN) {
-      this.soundPlayer.playSound(Sounds.DESCEND_STAIRS);
+      this.soundController.playSound('descend_stairs');
       await mapController.loadNextMap(this.game);
     } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_UP) {
-      this.soundPlayer.playSound(Sounds.DESCEND_STAIRS); // TODO
+      this.soundController.playSound('descend_stairs'); // TODO
       await mapController.loadPreviousMap(this.game);
     } else if (shrine) {
       shrine.use(this.game);
     } else {
       // this is mostly a hack to support clicks
-      this.soundPlayer.playSound(Sounds.FOOTSTEP);
+      this.soundController.playSound('footstep');
       await this.game.engine.playTurn(this.game);
     }
   };

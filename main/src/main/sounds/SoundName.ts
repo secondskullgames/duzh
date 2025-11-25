@@ -1,0 +1,18 @@
+export type SoundName =
+  | 'blocked'
+  | 'deflected_hit'
+  | 'descend_stairs'
+  | 'enemy_hits_player'
+  | 'enemy_dies'
+  | 'footstep'
+  | 'game_over'
+  | 'health_globe'
+  | 'level_up'
+  | 'pick_up_item'
+  | 'player_dies'
+  | 'player_hits_enemy'
+  | 'open_door'
+  | 'special_attack'
+  | 'use_potion'
+  | 'wizard_appear'
+  | 'wizard_vanish';

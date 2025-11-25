@@ -1,7 +1,6 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
-import Sounds from '@main/sounds/Sounds';
 import { getMeleeDamage } from '@main/units/UnitUtils';
 import { Activity } from '@main/units/Activity';
 import { Coordinates, Direction, pointAt } from '@duzh/geometry';
@@ -24,7 +23,7 @@ export class ShootBolt implements UnitAbility {
   isLegal = () => true; // TODO
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { soundPlayer, state, ticker } = game;
+    const { soundController, state, ticker } = game;
     const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -47,7 +46,7 @@ export class ShootBolt implements UnitAbility {
       });
       const message = this._getDamageLogMessage(unit, targetUnit, adjustedDamage);
       await this._playBoltAnimation(unit, direction, coordinatesList, targetUnit, game);
-      soundPlayer.playSound(Sounds.PLAYER_HITS_ENEMY);
+      soundController.playSound('player_hits_enemy');
       ticker.log(message, { turn: state.getTurn() });
       if (targetUnit.getLife() <= 0) {
         await sleep(100);

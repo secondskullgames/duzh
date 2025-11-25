@@ -1,7 +1,6 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '../units/Unit';
-import Sounds from '../sounds/Sounds';
 import { Coordinates, Direction, pointAt } from '@duzh/geometry';
 import { sleep } from '@lib/utils/promises';
 import { moveUnit } from '@main/actions/moveUnit';
@@ -25,7 +24,7 @@ export class Dash implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { soundPlayer } = game;
+    const { soundController } = game;
     const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -49,10 +48,10 @@ export class Dash implements UnitAbility {
     }
 
     if (moved) {
-      soundPlayer.playSound(Sounds.FOOTSTEP);
+      soundController.playSound('footstep');
       unit.spendMana(this.manaCost);
     } else {
-      soundPlayer.playSound(Sounds.BLOCKED);
+      soundController.playSound('blocked');
     }
   };
 }

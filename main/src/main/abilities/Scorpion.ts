@@ -1,7 +1,6 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit, { DefendResult } from '@main/units/Unit';
-import Sounds from '@main/sounds/Sounds';
 import { getMeleeDamage } from '@main/units/UnitUtils';
 import { Coordinates, Direction, pointAt } from '@duzh/geometry';
 import { moveUnit } from '@main/actions/moveUnit';
@@ -11,7 +10,7 @@ import { isBlocked } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';
 
 const attack: Attack = {
-  sound: Sounds.PLAYER_HITS_ENEMY,
+  sound: 'player_hits_enemy',
   calculateAttackResult: (unit: Unit): AttackResult => {
     const damage = Math.round(getMeleeDamage(unit) * Scorpion.DAMAGE_COEFFICIENT);
     return { damage };

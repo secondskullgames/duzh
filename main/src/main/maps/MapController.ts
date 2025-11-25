@@ -1,4 +1,4 @@
-import { MusicController } from '@duzh/audio';
+import { MusicPlayer } from '@duzh/audio';
 import { MapType } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
@@ -25,7 +25,7 @@ type Props = Readonly<{
   generatedMapFactory: GeneratedMapFactory;
   mapHydrator: MapHydrator;
   unitFactory: UnitFactory;
-  musicController: MusicController;
+  musicPlayer: MusicPlayer;
 }>;
 
 export class MapControllerImpl implements MapController {
@@ -34,7 +34,7 @@ export class MapControllerImpl implements MapController {
   private readonly generatedMapFactory: GeneratedMapFactory;
   private readonly mapHydrator: MapHydrator;
   private readonly unitFactory: UnitFactory;
-  private readonly musicController: MusicController;
+  private readonly musicPlayer: MusicPlayer;
 
   constructor(props: Props) {
     this.assetBundle = props.assetBundle;
@@ -42,11 +42,11 @@ export class MapControllerImpl implements MapController {
     this.generatedMapFactory = props.generatedMapFactory;
     this.mapHydrator = props.mapHydrator;
     this.unitFactory = props.unitFactory;
-    this.musicController = props.musicController;
+    this.musicPlayer = props.musicPlayer;
   }
 
   loadFirstMap = async (game: Game) => {
-    const { unitFactory, musicController, assetBundle } = this;
+    const { unitFactory, musicPlayer, assetBundle } = this;
     const { state } = game;
     const map = await this._loadMap(assetBundle.getMapList()[0].id, game);
     const playerUnit = await unitFactory.createPlayerUnit(
@@ -56,17 +56,17 @@ export class MapControllerImpl implements MapController {
     map.addUnit(playerUnit);
     state.addUnit(playerUnit);
     updateRevealedTiles(map, playerUnit);
-    musicController.stop();
+    musicPlayer.stop();
     if (map.music) {
-      musicController.playMusic(map.music);
+      musicPlayer.playMusic(map.music);
     }
   };
 
   loadNextMap = async (game: Game) => {
-    const { musicController, assetBundle } = this;
+    const { musicPlayer, assetBundle } = this;
     const { state } = game;
     const currentMap = state.getPlayerUnit().getMap();
-    musicController.stop();
+    musicPlayer.stop();
     const mapSpecs = assetBundle.getMapList();
     const nextMapIndex = mapSpecs.findIndex(spec => spec.id === currentMap.id) + 1;
     if (nextMapIndex >= mapSpecs.length) {
@@ -82,13 +82,13 @@ export class MapControllerImpl implements MapController {
       map.addUnit(playerUnit);
       updateRevealedTiles(map, playerUnit);
       if (map.music) {
-        musicController.playMusic(map.music);
+        musicPlayer.playMusic(map.music);
       }
     }
   };
 
   loadPreviousMap = async (game: Game) => {
-    const { musicController, assetBundle } = this;
+    const { musicPlayer, assetBundle } = this;
     const { state } = game;
     const mapSpecs = assetBundle.getMapList();
     const playerUnit = state.getPlayerUnit();
@@ -101,12 +101,12 @@ export class MapControllerImpl implements MapController {
     playerUnit.setCoordinates(map.getStartingCoordinates());
     updateRevealedTiles(map, playerUnit);
     if (map.music) {
-      musicController.playMusic(map.music);
+      musicPlayer.playMusic(map.music);
     }
   };
 
   loadDebugMap = async (game: Game) => {
-    const { musicController, predefinedMapFactory, mapHydrator, unitFactory } = this;
+    const { musicPlayer, predefinedMapFactory, mapHydrator, unitFactory } = this;
     const { state } = game;
 
     const mapTemplate = await predefinedMapFactory.buildPredefinedMap('test');
@@ -118,7 +118,7 @@ export class MapControllerImpl implements MapController {
     map.addUnit(playerUnit);
     state.addUnit(playerUnit);
     updateRevealedTiles(map, playerUnit);
-    musicController.stop();
+    musicPlayer.stop();
     updateRevealedTiles(map, state.getPlayerUnit());
   };
 

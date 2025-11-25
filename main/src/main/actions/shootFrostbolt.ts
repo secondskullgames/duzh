@@ -1,7 +1,6 @@
 import { dealDamage } from './dealDamage';
 import { die } from './die';
 import Unit from '../units/Unit';
-import Sounds from '../sounds/Sounds';
 import { Activity } from '../units/Activity';
 import { Direction } from '@duzh/geometry';
 import { Coordinates } from '@duzh/geometry';
@@ -21,7 +20,7 @@ export const shootFrostbolt = async (
   freezeDuration: number,
   game: Game
 ) => {
-  const { soundPlayer, ticker, state } = game;
+  const { soundController, ticker, state } = game;
   unit.setDirection(direction);
 
   const map = unit.getMap();
@@ -34,7 +33,7 @@ export const shootFrostbolt = async (
 
   const targetUnit = map.getUnit(coordinates);
   if (targetUnit) {
-    soundPlayer.playSound(Sounds.PLAYER_HITS_ENEMY);
+    soundController.playSound('player_hits_enemy');
     await playFrostboltAnimation(unit, direction, coordinatesList, targetUnit, game);
     const adjustedDamage = await dealDamage(damage, {
       sourceUnit: unit,

@@ -1,4 +1,3 @@
-import { SoundEffect } from '@duzh/models';
 import { sleep } from '@lib/utils/promises';
 import { Game } from '@main/core/Game';
 import { EquipmentScript } from '@main/equipment/EquipmentScript';
@@ -7,6 +6,7 @@ import { Activity } from '../units/Activity';
 import Unit, { DefendResult } from '../units/Unit';
 import { die } from './die';
 import { recordKill } from './recordKill';
+import { SoundName } from '@main/sounds/SoundName';
 
 export type AttackResult = Readonly<{
   /** the "outgoing", pre-mitigation damage */
@@ -16,7 +16,7 @@ export type AttackResult = Readonly<{
 export type Attack = Readonly<{
   calculateAttackResult: (attacker: Unit) => AttackResult;
   getDamageLogMessage: (attacker: Unit, defender: Unit, result: DefendResult) => string;
-  sound: SoundEffect;
+  sound: SoundName;
 }>;
 
 export const attackUnit = async (
@@ -25,7 +25,7 @@ export const attackUnit = async (
   attack: Attack,
   game: Game
 ) => {
-  const { soundPlayer, state, ticker } = game;
+  const { soundController, state, ticker } = game;
   for (const equipment of attacker.getEquipment().getAll()) {
     if (equipment.script) {
       await EquipmentScript.forName(equipment.script).beforeAttack?.(
@@ -47,7 +47,7 @@ export const attackUnit = async (
   const attackResult = attack.calculateAttackResult(attacker);
   const defendResult = defender.takeDamage(attackResult.damage, attacker);
   attacker.recordDamageDealt(defendResult.damageTaken);
-  soundPlayer.playSound(attack.sound);
+  soundController.playSound(attack.sound);
   const message = attack.getDamageLogMessage(attacker, defender, defendResult);
   ticker.log(message, { turn: state.getTurn() });
 

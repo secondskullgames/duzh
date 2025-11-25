@@ -1,6 +1,5 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
-import Sounds from '@main/sounds/Sounds';
 import { Coordinates, pointAt } from '@duzh/geometry';
 import Unit, { DefendResult } from '@main/units/Unit';
 import { getMeleeDamage } from '@main/units/UnitUtils';
@@ -9,7 +8,7 @@ import { hasEnemyUnit } from '@main/units/controllers/ControllerUtils';
 import { Game } from '@main/core/Game';
 
 const attack: Attack = {
-  sound: Sounds.PLAYER_HITS_ENEMY,
+  sound: 'player_hits_enemy',
   calculateAttackResult: (unit: Unit): AttackResult => {
     return { damage: getMeleeDamage(unit) };
   },

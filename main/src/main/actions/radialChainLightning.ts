@@ -2,7 +2,6 @@ import { recordKill } from './recordKill';
 import { die } from './die';
 import { dealDamage } from './dealDamage';
 import Unit from '../units/Unit';
-import Sounds from '../sounds/Sounds';
 import { Activity } from '../units/Activity';
 import { Coordinates } from '@duzh/geometry';
 import { sleep } from '@lib/utils/promises';
@@ -27,7 +26,7 @@ const getAdjacentEnemies = (unit: Unit, map: MapInstance) => {
 };
 
 export const radialChainLightning = async (unit: Unit, damage: number, game: Game) => {
-  const { soundPlayer, state, ticker } = game;
+  const { soundController, state, ticker } = game;
   const map = unit.getMap();
   const alreadyDamagedEnemies: Unit[] = [];
   const queue: Unit[] = getAdjacentEnemies(unit, map);
@@ -55,7 +54,7 @@ export const radialChainLightning = async (unit: Unit, damage: number, game: Gam
       recordKill(unit, targetUnit, game);
     }
     await sleep(150);
-    soundPlayer.playSound(Sounds.PLAYER_HITS_ENEMY);
+    soundController.playSound('player_hits_enemy');
 
     unit.setActivity(Activity.STANDING, 1, unit.getDirection());
     targetUnit.setActivity(Activity.STANDING, 1, unit.getDirection());

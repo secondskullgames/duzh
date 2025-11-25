@@ -1,7 +1,6 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
-import Sounds from '@main/sounds/Sounds';
 import { Coordinates, Direction } from '@duzh/geometry';
 import { moveUnit } from '@main/actions/moveUnit';
 import { isBlocked } from '@main/maps/MapUtils';
@@ -21,7 +20,7 @@ export class FreeMove implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { soundPlayer } = game;
+    const { soundController } = game;
     const map = unit.getMap();
     const direction = Direction.between(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
@@ -30,7 +29,7 @@ export class FreeMove implements UnitAbility {
       await moveUnit(unit, targetCoordinates, game);
       unit.spendMana(this.manaCost);
     } else {
-      soundPlayer.playSound(Sounds.BLOCKED);
+      soundController.playSound('blocked');
     }
   };
 }

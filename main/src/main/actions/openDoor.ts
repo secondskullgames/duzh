@@ -1,22 +1,21 @@
 import Unit from '../units/Unit';
 import Door from '../objects/Door';
-import Sounds from '../sounds/Sounds';
 import { ItemCategory } from '@duzh/models';
 import { Game } from '@main/core/Game';
 
 export const openDoor = async (unit: Unit, door: Door, game: Game) => {
-  const { soundPlayer } = game;
+  const { soundController } = game;
   if (door.isLocked()) {
     const keys = unit.getInventory().get(ItemCategory.KEY);
     if (keys.length > 0) {
       unit.getInventory().remove(keys[0]);
-      soundPlayer.playSound(Sounds.OPEN_DOOR);
+      soundController.playSound('open_door');
       door.open();
     } else {
-      soundPlayer.playSound(Sounds.BLOCKED);
+      soundController.playSound('blocked');
     }
   } else if (door.isClosed()) {
-    soundPlayer.playSound(Sounds.OPEN_DOOR);
+    soundController.playSound('open_door');
     door.open();
   }
 };

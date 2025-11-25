@@ -1,7 +1,6 @@
 import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit from '@main/units/Unit';
-import Sounds from '@main/sounds/Sounds';
 import { Activity } from '@main/units/Activity';
 import { Coordinates, pointAt } from '@duzh/geometry';
 import { moveUnit } from '@main/actions/moveUnit';
@@ -26,11 +25,11 @@ export class FastTeleport implements UnitAbility {
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
-    const { soundPlayer } = game;
+    const { soundController } = game;
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
     unit.spendMana(this.manaCost);
     await moveUnit(unit, coordinates, game);
     unit.setActivity(Activity.STANDING, 1, unit.getDirection());
-    soundPlayer.playSound(Sounds.FOOTSTEP);
+    soundController.playSound('footstep');
   };
 }

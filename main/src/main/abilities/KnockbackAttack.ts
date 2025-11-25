@@ -2,7 +2,6 @@ import { type UnitAbility } from './UnitAbility';
 import { AbilityName } from './AbilityName';
 import Unit, { DefendResult } from '@main/units/Unit';
 import { getMeleeDamage } from '@main/units/UnitUtils';
-import Sounds from '@main/sounds/Sounds';
 import { Coordinates, pointAt } from '@duzh/geometry';
 import { sleep } from '@lib/utils/promises';
 import { moveUnit } from '@main/actions/moveUnit';
@@ -38,7 +37,7 @@ export class KnockbackAttack implements UnitAbility {
       unit.spendMana(this.manaCost);
 
       const attack: Attack = {
-        sound: Sounds.SPECIAL_ATTACK,
+        sound: 'special_attack',
         calculateAttackResult: (unit: Unit): AttackResult => {
           const damage = Math.round(
             getMeleeDamage(unit) * KnockbackAttack.DAMAGE_COEFFICIENT
