@@ -18,7 +18,7 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "clean": "rimraf build",
     "lint": "prettier --write ./src"
   },

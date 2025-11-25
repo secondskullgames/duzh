@@ -6,7 +6,6 @@ import {
   pointAt
 } from '../CoordinatesUtils.js';
 import { Direction } from '../Direction.js';
-import { describe, expect, test } from 'vitest';
 
 describe('CoordinatesUtils', () => {
   test('manhattanDistance', () => {

@@ -1,8 +1,7 @@
 {
-  "exclude": ["**/*.test.ts"],
+  "extends": "../tsconfig.base.json",
+  "include": ["src"],
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "alwaysStrict": true,
     "baseUrl": ".",
     "paths": {
       "@data/*": ["data/*"],
@@ -15,12 +14,6 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "outDir": "./build",
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "strict": true,
-    "plugins": [],
     "types": ["vite/client", "vitest/globals", "node"]
   }
 }

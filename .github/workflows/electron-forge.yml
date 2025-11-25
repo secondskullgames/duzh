@@ -2,9 +2,12 @@
 
 name: Build Electron Forge executables
 
-on:
-  push:
-    branches: [ master ]
+# TODO: disabling until I can properly fix
+# broken due to https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-the-artifact-actions/
+# I'm probably a million Electron versions behind, too
+on: {}
+#  push:
+#    branches: [ master ]
 
 env:
   NODE_VERSION: 16
