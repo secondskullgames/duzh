@@ -1,5 +1,5 @@
+import { Sample, SoundEffect } from '@duzh/models';
 import CustomOscillator from './CustomOscillator';
-import { Sample } from './types';
 
 type Props = Readonly<{
   polyphony: number;
@@ -38,7 +38,11 @@ export default class SoundPlayer {
     }
   };
 
-  playSound = (samples: Sample[], repeating: boolean = false) => {
+  playSound = (sound: SoundEffect, repeating: boolean = false) => {
+    this.playSamples(sound.samples, repeating);
+  };
+
+  playSamples = (samples: Sample[], repeating: boolean = false) => {
     const oscillator = new CustomOscillator(this.context, this.gainNode, repeating);
     oscillator.play(samples, this.context);
     this.oscillators.push(oscillator);

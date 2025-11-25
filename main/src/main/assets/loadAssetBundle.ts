@@ -1,17 +1,17 @@
-import { AssetBundle, AssetBundleImpl } from '@main/assets/AssetBundle';
-import { ZodObject } from 'zod';
-import { z } from 'zod';
 import {
   ConsumableItemModelSchema,
   DynamicSpriteModelSchema,
   EquipmentModelSchema,
   GeneratedMapModelSchema,
+  MusicModelSchema,
   PredefinedMapModelSchema,
+  SoundEffectSchema,
   StaticSpriteModelSchema,
   TileSetModelSchema,
   UnitModelSchema
 } from '@duzh/models';
-import { Figure } from '@lib/audio/types';
+import { AssetBundle, AssetBundleImpl } from '@main/assets/AssetBundle';
+import { z, ZodObject } from 'zod';
 
 export const loadAssetBundle = async (): Promise<AssetBundle> => {
   const equipmentAssets = import.meta.glob('/data/equipment/**/*.json') as AssetGlob;
@@ -52,8 +52,8 @@ export const loadAssetBundle = async (): Promise<AssetBundle> => {
     },
     tileSets: await loadAssets(tileSetAssets, TileSetModelSchema),
     units: await loadAssets(unitAssets, UnitModelSchema),
-    sounds: await loadSoundAssets(soundAssets),
-    music: await loadMusicAssets(musicAssets)
+    sounds: await loadAssets(soundAssets, SoundEffectSchema),
+    music: await loadAssets(musicAssets, MusicModelSchema)
   });
 };
 
@@ -68,38 +68,6 @@ const loadAssets = async <S extends ZodObject>(
       const value = (await module()).default;
       return schema.parse(value);
     })
-  );
-};
-
-/** TODO standardize! */
-const loadMusicAssets = async (
-  assetGlob: AssetGlob
-): Promise<Record<string, Figure[]>> => {
-  return Object.fromEntries(
-    await Promise.all(
-      Object.entries(assetGlob).map(async ([filename, module]) => {
-        const value = (await module()).default;
-        const relativeFilename = filename
-          .replaceAll(/^\/data\/music\//g, '')
-          .replaceAll(/\.json$/g, '');
-        return [relativeFilename, value as Figure[]];
-      })
-    )
-  );
-};
-
-/** TODO standardize! */
-const loadSoundAssets = async (assetGlob: AssetGlob): Promise<Record<string, Figure>> => {
-  return Object.fromEntries(
-    await Promise.all(
-      Object.entries(assetGlob).map(async ([filename, module]) => {
-        const value = (await module()).default;
-        const relativeFilename = filename
-          .replaceAll(/^\/data\/sounds\//g, '')
-          .replaceAll(/\.json$/g, '');
-        return [relativeFilename, value as Figure];
-      })
-    )
   );
 };
 

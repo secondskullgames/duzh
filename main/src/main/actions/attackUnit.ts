@@ -1,12 +1,12 @@
+import { SoundEffect } from '@duzh/models';
+import { sleep } from '@lib/utils/promises';
+import { Game } from '@main/core/Game';
+import { EquipmentScript } from '@main/equipment/EquipmentScript';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { Activity } from '../units/Activity';
+import Unit, { DefendResult } from '../units/Unit';
 import { die } from './die';
 import { recordKill } from './recordKill';
-import Unit, { DefendResult } from '../units/Unit';
-import { Activity } from '../units/Activity';
-import { sleep } from '@lib/utils/promises';
-import { EquipmentScript } from '@main/equipment/EquipmentScript';
-import { SoundEffect } from '@lib/audio/types';
-import { StatusEffect } from '@main/units/effects/StatusEffect';
-import { Game } from '@main/core/Game';
 
 export type AttackResult = Readonly<{
   /** the "outgoing", pre-mitigation damage */

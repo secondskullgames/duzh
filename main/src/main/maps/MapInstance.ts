@@ -1,13 +1,12 @@
-import Tile from '../tiles/Tile';
-import Unit from '../units/Unit';
+import { FogOfWarParams, MusicModel } from '@duzh/models';
+import { Coordinates } from '@lib/geometry/Coordinates';
+import Grid from '@lib/geometry/Grid';
+import MultiGrid from '@lib/geometry/MultiGrid';
+import { Rect } from '@lib/geometry/Rect';
 import Projectile from '../entities/Projectile';
 import GameObject from '../objects/GameObject';
-import MultiGrid from '@lib/geometry/MultiGrid';
-import Grid from '@lib/geometry/Grid';
-import { Coordinates } from '@lib/geometry/Coordinates';
-import { FogOfWarParams } from '@duzh/models';
-import { Rect } from '@lib/geometry/Rect';
-import type { Figure } from '@lib/audio/types';
+import Tile from '../tiles/Tile';
+import Unit from '../units/Unit';
 
 type Props = Readonly<{
   id: string;
@@ -15,7 +14,7 @@ type Props = Readonly<{
   height: number;
   levelNumber: number;
   startingCoordinates: Coordinates;
-  music?: Figure[] | null;
+  music?: MusicModel | null;
   fogParams: FogOfWarParams;
 }>;
 
@@ -30,7 +29,7 @@ export default class MapInstance {
   private readonly objects: MultiGrid<GameObject>;
   private readonly projectiles: Set<Projectile>;
   private readonly revealedTiles: Grid<boolean>;
-  readonly music: Figure[] | null;
+  readonly music: MusicModel | null;
   private readonly fogParams: FogOfWarParams;
 
   constructor(props: Props) {

@@ -1,10 +1,13 @@
+import { Figure, MusicModel, Suite } from '@duzh/models';
+import { randChoice } from '@duzh/utils/random';
 import { transpose8vb } from '@lib/audio/AudioUtils';
 import SoundPlayer from '@lib/audio/SoundPlayer';
-import { Figure, Suite } from '@lib/audio/types';
-import { randChoice } from '@duzh/utils/random';
 
+/**
+ * TODO our object hierarchy is kinda fucked up
+ */
 export default class MusicController {
-  private activeMusic: Suite | Figure[] | null = null;
+  private activeMusic: Suite | MusicModel | null = null;
 
   constructor(private readonly soundPlayer: SoundPlayer) {}
 
@@ -51,22 +54,23 @@ export default class MusicController {
     );
   };
 
-  playMusic = (figures: Figure[]) => {
-    this.activeMusic = figures;
-    const length = figures[0].map(sample => sample[1]).reduce((a, b) => a + b);
-    for (const figure of figures) {
-      this.playFigure(figure);
+  playMusic = (music: MusicModel) => {
+    this.activeMusic = music;
+    // TODO making a big assumption here
+    const length = music.voices[0].map(sample => sample[1]).reduce((a, b) => a + b);
+    for (const voice of music.voices) {
+      this.playFigure(voice);
     }
 
     setTimeout(() => {
-      if (this.activeMusic === figures) {
-        this.playMusic(figures);
+      if (this.activeMusic === music) {
+        this.playMusic(music);
       }
     }, length);
   };
 
   playFigure = (figure: Figure) => {
-    this.soundPlayer.playSound(figure, false);
+    this.soundPlayer.playSamples(figure, false);
   };
 
   stopMusic = () => {
