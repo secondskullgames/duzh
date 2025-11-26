@@ -2,32 +2,46 @@
 
 A graphical Roguelike in the browser written in Typescript.
 
-[![Node.js CI](https://github.com/jwbutler/roguelike-js/actions/workflows/node.js.yml/badge.svg)](https://github.com/jwbutler/roguelike-js/actions/workflows/node.js.yml)
+## Gameplay
+
+* WASD / Arrow keys - Move around, melee attack 
+* Tab - Open inventory screen
+* Enter - Pick up item, enter portal, go down stairs
+* Number keys (1-9) - Special moves (press arrow to execute)
+* Shift + (direction) - Use bow and arrows
+* Alt + (direction) - Dash
+* M - View map screen
+* C - View character screen
+* F1 - View help screen
 
 ## Package Structure
 
-- `src/` - Typescript source code
-  - `lib/` - Library code that is (mostly) not specific to the game
-  - `main/` - Main game code
-  - `models/` - Zod schema definitions for game data
-  - `test/` - Unit tests
-- `build/` - Compiled Typescript
-- `data/` - Game data in JSON format
-- `electron/` - Electron-specific code
-- `public/` - Static files for the game
+This is a PNPM monorepo divided into a number of modules:
 
-### `data/`
-Much of the game data is stored as JSON files in the `data/` directory.
-We use Zod to define schemas for each type of game data and validate them at runtime.
-The corresponding Zod schemas are in `src/main/models/`.
+- `assets/` - contains game data in the form of JSON models and images, as well as scripts for building JSON asset bundles
+- `audio/` - helpers for playing sound and music files
+- `electron/` - configuration for deploying as an Electron app
+- `features/` - micro-library for toggling various boolean flags
+- `geometry/` - contains definitions of common geometric types, as well as pathfinding
+- `graphics/` - utilities for rendering via Canvas2D and dealing with images
+- `main/` - the main application code
+- `maps/` - code for procedural map generation as well as loading predefined maps from images
+- `models/` - Zod schemas for core game objects.
+- `utils/` - generic helper functions that are generally not game-specific.
 
-## Usage
+## Developing
+
+Compile the game:
+```
+pnpm build
+```
+
 Run the game in dev:
 ```
-npm run dev
+pnpm dev
 ```
 
 Run the game as an Electron app:
 ```
-npm run electron
+pnpm electron
 ```

@@ -1,6 +1,5 @@
 import { glob } from 'glob';
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { readFile } from 'node:fs/promises';
 import { ImageBundle } from '@duzh/models';
 import sharp from 'sharp';
 
