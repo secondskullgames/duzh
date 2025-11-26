@@ -4,8 +4,7 @@ import * as path from 'node:path';
 export default {
   resolve: {
     alias: {
-      '@main': path.resolve(__dirname, 'src/main'),
-      '@lib': path.resolve(__dirname, 'src/lib')
+      '@main': path.resolve(__dirname, 'src')
     }
   },
   build: {

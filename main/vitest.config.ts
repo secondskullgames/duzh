@@ -8,7 +8,7 @@ export default {
     coverage: {
       provider: 'v8',
       reporter: ['json', 'text-summary', 'lcov', 'clover'],
-      include: ['src/lib/**/*.ts', 'src/main/**/*.ts'],
+      include: ['src/**/*.ts'],
       thresholds: {
         //statements: 7.0,
         //branches: 6.0,
@@ -17,8 +17,7 @@ export default {
       }
     },
     alias: {
-      '@lib': path.resolve(__dirname, './src/lib'),
-      '@main': path.resolve(__dirname, './src/main')
+      '@main': path.resolve(__dirname, './src')
     }
   }
 } satisfies ViteUserConfig;

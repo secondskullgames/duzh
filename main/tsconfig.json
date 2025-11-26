@@ -4,8 +4,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@main/*": ["src/main/*"],
-      "@lib/*": ["src/lib/*"],
+      "@main/*": ["src/*"],
     },
     "lib": ["dom", "esnext"],
     "target": "esnext",
