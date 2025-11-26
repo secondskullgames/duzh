@@ -1,4 +1,4 @@
-import { Feature } from '@main/utils/features';
+import { Feature } from '@duzh/features';
 import { spawnFogUnits } from '@main/actions/spawnFogUnits';
 import { Game } from '@main/core/Game';
 import MapInstance from '@main/maps/MapInstance';

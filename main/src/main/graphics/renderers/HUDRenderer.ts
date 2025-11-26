@@ -5,7 +5,7 @@ import { Alignment, drawAligned } from '../RenderingUtils';
 import { FontName } from '../Fonts';
 import { Color, Graphics, PaletteSwaps } from '@duzh/graphics';
 import { Pixel, Rect } from '@duzh/geometry';
-import { Feature } from '@main/utils/features';
+import { Feature } from '@duzh/features';
 import Unit from '@main/units/Unit';
 import { ImageFactory } from '@duzh/graphics/images';
 import { checkNotNull } from '@duzh/utils/preconditions';

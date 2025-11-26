@@ -15,7 +15,7 @@ import Shrine from '@main/objects/Shrine';
 import Door, { DoorState } from '@main/objects/Door';
 import { DoorDirection } from '@duzh/models';
 import { Game } from '@main/core/Game';
-import { AssetBundle } from '@duzh/assets';
+import { AssetBundle } from '@duzh/models';
 
 export default class ObjectFactory {
   constructor(

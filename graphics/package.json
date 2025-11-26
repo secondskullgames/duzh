@@ -34,8 +34,8 @@
     "vitest": "catalog:vitest"
   },
   "dependencies": {
-    "@duzh/assets": "workspace:*",
     "@duzh/geometry": "workspace:*",
+    "@duzh/models": "workspace:*",
     "@duzh/utils": "workspace:*",
     "glob": "catalog:",
     "zod": "catalog:zod"

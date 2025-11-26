@@ -1,4 +1,4 @@
-import { ImageBundle } from '@duzh/assets';
+import { ImageBundle } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { createCanvas, createImage, getCanvasContext } from '../dom.js';
 

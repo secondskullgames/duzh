@@ -1,4 +1,4 @@
-import { AssetBundle } from '@duzh/assets';
+import { AssetBundle } from '@duzh/models';
 import { SoundPlayer } from '@duzh/audio';
 import { SoundName } from '@main/sounds/SoundName';
 import { checkNotNull } from '@duzh/utils/preconditions';

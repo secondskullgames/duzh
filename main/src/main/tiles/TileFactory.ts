@@ -8,7 +8,7 @@ import { Coordinates } from '@duzh/geometry';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { randChoice } from '@duzh/utils/random';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
-import { AssetBundle } from '@duzh/assets';
+import { AssetBundle } from '@duzh/models';
 
 type CreateTileParams = Readonly<{
   tileType: TileType;

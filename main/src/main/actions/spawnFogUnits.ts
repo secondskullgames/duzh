@@ -5,7 +5,7 @@ import { Faction } from '@main/units/Faction';
 import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
 import { Coordinates, hypotenuse } from '@duzh/geometry';
 import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
-import { Feature } from '@main/utils/features';
+import { Feature } from '@duzh/features';
 import { Game } from '@main/core/Game';
 
 export const spawnFogUnits = async (map: MapInstance, game: Game) => {

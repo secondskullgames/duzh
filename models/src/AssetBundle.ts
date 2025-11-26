@@ -1,17 +1,14 @@
 import { z } from 'zod';
-import {
-  ConsumableItemModelSchema,
-  DynamicSpriteModelSchema,
-  EquipmentModelSchema,
-  GeneratedMapModelSchema,
-  MapSpecSchema,
-  MusicModelSchema,
-  PredefinedMapModelSchema,
-  SoundEffectSchema,
-  StaticSpriteModelSchema,
-  TileSetModelSchema,
-  UnitModelSchema
-} from '@duzh/models';
+import { EquipmentModelSchema } from './EquipmentModel.js';
+import { ConsumableItemModelSchema } from './ConsumableItemModel.js';
+import { PredefinedMapModelSchema } from './PredefinedMapModel.js';
+import { GeneratedMapModelSchema } from './GeneratedMapModel.js';
+import { StaticSpriteModelSchema } from './StaticSpriteModel.js';
+import { DynamicSpriteModelSchema } from './DynamicSpriteModel.js';
+import { TileSetModelSchema } from './TileSetModel.js';
+import { UnitModelSchema } from './UnitModel.js';
+import { MusicModelSchema, SoundEffectSchema } from './SoundModels.js';
+import { MapSpecSchema } from './MapSpec.js';
 
 const idMap = <S extends z.ZodSchema>(schema: S): z.ZodRecord<z.ZodString, S> => {
   return z.record(z.string(), schema);

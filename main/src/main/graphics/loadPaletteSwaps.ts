@@ -1,4 +1,4 @@
-import { AssetBundle } from '@duzh/assets';
+import { AssetBundle } from '@duzh/models';
 import { Color, PaletteSwaps } from '@duzh/graphics';
 import { checkNotNull } from '@duzh/utils/preconditions';
 

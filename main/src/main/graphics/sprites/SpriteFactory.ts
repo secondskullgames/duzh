@@ -18,7 +18,7 @@ import { ImageEffects } from '@main/graphics/ImageEffects';
 import { DoorDirection, DynamicSpriteModel } from '@duzh/models';
 import Shrine from '@main/objects/Shrine';
 import { ShrineSprite } from '@main/graphics/sprites/ShrineSprite';
-import { AssetBundle } from '@duzh/assets';
+import { AssetBundle } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
 
 export default class SpriteFactory {

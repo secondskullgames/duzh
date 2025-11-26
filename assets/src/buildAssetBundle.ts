@@ -1,6 +1,6 @@
 import { readFile } from 'fs/promises';
 import { glob } from 'glob';
-import { AssetBundle } from './AssetBundle.js';
+import { AssetBundle } from '@duzh/models';
 import { z } from 'zod';
 import {
   ConsumableItemModelSchema,

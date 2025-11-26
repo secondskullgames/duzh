@@ -1,5 +1,5 @@
 import { ViteUserConfig } from 'vitest/config';
-import path from 'node:path';
+import * as path from 'node:path';
 
 export default {
   test: {
@@ -17,10 +17,8 @@ export default {
       }
     },
     alias: {
-      '@data': path.resolve(__dirname, './data'),
       '@lib': path.resolve(__dirname, './src/lib'),
-      '@main': path.resolve(__dirname, './src/main'),
-      '@test': path.resolve(__dirname, './src/test')
+      '@main': path.resolve(__dirname, './src/main')
     }
   }
 } satisfies ViteUserConfig;

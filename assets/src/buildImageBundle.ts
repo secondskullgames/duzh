@@ -1,7 +1,7 @@
 import { glob } from 'glob';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
-import { ImageBundle } from './ImageBundle.js';
+import { ImageBundle } from '@duzh/models';
 
 export const buildImageBundle = async (): Promise<ImageBundle> => {
   const filenames = await glob('**/*.png', { cwd: './png' });

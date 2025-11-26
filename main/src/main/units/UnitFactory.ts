@@ -9,7 +9,7 @@ import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
 import MapInstance from '@main/maps/MapInstance';
 import { Coordinates } from '@duzh/geometry';
 import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
-import { AssetBundle } from '@duzh/assets';
+import { AssetBundle } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
 
 type CreateUnitParams = Readonly<{
