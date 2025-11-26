@@ -26,7 +26,8 @@
     "prettier": "catalog:",
     "rimraf": "catalog:",
     "tsx": "catalog:tsx",
-    "typescript": "catalog:typescript"
+    "typescript": "catalog:typescript",
+    "vitest": "catalog:vitest"
   },
   "dependencies": {
     "@duzh/assets": "workspace:*",

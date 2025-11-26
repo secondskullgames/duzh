@@ -1,5 +1,5 @@
 import { Offsets } from '@duzh/geometry';
-import { Image } from '@lib/graphics/images/Image';
+import { Image } from '@duzh/graphics/images';
 
 /**
  * Note: It's expected that a separate Sprite instance will be created

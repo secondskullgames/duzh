@@ -1,7 +1,7 @@
 import DynamicSprite from './DynamicSprite';
 import Spawner from '../../objects/Spawner';
 import { Offsets } from '@duzh/geometry';
-import { Image } from '@lib/graphics/images/Image';
+import { Image } from '@duzh/graphics/images';
 
 type Props = Readonly<{
   spriteName: string;

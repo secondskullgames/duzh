@@ -1,7 +1,7 @@
 import DynamicSprite from './DynamicSprite';
 import Door from '../../objects/Door';
 import { Offsets } from '@duzh/geometry';
-import { Image } from '@lib/graphics/images/Image';
+import { Image } from '@duzh/graphics/images';
 
 type Props = Readonly<{
   spriteName: string;

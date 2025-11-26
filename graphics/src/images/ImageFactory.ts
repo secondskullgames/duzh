@@ -3,7 +3,7 @@ import { PaletteSwaps } from '../PaletteSwaps.js';
 import { Image } from './Image.js';
 import { ImageCache } from './ImageCache.js';
 import { ImageEffect } from './ImageEffect.js';
-import ImageLoader from './ImageLoader.js';
+import { ImageLoader } from './ImageLoader.js';
 import { applyTransparentColor, replaceColors } from './ImageUtils.js';
 
 type Params = Readonly<{

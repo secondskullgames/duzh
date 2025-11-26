@@ -1,6 +1,6 @@
 import { Renderer } from '@main/graphics/renderers/Renderer';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
-import { Graphics } from '@lib/graphics/Graphics';
+import { ImageFactory } from '@duzh/graphics/images';
+import { Graphics } from '@duzh/graphics';
 import { Rect } from '@duzh/geometry';
 
 export enum TopMenuIcon {

@@ -7,6 +7,6 @@
     "target": "esnext",
     "module": "nodenext",
     "outDir": "./build",
-    "types": ["node"]
+    "types": ["node", "vitest/config", "vitest/globals"]
   }
 }

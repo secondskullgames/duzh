@@ -188,6 +188,9 @@ importers:
       typescript:
         specifier: catalog:typescript
         version: 5.5.4
+      vitest:
+        specifier: catalog:vitest
+        version: 4.0.13(@types/node@22.19.1)(terser@5.44.1)(tsx@4.20.6)
 
   main:
     dependencies:

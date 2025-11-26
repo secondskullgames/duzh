@@ -1,5 +1,5 @@
 import { SceneName } from '@main/scenes/SceneName';
-import { Graphics } from '@lib/graphics/Graphics';
+import { Graphics } from '@duzh/graphics';
 import { ClickCommand, KeyCommand } from '@lib/input/inputTypes';
 
 export interface Scene {

@@ -1,17 +1,16 @@
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
-import { Graphics } from '@lib/graphics/Graphics';
+import { Color, Graphics } from '@duzh/graphics';
 import { isMobileDevice, toggleFullScreen } from '@lib/utils/dom';
 import { FontName } from '@main/graphics/Fonts';
 import { Pixel } from '@duzh/geometry';
-import { Color } from '@lib/graphics/Color';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { LINE_HEIGHT } from '@main/graphics/constants';
 import { TextRenderer } from '@main/graphics/TextRenderer';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
 import { Game } from '@main/core/Game';
 import { InterfaceColors } from '@main/graphics/InterfaceColors';
+import { ImageFactory } from '@duzh/graphics/images';
 
 const BACKGROUND_FILENAME = 'bordered_background';
 

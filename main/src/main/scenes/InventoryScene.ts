@@ -11,16 +11,15 @@ import {
 } from '@main/core/state/InventoryState';
 import InventoryItem from '@main/items/InventoryItem';
 import { TextRenderer } from '@main/graphics/TextRenderer';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
-import { Graphics } from '@lib/graphics/Graphics';
-import { FontName } from '@main/graphics/Fonts';
-import { Color } from '@lib/graphics/Color';
+import { Color, Graphics } from '@duzh/graphics';
+import { ImageFactory } from '@duzh/graphics/images';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { getSlotName, splitTooltipToLines } from '@main/equipment/EquipmentUtils';
 import { LINE_HEIGHT } from '@main/graphics/constants';
 import { Game } from '@main/core/Game';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { InterfaceColors } from '@main/graphics/InterfaceColors';
+import { FontName } from '@main/graphics/Fonts';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
