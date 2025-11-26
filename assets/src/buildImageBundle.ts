@@ -15,7 +15,8 @@ export const buildImageBundle = async (): Promise<ImageBundle> => {
 
 const loadImageDataUrl = async (filename: string): Promise<string> => {
   const result = await sharp(`./png/${filename}`)
-    .png({ compressionLevel: 9 })
+    .png({ compressionLevel: 9, palette: true })
+    .removeAlpha()
     .toBuffer({ resolveWithObject: true });
   const buffer = result.data;
   const encoded = buffer.toString('base64');
