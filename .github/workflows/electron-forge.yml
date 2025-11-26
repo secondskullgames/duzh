@@ -35,8 +35,8 @@ jobs:
     - id: build
       name: Build distribution
       run: |
-        pnpm ci
-        pnpm run build
+        pnpm install --frozen-lockfile
+        pnpm build
         cd electron
         npm ci
         npm run make
@@ -66,8 +66,8 @@ jobs:
     - id: build
       name: Build distribution
       run: |
-        npm ci
-        npm run build
+        pnpm install --frozen-lockfile
+        pnpm build
         cd electron
         npm ci
         npm run make
