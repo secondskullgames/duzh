@@ -1,0 +1,68 @@
+import { recordKill } from './recordKill';
+import { die } from './die';
+import { dealDamage } from './dealDamage';
+import Unit from '../units/Unit';
+import { Activity } from '../units/Activity';
+import { Coordinates, Direction } from '@duzh/geometry';
+import { sleep } from '@main/utils/promises';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
+import MapInstance from '@main/maps/MapInstance';
+import { Faction } from '@main/units/Faction';
+import { Game } from '@main/core/Game';
+
+const getAdjacentEnemies = (unit: Unit, map: MapInstance) => {
+  return map
+    .getAllUnits()
+    .filter(u => u.getFaction() === Faction.ENEMY)
+    .filter(u => {
+      const { dx, dy } = Coordinates.difference(
+        unit.getCoordinates(),
+        u.getCoordinates()
+      );
+      const direction = Direction.fromOffsetsOptional({ dx, dy });
+      return direction !== null;
+    });
+};
+
+export const radialChainLightning = async (unit: Unit, damage: number, game: Game) => {
+  const { soundController, state, ticker } = game;
+  const map = unit.getMap();
+  const alreadyDamagedEnemies: Unit[] = [];
+  const queue: Unit[] = getAdjacentEnemies(unit, map);
+
+  while (true) {
+    const targetUnit = queue.shift();
+    if (!targetUnit) {
+      break;
+    }
+    const adjacentTargets: Unit[] = getAdjacentEnemies(targetUnit, map)
+      .filter(u => !queue.includes(u))
+      .filter(u => !alreadyDamagedEnemies.includes(u));
+    queue.push(...adjacentTargets);
+    targetUnit.getEffects().addEffect(StatusEffect.DAMAGED, 1);
+    targetUnit.getEffects().addEffect(StatusEffect.SHOCKED, 1);
+    const damageTaken = await dealDamage(damage, {
+      sourceUnit: unit,
+      targetUnit: targetUnit
+    });
+
+    const message = getDamageLogMessage(unit, targetUnit, damageTaken);
+    ticker.log(message, { turn: state.getTurn() });
+    if (targetUnit.getLife() <= 0) {
+      await die(targetUnit, game);
+      recordKill(unit, targetUnit, game);
+    }
+    await sleep(150);
+    soundController.playSound('player_hits_enemy');
+
+    unit.setActivity(Activity.STANDING, 1, unit.getDirection());
+    targetUnit.setActivity(Activity.STANDING, 1, unit.getDirection());
+    targetUnit.getEffects().removeEffect(StatusEffect.DAMAGED);
+    targetUnit.getEffects().removeEffect(StatusEffect.SHOCKED);
+    alreadyDamagedEnemies.push(targetUnit);
+  }
+};
+
+const getDamageLogMessage = (unit: Unit, target: Unit, damageTaken: number): string => {
+  return `${unit.getName()}'s chain lightning hit ${target.getName()} for ${damageTaken} damage!`;
+};
