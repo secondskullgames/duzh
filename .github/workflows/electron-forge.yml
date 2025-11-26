@@ -108,7 +108,7 @@ jobs:
         gh release create "release-${{ github.sha }}" \
           --title "release-${{ github.sha }}" \
           --notes "" \
-          dist/windows/*.zip \
-          dist/macos/*.zip
+          dist/windows/**/*.zip \
+          dist/macos/**/*.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
