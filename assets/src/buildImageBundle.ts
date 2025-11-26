@@ -2,6 +2,7 @@ import { glob } from 'glob';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { ImageBundle } from '@duzh/models';
+import sharp from 'sharp';
 
 export const buildImageBundle = async (): Promise<ImageBundle> => {
   const filenames = await glob('**/*.png', { cwd: './png' });
@@ -13,7 +14,10 @@ export const buildImageBundle = async (): Promise<ImageBundle> => {
 };
 
 const loadImageDataUrl = async (filename: string): Promise<string> => {
-  const buffer = await readFile(`./png/${filename}`);
+  const result = await sharp(`./png/${filename}`)
+    .png({ compressionLevel: 9 })
+    .toBuffer({ resolveWithObject: true });
+  const buffer = result.data;
   const encoded = buffer.toString('base64');
   return `data:image/png;base64,${encoded}`;
 };
