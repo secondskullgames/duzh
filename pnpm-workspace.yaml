@@ -1,6 +1,7 @@
 packages:
   - 'assets'
   - 'audio'
+  - 'features'
   - 'geometry'
   - 'graphics'
   - 'main'

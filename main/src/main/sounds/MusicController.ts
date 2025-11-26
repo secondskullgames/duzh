@@ -1,4 +1,4 @@
-import { AssetBundle } from '@duzh/assets';
+import { AssetBundle } from '@duzh/models';
 import { MusicPlayer } from '@duzh/audio';
 import { Suite } from '@duzh/models';
 import { MusicName } from '@main/sounds/MusicName';

@@ -8,7 +8,7 @@ import {
   weightedRandom,
   WeightedRandomChoice
 } from '@duzh/utils/random';
-import { Feature } from '@main/utils/features';
+import { Feature } from '@duzh/features';
 import {
   Algorithm,
   DoorDirection,
@@ -26,7 +26,7 @@ import { RoomCorridorMapGenerator } from './room_corridor/RoomCorridorMapGenerat
 import { RoomCorridorMapGenerator2 } from './room_corridor_rewrite/RoomCorridorMapGenerator2';
 import { ItemController } from '@main/items/ItemController';
 import Tile from '@main/tiles/Tile';
-import { AssetBundle } from '@duzh/assets';
+import { AssetBundle } from '@duzh/models';
 
 type Props = Readonly<{
   assetBundle: AssetBundle;

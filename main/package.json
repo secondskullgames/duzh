@@ -26,6 +26,7 @@
   "dependencies": {
     "@duzh/assets": "workspace:*",
     "@duzh/audio": "workspace:*",
+    "@duzh/features": "workspace:*",
     "@duzh/geometry": "workspace:*",
     "@duzh/graphics": "workspace:*",
     "@duzh/models": "workspace:*",

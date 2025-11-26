@@ -17,7 +17,7 @@ import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import { radialChainLightning } from '@main/actions/radialChainLightning';
 import type { ItemProc } from './ItemProc';
 import { Game } from '@main/core/Game';
-import { AssetBundle } from '@duzh/assets';
+import { AssetBundle } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
 
 export class ItemFactory {

@@ -11,7 +11,7 @@ import { TextRenderer } from '@main/graphics/TextRenderer';
 import { MapController } from '@main/maps/MapController';
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import { Feature } from '@main/utils/features';
+import { Feature } from '@duzh/features';
 
 const TITLE_FILENAME = 'title2';
 

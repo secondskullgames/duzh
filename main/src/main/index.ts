@@ -1,4 +1,4 @@
-import { AssetBundleSchema, ImageBundleSchema } from '@duzh/assets';
+import { AssetBundleSchema, ImageBundleSchema } from '@duzh/models';
 import { MusicPlayer, SoundPlayer } from '@duzh/audio';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import InputHandler from '@lib/input/InputHandler';
@@ -42,7 +42,7 @@ import { FontFactory } from './graphics/Fonts';
 import { ItemController } from './items/ItemController';
 import { MapControllerImpl } from './maps/MapController';
 import { MapHydrator } from './maps/MapHydrator';
-import { Feature } from './utils/features';
+import { Feature } from '@duzh/features';
 import { FontBundle, Graphics } from '@duzh/graphics';
 import { ImageCache, ImageFactory, ImageLoader } from '@duzh/graphics/images';
 

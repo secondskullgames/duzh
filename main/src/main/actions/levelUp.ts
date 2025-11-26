@@ -1,5 +1,5 @@
 import Unit from '../units/Unit';
-import { Feature } from '@main/utils/features';
+import { Feature } from '@duzh/features';
 import { Faction } from '@main/units/Faction';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { UnitAbility } from '@main/abilities/UnitAbility';

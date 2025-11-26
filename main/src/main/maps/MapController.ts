@@ -10,7 +10,7 @@ import { GeneratedMapFactory } from './generated/GeneratedMapFactory';
 import { MapHydrator } from './MapHydrator';
 import { MapTemplate } from './MapTemplate';
 import { PredefinedMapFactory } from './predefined/PredefinedMapFactory';
-import { AssetBundle } from '@duzh/assets';
+import { AssetBundle } from '@duzh/models';
 
 export interface MapController {
   loadFirstMap: (game: Game) => Promise<void>;

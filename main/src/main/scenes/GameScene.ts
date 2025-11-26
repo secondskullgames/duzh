@@ -40,7 +40,7 @@ import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
 import { UnitOrder } from '@main/units/orders/UnitOrder';
 import Unit from '@main/units/Unit';
-import { Feature } from '@main/utils/features';
+import { Feature } from '@duzh/features';
 import { InterfaceColors } from '@main/graphics/InterfaceColors';
 import { SoundController } from '@main/sounds/SoundController';
 

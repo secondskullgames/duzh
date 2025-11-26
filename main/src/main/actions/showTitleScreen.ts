@@ -1,6 +1,6 @@
 import { Game } from '@main/core/Game';
 import { SceneName } from '@main/scenes/SceneName';
-import { Feature } from '@main/utils/features';
+import { Feature } from '@duzh/features';
 
 /**
  * Fully reset the game and show the title screen.

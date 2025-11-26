@@ -1,7 +1,7 @@
 import { DoorDirection, PredefinedMapModel, TileType, UnitModel } from '@duzh/models';
 import { Coordinates, Grid, MultiGrid } from '@duzh/geometry';
 import { MapTemplate, ObjectTemplate } from '../MapTemplate';
-import { AssetBundle } from '@duzh/assets';
+import { AssetBundle } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { Image, ImageFactory } from '@duzh/graphics/images';
 import { Color } from '@duzh/graphics';

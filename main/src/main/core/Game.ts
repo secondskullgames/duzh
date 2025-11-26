@@ -12,7 +12,7 @@ import ProjectileFactory from '@main/objects/ProjectileFactory';
 import UnitFactory from '@main/units/UnitFactory';
 import { SoundController } from '@main/sounds/SoundController';
 import { MusicController } from '@main/sounds/MusicController';
-import { AssetBundle } from '@duzh/assets';
+import { AssetBundle } from '@duzh/models';
 
 export type Game = Readonly<{
   config: GameConfig;
