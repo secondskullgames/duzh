@@ -28,6 +28,7 @@
     "@duzh/models": "workspace:*",
     "@duzh/utils": "workspace:*",
     "glob": "catalog:",
+    "sharp": "catalog:sharp",
     "zod": "catalog:zod"
   }
 }

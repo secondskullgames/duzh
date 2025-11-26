@@ -20,6 +20,8 @@ catalogs:
   pathfinding:
     'pathfinding': '^0.4.18'
     '@types/pathfinding': '^0.0.9'
+  sharp:
+    'sharp': '^0.34.5'
   tsx:
     'tsx': '^4.20.6'
   typescript:
