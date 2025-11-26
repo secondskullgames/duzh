@@ -1,3 +1,4 @@
+import { AssetBundleSchema, ImageBundleSchema } from '@duzh/assets';
 import { MusicPlayer, SoundPlayer } from '@duzh/audio';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { FontBundle } from '@lib/graphics/Fonts';
@@ -35,6 +36,8 @@ import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
 import { TitleScene } from '@main/scenes/TitleScene';
 import { VictoryScene } from '@main/scenes/VictoryScene';
+import { MusicController } from '@main/sounds/MusicController';
+import { SoundController } from '@main/sounds/SoundController';
 import TileFactory from '@main/tiles/TileFactory';
 import UnitFactory from '@main/units/UnitFactory';
 import { showTitleScreen } from './actions/showTitleScreen';
@@ -45,10 +48,6 @@ import { ItemController } from './items/ItemController';
 import { MapControllerImpl } from './maps/MapController';
 import { MapHydrator } from './maps/MapHydrator';
 import { Feature } from './utils/features';
-import { SoundController } from '@main/sounds/SoundController';
-import { MusicController } from '@main/sounds/MusicController';
-import { loadImageBundle } from '@main/assets/loadImageBundle';
-import { AssetBundleSchema } from '@duzh/assets';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -211,8 +210,12 @@ const init = async ({ rootElement, gameConfig }: Props) => {
 
 const main = async () => {
   const rootElement = checkNotNull(document.getElementById('container'));
-  const assetBundle = AssetBundleSchema.parse(await import('@duzh/assets/assets.json'));
-  const imageBundle = await loadImageBundle();
+  const assetBundle = AssetBundleSchema.parse(
+    (await import('@duzh/assets/assets.json')).default
+  );
+  const imageBundle = ImageBundleSchema.parse(
+    (await import('@duzh/assets/images.json')).default
+  );
   const gameConfig: GameConfig = {
     assetBundle,
     imageBundle,
