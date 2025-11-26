@@ -7,12 +7,16 @@
   "files": ["build"],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
     "clean": "rimraf build",
     "lint": "prettier --write ./src"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "@types/pathfinding": "catalog:pathfinding",
+    "@vitest/coverage-v8": "catalog:vitest",
     "glob": "catalog:",
     "globals": "catalog:",
     "prettier": "catalog:",

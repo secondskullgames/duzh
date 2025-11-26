@@ -17,11 +17,15 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
     "clean": "rimraf build",
     "lint": "prettier --write ./src"
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "@vitest/coverage-v8": "catalog:vitest",
     "globals": "catalog:",
     "prettier": "catalog:",
     "rimraf": "catalog:",

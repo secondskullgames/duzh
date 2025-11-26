@@ -19,11 +19,15 @@ export class EngineImpl implements Engine {
     const { state } = game;
     state.setTurnInProgress(true);
     // TODO consider iterating over every map
-    const map = state.getPlayerUnit().getMap();
+    const playerUnit = state.getPlayerUnit();
+    const map = playerUnit.getMap();
     const sortedUnits = this._sortUnits(map.getAllUnits());
     for (const unit of sortedUnits) {
-      if (unit.getLife() > 0) {
+      if (unit.getLife() > 0 && playerUnit.getLife() > 0) {
         await this._playUnitTurnAction(unit, game);
+      } else {
+        // TODO Super hack to avoid exceptions being thrown once the player dies
+        return;
       }
     }
 
