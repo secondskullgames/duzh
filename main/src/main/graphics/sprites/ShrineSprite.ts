@@ -1,5 +1,5 @@
 import DynamicSprite from './DynamicSprite';
-import { Image } from '@lib/graphics/images/Image';
+import { Image } from '@duzh/graphics/images';
 import Shrine from '@main/objects/Shrine';
 
 type Props = Readonly<{

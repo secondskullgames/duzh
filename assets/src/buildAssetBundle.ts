@@ -80,7 +80,26 @@ const mapById = <T extends { id: string }>(items: T[]): Record<string, T> => {
   return Object.fromEntries(items.map(item => [item.id, item]));
 };
 
+const assetBundleSize = (assetBundle: AssetBundle) => {
+  const mapLength = (map: Record<any, unknown>): number => Object.keys(map).length;
+
+  return (
+    mapLength(assetBundle.items) +
+    mapLength(assetBundle.equipment) +
+    mapLength(assetBundle.predefinedMaps) +
+    mapLength(assetBundle.generatedMaps) +
+    mapLength(assetBundle.units) +
+    mapLength(assetBundle.sounds) +
+    mapLength(assetBundle.music) +
+    mapLength(assetBundle.staticSprites) +
+    mapLength(assetBundle.dynamicSprites) +
+    mapLength(assetBundle.tileSets)
+  );
+};
+
 const assetBundle = await buildAssetBundle();
 const outFile = 'build/assets.json';
 mkdirSync('build', { recursive: true });
 writeFileSync(outFile, JSON.stringify(assetBundle));
+
+console.log(`Wrote ${assetBundleSize(assetBundle)} assets to ${outFile}`);

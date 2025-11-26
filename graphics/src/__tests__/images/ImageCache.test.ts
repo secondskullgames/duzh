@@ -1,6 +1,5 @@
-import { ImageCache } from '@lib/graphics/images/ImageCache';
-import { Color } from '@lib/graphics/Color';
-import { Image } from '@lib/graphics/images/Image';
+import { Image, ImageCache } from '../../images/index.js';
+import { Color } from '../../Color.js';
 
 test('caches and retrieves an image', () => {
   const cache = new ImageCache();

@@ -1,10 +1,10 @@
-import DynamicSprite from './DynamicSprite';
+import { Offsets } from '@duzh/geometry';
+import { Image } from '@duzh/graphics/images';
+import { maxBy } from '@duzh/utils/arrays';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { Activity } from '../../units/Activity';
 import Unit from '../../units/Unit';
-import { Offsets } from '@duzh/geometry';
-import { StatusEffect } from '@main/units/effects/StatusEffect';
-import { maxBy } from '@duzh/utils/arrays';
-import { Image } from '@lib/graphics/images/Image';
+import DynamicSprite from './DynamicSprite';
 
 type Props = Readonly<{
   spriteName: string;

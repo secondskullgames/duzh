@@ -9,8 +9,7 @@ import {
   pointAt,
   Rect
 } from '@duzh/geometry';
-import { Color } from '@lib/graphics/Color';
-import { Graphics } from '@lib/graphics/Graphics';
+import { Color, Graphics } from '@duzh/graphics';
 import {
   ArrowKey,
   ClickCommand,

@@ -1,7 +1,7 @@
-import { getCanvasContext, getOffscreenCanvasContext } from '@lib/utils/dom';
-import { Image } from '@lib/graphics/images/Image';
-import { Color } from '@lib/graphics/Color';
 import { Pixel, Rect } from '@duzh/geometry';
+import { Color } from './Color.js';
+import { getCanvasContext, getOffscreenCanvasContext } from './dom.js';
+import { Image } from './images/Image.js';
 
 export interface Graphics {
   clear: () => void;

@@ -6,7 +6,7 @@ import { checkNotNull } from '@duzh/utils/preconditions';
 import Unit from '@main/units/Unit';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { maxBy } from '@duzh/utils/arrays';
-import { Image } from '@lib/graphics/images/Image';
+import { Image } from '@duzh/graphics/images';
 
 type Props = Readonly<{
   spriteName: string;

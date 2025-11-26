@@ -2,7 +2,7 @@ import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
 import Projectile from '@main/entities/Projectile';
 import MapInstance from '@main/maps/MapInstance';
 import { Coordinates, Direction } from '@duzh/geometry';
-import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
+import { PaletteSwaps } from '@duzh/graphics';
 
 export default class ProjectileFactory {
   constructor(private readonly spriteFactory: SpriteFactory) {}

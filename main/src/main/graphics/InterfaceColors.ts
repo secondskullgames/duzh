@@ -1,4 +1,4 @@
-import { Color } from '@lib/graphics/Color';
+import { Color } from '@duzh/graphics';
 
 const hexColors = {
   BLACK: '#000000',

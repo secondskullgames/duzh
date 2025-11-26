@@ -1,6 +1,6 @@
 import Sprite from './Sprite';
 import { Offsets } from '@duzh/geometry';
-import { Image } from '@lib/graphics/images/Image';
+import { Image } from '@duzh/graphics/images';
 
 export default class StaticSprite implements Sprite {
   private readonly image: Image;

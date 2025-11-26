@@ -1,8 +1,8 @@
 import { ImageBundle } from '@duzh/assets';
 import { checkNotNull } from '@duzh/utils/preconditions';
-import { createCanvas, createImage, getCanvasContext } from '@lib/utils/dom';
+import { createCanvas, createImage, getCanvasContext } from '../dom.js';
 
-export default class ImageLoader {
+export class ImageLoader {
   private readonly canvas: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D;
   private readonly imageBundle: ImageBundle;

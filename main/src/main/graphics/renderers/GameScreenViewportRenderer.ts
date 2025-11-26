@@ -1,19 +1,17 @@
-import { Renderer } from './Renderer';
+import { Coordinates, Pixel } from '@duzh/geometry';
+import { Color, Graphics, PaletteSwaps } from '@duzh/graphics';
+import { ImageFactory } from '@duzh/graphics/images';
+import { Game } from '@main/core/Game';
+import Entity from '@main/entities/Entity';
+import { InterfaceColors } from '@main/graphics/InterfaceColors';
+import { ShrineMenuRenderer } from '@main/graphics/renderers/ShrineMenuRenderer';
+import MapInstance from '@main/maps/MapInstance';
+import { getItem, getMovableBlock } from '@main/maps/MapUtils';
 import Equipment from '../../equipment/Equipment';
 import Unit from '../../units/Unit';
 import { TILE_HEIGHT, TILE_WIDTH } from '../constants';
 import Sprite from '../sprites/Sprite';
-import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
-import { Coordinates, Pixel } from '@duzh/geometry';
-import { Graphics } from '@lib/graphics/Graphics';
-import Entity from '@main/entities/Entity';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
-import { Color } from '@lib/graphics/Color';
-import { getItem, getMovableBlock } from '@main/maps/MapUtils';
-import { ShrineMenuRenderer } from '@main/graphics/renderers/ShrineMenuRenderer';
-import { Game } from '@main/core/Game';
-import MapInstance from '@main/maps/MapInstance';
-import { InterfaceColors } from '@main/graphics/InterfaceColors';
+import { Renderer } from './Renderer';
 
 const SHADOW_FILENAME = 'shadow';
 

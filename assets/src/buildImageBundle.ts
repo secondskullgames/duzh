@@ -22,3 +22,4 @@ const imageBundle = await buildImageBundle();
 const outFile = 'build/images.json';
 mkdirSync('build', { recursive: true });
 writeFileSync(outFile, JSON.stringify(imageBundle));
+console.log(`Wrote ${Object.keys(imageBundle).length} images to ${outFile}`);

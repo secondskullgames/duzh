@@ -1,35 +1,39 @@
 {
-  "name": "@duzh/main",
+  "name": "@duzh/graphics",
   "version": "0.1.0",
   "type": "module",
+  "files": [
+    "build"
+  ],
+  "exports": {
+    ".": {
+      "import": "./build/index.js",
+      "types": "./build/index.d.ts"
+    },
+    "./images": {
+      "import": "./build/images/index.js",
+      "types": "./build/images/index.d.ts"
+    }
+  },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && vite build",
-    "dev": "vite dev",
-    "preview": "vite preview",
+    "build": "tsc -p tsconfig.build.json",
     "clean": "rimraf build",
-    "test": "vitest",
-    "test:watch": "vitest --watch",
-    "test:coverage": "vitest --coverage",
     "lint": "prettier --write ./src"
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "@vitest/coverage-v8": "catalog:vitest",
-    "glob": "catalog:",
     "globals": "catalog:",
     "prettier": "catalog:",
     "rimraf": "catalog:",
+    "tsx": "catalog:tsx",
     "typescript": "catalog:typescript",
-    "vite": "catalog:vite",
     "vitest": "catalog:vitest"
   },
   "dependencies": {
     "@duzh/assets": "workspace:*",
-    "@duzh/audio": "workspace:*",
     "@duzh/geometry": "workspace:*",
-    "@duzh/graphics": "workspace:*",
-    "@duzh/models": "workspace:*",
     "@duzh/utils": "workspace:*",
+    "glob": "catalog:",
     "zod": "catalog:zod"
   }
 }

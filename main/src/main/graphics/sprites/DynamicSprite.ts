@@ -1,7 +1,7 @@
 import Sprite from './Sprite';
 import { Offsets } from '@duzh/geometry';
 import { checkNotNull } from '@duzh/utils/preconditions';
-import { Image } from '@lib/graphics/images/Image';
+import { Image } from '@duzh/graphics/images';
 
 type Props = Readonly<{
   spriteName: string;

@@ -1,8 +1,8 @@
-import { Image } from './Image';
-import { ImageEffect } from './ImageEffect';
-import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import { comparing } from '@duzh/utils/arrays';
-import { Color } from '@lib/graphics/Color';
+import { Color } from '../Color.js';
+import { PaletteSwaps } from '../PaletteSwaps.js';
+import { Image } from './Image.js';
+import { ImageEffect } from './ImageEffect.js';
 
 type CacheKey = Readonly<{
   filename: string;

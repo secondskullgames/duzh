@@ -1,11 +1,6 @@
 import { AssetBundleSchema, ImageBundleSchema } from '@duzh/assets';
 import { MusicPlayer, SoundPlayer } from '@duzh/audio';
 import { checkNotNull } from '@duzh/utils/preconditions';
-import { FontBundle } from '@lib/graphics/Fonts';
-import { Graphics } from '@lib/graphics/Graphics';
-import { ImageCache } from '@lib/graphics/images/ImageCache';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
-import ImageLoader from '@lib/graphics/images/ImageLoader';
 import InputHandler from '@lib/input/InputHandler';
 import { createCanvas, enterFullScreen, isMobileDevice } from '@lib/utils/dom';
 import { InventoryController } from '@main/controllers/InventoryController';
@@ -48,6 +43,8 @@ import { ItemController } from './items/ItemController';
 import { MapControllerImpl } from './maps/MapController';
 import { MapHydrator } from './maps/MapHydrator';
 import { Feature } from './utils/features';
+import { FontBundle, Graphics } from '@duzh/graphics';
+import { ImageCache, ImageFactory, ImageLoader } from '@duzh/graphics/images';
 
 type Props = Readonly<{
   rootElement: HTMLElement;

@@ -1,12 +1,11 @@
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
+import { ImageFactory } from '@duzh/graphics/images';
 import { TextRenderer } from '@main/graphics/TextRenderer';
-import { Graphics } from '@lib/graphics/Graphics';
+import { Color, Graphics } from '@duzh/graphics';
 import { FontName } from '@main/graphics/Fonts';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Pixel } from '@duzh/geometry';
-import { Color } from '@lib/graphics/Color';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { toggleFullScreen } from '@lib/utils/dom';
 import { showTitleScreen } from '@main/actions/showTitleScreen';
