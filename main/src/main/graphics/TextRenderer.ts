@@ -1,12 +1,9 @@
-import { FontName } from './Fonts';
-import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
+import { Color, FontBundle, FontInstance, Graphics, PaletteSwaps } from '@duzh/graphics';
+import { replaceColors } from '@duzh/graphics/images';
 import { createCanvas } from '@lib/utils/dom';
 import { GameConfig } from '@main/core/GameConfig';
-import { replaceColors } from '@lib/graphics/images/ImageUtils';
-import { Color } from '@lib/graphics/Color';
-import { FontBundle, FontInstance } from '@lib/graphics/Fonts';
-import { Graphics } from '@lib/graphics/Graphics';
 import { InterfaceColors } from '@main/graphics/InterfaceColors';
+import { FontName } from './Fonts';
 
 export type TextParams = Readonly<{
   text: string;

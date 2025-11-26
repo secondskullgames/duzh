@@ -27,6 +27,7 @@
     "@duzh/assets": "workspace:*",
     "@duzh/audio": "workspace:*",
     "@duzh/geometry": "workspace:*",
+    "@duzh/graphics": "workspace:*",
     "@duzh/models": "workspace:*",
     "@duzh/utils": "workspace:*",
     "zod": "catalog:zod"

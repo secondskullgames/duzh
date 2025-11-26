@@ -1,4 +1,4 @@
-import { Color } from '@lib/graphics/Color';
+import { Color } from './Color.js';
 
 export interface PaletteSwaps {
   entries: () => [Color, Color][];

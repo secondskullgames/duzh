@@ -1,7 +1,6 @@
-import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
 import { AssetBundle } from '@duzh/assets';
+import { Color, PaletteSwaps } from '@duzh/graphics';
 import { checkNotNull } from '@duzh/utils/preconditions';
-import { Color } from '@lib/graphics/Color';
 
 /**
  * @param paletteSwaps Contains a map of color names, to be converted to hex format

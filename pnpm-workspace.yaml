@@ -2,6 +2,7 @@ packages:
   - 'assets'
   - 'audio'
   - 'geometry'
+  - 'graphics'
   - 'main'
   - 'models'
   - 'utils'

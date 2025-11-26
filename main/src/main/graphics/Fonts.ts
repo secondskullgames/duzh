@@ -1,6 +1,6 @@
+import { FontBundle, FontDefinition, FontInstance } from '@duzh/graphics';
+import { ImageFactory } from '@duzh/graphics/images';
 import { createCanvas, getCanvasContext } from '@lib/utils/dom';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
-import { FontBundle, FontDefinition, FontInstance } from '@lib/graphics/Fonts';
 
 // Fonts are partial ASCII table consisting of the "printable characters", 32 to 126, i.e.
 //  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}

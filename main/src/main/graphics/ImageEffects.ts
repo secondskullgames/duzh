@@ -1,5 +1,4 @@
-import { replaceAll } from '@lib/graphics/images/ImageUtils';
-import { ImageEffect } from '@lib/graphics/images/ImageEffect';
+import { ImageEffect, replaceAll } from '@duzh/graphics/images';
 import { InterfaceColors } from '@main/graphics/InterfaceColors';
 
 export namespace ImageEffects {

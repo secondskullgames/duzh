@@ -1,5 +1,5 @@
 import { Pixel } from '@duzh/geometry';
-import { Graphics } from '@lib/graphics/Graphics';
+import { Graphics } from '@duzh/graphics';
 
 export enum Alignment {
   LEFT = 'left',

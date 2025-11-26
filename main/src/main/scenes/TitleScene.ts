@@ -1,18 +1,17 @@
-import { Scene } from '@main/scenes/Scene';
-import { SceneName } from '@main/scenes/SceneName';
-import { MapController } from '@main/maps/MapController';
+import { Pixel } from '@duzh/geometry';
+import { Color, Graphics } from '@duzh/graphics';
+import { ImageFactory } from '@duzh/graphics/images';
 import { ClickCommand, KeyCommand, ModifierKey } from '@lib/input/inputTypes';
 import { isMobileDevice, toggleFullScreen } from '@lib/utils/dom';
-import { Feature } from '@main/utils/features';
-import ImageFactory from '@lib/graphics/images/ImageFactory';
-import { TextRenderer } from '@main/graphics/TextRenderer';
-import { Graphics } from '@lib/graphics/Graphics';
-import { FontName } from '@main/graphics/Fonts';
-import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
-import { Pixel } from '@duzh/geometry';
-import { Color } from '@lib/graphics/Color';
 import { Game } from '@main/core/Game';
+import { FontName } from '@main/graphics/Fonts';
 import { InterfaceColors } from '@main/graphics/InterfaceColors';
+import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
+import { TextRenderer } from '@main/graphics/TextRenderer';
+import { MapController } from '@main/maps/MapController';
+import { Scene } from '@main/scenes/Scene';
+import { SceneName } from '@main/scenes/SceneName';
+import { Feature } from '@main/utils/features';
 
 const TITLE_FILENAME = 'title2';
 

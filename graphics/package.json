@@ -1,5 +1,5 @@
 {
-  "name": "@duzh/assets",
+  "name": "@duzh/graphics",
   "version": "0.1.0",
   "type": "module",
   "files": [
@@ -10,8 +10,10 @@
       "import": "./build/index.js",
       "types": "./build/index.d.ts"
     },
-    "./assets.json": "./build/assets.json",
-    "./images.json": "./build/images.json"
+    "./images": {
+      "import": "./build/images/index.js",
+      "types": "./build/images/index.d.ts"
+    }
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -27,7 +29,8 @@
     "typescript": "catalog:typescript"
   },
   "dependencies": {
-    "@duzh/models": "workspace:*",
+    "@duzh/assets": "workspace:*",
+    "@duzh/geometry": "workspace:*",
     "@duzh/utils": "workspace:*",
     "glob": "catalog:",
     "zod": "catalog:zod"

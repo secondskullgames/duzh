@@ -1,5 +1,5 @@
-import { RGB } from '@lib/graphics/RGB';
 import { Pixel } from '@duzh/geometry';
+import { RGB } from '../RGB.js';
 
 export type Image = Readonly<{
   bitmap: ImageBitmap;

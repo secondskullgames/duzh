@@ -1,10 +1,10 @@
-import { Image } from './Image';
-import { ImageCache } from './ImageCache';
-import { ImageEffect } from './ImageEffect';
-import ImageLoader from './ImageLoader';
-import { applyTransparentColor, replaceColors } from './ImageUtils';
-import { PaletteSwaps } from '@lib/graphics/PaletteSwaps';
-import { Color } from '@lib/graphics/Color';
+import { Color } from '../Color.js';
+import { PaletteSwaps } from '../PaletteSwaps.js';
+import { Image } from './Image.js';
+import { ImageCache } from './ImageCache.js';
+import { ImageEffect } from './ImageEffect.js';
+import ImageLoader from './ImageLoader.js';
+import { applyTransparentColor, replaceColors } from './ImageUtils.js';
 
 type Params = Readonly<{
   filename?: string;
@@ -14,7 +14,7 @@ type Params = Readonly<{
   effects?: ImageEffect[];
 }>;
 
-export default class ImageFactory {
+export class ImageFactory {
   private readonly rawCache: Record<string, ImageData | null> = {};
 
   constructor(
