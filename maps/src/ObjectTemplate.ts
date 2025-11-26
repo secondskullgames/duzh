@@ -1,13 +1,4 @@
-import {
-  ConsumableItemModel,
-  DoorDirection,
-  EquipmentModel,
-  FogOfWarParams,
-  MusicModel,
-  TileType,
-  UnitModel
-} from '@duzh/models';
-import { Coordinates, Grid, MultiGrid } from '@duzh/geometry';
+import { ConsumableItemModel, DoorDirection, EquipmentModel } from '@duzh/models';
 
 /** TODO: really need to clean up data representation of other object types */
 export type ObjectTemplate =
@@ -22,17 +13,3 @@ export type ObjectTemplate =
 
 export type ObjectType = ObjectTemplate['type'];
 export type ItemOrEquipment = ObjectTemplate & { type: 'item' | 'equipment' };
-
-export type MapTemplate = Readonly<{
-  id: string;
-  width: number;
-  height: number;
-  levelNumber: number;
-  startingCoordinates: Coordinates;
-  tiles: Grid<TileType>;
-  tileSet: string;
-  units: Grid<UnitModel>;
-  objects: MultiGrid<ObjectTemplate>;
-  music: MusicModel | null;
-  fogParams: FogOfWarParams;
-}>;

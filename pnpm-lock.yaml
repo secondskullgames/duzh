@@ -236,6 +236,9 @@ importers:
       '@duzh/graphics':
         specifier: workspace:*
         version: link:../graphics
+      '@duzh/maps':
+        specifier: workspace:*
+        version: link:../maps
       '@duzh/models':
         specifier: workspace:*
         version: link:../models
@@ -273,6 +276,43 @@ importers:
       vitest:
         specifier: catalog:vitest
         version: 4.0.13(@types/node@22.19.1)(terser@5.44.1)(tsx@4.20.6)
+
+  maps:
+    dependencies:
+      '@duzh/features':
+        specifier: workspace:*
+        version: link:../features
+      '@duzh/geometry':
+        specifier: workspace:*
+        version: link:../geometry
+      '@duzh/graphics':
+        specifier: workspace:*
+        version: link:../graphics
+      '@duzh/models':
+        specifier: workspace:*
+        version: link:../models
+      '@duzh/utils':
+        specifier: workspace:*
+        version: link:../utils
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 22.19.1
+      glob:
+        specifier: 'catalog:'
+        version: 11.1.0
+      globals:
+        specifier: 'catalog:'
+        version: 15.15.0
+      prettier:
+        specifier: 'catalog:'
+        version: 3.6.2
+      rimraf:
+        specifier: 'catalog:'
+        version: 6.1.0
+      typescript:
+        specifier: catalog:typescript
+        version: 5.5.4
 
   models:
     dependencies:

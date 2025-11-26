@@ -5,6 +5,7 @@ packages:
   - 'geometry'
   - 'graphics'
   - 'main'
+  - 'maps'
   - 'models'
   - 'utils'
 

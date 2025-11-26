@@ -1,11 +1,11 @@
-import EmptyRegionConnection from './EmptyRegionConnection';
-import { Connection } from './Connection';
-import MapPruner from './MapPruner';
-import RegionConnector from './RegionConnector';
-import RegionSplitter from './RegionSplitter';
-import RoomRegion from './RoomRegion';
-import TileGenerator from './TileGenerator';
-import { AbstractMapGenerator } from '../AbstractMapGenerator';
+import EmptyRegionConnection from './EmptyRegionConnection.js';
+import { Connection } from './Connection.js';
+import MapPruner from './MapPruner.js';
+import RegionConnector from './RegionConnector.js';
+import RegionSplitter from './RegionSplitter.js';
+import RoomRegion from './RoomRegion.js';
+import TileGenerator from './TileGenerator.js';
+import { AbstractMapGenerator } from '../AbstractMapGenerator.js';
 import { TileType } from '@duzh/models';
 import { Grid } from '@duzh/geometry';
 

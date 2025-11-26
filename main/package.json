@@ -29,6 +29,7 @@
     "@duzh/features": "workspace:*",
     "@duzh/geometry": "workspace:*",
     "@duzh/graphics": "workspace:*",
+    "@duzh/maps": "workspace:*",
     "@duzh/models": "workspace:*",
     "@duzh/utils": "workspace:*",
     "zod": "catalog:zod"

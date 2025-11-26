@@ -1,18 +1,14 @@
-import { ItemOrEquipment, ObjectTemplate } from '@main/maps/MapTemplate';
 import { Feature } from '@duzh/features';
 import { checkState } from '@duzh/utils/preconditions';
 import { weightedRandom, WeightedRandomChoice } from '@duzh/utils/random';
 import { AssetBundle } from '@duzh/models';
+import { ItemOrEquipment, ObjectTemplate } from './ObjectTemplate.js';
 
 type Props = Readonly<{
   assetBundle: AssetBundle;
 }>;
 
-/**
- * TODO - currently this doesn't handle actual instantiation of items,
- * just choosing them
- */
-export class ItemController {
+export class MapObjectFactory {
   private readonly assetBundle: AssetBundle;
   private readonly generatedEquipmentIds: Set<string>;
 

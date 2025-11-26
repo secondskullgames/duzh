@@ -1,4 +1,4 @@
-import RoomRegion from './RoomRegion';
+import RoomRegion from './RoomRegion.js';
 
 type EmptyRegionConnection = {
   roomRegion: RoomRegion;

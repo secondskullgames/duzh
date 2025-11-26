@@ -1,6 +1,6 @@
-import { Connection } from './Connection';
-import EmptyRegionConnection from './EmptyRegionConnection';
-import RoomRegion from './RoomRegion';
+import { Connection } from './Connection.js';
+import EmptyRegionConnection from './EmptyRegionConnection.js';
+import RoomRegion from './RoomRegion.js';
 import { replace, subtract } from '@duzh/utils/arrays';
 import { checkState } from '@duzh/utils/preconditions';
 import { randInt, shuffle } from '@duzh/utils/random';

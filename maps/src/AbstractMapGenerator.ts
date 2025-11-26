@@ -1,9 +1,10 @@
-import { getUnoccupiedLocations } from './MapGenerationUtils';
 import { GeneratedMapModel, TileType, UnitModel } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { Feature } from '@duzh/features';
-import { MapTemplate, ObjectTemplate } from '../MapTemplate';
 import { Grid, MultiGrid } from '@duzh/geometry';
+import { MapTemplate } from './MapTemplate.js';
+import { getUnoccupiedLocations } from './utils.js';
+import { ObjectTemplate } from './ObjectTemplate.js';
 
 /**
  * TODO - OOP is a mess here but we'll fix it later

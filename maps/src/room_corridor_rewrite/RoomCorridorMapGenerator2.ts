@@ -1,8 +1,8 @@
-import Section from './Section';
-import SectionConnector from './SectionConnector';
-import SectionSplitter from './SectionSplitter';
-import TileGenerator from './TileGenerator';
-import { AbstractMapGenerator } from '../AbstractMapGenerator';
+import Section from './Section.js';
+import SectionConnector from './SectionConnector.js';
+import SectionSplitter from './SectionSplitter.js';
+import TileGenerator from './TileGenerator.js';
+import { AbstractMapGenerator } from '../AbstractMapGenerator.js';
 import { TileType } from '@duzh/models';
 import { Grid, Rect } from '@duzh/geometry';
 

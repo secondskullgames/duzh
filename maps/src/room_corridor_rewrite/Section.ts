@@ -1,5 +1,5 @@
-import Connection from './Connection';
-import SplitDirection from '../room_corridor_rewrite/SplitDirection';
+import Connection from './Connection.js';
+import SplitDirection from './SplitDirection.js';
 import { Rect } from '@duzh/geometry';
 import { checkArgument, checkState } from '@duzh/utils/preconditions';
 

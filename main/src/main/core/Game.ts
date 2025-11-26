@@ -4,7 +4,7 @@ import { Engine } from '@main/core/Engine';
 import { GameConfig } from '@main/core/GameConfig';
 import { GameState } from '@main/core/GameState';
 import Ticker from '@main/core/Ticker';
-import { ItemController } from '@main/items/ItemController';
+import { MapObjectFactory } from '@duzh/maps';
 import { ItemFactory } from '@main/items/ItemFactory';
 import { MapController } from '@main/maps/MapController';
 import ObjectFactory from '@main/objects/ObjectFactory';
@@ -28,6 +28,6 @@ export type Game = Readonly<{
   mapController: MapController;
   inventoryController: InventoryController;
   shrineController: ShrineController;
-  itemController: ItemController;
+  mapObjectFactory: MapObjectFactory;
   ticker: Ticker;
 }>;
