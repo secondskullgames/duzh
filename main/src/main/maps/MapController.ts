@@ -1,15 +1,13 @@
 import { MusicPlayer } from '@duzh/audio';
-import { MapType } from '@duzh/models';
+import { AssetBundle, MapType } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { updateRevealedTiles } from '@main/actions/updateRevealedTiles';
 import { Game } from '@main/core/Game';
 import MapInstance from '@main/maps/MapInstance';
 import { SceneName } from '@main/scenes/SceneName';
 import UnitFactory from '../units/UnitFactory';
-import { GeneratedMapFactory } from './generated/GeneratedMapFactory';
+import { GeneratedMapFactory, MapTemplate, PredefinedMapFactory } from '@duzh/maps';
 import { MapHydrator } from './MapHydrator';
-import { MapTemplate, PredefinedMapFactory } from '@duzh/maps';
-import { AssetBundle } from '@duzh/models';
 
 export interface MapController {
   loadFirstMap: (game: Game) => Promise<void>;

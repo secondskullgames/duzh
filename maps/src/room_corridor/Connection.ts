@@ -1,5 +1,5 @@
-import RoomRegion from './RoomRegion';
-import SplitDirection from './SplitDirection';
+import RoomRegion from './RoomRegion.js';
+import SplitDirection from './SplitDirection.js';
 import { Coordinates } from '@duzh/geometry';
 
 export type Connection = Readonly<{

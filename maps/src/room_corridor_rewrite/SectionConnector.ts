@@ -1,5 +1,5 @@
-import Connection from './Connection';
-import Section from './Section';
+import Connection from './Connection.js';
+import Section from './Section.js';
 import { Coordinates, Rect } from '@duzh/geometry';
 import { max, min } from '@duzh/utils/arrays';
 import { checkNotNull } from '@duzh/utils/preconditions';

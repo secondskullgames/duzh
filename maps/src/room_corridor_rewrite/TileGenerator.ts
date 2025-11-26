@@ -1,5 +1,5 @@
 import { Grid } from '@duzh/geometry';
-import Section from './Section';
+import Section from './Section.js';
 import { TileType } from '@duzh/models';
 
 interface TileGenerator {

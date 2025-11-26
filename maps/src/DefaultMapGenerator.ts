@@ -1,4 +1,4 @@
-import { AbstractMapGenerator } from './AbstractMapGenerator';
+import { AbstractMapGenerator } from './AbstractMapGenerator.js';
 import { TileType } from '@duzh/models';
 import { Coordinates, Grid, Heuristic, Pathfinder, Rect } from '@duzh/geometry';
 import { randInt, shuffle } from '@duzh/utils/random';

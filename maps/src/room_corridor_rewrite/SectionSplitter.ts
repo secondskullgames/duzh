@@ -1,5 +1,5 @@
-import Section from './Section';
-import SplitDirection from './SplitDirection';
+import Section from './Section.js';
+import SplitDirection from './SplitDirection.js';
 import { randChoice, randInt } from '@duzh/utils/random';
 
 type Props = Readonly<{

@@ -1,6 +1,6 @@
-import EmptyRegionConnection from './EmptyRegionConnection';
-import { Connection } from './Connection';
-import RoomRegion from './RoomRegion';
+import EmptyRegionConnection from './EmptyRegionConnection.js';
+import { Connection } from './Connection.js';
+import RoomRegion from './RoomRegion.js';
 import { areAdjacent, Coordinates } from '@duzh/geometry';
 import { randChoice, randInt, shuffle } from '@duzh/utils/random';
 

@@ -1,7 +1,7 @@
-import EmptyRegionConnection from './EmptyRegionConnection';
-import RoomRegion from './RoomRegion';
-import SplitDirection from './SplitDirection';
-import { Connection } from './Connection';
+import EmptyRegionConnection from './EmptyRegionConnection.js';
+import RoomRegion from './RoomRegion.js';
+import SplitDirection from './SplitDirection.js';
+import { Connection } from './Connection.js';
 import { TileType } from '@duzh/models';
 import { Coordinates, Grid, Offsets } from '@duzh/geometry';
 import { shuffle } from '@duzh/utils/random';

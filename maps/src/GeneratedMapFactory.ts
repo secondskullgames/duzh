@@ -11,20 +11,22 @@ import {
 import { Feature } from '@duzh/features';
 import {
   Algorithm,
+  AssetBundle,
   DoorDirection,
   GeneratedMapModel,
   TileType,
   UnitModel
 } from '@duzh/models';
-import { MapObjectFactory, MapTemplate, ObjectTemplate } from '@duzh/maps';
-import { AbstractMapGenerator } from './AbstractMapGenerator';
-import { BlobMapGenerator } from './BlobMapGenerator';
-import { DefaultMapGenerator } from './DefaultMapGenerator';
-import { getUnoccupiedLocations } from './MapGenerationUtils';
-import { PathMapGenerator } from './PathMapGenerator';
-import { RoomCorridorMapGenerator } from './room_corridor/RoomCorridorMapGenerator';
-import { RoomCorridorMapGenerator2 } from './room_corridor_rewrite/RoomCorridorMapGenerator2';
-import { AssetBundle } from '@duzh/models';
+import { AbstractMapGenerator } from './AbstractMapGenerator.js';
+import { BlobMapGenerator } from './BlobMapGenerator.js';
+import { DefaultMapGenerator } from './DefaultMapGenerator.js';
+import { PathMapGenerator } from './PathMapGenerator.js';
+import { RoomCorridorMapGenerator } from './room_corridor/RoomCorridorMapGenerator.js';
+import { RoomCorridorMapGenerator2 } from './room_corridor_rewrite/RoomCorridorMapGenerator2.js';
+import { MapObjectFactory } from './MapObjectFactory.js';
+import { MapTemplate } from './MapTemplate.js';
+import { getUnoccupiedLocations } from './utils.js';
+import { ObjectTemplate } from './ObjectTemplate.js';
 
 type Props = Readonly<{
   assetBundle: AssetBundle;
