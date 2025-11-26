@@ -19,13 +19,13 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - uses: pnpm/action-setup@v4
       with:
         version: 9
 
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@v6
       with:
         node-version: ${{ env.NODE_VERSION }}
         cache: pnpm
@@ -51,13 +51,13 @@ jobs:
   build-macos:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - uses: pnpm/action-setup@v4
       with:
         version: 9
 
-    - uses: actions/setup-node@v4
+    - uses: actions/setup-node@v6
       with:
         node-version: ${{ env.NODE_VERSION }}
         cache: pnpm
@@ -97,6 +97,11 @@ jobs:
       with:
         name: macos-zips
         path: dist/macos
+
+    - name: debug downloaded files
+      run: |
+        echo "dist:"
+        ls -R dist
 
     - name: Create GitHub release
       run: |
