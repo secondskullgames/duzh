@@ -1,6 +1,6 @@
-import { createCanvas, createImage, getCanvasContext } from '@lib/utils/dom';
+import { ImageBundle } from '@duzh/assets';
 import { checkNotNull } from '@duzh/utils/preconditions';
-import { ImageBundle } from '@main/assets/ImageBundle';
+import { createCanvas, createImage, getCanvasContext } from '@lib/utils/dom';
 
 export default class ImageLoader {
   private readonly canvas: HTMLCanvasElement;
@@ -33,7 +33,7 @@ export default class ImageLoader {
   };
 
   loadImageOptional = async (filename: string): Promise<ImageData | null> => {
-    const imageDataUrl = this.imageBundle.getImageUrlOptional(`${filename}.png`);
+    const imageDataUrl = this.imageBundle[`${filename}.png`];
     if (!imageDataUrl) {
       return null;
     }

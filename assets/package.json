@@ -10,10 +10,13 @@
       "import": "./build/index.js",
       "types": "./build/index.d.ts"
     },
-    "./assets.json": "./build/assets.json"
+    "./assets.json": "./build/assets.json",
+    "./images.json": "./build/images.json"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && tsx src/buildAssetBundle.ts",
+    "build:assets": "tsx src/buildAssetBundle.ts",
+    "build:images": "tsx src/buildImageBundle.ts",
+    "build": "tsc -p tsconfig.build.json && pnpm build:assets && pnpm build:images",
     "clean": "rimraf build",
     "lint": "prettier --write ./src"
   },
