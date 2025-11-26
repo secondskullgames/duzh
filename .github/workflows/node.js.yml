@@ -19,17 +19,21 @@ jobs:
         node-version: [20.x]
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v4
+      - id: checkout-code
+        name: Checkout code
+        uses: actions/checkout@v6
+      - id: setup-pnpm
+        uses: pnpm/action-setup@v4
         with:
           version: 9
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
-      - run: pnpm i --frozen-lockfile
-      - run: pnpm run build
-      - run: pnpm test
-      - run: pnpm run test:coverage
-      - run: pnpm run lint
+      - run: |
+          pnpm i --frozen-lockfile
+          pnpm run build
+          pnpm test
+          pnpm run test:coverage
+          pnpm run lint

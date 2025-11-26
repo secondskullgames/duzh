@@ -1,18 +1,19 @@
-# Github Actions configuration that uses the  to build a native executable for various platforms.
+# Github Actions configuration that uses Electron Forge to build a native executable for various platforms.
 
 name: Build Electron Forge executables
 
-# TODO: disabling until I can properly fix
-# broken due to https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-the-artifact-actions/
-# I'm probably a million Electron versions behind, too
-on: {}
-#  push:
-#    branches: [ master ]
+on:
+  push:
+    branches: [ master ]
+  # TODO TEMP
+  pull_request:
+    branches: [master]
 
 env:
-  NODE_VERSION: 16
+  NODE_VERSION: 20
   
 permissions:
+  # TODO this looks incredibly sus
   write-all
 
 jobs:
@@ -25,23 +26,27 @@ jobs:
     steps:
     - id: checkout-code
       name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
+    - id: setup-pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9
     - id: setup-node
       name: Setup Node
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v6
       with:
         node-version: ${{ env.NODE_VERSION }}
     - id: build
       name: Build distribution
       run: |
-        npm ci
-        npm run build
+        pnpm install --frozen-lockfile
+        pnpm build
         cd electron
         npm ci
         npm run make
     - id: upload
       name: Upload executable
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: ./electron/out/make/zip/win32/x64
         name: windows-executable
@@ -56,23 +61,27 @@ jobs:
     steps:
     - id: checkout-code
       name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
+    - id: setup-pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9
     - id: setup-node
       name: Setup Node
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v6
       with:
         node-version: ${{ env.NODE_VERSION }}
     - id: build
       name: Build distribution
       run: |
-        npm ci
-        npm run build
+        pnpm install --frozen-lockfile
+        pnpm build
         cd electron
         npm ci
         npm run make
     - id: upload
       name: Upload executable
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         path: ./electron/out/make/zip/darwin
         name: osx-executable
@@ -88,13 +97,13 @@ jobs:
     ### Download executables
     - id: download-windows-executable
       name: Download Windows executable
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: windows-executable
         path: windows
     - id: download-osx-executable
       name: Download OSX executable
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: osx-executable
         path: osx
