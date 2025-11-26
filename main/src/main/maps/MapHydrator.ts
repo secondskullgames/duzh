@@ -8,7 +8,7 @@ import { ItemFactory } from '@main/items/ItemFactory';
 import { Faction } from '@main/units/Faction';
 import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
 import { Game } from '@main/core/Game';
-import { MapTemplate } from './MapTemplate';
+import { MapTemplate } from '@duzh/maps';
 import { checkNotNull } from '@duzh/utils/preconditions';
 
 /**

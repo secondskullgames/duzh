@@ -16,7 +16,7 @@ import {
   TileType,
   UnitModel
 } from '@duzh/models';
-import { MapTemplate, ObjectTemplate } from '../MapTemplate';
+import { MapObjectFactory, MapTemplate, ObjectTemplate } from '@duzh/maps';
 import { AbstractMapGenerator } from './AbstractMapGenerator';
 import { BlobMapGenerator } from './BlobMapGenerator';
 import { DefaultMapGenerator } from './DefaultMapGenerator';
@@ -24,22 +24,20 @@ import { getUnoccupiedLocations } from './MapGenerationUtils';
 import { PathMapGenerator } from './PathMapGenerator';
 import { RoomCorridorMapGenerator } from './room_corridor/RoomCorridorMapGenerator';
 import { RoomCorridorMapGenerator2 } from './room_corridor_rewrite/RoomCorridorMapGenerator2';
-import { ItemController } from '@main/items/ItemController';
-import Tile from '@main/tiles/Tile';
 import { AssetBundle } from '@duzh/models';
 
 type Props = Readonly<{
   assetBundle: AssetBundle;
-  itemController: ItemController;
+  mapObjectFactory: MapObjectFactory;
 }>;
 
 export class GeneratedMapFactory {
   private readonly assetBundle: AssetBundle;
-  private readonly itemController: ItemController;
+  private readonly mapObjectFactory: MapObjectFactory;
 
   constructor(props: Props) {
     this.assetBundle = props.assetBundle;
-    this.itemController = props.itemController;
+    this.mapObjectFactory = props.mapObjectFactory;
   }
 
   buildGeneratedMap = async (mapId: string): Promise<MapTemplate> => {
@@ -150,7 +148,7 @@ export class GeneratedMapFactory {
     let itemsRemaining = randInt(model.items.min, model.items.max);
 
     while (itemsRemaining > 0) {
-      const object = await this.itemController.chooseRandomMapItemForLevel(
+      const object = await this.mapObjectFactory.chooseRandomMapItemForLevel(
         model.levelNumber
       );
       const coordinates = randChoice(candidateLocations);
@@ -218,7 +216,7 @@ export class GeneratedMapFactory {
               return false;
             }
             const tile = checkNotNull(map.tiles.get(adjacentCoordinates));
-            if (Tile.isBlocking(tile)) {
+            if (this._isBlocking(tile)) {
               return false;
             }
             if (this._isOccupied(map, adjacentCoordinates)) {
@@ -279,5 +277,18 @@ export class GeneratedMapFactory {
 
   private _isOccupied = (map: MapTemplate, coordinates: Coordinates): boolean => {
     return map.objects.get(coordinates).length > 0 || map.units.get(coordinates) !== null;
+  };
+
+  /** TODO: This is copy-pasted from Tile.  Didn't want to import that here. */
+  private _isBlocking = (tile: TileType) => {
+    switch (tile) {
+      case TileType.WALL_HALL:
+      case TileType.WALL_TOP:
+      case TileType.WALL:
+      case TileType.NONE:
+        return true;
+      default:
+        return false;
+    }
   };
 }

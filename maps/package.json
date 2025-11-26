@@ -1,0 +1,28 @@
+{
+  "name": "@duzh/maps",
+  "version": "0.1.0",
+  "type": "module",
+  "files": ["build"],
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rimraf build",
+    "lint": "prettier --write ./src"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "glob": "catalog:",
+    "globals": "catalog:",
+    "prettier": "catalog:",
+    "rimraf": "catalog:",
+    "typescript": "catalog:typescript"
+  },
+  "dependencies": {
+    "@duzh/features": "workspace:*",
+    "@duzh/geometry": "workspace:*",
+    "@duzh/graphics": "workspace:*",
+    "@duzh/models": "workspace:*",
+    "@duzh/utils": "workspace:*"
+  }
+}

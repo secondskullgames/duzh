@@ -79,8 +79,8 @@ const _createItem = async (
   map: MapInstance,
   game: Game
 ): Promise<GameObject> => {
-  const { itemFactory, itemController } = game;
-  const objectTemplate = await itemController.chooseRandomMapItemForLevel(
+  const { itemFactory, mapObjectFactory } = game;
+  const objectTemplate = await mapObjectFactory.chooseRandomMapItemForLevel(
     map.levelNumber
   );
   switch (objectTemplate.type) {

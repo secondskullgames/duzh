@@ -18,7 +18,7 @@ import { TextRenderer } from '@main/graphics/TextRenderer';
 import { createInputHandler } from '@main/input/createInputHandler';
 import { ItemFactory } from '@main/items/ItemFactory';
 import { GeneratedMapFactory } from '@main/maps/generated/GeneratedMapFactory';
-import { PredefinedMapFactory } from '@main/maps/predefined/PredefinedMapFactory';
+import { MapObjectFactory, PredefinedMapFactory } from '@duzh/maps';
 import ObjectFactory from '@main/objects/ObjectFactory';
 import ProjectileFactory from '@main/objects/ProjectileFactory';
 import { CharacterScene } from '@main/scenes/CharacterScene';
@@ -39,7 +39,6 @@ import { showTitleScreen } from './actions/showTitleScreen';
 import { DebugController } from './core/DebugController';
 import { GameStateImpl } from './core/GameState';
 import { FontFactory } from './graphics/Fonts';
-import { ItemController } from './items/ItemController';
 import { MapControllerImpl } from './maps/MapController';
 import { MapHydrator } from './maps/MapHydrator';
 import { Feature } from '@duzh/features';
@@ -83,8 +82,8 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
   const objectFactory = new ObjectFactory(assetBundle, spriteFactory, unitFactory);
   const projectileFactory = new ProjectileFactory(spriteFactory);
   const predefinedMapFactory = new PredefinedMapFactory(imageFactory, assetBundle);
-  const itemController = new ItemController({ assetBundle });
-  const generatedMapFactory = new GeneratedMapFactory({ assetBundle, itemController });
+  const mapObjectFactory = new MapObjectFactory({ assetBundle });
+  const generatedMapFactory = new GeneratedMapFactory({ assetBundle, mapObjectFactory });
   const mapHydrator = new MapHydrator(
     tileFactory,
     objectFactory,
@@ -117,7 +116,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
     mapController,
     inventoryController,
     shrineController,
-    itemController,
+    mapObjectFactory,
     ticker: new Ticker()
   };
   const inputHandler = createInputHandler({ game });

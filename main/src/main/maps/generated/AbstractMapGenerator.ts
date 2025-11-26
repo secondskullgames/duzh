@@ -2,7 +2,7 @@ import { getUnoccupiedLocations } from './MapGenerationUtils';
 import { GeneratedMapModel, TileType, UnitModel } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { Feature } from '@duzh/features';
-import { MapTemplate, ObjectTemplate } from '../MapTemplate';
+import { MapTemplate, ObjectTemplate } from '@duzh/maps';
 import { Grid, MultiGrid } from '@duzh/geometry';
 
 /**

@@ -8,8 +8,7 @@ import { SceneName } from '@main/scenes/SceneName';
 import UnitFactory from '../units/UnitFactory';
 import { GeneratedMapFactory } from './generated/GeneratedMapFactory';
 import { MapHydrator } from './MapHydrator';
-import { MapTemplate } from './MapTemplate';
-import { PredefinedMapFactory } from './predefined/PredefinedMapFactory';
+import { MapTemplate, PredefinedMapFactory } from '@duzh/maps';
 import { AssetBundle } from '@duzh/models';
 
 export interface MapController {

@@ -1,10 +1,9 @@
-import Tile from '../../tiles/Tile';
 import { TileType } from '@duzh/models';
 import { Coordinates, Grid } from '@duzh/geometry';
 import { shuffle } from '@duzh/utils/random';
 
 export const getUnoccupiedLocations = (
-  tiles: Grid<Tile> | Grid<TileType>,
+  tiles: Grid<TileType>,
   allowedTileTypes: TileType[],
   occupiedLocations: Coordinates[]
 ): Coordinates[] => {
@@ -13,11 +12,8 @@ export const getUnoccupiedLocations = (
   const { width, height } = tiles;
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      const tile = tiles.get({ x, y });
-      if (tile) {
-        const tileType =
-          typeof tile === 'object' ? (tile as Tile).getTileType() : (tile as TileType);
-
+      const tileType = tiles.get({ x, y });
+      if (tileType) {
         if (allowedTileTypes.includes(tileType)) {
           if (
             !occupiedLocations.find(coordinates =>

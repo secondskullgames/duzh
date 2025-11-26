@@ -50,18 +50,7 @@ export default class Tile implements Entity {
 
   /** @override */
   isBlocking = (): boolean => {
-    return Tile.isBlocking(this.tileType);
-  };
-
-  getTileType = (): TileType => this.tileType;
-
-  /**
-   * @override {@link Entity#getType}
-   */
-  getType = (): EntityType => EntityType.TILE;
-
-  static isBlocking = (tileType: TileType): boolean => {
-    switch (tileType) {
+    switch (this.tileType) {
       case TileType.WALL_HALL:
       case TileType.WALL_TOP:
       case TileType.WALL:
@@ -71,4 +60,11 @@ export default class Tile implements Entity {
         return false;
     }
   };
+
+  getTileType = (): TileType => this.tileType;
+
+  /**
+   * @override {@link Entity#getType}
+   */
+  getType = (): EntityType => EntityType.TILE;
 }
