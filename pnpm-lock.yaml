@@ -133,6 +133,9 @@ importers:
       '@types/pathfinding':
         specifier: catalog:pathfinding
         version: 0.0.9
+      '@vitest/coverage-v8':
+        specifier: catalog:vitest
+        version: 4.0.13(vitest@4.0.13(@types/node@22.19.1)(terser@5.44.1)(tsx@4.20.6))
       glob:
         specifier: 'catalog:'
         version: 11.1.0
@@ -173,6 +176,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 22.19.1
+      '@vitest/coverage-v8':
+        specifier: catalog:vitest
+        version: 4.0.13(vitest@4.0.13(@types/node@22.19.1)(terser@5.44.1)(tsx@4.20.6))
       globals:
         specifier: 'catalog:'
         version: 15.15.0
