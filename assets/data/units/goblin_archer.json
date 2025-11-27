@@ -16,7 +16,7 @@
   },
   "meleeDamage": 2,
   "rangedDamage": 2,
-  "life": 40,
+  "life": 25,
   "mana": 5,
   "equipment": [
     "bronze_sword",

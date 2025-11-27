@@ -1,17 +1,17 @@
-import { type UnitAbility } from './UnitAbility';
-import { AbilityName } from './AbilityName';
+import { Coordinates, Direction, pointAt } from '@duzh/geometry';
+import { EquipmentSlot } from '@duzh/models';
+import { dealDamage } from '@main/actions/dealDamage';
+import { die } from '@main/actions/die';
+import { Game } from '@main/core/Game';
+import { EquipmentScript } from '@main/equipment/EquipmentScript';
+import { isBlocked } from '@main/maps/MapUtils';
 import { Activity } from '@main/units/Activity';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
 import Unit from '@main/units/Unit';
 import { getRangedDamage } from '@main/units/UnitUtils';
-import { Coordinates, Direction, pointAt } from '@duzh/geometry';
-import { dealDamage } from '@main/actions/dealDamage';
 import { sleep } from '@main/utils/promises';
-import { die } from '@main/actions/die';
-import { isBlocked } from '@main/maps/MapUtils';
-import { EquipmentScript } from '@main/equipment/EquipmentScript';
-import { StatusEffect } from '@main/units/effects/StatusEffect';
-import { EquipmentSlot } from '@duzh/models';
-import { Game } from '@main/core/Game';
+import { AbilityName } from './AbilityName';
+import { type UnitAbility } from './UnitAbility';
 
 export class ShootArrow implements UnitAbility {
   static readonly MANA_COST = 5;
@@ -25,13 +25,14 @@ export class ShootArrow implements UnitAbility {
     unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON) !== null;
 
   isLegal = (unit: Unit, coordinates: Coordinates) => {
-    const map = unit.getMap();
+    /*const map = unit.getMap();
     const direction = pointAt(unit.getCoordinates(), coordinates);
     let targetCoordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
     while (map.contains(targetCoordinates) && !isBlocked(targetCoordinates, map)) {
       targetCoordinates = Coordinates.plusDirection(targetCoordinates, direction);
     }
-    return map.getUnit(targetCoordinates) !== null;
+    return map.getUnit(targetCoordinates) !== null;*/
+    return true;
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {

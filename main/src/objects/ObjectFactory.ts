@@ -1,20 +1,20 @@
-import Spawner from './Spawner';
-import GameObject from './GameObject';
-import Block from './Block';
-import Bonus from './Bonus';
-import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
-import UnitFactory from '@main/units/UnitFactory';
-import { Faction } from '@main/units/Faction';
-import Unit from '@main/units/Unit';
+import { Coordinates } from '@duzh/geometry';
+import { AssetBundle, DoorDirection } from '@duzh/models';
+import { Game } from '@main/core/Game';
+import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
 import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
 import MapInstance from '@main/maps/MapInstance';
 import { getBonus } from '@main/maps/MapUtils';
-import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
-import { Coordinates } from '@duzh/geometry';
-import Shrine from '@main/objects/Shrine';
 import Door, { DoorState } from '@main/objects/Door';
-import { AssetBundle, DoorDirection } from '@duzh/models';
-import { Game } from '@main/core/Game';
+import Shrine from '@main/objects/Shrine';
+import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
+import { Faction } from '@main/units/Faction';
+import Unit from '@main/units/Unit';
+import UnitFactory from '@main/units/UnitFactory';
+import Block from './Block';
+import Bonus from './Bonus';
+import GameObject from './GameObject';
+import Spawner from './Spawner';
 
 export default class ObjectFactory {
   constructor(
@@ -177,7 +177,7 @@ export default class ObjectFactory {
       )
     );
 
-    const radius = 7;
+    const radius = 10;
 
     const onUse = async (unit: Unit, game: Game) => {
       const { soundController, ticker, state } = game;

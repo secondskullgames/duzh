@@ -9,7 +9,15 @@
     "types": [
       {
         "type": "goblin_soldier",
-        "chance": 0.55
+        "chance": 0.4
+      },
+      {
+        "type": "grunt",
+        "chance": 0.1
+      },
+      {
+        "type": "red_beetle",
+        "chance": 0.1
       },
       {
         "type": "golem",
@@ -21,11 +29,11 @@
       },
       {
         "type": "scorpion",
-        "chance": 0.15
+        "chance": 0.1
       }
     ],
     "min": 10,
-    "max": 10
+    "max": 11
   },
   "items": {
     "min": 2,

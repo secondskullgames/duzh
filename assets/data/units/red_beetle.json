@@ -5,12 +5,12 @@
   "sprite": "beetle",
   "paletteSwaps": {},
   "life": 25,
-  "mana": 4,
-  "meleeDamage": 10,
+  "mana": 6,
+  "meleeDamage": 8,
   "rangedDamage": 0,
   "aiParameters": {
-    "speed": 0.8,
-    "visionRange": 6,
+    "speed": 0.95,
+    "visionRange": 8,
     "aggressiveness": 0.95,
     "fleeThreshold": 0.15
   },

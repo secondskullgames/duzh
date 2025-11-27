@@ -9,15 +9,19 @@
     "types": [
       {
         "type": "goblin_soldier",
-        "chance": 0.5
+        "chance": 0.4
       },
       {
-        "type": "red_snake",
+        "type": "grunt",
+        "chance": 0.1
+      },
+      {
+        "type": "red_beetle",
         "chance": 0.1
       },
       {
         "type": "green_blob",
-        "chance": 0.1
+        "chance": 0.2
       },
       {
         "type": "goblin_archer",
@@ -28,7 +32,7 @@
         "chance": 0.1
       }
     ],
-    "min": 10,
+    "min": 11,
     "max": 12
   },
   "items": {
@@ -38,7 +42,7 @@
   "shrines": 0,
   "fogOfWar": {
     "enabled": true,
-    "radius": 4,
+    "radius": 5,
     "spawnEnemies": true,
     "spawnedUnitClass": "black_snake_spawn",
     "spawnRate": 0.05,

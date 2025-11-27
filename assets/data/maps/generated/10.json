@@ -8,20 +8,16 @@
   "enemies": {
     "types": [
       {
-        "type": "red_snake",
-        "chance": 0.25
-      },
-      {
         "type": "red_beetle",
-        "chance": 0.1
+        "chance": 0.2
       },
       {
         "type": "golem",
-        "chance": 0.1
+        "chance": 0.2
       },
       {
         "type": "fire_golem",
-        "chance": 0.1
+        "chance": 0.15
       },
       {
         "type": "scorpion",
@@ -37,7 +33,7 @@
       }
     ],
     "min": 12,
-    "max": 14
+    "max": 13
   },
   "items": {
     "min": 1,
@@ -46,7 +42,7 @@
   "shrines": 1,
   "fogOfWar": {
     "enabled": true,
-    "radius": 2,
+    "radius": 3,
     "spawnEnemies": true,
     "spawnedUnitClass": "black_snake_spawn",
     "spawnRate": 0.05,

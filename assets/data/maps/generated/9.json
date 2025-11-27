@@ -12,16 +12,20 @@
         "chance": 0.25
       },
       {
+        "type": "goblin_soldier",
+        "chance": 0.2
+      },
+      {
         "type": "golem",
-        "chance": 0.25
+        "chance": 0.15
       },
       {
         "type": "fire_golem",
-        "chance": 0.25
+        "chance": 0.15
       },
       {
         "type": "green_blob",
-        "chance": 0.25
+        "chance": 0.15
       }
     ],
     "min": 11,

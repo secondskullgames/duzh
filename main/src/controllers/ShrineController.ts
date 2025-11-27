@@ -1,7 +1,7 @@
-import { ShrineMenuState, ShrineOption } from '@main/core/state/ShrineMenuState';
-import { Game } from '@main/core/Game';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { randChoice, sample } from '@duzh/utils/random';
+import { Game } from '@main/core/Game';
+import { ShrineMenuState, ShrineOption } from '@main/core/state/ShrineMenuState';
 
 export class ShrineController {
   prepareShrineMenu = (game: Game): ShrineMenuState => {
@@ -39,6 +39,14 @@ export class ShrineController {
             // TODO
             game.soundController.playSound('use_potion');
           }
+        },
+        {
+          label: '+1 Life Per Turn',
+          onUse: async (game: Game) => {
+            playerUnit.increaseLifePerTurn(1);
+            // TODO
+            game.soundController.playSound('use_potion');
+          }
         }
       ],
       manaPerTurn: [
@@ -56,6 +64,14 @@ export class ShrineController {
           label: '+1 Melee Damage',
           onUse: async (game: Game) => {
             playerUnit.increaseMeleeDamage(1);
+            // TODO
+            game.soundController.playSound('use_potion');
+          }
+        },
+        {
+          label: '+2 Melee Damage',
+          onUse: async (game: Game) => {
+            playerUnit.increaseMeleeDamage(2);
             // TODO
             game.soundController.playSound('use_potion');
           }
