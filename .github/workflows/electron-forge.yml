@@ -3,8 +3,6 @@ name: Build Electron Forge executables
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 env:
   NODE_VERSION: 20
