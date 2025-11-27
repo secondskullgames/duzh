@@ -13,11 +13,15 @@
       },
       {
         "type": "red_snake",
-        "chance": 0.3
+        "chance": 0.1
       },
       {
         "type": "goblin_soldier",
-        "chance": 0.2
+        "chance": 0.3
+      },
+      {
+        "type": "red_beetle",
+        "chance": 0.1
       },
       {
         "type": "green_blob",

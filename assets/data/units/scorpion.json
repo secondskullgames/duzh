@@ -4,7 +4,7 @@
   "type": "ANIMAL",
   "sprite": "scorpion",
   "paletteSwaps": {},
-  "life": 50,
+  "life": 60,
   "mana": 10,
   "meleeDamage": 12,
   "rangedDamage": 0,
