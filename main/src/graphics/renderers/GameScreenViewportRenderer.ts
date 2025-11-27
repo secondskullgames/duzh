@@ -1,3 +1,4 @@
+import { Feature } from '@duzh/features';
 import { Coordinates, Pixel } from '@duzh/geometry';
 import { Color, Graphics, PaletteSwaps } from '@duzh/graphics';
 import { ImageFactory } from '@duzh/graphics/images';
@@ -114,7 +115,7 @@ export default class GameScreenViewportRenderer implements Renderer {
   };
 
   /**
-   * Render the unit, all of its equipment, and the corresponding overlay.
+   * Render the unit with all of its equipment.
    */
   private _renderUnit = (unit: Unit, coordinates: Coordinates, graphics: Graphics) => {
     const behindEquipment: Equipment[] = [];
@@ -152,6 +153,13 @@ export default class GameScreenViewportRenderer implements Renderer {
     if (unit) {
       if (unit === state.getPlayerUnit()) {
         return this._drawEllipse(coordinates, InterfaceColors.GREEN, graphics);
+      } else if (Feature.isEnabled(Feature.ENEMY_LIFE_INDICATORS)) {
+        const lifeRatio = unit.getLife() / unit.getMaxLife();
+        if (lifeRatio < 0.5) {
+          return this._drawEllipse(coordinates, InterfaceColors.DARK_RED, graphics);
+        } else {
+          return this._drawEllipse(coordinates, InterfaceColors.DARK_GRAY, graphics);
+        }
       } else {
         return this._drawEllipse(coordinates, InterfaceColors.DARK_GRAY, graphics);
       }
