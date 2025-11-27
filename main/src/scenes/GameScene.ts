@@ -1,5 +1,4 @@
-import { TileType } from '@duzh/models';
-import { checkNotNull } from '@duzh/utils/preconditions';
+import { Feature } from '@duzh/features';
 import {
   Coordinates,
   Direction,
@@ -10,15 +9,8 @@ import {
   Rect
 } from '@duzh/geometry';
 import { Color, Graphics } from '@duzh/graphics';
-import {
-  ArrowKey,
-  ClickCommand,
-  Key,
-  KeyCommand,
-  ModifierKey
-} from '@main/input/inputTypes';
-import { isArrowKey, isModifierKey, isNumberKey } from '@main/input/InputUtils';
-import { isMobileDevice, toggleFullScreen } from '@main/utils/dom';
+import { TileType } from '@duzh/models';
+import { checkNotNull } from '@duzh/utils/preconditions';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
@@ -27,22 +19,30 @@ import { Game } from '@main/core/Game';
 import { ShrineMenuState, ShrineOption } from '@main/core/state/ShrineMenuState';
 import { LINE_HEIGHT, TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
 import { FontName } from '@main/graphics/Fonts';
+import { InterfaceColors } from '@main/graphics/InterfaceColors';
 import { Renderer } from '@main/graphics/renderers/Renderer';
 import TopMenuRenderer, { TopMenuIcon } from '@main/graphics/renderers/TopMenuRenderer';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { TextRenderer } from '@main/graphics/TextRenderer';
 import { getDirection } from '@main/input/inputMappers';
+import {
+  ArrowKey,
+  ClickCommand,
+  Key,
+  KeyCommand,
+  ModifierKey
+} from '@main/input/inputTypes';
+import { isArrowKey, isModifierKey, isNumberKey } from '@main/input/InputUtils';
 import { MapController } from '@main/maps/MapController';
 import { getItem, getShrine } from '@main/maps/MapUtils';
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
+import { SoundController } from '@main/sounds/SoundController';
 import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
 import { UnitOrder } from '@main/units/orders/UnitOrder';
 import Unit from '@main/units/Unit';
-import { Feature } from '@duzh/features';
-import { InterfaceColors } from '@main/graphics/InterfaceColors';
-import { SoundController } from '@main/sounds/SoundController';
+import { isMobileDevice, toggleFullScreen } from '@main/utils/dom';
 
 export class GameScene implements Scene {
   readonly name = SceneName.GAME;

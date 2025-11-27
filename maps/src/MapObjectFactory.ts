@@ -1,7 +1,7 @@
 import { Feature } from '@duzh/features';
+import { AssetBundle } from '@duzh/models';
 import { checkState } from '@duzh/utils/preconditions';
 import { weightedRandom, WeightedRandomChoice } from '@duzh/utils/random';
-import { AssetBundle } from '@duzh/models';
 import { ItemOrEquipment, ObjectTemplate } from './ObjectTemplate.js';
 
 type Props = Readonly<{
@@ -28,6 +28,18 @@ export class MapObjectFactory {
       const equipmentModel = this.assetBundle.equipment['bronze_sword'];
       const object: ObjectTemplate = { type: 'equipment', model: equipmentModel };
       this.generatedEquipmentIds.add('bronze_sword');
+      return object;
+    }
+
+    // TODO: see above
+    if (
+      Feature.isEnabled(Feature.FORCE_SHORT_BOW) &&
+      levelNumber === 2 &&
+      !this.generatedEquipmentIds.has('short_bow')
+    ) {
+      const equipmentModel = this.assetBundle.equipment['short_bow'];
+      const object: ObjectTemplate = { type: 'equipment', model: equipmentModel };
+      this.generatedEquipmentIds.add('short_bow');
       return object;
     }
 
