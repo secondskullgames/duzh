@@ -12,12 +12,20 @@
         "chance": 0.5
       },
       {
+        "type": "red_snake",
+        "chance": 0.1
+      },
+      {
         "type": "green_blob",
-        "chance": 0.25
+        "chance": 0.1
       },
       {
         "type": "goblin_archer",
-        "chance": 0.25
+        "chance": 0.1
+      },
+      {
+        "type": "golem",
+        "chance": 0.1
       }
     ],
     "min": 10,

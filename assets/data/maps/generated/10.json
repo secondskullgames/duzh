@@ -8,12 +8,20 @@
   "enemies": {
     "types": [
       {
-        "type": "golem",
+        "type": "red_snake",
         "chance": 0.25
       },
       {
+        "type": "red_beetle",
+        "chance": 0.1
+      },
+      {
+        "type": "golem",
+        "chance": 0.1
+      },
+      {
         "type": "fire_golem",
-        "chance": 0.25
+        "chance": 0.1
       },
       {
         "type": "scorpion",
@@ -25,7 +33,7 @@
       },
       {
         "type": "robed_wizard",
-        "chance": 0.1
+        "chance": 0.05
       }
     ],
     "min": 12,

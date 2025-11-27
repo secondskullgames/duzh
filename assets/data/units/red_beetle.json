@@ -4,15 +4,15 @@
   "type": "ANIMAL",
   "sprite": "beetle",
   "paletteSwaps": {},
-  "life": 35,
+  "life": 25,
   "mana": 4,
   "meleeDamage": 10,
   "rangedDamage": 0,
   "aiParameters": {
     "speed": 0.8,
     "visionRange": 6,
-    "aggressiveness": 0.8,
-    "fleeThreshold": 0
+    "aggressiveness": 0.95,
+    "fleeThreshold": 0.15
   },
   "abilities": ["ATTACK", "DASH"],
   "experience": 1

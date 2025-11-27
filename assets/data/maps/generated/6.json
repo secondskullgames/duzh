@@ -9,26 +9,30 @@
     "types": [
       {
         "type": "goblin_soldier",
-        "chance": 0.4
+        "chance": 0.3
+      },
+      {
+        "type": "grunt",
+        "chance": 0.2
       },
       {
         "type": "red_beetle",
         "chance": 0.2
       },
       {
-        "type": "golem",
+        "type": "goblin_archer",
         "chance": 0.2
       },
       {
         "type": "robo_turtle",
-        "chance": 0.2
+        "chance": 0.1
       }
     ],
     "min": 9,
     "max": 10
   },
   "items": {
-    "min": 1,
+    "min": 2,
     "max": 2
   },
   "shrines": 1,

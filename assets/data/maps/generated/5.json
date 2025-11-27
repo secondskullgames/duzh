@@ -12,16 +12,20 @@
         "chance": 0.4
       },
       {
+        "type": "red_snake",
+        "chance": 0.3
+      },
+      {
         "type": "goblin_soldier",
-        "chance": 0.4
+        "chance": 0.2
       },
       {
         "type": "green_blob",
-        "chance": 0.2
+        "chance": 0.1
       }
     ],
     "min": 8,
-    "max": 9
+    "max": 10
   },
   "items": {
     "min": 1,

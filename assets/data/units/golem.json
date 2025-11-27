@@ -17,9 +17,9 @@
   "life": 60,
   "mana": 10,
   "aiParameters": {
-    "speed": 0.7,
+    "speed": 0.6,
     "visionRange": 8,
-    "aggressiveness": 0.8,
+    "aggressiveness": 0.9,
     "fleeThreshold": 0
   },
   "abilities": ["ATTACK", "HEAVY_ATTACK", "MINOR_STUN_ATTACK"],

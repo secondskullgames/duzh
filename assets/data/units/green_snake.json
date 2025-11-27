@@ -11,7 +11,7 @@
   "aiParameters": {
     "speed": 0.7,
     "visionRange": 6,
-    "aggressiveness": 0.5,
+    "aggressiveness": 0.75,
     "fleeThreshold": 0
   },
   "abilities": ["ATTACK"],

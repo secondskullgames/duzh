@@ -14,7 +14,7 @@
     "PLAYER_SHINS": "BLACK",
     "PLAYER_FEET": "BLACK"
   },
-  "life": 35,
+  "life": 30,
   "mana": 10,
   "meleeDamage": 4,
   "rangedDamage": 0,

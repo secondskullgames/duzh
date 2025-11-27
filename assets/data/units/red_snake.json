@@ -13,9 +13,9 @@
   "meleeDamage": 7,
   "rangedDamage": 0,
   "aiParameters": {
-    "speed": 0.9,
+    "speed": 0.95,
     "visionRange": 8,
-    "aggressiveness": 0.9,
+    "aggressiveness": 0.95,
     "fleeThreshold": 0
   },
   "abilities": ["ATTACK"],

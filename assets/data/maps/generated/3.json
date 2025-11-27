@@ -9,22 +9,30 @@
     "types": [
       {
         "type": "grunt",
-        "chance": 0.5
+        "chance": 0.4
       },
       {
         "type": "red_beetle",
         "chance": 0.3
       },
       {
+        "type": "green_snake",
+        "chance": 0.1
+      },
+      {
+        "type": "red_snake",
+        "chance": 0.1
+      },
+      {
         "type": "robo_turtle",
-        "chance": 0.2
+        "chance": 0.1
       }
     ],
     "min": 6,
     "max": 7
   },
   "items": {
-    "min": 1,
+    "min": 2,
     "max": 2
   },
   "shrines": 0,

@@ -9,11 +9,11 @@
     "types": [
       {
         "type": "green_snake",
-        "chance": 0.6
+        "chance": 0.5
       },
       {
         "type": "red_snake",
-        "chance": 0.4
+        "chance": 0.5
       }
     ],
     "min": 4,

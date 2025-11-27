@@ -4,14 +4,14 @@
   "type": "ELEMENTAL",
   "sprite": "blob",
   "paletteSwaps": {},
-  "life": 50,
+  "life": 60,
   "mana": 15,
   "meleeDamage": 8,
   "rangedDamage": 0,
   "aiParameters": {
-    "speed": 0.7,
+    "speed": 0.5,
     "visionRange": 6,
-    "aggressiveness": 0.7,
+    "aggressiveness": 0.75,
     "fleeThreshold": 0
   },
   "abilities": ["ATTACK", "MINOR_STUN_ATTACK"],
