@@ -21,7 +21,7 @@ export class MapObjectFactory {
     // TODO: this is a hack to force a bronze sword on the first level
     // I don't want to design a better DSL for map generation right now
     if (
-      Feature.isEnabled(Feature.FORCE_BRONZE_SWORD) &&
+      Feature.isEnabled('force_bronze_sword') &&
       levelNumber === 1 &&
       !this.generatedEquipmentIds.has('bronze_sword')
     ) {
@@ -33,7 +33,7 @@ export class MapObjectFactory {
 
     // TODO: see above
     if (
-      Feature.isEnabled(Feature.FORCE_SHORT_BOW) &&
+      Feature.isEnabled('force_short_bow') &&
       levelNumber === 2 &&
       !this.generatedEquipmentIds.has('short_bow')
     ) {
@@ -47,7 +47,7 @@ export class MapObjectFactory {
     const allConsumableModels = Object.values(this.assetBundle.items);
     const possibleEquipmentModels = allEquipmentModels
       .filter(equipmentModel => {
-        if (Feature.isEnabled(Feature.DEDUPLICATE_EQUIPMENT)) {
+        if (Feature.isEnabled('deduplicate_equipment')) {
           return !this.generatedEquipmentIds.has(equipmentModel.id);
         }
         return true;

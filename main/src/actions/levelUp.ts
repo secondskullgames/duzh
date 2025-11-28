@@ -1,16 +1,16 @@
-import Unit from '../units/Unit';
 import { Feature } from '@duzh/features';
-import { Faction } from '@main/units/Faction';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Game } from '@main/core/Game';
+import { Faction } from '@main/units/Faction';
+import Unit from '../units/Unit';
 
 export const levelUp = (unit: Unit, game: Game) => {
   const { state, ticker } = game;
   unit.incrementLevel();
   if (unit.getFaction() === Faction.PLAYER) {
     const playerUnitClass = checkNotNull(unit.getPlayerUnitClass());
-    if (Feature.isEnabled(Feature.SHRINES)) {
+    if (Feature.isEnabled('shrines')) {
       ticker.log(`Welcome to level ${unit.getLevel()}!`, { turn: state.getTurn() });
       const abilitiesToLearn = playerUnitClass.getAbilitiesLearnedAtLevel(
         unit.getLevel()

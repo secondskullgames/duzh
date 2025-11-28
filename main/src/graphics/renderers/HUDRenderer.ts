@@ -1,20 +1,20 @@
-import { Renderer } from './Renderer';
-import { LINE_HEIGHT } from '../constants';
-import { TextRenderer } from '../TextRenderer';
-import { Alignment, drawAligned } from '../RenderingUtils';
-import { FontName } from '../Fonts';
-import { Color, Graphics, PaletteSwaps } from '@duzh/graphics';
-import { Pixel, Rect } from '@duzh/geometry';
 import { Feature } from '@duzh/features';
-import Unit from '@main/units/Unit';
+import { Pixel, Rect } from '@duzh/geometry';
+import { Color, Graphics, PaletteSwaps } from '@duzh/graphics';
 import { ImageFactory } from '@duzh/graphics/images';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { type UnitAbility } from '@main/abilities/UnitAbility';
-import { StatusEffect } from '@main/units/effects/StatusEffect';
-import { formatTimestamp } from '@main/utils/time';
 import { Game } from '@main/core/Game';
 import { InterfaceColors } from '@main/graphics/InterfaceColors';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
+import Unit from '@main/units/Unit';
+import { formatTimestamp } from '@main/utils/time';
+import { LINE_HEIGHT } from '../constants';
+import { FontName } from '../Fonts';
+import { Alignment, drawAligned } from '../RenderingUtils';
+import { TextRenderer } from '../TextRenderer';
+import { Renderer } from './Renderer';
 
 const HUD_FILENAME = 'brick_hud_3';
 
@@ -89,14 +89,14 @@ export default class HUDRenderer implements Renderer {
     }
     lines.push(`Level ${playerUnit.getLevel()}`);
 
-    if (Feature.isEnabled(Feature.HUD_BARS)) {
+    if (Feature.isEnabled('hud_bars')) {
       lines.push(`      ${playerUnit.getLife()}/${playerUnit.getMaxLife()}`);
     } else {
       lines.push(`Life: ${playerUnit.getLife()}/${playerUnit.getMaxLife()}`);
     }
 
     if (playerUnit.getMana() !== null && playerUnit.getMaxMana() !== null) {
-      if (Feature.isEnabled(Feature.HUD_BARS)) {
+      if (Feature.isEnabled('hud_bars')) {
         lines.push(`      ${playerUnit.getMana()}/${playerUnit.getMaxMana()}`);
       } else {
         lines.push(`Mana: ${playerUnit.getMana()}/${playerUnit.getMaxMana()}`);
@@ -118,7 +118,7 @@ export default class HUDRenderer implements Renderer {
       );
     }
 
-    if (Feature.isEnabled(Feature.HUD_BARS)) {
+    if (Feature.isEnabled('hud_bars')) {
       this._renderLifeBar(playerUnit, graphics, {
         left,
         top: top + LINE_HEIGHT * 2 - 2,

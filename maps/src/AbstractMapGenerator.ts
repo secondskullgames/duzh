@@ -1,10 +1,10 @@
-import { GeneratedMapModel, TileType, UnitModel } from '@duzh/models';
-import { checkNotNull } from '@duzh/utils/preconditions';
 import { Feature } from '@duzh/features';
 import { Grid, MultiGrid } from '@duzh/geometry';
+import { GeneratedMapModel, TileType, UnitModel } from '@duzh/models';
+import { checkNotNull } from '@duzh/utils/preconditions';
 import { MapTemplate } from './MapTemplate.js';
-import { getUnoccupiedLocations } from './utils.js';
 import { ObjectTemplate } from './ObjectTemplate.js';
+import { getUnoccupiedLocations } from './utils.js';
 
 /**
  * TODO - OOP is a mess here but we'll fix it later
@@ -24,7 +24,7 @@ export abstract class AbstractMapGenerator {
     const candidateLocations = getUnoccupiedLocations(tiles, [TileType.FLOOR], []);
     const startingCoordinates = checkNotNull(candidateLocations.shift());
 
-    if (Feature.isEnabled(Feature.STAIRS_UP)) {
+    if (Feature.isEnabled('stairs_up')) {
       tiles.put(startingCoordinates, TileType.STAIRS_UP);
     }
 

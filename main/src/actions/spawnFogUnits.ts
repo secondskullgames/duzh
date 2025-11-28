@@ -1,12 +1,12 @@
-import MapInstance from '@main/maps/MapInstance';
+import { Feature } from '@duzh/features';
+import { Coordinates, hypotenuse } from '@duzh/geometry';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { randChance, randChoice } from '@duzh/utils/random';
+import { Game } from '@main/core/Game';
+import MapInstance from '@main/maps/MapInstance';
+import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
 import { Faction } from '@main/units/Faction';
 import { chooseUnitController } from '@main/units/controllers/ControllerUtils';
-import { Coordinates, hypotenuse } from '@duzh/geometry';
-import { getUnitsOfClass, isBlocked } from '@main/maps/MapUtils';
-import { Feature } from '@duzh/features';
-import { Game } from '@main/core/Game';
 
 export const spawnFogUnits = async (map: MapInstance, game: Game) => {
   const { state, unitFactory, assetBundle } = game;
@@ -45,7 +45,7 @@ export const spawnFogUnits = async (map: MapInstance, game: Game) => {
 const _getFogSpawnCoordinates = (map: MapInstance, game: Game): Coordinates | null => {
   const allTiles = map.getTiles().flat();
   const candidateCoordinates = (() => {
-    if (Feature.isEnabled(Feature.FOG_SHADES_EVERYWHERE)) {
+    if (Feature.isEnabled('fog_shades_everywhere')) {
       const playerUnit = game.state.getPlayerUnit();
       const minDistanceWaway = 10;
       return allTiles

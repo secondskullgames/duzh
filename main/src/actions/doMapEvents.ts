@@ -4,7 +4,7 @@ import { Game } from '@main/core/Game';
 import MapInstance from '@main/maps/MapInstance';
 
 export const doMapEvents = async (map: MapInstance, game: Game) => {
-  if (Feature.isEnabled(Feature.FOG_SHADES)) {
+  if (Feature.isEnabled('fog_shades')) {
     await spawnFogUnits(map, game);
   }
 };

@@ -126,20 +126,14 @@ export class GameScene implements Scene {
           }
         }
       }
-    } else if (
-      modifiers.includes(ModifierKey.ALT) &&
-      Feature.isEnabled(Feature.ALT_STRAFE)
-    ) {
+    } else if (modifiers.includes(ModifierKey.ALT) && Feature.isEnabled('alt_strafe')) {
       if (playerUnit.hasAbility(AbilityName.STRAFE)) {
         const ability = playerUnit.getAbilityForName(AbilityName.STRAFE);
         if (ability.isEnabled(playerUnit) && ability.isLegal(playerUnit, coordinates)) {
           order = AbilityOrder.create({ direction, ability });
         }
       }
-    } else if (
-      modifiers.includes(ModifierKey.ALT) &&
-      Feature.isEnabled(Feature.ALT_DASH)
-    ) {
+    } else if (modifiers.includes(ModifierKey.ALT) && Feature.isEnabled('alt_dash')) {
       if (playerUnit.hasAbility(AbilityName.DASH)) {
         const ability = playerUnit.getAbilityForName(AbilityName.DASH);
         if (ability.isEnabled(playerUnit) && ability.isLegal(playerUnit, coordinates)) {
@@ -467,7 +461,7 @@ export class GameScene implements Scene {
       await this.topMenuRenderer.render(graphics);
     }
 
-    if (Feature.isEnabled(Feature.BUSY_INDICATOR)) {
+    if (Feature.isEnabled('busy_indicator')) {
       if (state.isTurnInProgress()) {
         this._drawTurnProgressIndicator(graphics);
       }

@@ -1,4 +1,13 @@
+import { Feature } from '@duzh/features';
 import { Coordinates, Direction, Grid, MultiGrid } from '@duzh/geometry';
+import {
+  Algorithm,
+  AssetBundle,
+  DoorDirection,
+  GeneratedMapModel,
+  TileType,
+  UnitModel
+} from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import {
   randChance,
@@ -8,25 +17,16 @@ import {
   weightedRandom,
   WeightedRandomChoice
 } from '@duzh/utils/random';
-import { Feature } from '@duzh/features';
-import {
-  Algorithm,
-  AssetBundle,
-  DoorDirection,
-  GeneratedMapModel,
-  TileType,
-  UnitModel
-} from '@duzh/models';
 import { AbstractMapGenerator } from './AbstractMapGenerator.js';
 import { BlobMapGenerator } from './BlobMapGenerator.js';
 import { DefaultMapGenerator } from './DefaultMapGenerator.js';
+import { MapObjectFactory } from './MapObjectFactory.js';
+import { MapTemplate } from './MapTemplate.js';
+import { ObjectTemplate } from './ObjectTemplate.js';
 import { PathMapGenerator } from './PathMapGenerator.js';
 import { RoomCorridorMapGenerator } from './room_corridor/RoomCorridorMapGenerator.js';
 import { RoomCorridorMapGenerator2 } from './room_corridor_rewrite/RoomCorridorMapGenerator2.js';
-import { MapObjectFactory } from './MapObjectFactory.js';
-import { MapTemplate } from './MapTemplate.js';
 import { getUnoccupiedLocations } from './utils.js';
-import { ObjectTemplate } from './ObjectTemplate.js';
 
 type Props = Readonly<{
   assetBundle: AssetBundle;
@@ -84,7 +84,7 @@ export class GeneratedMapFactory {
   };
 
   private _getRoomsAndCorridorsGenerator = (): AbstractMapGenerator => {
-    if (Feature.isEnabled(Feature.ROOMS_AND_CORRIDORS_2)) {
+    if (Feature.isEnabled('rooms_and_corridors_2')) {
       return new RoomCorridorMapGenerator2({
         minRoomWidth: 5,
         minRoomHeight: 4
@@ -189,7 +189,7 @@ export class GeneratedMapFactory {
       }
     }
 
-    if (Feature.isEnabled(Feature.SHRINES)) {
+    if (Feature.isEnabled('shrines')) {
       const numShrines = model.shrines;
       for (let i = 0; i < numShrines; i++) {
         const coordinates = randChoice(candidateLocations);
@@ -248,7 +248,7 @@ export class GeneratedMapFactory {
    * TODO hardcoding these
    */
   private _getTileSetNames = (): string[] => {
-    if (Feature.isEnabled(Feature.DARK_DUNGEON)) {
+    if (Feature.isEnabled('dark_dungeon')) {
       return ['dark/dungeon_dark1', 'dark/dungeon_dark2', 'dark/dungeon_dark3'];
     }
 

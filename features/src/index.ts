@@ -1,58 +1,57 @@
-export enum Feature {
-  ALERT_ON_ERROR = 'ALERT_ON_ERROR',
+export type Feature =
+  | 'alert_on_error'
   // Note: Only one ALT_ feature should be enabled at any one time.
   // They don't work together and the precedence is undefined.
-  ALT_DASH = 'ALT_DASH',
-  ALT_STRAFE = 'ALT_STRAFE',
-  ALT_TURN = 'ALT_TURN',
-  BLINK_THROUGH_WALLS = 'BLINK_THROUGH_WALLS',
-  BUSY_INDICATOR = 'BUSY_INDICATOR',
-  DARK_DUNGEON = 'DARK_DUNGEON',
-  DEBUG_BUTTONS = 'DEBUG_BUTTONS',
-  DEBUG_LEVEL = 'DEBUG_LEVEL',
-  DEBUG_LOGGING = 'DEBUG_LOGGING',
-  DEDUPLICATE_EQUIPMENT = 'DEDUPLICATE_EQUIPMENT',
-  DOUBLE_BUFFERING = 'DOUBLE_BUFFERING',
-  ENEMY_LIFE_INDICATORS = 'ENEMY_LIFE_INDICATORS',
-  FOG_SHADES = 'FOG_SHADES',
-  FOG_SHADES_EVERYWHERE = 'FOG_SHADES_EVERYWHERE',
-  FORCE_BRONZE_SWORD = 'FORCE_BRONZE_SWORD',
-  FORCE_SHORT_BOW = 'FORCE_SHORT_BOW',
-  GOD_MODE = 'GOD_MODE',
-  MOBILE_WEB = 'MOBILE_WEB',
-  HUD_BARS = 'HUD_BARS',
-  ROOMS_AND_CORRIDORS_2 = 'ROOMS_AND_CORRIDORS_2',
-  SHRINES = 'SHRINES',
-  STAIRS_UP = 'STAIRS_UP',
-  TITLE_MUSIC = 'TITLE_MUSIC'
-}
+  | 'alt_dash'
+  | 'alt_strafe'
+  | 'alt_turn'
+  | 'blink_through_walls'
+  | 'busy_indicator'
+  | 'dark_dungeon'
+  | 'debug_buttons'
+  | 'debug_level'
+  | 'debug_logging'
+  | 'deduplicate_equipment'
+  | 'double_buffering'
+  | 'enemy_life_indicators'
+  | 'fog_shades'
+  | 'fog_shades_everywhere'
+  | 'force_bronze_sword'
+  | 'force_short_bow'
+  | 'god_mode'
+  | 'mobile_web'
+  | 'hud_bars'
+  | 'rooms_and_corridors_2'
+  | 'shrines'
+  | 'stairs_up'
+  | 'title_music';
 
 export namespace Feature {
   const ENABLED_FEATURES: Record<Feature, boolean> = {
-    [Feature.ALERT_ON_ERROR]: true,
-    [Feature.ALT_DASH]: true,
-    [Feature.ALT_STRAFE]: false,
-    [Feature.ALT_TURN]: false,
-    [Feature.BLINK_THROUGH_WALLS]: false,
-    [Feature.BUSY_INDICATOR]: true,
-    [Feature.DARK_DUNGEON]: false,
-    [Feature.DEBUG_BUTTONS]: false,
-    [Feature.DEBUG_LEVEL]: false,
-    [Feature.DEDUPLICATE_EQUIPMENT]: true,
-    [Feature.DEBUG_LOGGING]: false,
-    [Feature.DOUBLE_BUFFERING]: true,
-    [Feature.ENEMY_LIFE_INDICATORS]: false,
-    [Feature.FOG_SHADES]: true,
-    [Feature.FOG_SHADES_EVERYWHERE]: false,
-    [Feature.FORCE_BRONZE_SWORD]: true,
-    [Feature.FORCE_SHORT_BOW]: true,
-    [Feature.GOD_MODE]: false,
-    [Feature.HUD_BARS]: true,
-    [Feature.MOBILE_WEB]: true,
-    [Feature.ROOMS_AND_CORRIDORS_2]: true,
-    [Feature.SHRINES]: true,
-    [Feature.STAIRS_UP]: false,
-    [Feature.TITLE_MUSIC]: true
+    alert_on_error: true,
+    alt_dash: true,
+    alt_strafe: false,
+    alt_turn: false,
+    blink_through_walls: false,
+    busy_indicator: true,
+    dark_dungeon: false,
+    debug_buttons: false,
+    debug_level: false,
+    deduplicate_equipment: true,
+    debug_logging: false,
+    double_buffering: true,
+    enemy_life_indicators: false,
+    fog_shades: true,
+    fog_shades_everywhere: false,
+    force_bronze_sword: true,
+    force_short_bow: true,
+    god_mode: false,
+    hud_bars: true,
+    mobile_web: true,
+    rooms_and_corridors_2: true,
+    shrines: true,
+    stairs_up: false,
+    title_music: true
   };
   export const isEnabled = (feature: Feature): boolean => {
     const queryParam = getQueryParam(feature);

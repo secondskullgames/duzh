@@ -153,7 +153,7 @@ export default class GameScreenViewportRenderer implements Renderer {
     if (unit) {
       if (unit === state.getPlayerUnit()) {
         return this._drawEllipse(coordinates, InterfaceColors.GREEN, graphics);
-      } else if (Feature.isEnabled(Feature.ENEMY_LIFE_INDICATORS)) {
+      } else if (Feature.isEnabled('enemy_life_indicators')) {
         const lifeRatio = unit.getLife() / unit.getMaxLife();
         if (lifeRatio < 0.5) {
           return this._drawEllipse(coordinates, InterfaceColors.DARK_RED, graphics);

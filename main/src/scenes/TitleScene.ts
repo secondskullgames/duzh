@@ -1,17 +1,17 @@
+import { Feature } from '@duzh/features';
 import { Pixel } from '@duzh/geometry';
 import { Color, Graphics } from '@duzh/graphics';
 import { ImageFactory } from '@duzh/graphics/images';
-import { ClickCommand, KeyCommand, ModifierKey } from '@main/input/inputTypes';
-import { isMobileDevice, toggleFullScreen } from '@main/utils/dom';
 import { Game } from '@main/core/Game';
 import { FontName } from '@main/graphics/Fonts';
 import { InterfaceColors } from '@main/graphics/InterfaceColors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { TextRenderer } from '@main/graphics/TextRenderer';
+import { ClickCommand, KeyCommand, ModifierKey } from '@main/input/inputTypes';
 import { MapController } from '@main/maps/MapController';
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import { Feature } from '@duzh/features';
+import { isMobileDevice, toggleFullScreen } from '@main/utils/dom';
 
 const TITLE_FILENAME = 'title2';
 
@@ -28,7 +28,7 @@ export class TitleScene implements Scene {
   private _handleStartGame = async () => {
     const { mapController } = this;
     const { state, ticker } = this.game;
-    if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
+    if (Feature.isEnabled('debug_level')) {
       await mapController.loadDebugMap(this.game);
     } else {
       await mapController.loadFirstMap(this.game);

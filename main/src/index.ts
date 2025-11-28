@@ -179,7 +179,7 @@ const init = async ({ rootElement, gameConfig }: Props) => {
   canvas.focus();
   const canvasGraphics = Graphics.forCanvas(canvas);
   let bufferGraphics: Graphics;
-  if (Feature.isEnabled(Feature.DOUBLE_BUFFERING)) {
+  if (Feature.isEnabled('double_buffering')) {
     const bufferCanvas = createCanvas({
       width: gameConfig.screenWidth,
       height: gameConfig.screenHeight
@@ -190,7 +190,7 @@ const init = async ({ rootElement, gameConfig }: Props) => {
   if (isMobileDevice()) {
     await enterFullScreen();
   }
-  if (Feature.isEnabled(Feature.DEBUG_BUTTONS)) {
+  if (Feature.isEnabled('debug_buttons')) {
     const debug = container.debugController;
     debug.attachToWindow();
   }
@@ -206,7 +206,7 @@ const init = async ({ rootElement, gameConfig }: Props) => {
   setInterval(async () => {
     const currentScene = state.getCurrentScene();
     if (currentScene) {
-      if (Feature.isEnabled(Feature.DOUBLE_BUFFERING)) {
+      if (Feature.isEnabled('double_buffering')) {
         await currentScene.render(bufferGraphics);
         canvasGraphics.putImageData(bufferGraphics.getImageData(), { x: 0, y: 0 });
       } else {
@@ -236,7 +236,7 @@ const main = async () => {
 
 main().catch(e => {
   console.error(e);
-  if (Feature.isEnabled(Feature.ALERT_ON_ERROR)) {
+  if (Feature.isEnabled('alert_on_error')) {
     // eslint-disable-next-line no-alert
     alert(e);
   }

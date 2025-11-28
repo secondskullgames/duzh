@@ -1,13 +1,13 @@
-import { type UnitAbility } from './UnitAbility';
-import { AbilityName } from './AbilityName';
-import Unit from '@main/units/Unit';
-import MapInstance from '@main/maps/MapInstance';
-import { Coordinates, Direction, pointAt } from '@duzh/geometry';
-import { moveUnit } from '@main/actions/moveUnit';
 import { Feature } from '@duzh/features';
-import { isBlocked } from '@main/maps/MapUtils';
+import { Coordinates, Direction, pointAt } from '@duzh/geometry';
 import { checkState } from '@duzh/utils/preconditions';
+import { moveUnit } from '@main/actions/moveUnit';
 import { Game } from '@main/core/Game';
+import MapInstance from '@main/maps/MapInstance';
+import { isBlocked } from '@main/maps/MapUtils';
+import Unit from '@main/units/Unit';
+import { AbilityName } from './AbilityName';
+import { type UnitAbility } from './UnitAbility';
 
 export class Blink implements UnitAbility {
   static readonly MANA_COST = 10;
@@ -50,7 +50,7 @@ const _isBlocked = (start: Coordinates, end: Coordinates, map: MapInstance): boo
     coordinates = Coordinates.plusDirection(coordinates, direction);
     if (Coordinates.equals(coordinates, end)) {
       return isBlocked(coordinates, map);
-    } else if (Feature.isEnabled(Feature.BLINK_THROUGH_WALLS)) {
+    } else if (Feature.isEnabled('blink_through_walls')) {
       // do nothing
     } else {
       return map.getTile(coordinates).isBlocking();
