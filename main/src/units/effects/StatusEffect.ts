@@ -3,7 +3,8 @@ export enum StatusEffect {
   BURNING = 'BURNING',
   FROZEN = 'FROZEN',
   SHOCKED = 'SHOCKED',
-  DAMAGED = 'DAMAGED'
+  DAMAGED = 'DAMAGED',
+  OVERDRIVE = 'OVERDRIVE'
 }
 
 export namespace StatusEffect {

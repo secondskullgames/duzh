@@ -1,6 +1,5 @@
 import { Offsets } from '@duzh/geometry';
 import { Image } from '@duzh/graphics/images';
-import { maxBy } from '@duzh/utils/arrays';
 import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { Activity } from '../../units/Activity';
 import Unit from '../../units/Unit';
@@ -33,10 +32,18 @@ export class UnitSprite extends DynamicSprite<Unit> {
 
   private _getEffect = (target: Unit): StatusEffect | null => {
     const effects = target.getEffects().getEffects();
-    if (effects.length > 0) {
-      // TODO precedence
-      // super hack to make Damaged take precedence over Stunned
-      return maxBy(effects, effect => (effect === StatusEffect.STUNNED ? 0 : 1));
+    // main thing is to put DAMAGED at the top, others don't matter much
+    const precedence = [
+      StatusEffect.DAMAGED,
+      StatusEffect.BURNING,
+      StatusEffect.FROZEN,
+      StatusEffect.SHOCKED,
+      StatusEffect.OVERDRIVE
+    ];
+    for (const effect of precedence) {
+      if (effects.includes(effect)) {
+        return effect;
+      }
     }
     return null;
   };

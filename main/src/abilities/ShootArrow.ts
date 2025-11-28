@@ -1,17 +1,17 @@
-import { type UnitAbility } from './UnitAbility';
-import { AbilityName } from './AbilityName';
+import { Coordinates, Direction, pointAt } from '@duzh/geometry';
+import { EquipmentSlot } from '@duzh/models';
+import { dealDamage } from '@main/actions/dealDamage';
+import { die } from '@main/actions/die';
+import { Game } from '@main/core/Game';
+import { EquipmentScript } from '@main/equipment/EquipmentScript';
+import { isBlocked } from '@main/maps/MapUtils';
 import { Activity } from '@main/units/Activity';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
 import Unit from '@main/units/Unit';
 import { getRangedDamage } from '@main/units/UnitUtils';
-import { Coordinates, Direction, pointAt } from '@duzh/geometry';
-import { dealDamage } from '@main/actions/dealDamage';
 import { sleep } from '@main/utils/promises';
-import { die } from '@main/actions/die';
-import { isBlocked } from '@main/maps/MapUtils';
-import { EquipmentScript } from '@main/equipment/EquipmentScript';
-import { StatusEffect } from '@main/units/effects/StatusEffect';
-import { EquipmentSlot } from '@duzh/models';
-import { Game } from '@main/core/Game';
+import { AbilityName } from './AbilityName';
+import { type UnitAbility } from './UnitAbility';
 
 export class ShootArrow implements UnitAbility {
   static readonly MANA_COST = 5;
@@ -21,8 +21,9 @@ export class ShootArrow implements UnitAbility {
   readonly innate = true;
 
   isEnabled = (unit: Unit) =>
-    unit.getMana() >= this.manaCost &&
-    unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON) !== null;
+    unit.getEquipment().getBySlot(EquipmentSlot.RANGED_WEAPON) !== null &&
+    (unit.getMana() >= this.manaCost ||
+      unit.getEffects().getDuration(StatusEffect.OVERDRIVE) > 0);
 
   isLegal = (unit: Unit, coordinates: Coordinates) => {
     const map = unit.getMap();
@@ -44,7 +45,9 @@ export class ShootArrow implements UnitAbility {
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
-    unit.spendMana(this.manaCost);
+    if (unit.getEffects().getDuration(StatusEffect.OVERDRIVE) === 0) {
+      unit.spendMana(this.manaCost);
+    }
 
     const coordinatesList = [];
     let targetCoordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);

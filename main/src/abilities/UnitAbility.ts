@@ -1,7 +1,13 @@
+import { Coordinates } from '@duzh/geometry';
+import { BurningAttack } from '@main/abilities/BurningAttack';
+import { FastTeleport } from '@main/abilities/FastTeleport';
+import { ShootFirebolt } from '@main/abilities/ShootFirebolt';
+import { ShootFrostbolt } from '@main/abilities/ShootFrostbolt';
+import { Game } from '@main/core/Game';
+import Unit from '@main/units/Unit';
 import { AbilityName } from './AbilityName';
-import { NormalAttack } from './NormalAttack';
 import { Blink } from './Blink';
-import { ShootBolt } from './ShootBolt';
+import { Cleave } from './Cleave';
 import { Dash } from './Dash';
 import { DashAttack } from './DashAttack';
 import { FreeMove } from './FreeMove';
@@ -9,23 +15,17 @@ import { HeavyAttack } from './HeavyAttack';
 import { KnockbackAttack } from './KnockbackAttack';
 import { MinorKnockback } from './MinorKnockback';
 import { MinorStunAttack } from './MinorStunAttack';
+import { NormalAttack } from './NormalAttack';
 import { PiercingAttack } from './PiercingAttack';
+import { Scorpion } from './Scorpion';
 import { ShootArrow } from './ShootArrow';
-import { ShootTurretArrow } from './ShootTurretArrow';
+import { ShootBolt } from './ShootBolt';
 import { ShootFireball } from './ShootFireball';
+import { ShootTurretArrow } from './ShootTurretArrow';
 import { Strafe } from './Strafe';
 import { StunAttack } from './StunAttack';
 import { Summon } from './Summon';
 import { Teleport } from './Teleport';
-import { Scorpion } from './Scorpion';
-import { Cleave } from './Cleave';
-import Unit from '@main/units/Unit';
-import { Coordinates } from '@duzh/geometry';
-import { BurningAttack } from '@main/abilities/BurningAttack';
-import { FastTeleport } from '@main/abilities/FastTeleport';
-import { ShootFrostbolt } from '@main/abilities/ShootFrostbolt';
-import { ShootFirebolt } from '@main/abilities/ShootFirebolt';
-import { Game } from '@main/core/Game';
 
 /**
  * Currently, a UnitAbility can really be one of three things:
@@ -44,7 +44,9 @@ export interface UnitAbility {
    * True if the ability does not show up on the player's action bar
    */
   readonly innate: boolean;
-
+  /**
+   * TODO this is pretty much copy-pasted everywhere
+   */
   isEnabled: (unit: Unit) => boolean;
   /**
    * Note - this doesn't check the ability's mana cost, you need to check
