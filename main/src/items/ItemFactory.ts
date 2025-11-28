@@ -1,28 +1,28 @@
-import InventoryItem from './InventoryItem';
-import SpriteFactory from '../graphics/sprites/SpriteFactory';
-import Unit from '../units/Unit';
-import Equipment from '../equipment/Equipment';
-import MapItem from '../objects/MapItem';
-import MapInstance from '../maps/MapInstance';
+import { Coordinates } from '@duzh/geometry';
 import {
   AssetBundle,
   ConsumableItemModel,
   ConsumableType,
   ItemCategory
 } from '@duzh/models';
-import { Coordinates } from '@duzh/geometry';
-import { equipItem } from '@main/actions/equipItem';
-import { getEquipmentTooltip } from '@main/equipment/EquipmentUtils';
-import { shootFireball } from '@main/actions/shootFireball';
-import { SceneName } from '@main/scenes/SceneName';
-import { floorFire } from '@main/actions/floorFire';
-import { revealMap } from '@main/maps/MapUtils';
-import { castFreeze } from '@main/actions/castFreeze';
-import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
-import { radialChainLightning } from '@main/actions/radialChainLightning';
-import type { ItemProc } from './ItemProc';
-import { Game } from '@main/core/Game';
 import { checkNotNull } from '@duzh/utils/preconditions';
+import { castFreeze } from '@main/actions/castFreeze';
+import { equipItem } from '@main/actions/equipItem';
+import { floorFire } from '@main/actions/floorFire';
+import { radialChainLightning } from '@main/actions/radialChainLightning';
+import { shootFireball } from '@main/actions/shootFireball';
+import { Game } from '@main/core/Game';
+import { getEquipmentTooltip } from '@main/equipment/EquipmentUtils';
+import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
+import { revealMap } from '@main/maps/MapUtils';
+import { SceneName } from '@main/scenes/SceneName';
+import Equipment from '../equipment/Equipment';
+import SpriteFactory from '../graphics/sprites/SpriteFactory';
+import MapInstance from '../maps/MapInstance';
+import MapItem from '../objects/MapItem';
+import Unit from '../units/Unit';
+import InventoryItem from './InventoryItem';
+import type { ItemProc } from './ItemProc';
 
 export class ItemFactory {
   constructor(
@@ -63,6 +63,27 @@ export class ItemFactory {
       category: ItemCategory.POTION,
       onUse,
       tooltip: `Restores ${manaRestored} mana`
+    });
+  };
+
+  createOverdrivePotion = (name: string, duration: number): InventoryItem => {
+    const onUse: ItemProc = async (item: InventoryItem, unit: Unit, game: Game) => {
+      const { soundController, state, ticker } = game;
+      soundController.playSound('use_potion');
+      unit.setOverdrive(duration);
+      ticker.log(
+        `${unit.getName()} used ${item.name}.  Abilities are free for ${duration} turns.`,
+        {
+          turn: state.getTurn()
+        }
+      );
+    };
+
+    return new InventoryItem({
+      name,
+      category: ItemCategory.POTION,
+      onUse,
+      tooltip: `All abilities are free for the next ${duration} turns`
     });
   };
 
@@ -218,6 +239,10 @@ export class ItemFactory {
       case ConsumableType.MANA_POTION: {
         const amount = parseInt(model.params?.amount ?? '0');
         return this.createManaPotion(model.name, amount);
+      }
+      case ConsumableType.OVERDRIVE_POTION: {
+        const duration = parseInt(model.params?.duration ?? '0');
+        return this.createOverdrivePotion(model.name, duration);
       }
       case ConsumableType.KEY: {
         return this.createKey(model.name);

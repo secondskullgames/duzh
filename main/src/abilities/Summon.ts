@@ -1,11 +1,12 @@
-import { type UnitAbility } from './UnitAbility';
-import { AbilityName } from './AbilityName';
-import Unit from '@main/units/Unit';
-import BasicEnemyController from '@main/units/controllers/BasicEnemyController';
 import { Coordinates } from '@duzh/geometry';
 import { checkNotNull } from '@duzh/utils/preconditions';
-import { isBlocked } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';
+import { isBlocked } from '@main/maps/MapUtils';
+import Unit from '@main/units/Unit';
+import BasicEnemyController from '@main/units/controllers/BasicEnemyController';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { AbilityName } from './AbilityName';
+import { type UnitAbility } from './UnitAbility';
 
 export class Summon implements UnitAbility {
   static readonly MANA_COST = 25;
@@ -14,7 +15,9 @@ export class Summon implements UnitAbility {
   readonly icon = null;
   readonly innate = false;
 
-  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+  isEnabled = (unit: Unit) =>
+    unit.getMana() >= this.manaCost ||
+    unit.getEffects().getDuration(StatusEffect.OVERDRIVE) > 0;
 
   isLegal = (unit: Unit, coordinates: Coordinates) =>
     !isBlocked(coordinates, unit.getMap());
@@ -36,6 +39,8 @@ export class Summon implements UnitAbility {
     });
     map.addUnit(summonedUnit);
     game.state.addUnit(summonedUnit);
-    unit.spendMana(this.manaCost);
+    if (unit.getEffects().getDuration(StatusEffect.OVERDRIVE) === 0) {
+      unit.spendMana(this.manaCost);
+    }
   };
 }

@@ -1,26 +1,26 @@
-import { UnitController } from './controllers/UnitController';
-import { PlayerUnitClass } from './PlayerUnitClass';
-import { Faction } from './Faction';
-import { calculateTotalIncomingDamage } from './UnitUtils';
-import { Activity } from './Activity';
+import { Coordinates, Direction } from '@duzh/geometry';
+import { AIParameters, UnitModel, UnitType } from '@duzh/models';
+import { check, checkArgument, checkNotNull } from '@duzh/utils/preconditions';
+import { AbilityName } from '@main/abilities/AbilityName';
+import { UnitAbility } from '@main/abilities/UnitAbility';
+import { dealDamage } from '@main/actions/dealDamage';
+import { die } from '@main/actions/die';
+import { Game } from '@main/core/Game';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { UnitStatusEffects } from '@main/units/effects/UnitStatusEffects';
+import Entity from '../entities/Entity';
+import { EntityType } from '../entities/EntityType';
 import Equipment from '../equipment/Equipment';
 import EquipmentMap from '../equipment/EquipmentMap';
 import DynamicSprite from '../graphics/sprites/DynamicSprite';
-import InventoryMap from '../items/InventoryMap';
-import Entity from '../entities/Entity';
 import Sprite from '../graphics/sprites/Sprite';
-import { EntityType } from '../entities/EntityType';
+import InventoryMap from '../items/InventoryMap';
 import MapInstance from '../maps/MapInstance';
-import { AbilityName } from '@main/abilities/AbilityName';
-import { UnitAbility } from '@main/abilities/UnitAbility';
-import { AIParameters, UnitModel, UnitType } from '@duzh/models';
-import { Coordinates, Direction } from '@duzh/geometry';
-import { check, checkArgument, checkNotNull } from '@duzh/utils/preconditions';
-import { die } from '@main/actions/die';
-import { StatusEffect } from '@main/units/effects/StatusEffect';
-import { UnitStatusEffects } from '@main/units/effects/UnitStatusEffects';
-import { dealDamage } from '@main/actions/dealDamage';
-import { Game } from '@main/core/Game';
+import { Activity } from './Activity';
+import { UnitController } from './controllers/UnitController';
+import { Faction } from './Faction';
+import { PlayerUnitClass } from './PlayerUnitClass';
+import { calculateTotalIncomingDamage } from './UnitUtils';
 
 /**
  * Regenerate this raw amount of health each turn
@@ -280,8 +280,6 @@ export default class Unit implements Entity {
     return manaGained;
   };
 
-  canSpendMana = (amount: number) => this.mana >= amount;
-
   spendMana = (amount: number) => {
     checkArgument(amount <= this.mana);
     checkArgument(amount >= 0);
@@ -316,6 +314,10 @@ export default class Unit implements Entity {
 
   setBurning = (duration: number) => {
     this.effects.addEffect(StatusEffect.BURNING, duration);
+  };
+
+  setOverdrive = (duration: number) => {
+    this.effects.addEffect(StatusEffect.OVERDRIVE, duration);
   };
 
   /**
