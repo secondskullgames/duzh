@@ -1,8 +1,10 @@
-import { AssetBundleSchema, ImageBundleSchema } from '@duzh/models';
 import { MusicPlayer, SoundPlayer } from '@duzh/audio';
+import { Feature } from '@duzh/features';
+import { FontBundle, Graphics } from '@duzh/graphics';
+import { ImageCache, ImageFactory, ImageLoader } from '@duzh/graphics/images';
+import { GeneratedMapFactory, MapObjectFactory, PredefinedMapFactory } from '@duzh/maps';
+import { AssetBundleSchema, ImageBundleSchema } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
-import InputHandler from '@main/input/InputHandler';
-import { createCanvas, enterFullScreen, isMobileDevice } from '@main/utils/dom';
 import { InventoryController } from '@main/controllers/InventoryController';
 import { ShrineController } from '@main/controllers/ShrineController';
 import { EngineImpl } from '@main/core/Engine';
@@ -16,8 +18,8 @@ import TopMenuRenderer from '@main/graphics/renderers/TopMenuRenderer';
 import SpriteFactory from '@main/graphics/sprites/SpriteFactory';
 import { TextRenderer } from '@main/graphics/TextRenderer';
 import { createInputHandler } from '@main/input/createInputHandler';
+import InputHandler from '@main/input/InputHandler';
 import { ItemFactory } from '@main/items/ItemFactory';
-import { GeneratedMapFactory, MapObjectFactory, PredefinedMapFactory } from '@duzh/maps';
 import ObjectFactory from '@main/objects/ObjectFactory';
 import ProjectileFactory from '@main/objects/ProjectileFactory';
 import { CharacterScene } from '@main/scenes/CharacterScene';
@@ -34,15 +36,13 @@ import { MusicController } from '@main/sounds/MusicController';
 import { SoundController } from '@main/sounds/SoundController';
 import TileFactory from '@main/tiles/TileFactory';
 import UnitFactory from '@main/units/UnitFactory';
+import { createCanvas, enterFullScreen, isMobileDevice } from '@main/utils/dom';
 import { showTitleScreen } from './actions/showTitleScreen';
 import { DebugController } from './core/DebugController';
 import { GameStateImpl } from './core/GameState';
 import { FontFactory } from './graphics/Fonts';
 import { MapControllerImpl } from './maps/MapController';
 import { MapHydrator } from './maps/MapHydrator';
-import { Feature } from '@duzh/features';
-import { FontBundle, Graphics } from '@duzh/graphics';
-import { ImageCache, ImageFactory, ImageLoader } from '@duzh/graphics/images';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -178,6 +178,14 @@ const init = async ({ rootElement, gameConfig }: Props) => {
   canvas.tabIndex = 0;
   canvas.focus();
   const canvasGraphics = Graphics.forCanvas(canvas);
+  let bufferGraphics: Graphics;
+  if (Feature.isEnabled(Feature.DOUBLE_BUFFERING)) {
+    const bufferCanvas = createCanvas({
+      width: gameConfig.screenWidth,
+      height: gameConfig.screenHeight
+    });
+    bufferGraphics = Graphics.forCanvas(bufferCanvas);
+  }
 
   if (isMobileDevice()) {
     await enterFullScreen();
@@ -198,7 +206,12 @@ const init = async ({ rootElement, gameConfig }: Props) => {
   setInterval(async () => {
     const currentScene = state.getCurrentScene();
     if (currentScene) {
-      await currentScene.render(canvasGraphics);
+      if (Feature.isEnabled(Feature.DOUBLE_BUFFERING)) {
+        await currentScene.render(bufferGraphics);
+        canvasGraphics.putImageData(bufferGraphics.getImageData(), { x: 0, y: 0 });
+      } else {
+        await currentScene.render(canvasGraphics);
+      }
     }
   }, 20);
 };
