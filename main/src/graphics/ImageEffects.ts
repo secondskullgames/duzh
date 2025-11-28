@@ -18,8 +18,4 @@ export namespace ImageEffects {
     name: 'SHOCKED',
     apply: (img: ImageData) => replaceAll(img, Color.WHITE)
   };
-  export const OVERDRIVE: ImageEffect = {
-    name: 'OVERDRIVE',
-    apply: (img: ImageData) => replaceAll(img, Color.fromHex('#ff00ff')) // MAGENTA
-  };
 }

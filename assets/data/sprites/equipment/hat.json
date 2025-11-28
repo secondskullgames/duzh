@@ -72,14 +72,6 @@
           "number": "1"
         }
       ]
-    },
-    "overdrive": {
-      "frames": [
-        {
-          "activity": "standing",
-          "number": "1"
-        }
-      ]
     }
   }
 }

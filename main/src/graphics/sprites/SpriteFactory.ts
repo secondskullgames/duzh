@@ -245,9 +245,6 @@ export default class SpriteFactory {
             case 'shocked':
               effects.push(ImageEffects.SHOCKED);
               break;
-            case 'overdrive':
-              effects.push(ImageEffects.OVERDRIVE);
-              break;
           }
 
           const frameKey = `${animationName}_${direction}_${i}`;

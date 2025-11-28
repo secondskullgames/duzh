@@ -32,17 +32,14 @@ export class UnitSprite extends DynamicSprite<Unit> {
 
   private _getEffect = (target: Unit): StatusEffect | null => {
     const effects = target.getEffects().getEffects();
-    // main thing is to put DAMAGED at the top, others don't matter much
-    const precedence = [
-      StatusEffect.DAMAGED,
-      StatusEffect.BURNING,
-      StatusEffect.FROZEN,
-      StatusEffect.SHOCKED,
-      StatusEffect.OVERDRIVE
-    ];
-    for (const effect of precedence) {
-      if (effects.includes(effect)) {
-        return effect;
+    if (effects.length > 0) {
+      if (effects.includes(StatusEffect.DAMAGED)) {
+        return StatusEffect.DAMAGED;
+      }
+      for (const effect of effects) {
+        if (effect !== StatusEffect.OVERDRIVE) {
+          return effect;
+        }
       }
     }
     return null;
