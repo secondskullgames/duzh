@@ -1,13 +1,14 @@
-import { type UnitAbility } from './UnitAbility';
-import { AbilityName } from './AbilityName';
-import Unit from '@main/units/Unit';
-import MapInstance from '@main/maps/MapInstance';
-import { Coordinates, Direction, pointAt } from '@duzh/geometry';
-import { moveUnit } from '@main/actions/moveUnit';
 import { Feature } from '@duzh/features';
-import { isBlocked } from '@main/maps/MapUtils';
+import { Coordinates, Direction, pointAt } from '@duzh/geometry';
 import { checkState } from '@duzh/utils/preconditions';
+import { moveUnit } from '@main/actions/moveUnit';
 import { Game } from '@main/core/Game';
+import MapInstance from '@main/maps/MapInstance';
+import { isBlocked } from '@main/maps/MapUtils';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
+import Unit from '@main/units/Unit';
+import { AbilityName } from './AbilityName';
+import { type UnitAbility } from './UnitAbility';
 
 export class Blink implements UnitAbility {
   static readonly MANA_COST = 10;
@@ -17,7 +18,9 @@ export class Blink implements UnitAbility {
   readonly icon = 'blink_icon';
   readonly innate = false;
 
-  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+  isEnabled = (unit: Unit) =>
+    unit.getMana() >= this.manaCost ||
+    unit.getEffects().getDuration(StatusEffect.OVERDRIVE) > 0;
 
   isLegal = (unit: Unit, coordinates: Coordinates) => {
     const map = unit.getMap();
@@ -39,7 +42,9 @@ export class Blink implements UnitAbility {
     checkState(!blocked);
 
     await moveUnit(unit, targetCoordinates, game);
-    unit.spendMana(this.manaCost);
+    if (unit.getEffects().getDuration(StatusEffect.OVERDRIVE) === 0) {
+      unit.spendMana(this.manaCost);
+    }
   };
 }
 

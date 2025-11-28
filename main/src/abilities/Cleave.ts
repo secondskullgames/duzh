@@ -1,10 +1,11 @@
-import { AbilityName } from './AbilityName';
-import Unit, { DefendResult } from '@main/units/Unit';
-import { getMeleeDamage } from '@main/units/UnitUtils';
 import { Coordinates, Direction, pointAt } from '@duzh/geometry';
 import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
-import type { UnitAbility } from './UnitAbility';
 import { Game } from '@main/core/Game';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
+import Unit, { DefendResult } from '@main/units/Unit';
+import { getMeleeDamage } from '@main/units/UnitUtils';
+import { AbilityName } from './AbilityName';
+import type { UnitAbility } from './UnitAbility';
 
 const attack: Attack = {
   sound: 'special_attack',
@@ -28,7 +29,10 @@ export class Cleave implements UnitAbility {
   readonly icon = 'icon7';
   readonly innate = false;
 
-  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+  isEnabled = (unit: Unit) =>
+    unit.getMana() >= this.manaCost ||
+    unit.getEffects().getDuration(StatusEffect.OVERDRIVE) > 0;
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isLegal = (unit: Unit, coordinates: Coordinates) => {
     return _getTargetUnits(unit).length > 0;
@@ -40,7 +44,9 @@ export class Cleave implements UnitAbility {
 
     const targetUnits = _getTargetUnits(unit);
     if (targetUnits.length > 0) {
-      unit.spendMana(this.manaCost);
+      if (unit.getEffects().getDuration(StatusEffect.OVERDRIVE) === 0) {
+        unit.spendMana(this.manaCost);
+      }
     }
 
     // TODO: consider making this simultaneous

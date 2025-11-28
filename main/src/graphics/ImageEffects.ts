@@ -1,21 +1,21 @@
+import { Color } from '@duzh/graphics';
 import { ImageEffect, replaceAll } from '@duzh/graphics/images';
-import { InterfaceColors } from '@main/graphics/InterfaceColors';
 
 export namespace ImageEffects {
   export const DAMAGED: ImageEffect = {
     name: 'DAMAGED',
-    apply: (img: ImageData) => replaceAll(img, InterfaceColors.WHITE)
+    apply: (img: ImageData) => replaceAll(img, Color.WHITE)
   };
   export const BURNING: ImageEffect = {
     name: 'BURNING',
-    apply: (img: ImageData) => replaceAll(img, InterfaceColors.ORANGE)
+    apply: (img: ImageData) => replaceAll(img, Color.fromHex('#ff8000')) // ORANGE
   };
   export const FROZEN: ImageEffect = {
     name: 'FROZEN',
-    apply: (img: ImageData) => replaceAll(img, InterfaceColors.CYAN)
+    apply: (img: ImageData) => replaceAll(img, Color.fromHex('#00ffff')) // CYAN
   };
   export const SHOCKED: ImageEffect = {
-    name: 'WHITE',
-    apply: (img: ImageData) => replaceAll(img, InterfaceColors.WHITE)
+    name: 'SHOCKED',
+    apply: (img: ImageData) => replaceAll(img, Color.WHITE)
   };
 }

@@ -1,13 +1,14 @@
-import { type UnitAbility } from './UnitAbility';
-import { AbilityName } from './AbilityName';
+import { Coordinates, Direction, offsetsToDirection, pointAt } from '@duzh/geometry';
+import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
+import { moveUnit } from '@main/actions/moveUnit';
+import { Game } from '@main/core/Game';
+import { getEnemyUnit, isBlocked } from '@main/maps/MapUtils';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
 import Unit, { DefendResult } from '@main/units/Unit';
 import { getMeleeDamage } from '@main/units/UnitUtils';
-import { Coordinates, Direction, offsetsToDirection, pointAt } from '@duzh/geometry';
-import { moveUnit } from '@main/actions/moveUnit';
-import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { sleep } from '@main/utils/promises';
-import { getEnemyUnit, isBlocked } from '@main/maps/MapUtils';
-import { Game } from '@main/core/Game';
+import { AbilityName } from './AbilityName';
+import { type UnitAbility } from './UnitAbility';
 
 const attack: Attack = {
   sound: 'special_attack',
@@ -31,7 +32,10 @@ export class DashAttack implements UnitAbility {
   manaCost = DashAttack.MANA_COST;
   readonly icon = 'icon5';
   readonly innate = false;
-  readonly isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+
+  isEnabled = (unit: Unit) =>
+    unit.getMana() >= this.manaCost ||
+    unit.getEffects().getDuration(StatusEffect.OVERDRIVE) > 0;
 
   /**
    * It's legal if:
@@ -71,7 +75,9 @@ export class DashAttack implements UnitAbility {
     }
 
     unit.setDirection(pointAt(unit.getCoordinates(), coordinates));
-    unit.spendMana(this.manaCost);
+    if (unit.getEffects().getDuration(StatusEffect.OVERDRIVE) === 0) {
+      unit.spendMana(this.manaCost);
+    }
 
     const numTiles = 2;
     for (let i = 0; i < 2; i++) {

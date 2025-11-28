@@ -1,13 +1,14 @@
-import { type UnitAbility } from './UnitAbility';
-import { AbilityName } from './AbilityName';
+import { Coordinates, Direction, pointAt } from '@duzh/geometry';
+import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
+import { moveUnit } from '@main/actions/moveUnit';
+import { Game } from '@main/core/Game';
+import { isBlocked } from '@main/maps/MapUtils';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
 import Unit, { DefendResult } from '@main/units/Unit';
 import { getMeleeDamage } from '@main/units/UnitUtils';
-import { Coordinates, Direction, pointAt } from '@duzh/geometry';
-import { moveUnit } from '@main/actions/moveUnit';
-import { Attack, AttackResult, attackUnit } from '@main/actions/attackUnit';
 import { sleep } from '@main/utils/promises';
-import { isBlocked } from '@main/maps/MapUtils';
-import { Game } from '@main/core/Game';
+import { AbilityName } from './AbilityName';
+import { type UnitAbility } from './UnitAbility';
 
 const attack: Attack = {
   sound: 'player_hits_enemy',
@@ -33,7 +34,9 @@ export class Scorpion implements UnitAbility {
   readonly icon = 'scorpion_icon';
   readonly innate = false;
 
-  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+  isEnabled = (unit: Unit) =>
+    unit.getMana() >= this.manaCost ||
+    unit.getEffects().getDuration(StatusEffect.OVERDRIVE) > 0;
 
   isLegal = (unit: Unit, coordinates: Coordinates) => {
     const direction = pointAt(unit.getCoordinates(), coordinates);
@@ -47,7 +50,9 @@ export class Scorpion implements UnitAbility {
     const { dx, dy } = Direction.getOffsets(direction);
     unit.setDirection(direction);
     const targetUnit = this._findTargetUnit(unit, direction);
-    unit.spendMana(this.manaCost);
+    if (unit.getEffects().getDuration(StatusEffect.OVERDRIVE) === 0) {
+      unit.spendMana(this.manaCost);
+    }
     const projectile = await projectileFactory.createArrow(coordinates, map, direction);
     map.addProjectile(projectile);
 

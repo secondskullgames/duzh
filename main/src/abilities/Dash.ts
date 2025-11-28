@@ -1,11 +1,12 @@
-import { type UnitAbility } from './UnitAbility';
-import { AbilityName } from './AbilityName';
-import Unit from '../units/Unit';
 import { Coordinates, Direction, pointAt } from '@duzh/geometry';
-import { sleep } from '@main/utils/promises';
 import { moveUnit } from '@main/actions/moveUnit';
-import { isBlocked } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';
+import { isBlocked } from '@main/maps/MapUtils';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
+import { sleep } from '@main/utils/promises';
+import Unit from '../units/Unit';
+import { AbilityName } from './AbilityName';
+import { type UnitAbility } from './UnitAbility';
 
 export class Dash implements UnitAbility {
   static readonly MANA_COST = 4;
@@ -14,7 +15,9 @@ export class Dash implements UnitAbility {
   readonly icon = 'icon5';
   readonly innate = true;
 
-  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+  isEnabled = (unit: Unit) =>
+    unit.getMana() >= this.manaCost ||
+    unit.getEffects().getDuration(StatusEffect.OVERDRIVE) > 0;
 
   isLegal = (unit: Unit, coordinates: Coordinates) => {
     const map = unit.getMap();
@@ -49,7 +52,9 @@ export class Dash implements UnitAbility {
 
     if (moved) {
       soundController.playSound('footstep');
-      unit.spendMana(this.manaCost);
+      if (unit.getEffects().getDuration(StatusEffect.OVERDRIVE) === 0) {
+        unit.spendMana(this.manaCost);
+      }
     } else {
       soundController.playSound('blocked');
     }

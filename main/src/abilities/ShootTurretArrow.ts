@@ -1,15 +1,15 @@
-import { type UnitAbility } from './UnitAbility';
-import { AbilityName } from './AbilityName';
-import Unit from '@main/units/Unit';
-import { getRangedDamage } from '@main/units/UnitUtils';
-import { Activity } from '@main/units/Activity';
 import { Coordinates, Direction, pointAt } from '@duzh/geometry';
 import { dealDamage } from '@main/actions/dealDamage';
-import { sleep } from '@main/utils/promises';
 import { die } from '@main/actions/die';
-import { isBlocked } from '@main/maps/MapUtils';
-import { StatusEffect } from '@main/units/effects/StatusEffect';
 import { Game } from '@main/core/Game';
+import { isBlocked } from '@main/maps/MapUtils';
+import { Activity } from '@main/units/Activity';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
+import Unit from '@main/units/Unit';
+import { getRangedDamage } from '@main/units/UnitUtils';
+import { sleep } from '@main/utils/promises';
+import { AbilityName } from './AbilityName';
+import { type UnitAbility } from './UnitAbility';
 
 export class ShootTurretArrow implements UnitAbility {
   static readonly MANA_COST = 5;
@@ -28,7 +28,9 @@ export class ShootTurretArrow implements UnitAbility {
     const direction = pointAt(unit.getCoordinates(), coordinates);
     unit.setDirection(direction);
 
-    unit.spendMana(this.manaCost);
+    if (unit.getEffects().getDuration(StatusEffect.OVERDRIVE) === 0) {
+      unit.spendMana(this.manaCost);
+    }
 
     const coordinatesList = [];
     let targetCoordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);

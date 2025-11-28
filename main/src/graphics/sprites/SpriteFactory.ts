@@ -1,24 +1,24 @@
+import { Direction } from '@duzh/geometry';
+import { Color, PaletteSwaps } from '@duzh/graphics';
+import { Image, ImageEffect, ImageFactory } from '@duzh/graphics/images';
+import { AssetBundle, DoorDirection, DynamicSpriteModel } from '@duzh/models';
+import { checkNotNull } from '@duzh/utils/preconditions';
+import { ImageEffects } from '@main/graphics/ImageEffects';
+import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
+import { ShrineSprite } from '@main/graphics/sprites/ShrineSprite';
+import Shrine from '@main/objects/Shrine';
+import Unit from '@main/units/Unit';
+import { fillTemplate } from '@main/utils/templates';
+import Door, { DoorState } from '../../objects/Door';
+import Spawner, { SpawnerState } from '../../objects/Spawner';
+import { DoorSprite } from './DoorSprite';
 import DynamicSprite from './DynamicSprite';
+import { EquipmentSprite } from './EquipmentSprite';
+import { SpawnerSprite } from './SpawnerSprite';
 import Sprite from './Sprite';
 import { SpriteCategory } from './SpriteCategory';
 import StaticSprite from './StaticSprite';
-import { SpawnerSprite } from './SpawnerSprite';
-import { DoorSprite } from './DoorSprite';
-import { EquipmentSprite } from './EquipmentSprite';
 import { UnitSprite } from './UnitSprite';
-import Door, { DoorState } from '../../objects/Door';
-import Spawner, { SpawnerState } from '../../objects/Spawner';
-import { Color, PaletteSwaps } from '@duzh/graphics';
-import Unit from '@main/units/Unit';
-import { Direction } from '@duzh/geometry';
-import { fillTemplate } from '@main/utils/templates';
-import { Image, ImageEffect, ImageFactory } from '@duzh/graphics/images';
-import { loadPaletteSwaps } from '@main/graphics/loadPaletteSwaps';
-import { ImageEffects } from '@main/graphics/ImageEffects';
-import { AssetBundle, DoorDirection, DynamicSpriteModel } from '@duzh/models';
-import Shrine from '@main/objects/Shrine';
-import { ShrineSprite } from '@main/graphics/sprites/ShrineSprite';
-import { checkNotNull } from '@duzh/utils/preconditions';
 
 export default class SpriteFactory {
   constructor(

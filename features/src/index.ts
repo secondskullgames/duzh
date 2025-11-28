@@ -41,7 +41,7 @@ export namespace Feature {
     [Feature.DEDUPLICATE_EQUIPMENT]: true,
     [Feature.DEBUG_LOGGING]: false,
     [Feature.DOUBLE_BUFFERING]: true,
-    [Feature.ENEMY_LIFE_INDICATORS]: false,
+    [Feature.ENEMY_LIFE_INDICATORS]: true,
     [Feature.FOG_SHADES]: true,
     [Feature.FOG_SHADES_EVERYWHERE]: false,
     [Feature.FORCE_BRONZE_SWORD]: true,

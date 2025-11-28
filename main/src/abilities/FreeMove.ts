@@ -1,10 +1,11 @@
-import { type UnitAbility } from './UnitAbility';
-import { AbilityName } from './AbilityName';
-import Unit from '@main/units/Unit';
 import { Coordinates, Direction } from '@duzh/geometry';
 import { moveUnit } from '@main/actions/moveUnit';
-import { isBlocked } from '@main/maps/MapUtils';
 import { Game } from '@main/core/Game';
+import { isBlocked } from '@main/maps/MapUtils';
+import { StatusEffect } from '@main/units/effects/StatusEffect';
+import Unit from '@main/units/Unit';
+import { AbilityName } from './AbilityName';
+import { type UnitAbility } from './UnitAbility';
 
 export class FreeMove implements UnitAbility {
   static readonly MANA_COST = 4;
@@ -13,7 +14,9 @@ export class FreeMove implements UnitAbility {
   readonly icon = 'icon5';
   readonly innate = false;
 
-  isEnabled = (unit: Unit) => unit.getMana() >= this.manaCost;
+  isEnabled = (unit: Unit) =>
+    unit.getMana() >= this.manaCost ||
+    unit.getEffects().getDuration(StatusEffect.OVERDRIVE) > 0;
 
   isLegal = (unit: Unit, coordinates: Coordinates) => {
     return !isBlocked(coordinates, unit.getMap());
@@ -27,7 +30,9 @@ export class FreeMove implements UnitAbility {
     const targetCoordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
     if (!isBlocked(targetCoordinates, map)) {
       await moveUnit(unit, targetCoordinates, game);
-      unit.spendMana(this.manaCost);
+      if (unit.getEffects().getDuration(StatusEffect.OVERDRIVE) === 0) {
+        unit.spendMana(this.manaCost);
+      }
     } else {
       soundController.playSound('blocked');
     }

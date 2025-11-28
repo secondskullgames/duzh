@@ -3,6 +3,7 @@ import { z } from 'zod';
 export enum ConsumableType {
   LIFE_POTION = 'life_potion',
   MANA_POTION = 'mana_potion',
+  OVERDRIVE_POTION = 'overdrive_potion',
   KEY = 'key',
   SCROLL = 'scroll'
 }
