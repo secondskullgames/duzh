@@ -1,8 +1,8 @@
 {
   "id": "mana_potion",
   "name": "Mana Potion",
-  "level": 1,
-  "rarity": 5,
+  "level": null,
+  "rarity": null,
   "mapSprite": "map_potion",
   "paletteSwaps": {
     "DARK_RED": "DARK_BLUE",
