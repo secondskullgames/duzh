@@ -1,10 +1,5 @@
 import { Coordinates } from '@duzh/geometry';
-import {
-  AssetBundle,
-  ConsumableItemModel,
-  ConsumableType,
-  ItemCategory
-} from '@duzh/models';
+import { AssetBundle, ConsumableType, ItemCategory } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { castFreeze } from '@main/actions/castFreeze';
 import { equipItem } from '@main/actions/equipItem';
@@ -230,7 +225,8 @@ export class ItemFactory {
     return equipment;
   };
 
-  createInventoryItem = async (model: ConsumableItemModel): Promise<InventoryItem> => {
+  createInventoryItem = async (id: string): Promise<InventoryItem> => {
+    const model = checkNotNull(this.assetBundle.items[id]);
     switch (model.type) {
       case ConsumableType.LIFE_POTION: {
         const amount = parseInt(model.params?.amount ?? '0');
@@ -280,7 +276,7 @@ export class ItemFactory {
 
   createMapItem = async (itemId: string, coordinates: Coordinates, map: MapInstance) => {
     const model = checkNotNull(this.assetBundle.items[itemId]);
-    const inventoryItem = await this.createInventoryItem(model);
+    const inventoryItem = await this.createInventoryItem(itemId);
     const sprite = await this.spriteFactory.createStaticSprite(
       model.mapSprite,
       loadPaletteSwaps(model.paletteSwaps, this.assetBundle)

@@ -1,10 +1,10 @@
+import { die } from '@main/actions/die';
+import { Game } from '@main/core/Game';
+import { MapController } from '@main/maps/MapController';
+import { Faction } from '@main/units/Faction';
 import { levelUp as _levelUp } from '../actions/levelUp';
 import { ItemFactory } from '../items/ItemFactory';
 import MapInstance from '../maps/MapInstance';
-import { die } from '@main/actions/die';
-import { MapController } from '@main/maps/MapController';
-import { Faction } from '@main/units/Faction';
-import { Game } from '@main/core/Game';
 
 export class DebugController {
   constructor(
@@ -49,6 +49,19 @@ export class DebugController {
     soundController.playSound('pick_up_item');
   };
 
+  awardItem = async () => {
+    const { itemFactory } = this;
+    const { soundController, state, ticker } = this.game;
+
+    // eslint-disable-next-line no-alert
+    const id = prompt('Enter a valid item_id')!;
+    const item = await itemFactory.createInventoryItem(id);
+    const playerUnit = state.getPlayerUnit();
+    playerUnit.getInventory().add(item);
+    ticker.log(`Picked up a ${item.name}.`, { turn: state.getTurn() });
+    soundController.playSound('pick_up_item');
+  };
+
   attachToWindow = () => {
     const { mapController } = this;
     const { state } = this.game;
@@ -77,6 +90,10 @@ export class DebugController {
       {
         label: 'Award Equipment',
         onClick: () => this.awardEquipment()
+      },
+      {
+        label: 'Award Item',
+        onClick: () => this.awardItem()
       }
     ];
     if (rootElelement) {
