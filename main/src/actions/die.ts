@@ -1,17 +1,17 @@
-import { gameOver } from './gameOver';
-import Unit from '@main/units/Unit';
-import { random, weightedRandom } from '@duzh/utils/random';
 import { Coordinates } from '@duzh/geometry';
+import { random, weightedRandom } from '@duzh/utils/random';
+import { Game } from '@main/core/Game';
 import MapInstance from '@main/maps/MapInstance';
 import GameObject from '@main/objects/GameObject';
-import { Game } from '@main/core/Game';
+import Unit from '@main/units/Unit';
+import { gameOver } from './gameOver';
 
 // TODO this should be enemy-specific? add loot tables
 const ITEM_DROP_CHANCE = 0.05;
 const GLOBE_DROP_CHANCE = 0.2;
-const HEALTH_GLOBE_DROP_CHANCE = 1;
+const HEALTH_GLOBE_DROP_CHANCE = 0.9;
 const MANA_GLOBE_DROP_CHANCE = 0;
-const VISION_GLOBE_DROP_CHANCE = 0;
+const VISION_GLOBE_DROP_CHANCE = 0.1;
 
 export const die = async (unit: Unit, game: Game) => {
   const { soundController, state, ticker } = game;

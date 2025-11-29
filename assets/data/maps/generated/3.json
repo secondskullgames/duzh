@@ -9,15 +9,15 @@
     "types": [
       {
         "type": "grunt",
-        "chance": 0.5
+        "chance": 0.6
       },
       {
         "type": "red_beetle",
-        "chance": 0.3
+        "chance": 0.25
       },
       {
         "type": "robo_turtle",
-        "chance": 0.2
+        "chance": 0.15
       }
     ],
     "min": 6,

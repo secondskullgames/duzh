@@ -9,9 +9,9 @@
   "meleeDamage": 8,
   "rangedDamage": 0,
   "aiParameters": {
-    "speed": 0.7,
+    "speed": 0.6,
     "visionRange": 6,
-    "aggressiveness": 0.7,
+    "aggressiveness": 0.8,
     "fleeThreshold": 0
   },
   "abilities": ["ATTACK", "MINOR_STUN_ATTACK"],
