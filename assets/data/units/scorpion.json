@@ -4,14 +4,14 @@
   "type": "ANIMAL",
   "sprite": "scorpion",
   "paletteSwaps": {},
-  "life": 40,
+  "life": 60,
   "mana": 10,
   "meleeDamage": 12,
   "rangedDamage": 0,
   "aiParameters": {
     "speed": 0.8,
     "visionRange": 8,
-    "aggressiveness": 0.9,
+    "aggressiveness": 1.0,
     "fleeThreshold": 0
   },
   "abilities": ["ATTACK", "HEAVY_ATTACK", "KNOCKBACK_ATTACK"],
