@@ -163,7 +163,6 @@ export class GameScene implements Scene {
       playerController.queueOrder(order);
       await this.game.engine.playTurn(this.game);
     } else {
-      playerUnit.setDirection(direction);
       this.soundController.playSound('blocked');
     }
   };
