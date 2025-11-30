@@ -9,19 +9,19 @@
     "types": [
       {
         "type": "goblin_soldier",
-        "chance": 0.4
+        "chance": 0.45
       },
       {
         "type": "red_beetle",
-        "chance": 0.2
+        "chance": 0.25
       },
       {
         "type": "golem",
-        "chance": 0.2
+        "chance": 0.15
       },
       {
         "type": "robo_turtle",
-        "chance": 0.2
+        "chance": 0.15
       }
     ],
     "min": 9,

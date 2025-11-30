@@ -1,17 +1,17 @@
+import { Feature } from '@duzh/features';
 import { Pixel } from '@duzh/geometry';
 import { Color, Graphics } from '@duzh/graphics';
 import { ImageFactory } from '@duzh/graphics/images';
-import { ClickCommand, KeyCommand, ModifierKey } from '@main/input/inputTypes';
-import { isMobileDevice, toggleFullScreen } from '@main/utils/dom';
 import { Game } from '@main/core/Game';
 import { FontName } from '@main/graphics/Fonts';
 import { InterfaceColors } from '@main/graphics/InterfaceColors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { TextRenderer } from '@main/graphics/TextRenderer';
+import { ClickCommand, KeyCommand, ModifierKey } from '@main/input/inputTypes';
 import { MapController } from '@main/maps/MapController';
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import { Feature } from '@duzh/features';
+import { isMobileDevice, toggleFullScreen } from '@main/utils/dom';
 
 const TITLE_FILENAME = 'title2';
 
@@ -26,17 +26,27 @@ export class TitleScene implements Scene {
   ) {}
 
   private _handleStartGame = async () => {
-    const { mapController } = this;
-    const { state, ticker } = this.game;
+    const { game, mapController } = this;
+    const { state, ticker } = game;
     if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
-      await mapController.loadDebugMap(this.game);
+      await mapController.loadDebugMap(game);
     } else {
-      await mapController.loadFirstMap(this.game);
+      await mapController.loadFirstMap(game);
     }
     state.startGameTimer();
     state.setScene(SceneName.GAME);
     ticker.log('Welcome to the Dungeons of Duzh!', { turn: state.getTurn() });
-    if (isMobileDevice()) {
+    if (Feature.isEnabled(Feature.GOD_MODE)) {
+      const playerUnit = state.getPlayerUnit();
+      game.ticker.log('You are a god! Use your power wisely.', { turn: state.getTurn() });
+      const sword = await game.itemFactory.createEquipment('god_sword');
+      sword.attach(playerUnit);
+      playerUnit.getEquipment().add(sword);
+      const armor = await game.itemFactory.createEquipment('god_armor');
+      armor.attach(playerUnit);
+      playerUnit.getEquipment().add(armor);
+      // gods don't need instructions
+    } else if (isMobileDevice()) {
       ticker.log('Press the ? icon in the upper-right for instructions.', {
         turn: state.getTurn()
       });

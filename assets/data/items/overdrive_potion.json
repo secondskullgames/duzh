@@ -1,7 +1,7 @@
 {
   "id": "overdrive_potion",
   "name": "Overdrive Potion",
-  "level": 1,
+  "level": 2,
   "rarity": 4,
   "mapSprite": "map_potion",
   "paletteSwaps": {
@@ -10,6 +10,6 @@
   },
   "type": "overdrive_potion",
   "params": {
-    "duration": "10"
+    "duration": "8"
   }
 }

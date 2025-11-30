@@ -16,8 +16,8 @@
   },
   "meleeDamage": 2,
   "rangedDamage": 2,
-  "life": 40,
-  "mana": 5,
+  "life": 35,
+  "mana": 6,
   "equipment": [
     "bronze_sword",
     "red_chain_mail",
