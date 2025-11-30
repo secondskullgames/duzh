@@ -26,13 +26,7 @@ export class ShootArrow implements UnitAbility {
       unit.getEffects().getDuration(StatusEffect.OVERDRIVE) > 0);
 
   isLegal = (unit: Unit, coordinates: Coordinates) => {
-    const map = unit.getMap();
-    const direction = pointAt(unit.getCoordinates(), coordinates);
-    let targetCoordinates = Coordinates.plusDirection(unit.getCoordinates(), direction);
-    while (map.contains(targetCoordinates) && !isBlocked(targetCoordinates, map)) {
-      targetCoordinates = Coordinates.plusDirection(targetCoordinates, direction);
-    }
-    return map.getUnit(targetCoordinates) !== null;
+    return true;
   };
 
   use = async (unit: Unit, coordinates: Coordinates, game: Game) => {
