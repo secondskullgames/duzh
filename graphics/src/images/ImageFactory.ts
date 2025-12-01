@@ -38,7 +38,7 @@ export class ImageFactory {
         return cached;
       }
 
-      let imageData = await this.imageLoader.loadImageData(filename);
+      let imageData = await this.imageLoader.loadImageDataOptional(filename);
       if (imageData) {
         if (transparentColor) {
           imageData = applyTransparentColor(imageData, transparentColor);
