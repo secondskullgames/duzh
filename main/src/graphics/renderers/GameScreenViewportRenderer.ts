@@ -16,7 +16,7 @@ import { Renderer } from './Renderer';
 
 const SHADOW_FILENAME = 'shadow';
 
-export default class GameScreenViewportRenderer implements Renderer {
+export default class GameSceneViewportRenderer implements Renderer {
   constructor(
     private readonly game: Game,
     private readonly imageFactory: ImageFactory,

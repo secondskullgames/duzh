@@ -1,4 +1,3 @@
-import { Feature } from '@duzh/features';
 import {
   Coordinates,
   isAdjacent,
@@ -7,19 +6,15 @@ import {
   pointAt,
   Rect
 } from '@duzh/geometry';
-import { Color, Graphics } from '@duzh/graphics';
+import { Graphics } from '@duzh/graphics';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { AbilityName } from '@main/abilities/AbilityName';
 import { GameController } from '@main/controllers/GameController';
 import { Game } from '@main/core/Game';
 import { ShrineMenuState, ShrineOption } from '@main/core/state/ShrineMenuState';
-import { LINE_HEIGHT, TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
-import { FontName } from '@main/graphics/Fonts';
-import { InterfaceColors } from '@main/graphics/InterfaceColors';
-import { Renderer } from '@main/graphics/renderers/Renderer';
+import { TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
+import { GameSceneRenderer } from '@main/graphics/renderers/GameSceneRenderer.ts';
 import TopMenuRenderer, { TopMenuIcon } from '@main/graphics/renderers/TopMenuRenderer';
-import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
-import { TextRenderer } from '@main/graphics/TextRenderer';
 import { arrowKeyToDirection, directionToArrowKey } from '@main/input/inputMappers';
 import { ClickCommand, KeyCommand, ModifierKey } from '@main/input/inputTypes';
 import { isArrowKey, isModifierKey, isNumberKey } from '@main/input/InputUtils';
@@ -27,7 +22,7 @@ import { getShrine } from '@main/maps/MapUtils';
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
 import Unit from '@main/units/Unit';
-import { isMobileDevice, toggleFullScreen } from '@main/utils/dom';
+import { toggleFullScreen } from '@main/utils/dom';
 
 export class GameScene implements Scene {
   readonly name = SceneName.GAME;
@@ -35,10 +30,7 @@ export class GameScene implements Scene {
   constructor(
     private readonly game: Game,
     private readonly gameController: GameController,
-    private readonly textRenderer: TextRenderer,
-    private readonly viewportRenderer: Renderer,
-    private readonly hudRenderer: Renderer,
-    private readonly topMenuRenderer: Renderer
+    private readonly renderer: GameSceneRenderer
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
@@ -245,82 +237,6 @@ export class GameScene implements Scene {
   };
 
   render = async (graphics: Graphics) => {
-    const { state } = this.game;
-    graphics.fillRect(
-      {
-        left: 0,
-        top: 0,
-        width: graphics.getWidth(),
-        height: graphics.getHeight()
-      },
-      InterfaceColors.BLACK
-    );
-
-    await this.viewportRenderer.render(graphics);
-    await this.hudRenderer.render(graphics);
-    await this._renderTicker(graphics);
-
-    if (isMobileDevice()) {
-      await this.topMenuRenderer.render(graphics);
-    }
-
-    if (Feature.isEnabled(Feature.BUSY_INDICATOR)) {
-      if (state.isTurnInProgress()) {
-        this._drawTurnProgressIndicator(graphics);
-      }
-    }
-  };
-
-  private _renderTicker = async (graphics: Graphics) => {
-    const { state, ticker } = this.game;
-    const messages = ticker.getRecentMessages(state.getTurn());
-
-    const left = 0;
-    const top = 0;
-
-    for (let i = 0; i < messages.length; i++) {
-      const y = top + LINE_HEIGHT * i;
-      graphics.fillRect(
-        { left, top: y, width: graphics.getWidth(), height: LINE_HEIGHT },
-        InterfaceColors.BLACK
-      );
-      this._drawText(
-        messages[i],
-        FontName.APPLE_II,
-        { x: left, y: y + 2 },
-        InterfaceColors.WHITE,
-        Alignment.LEFT,
-        graphics
-      );
-    }
-  };
-
-  private _drawTurnProgressIndicator = (graphics: Graphics) => {
-    const { state } = this.game;
-    if (state.isTurnInProgress()) {
-      const width = 20;
-      const height = 20;
-      const left = graphics.getWidth() - width;
-      const top = 0;
-      const rect = { left, top, width, height };
-      graphics.fillRect(rect, InterfaceColors.DARK_GRAY);
-    }
-  };
-
-  private _drawText = (
-    text: string,
-    fontName: FontName,
-    pixel: Pixel,
-    color: Color,
-    textAlign: Alignment,
-    graphics: Graphics
-  ) => {
-    const imageData = this.textRenderer.renderText({
-      text,
-      fontName,
-      color,
-      backgroundColor: InterfaceColors.BLACK
-    });
-    drawAligned(imageData, graphics, pixel, textAlign);
+    this.renderer.render(graphics);
   };
 }

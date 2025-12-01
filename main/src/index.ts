@@ -11,7 +11,7 @@ import { EngineImpl } from '@main/core/Engine';
 import { Game } from '@main/core/Game';
 import { GameConfig } from '@main/core/GameConfig';
 import Ticker from '@main/core/Ticker';
-import GameScreenViewportRenderer from '@main/graphics/renderers/GameScreenViewportRenderer';
+import GameSceneViewportRenderer from '@main/graphics/renderers/GameScreenViewportRenderer';
 import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
 import { ShrineMenuRenderer } from '@main/graphics/renderers/ShrineMenuRenderer';
 import TopMenuRenderer from '@main/graphics/renderers/TopMenuRenderer';
@@ -42,6 +42,7 @@ import { GameController } from './controllers/GameController';
 import { DebugController } from './core/DebugController';
 import { GameStateImpl } from './core/GameState';
 import { FontFactory } from './graphics/Fonts';
+import { GameSceneRenderer } from './graphics/renderers/GameSceneRenderer.ts';
 import { MapControllerImpl } from './maps/MapController';
 import { MapHydrator } from './maps/MapHydrator';
 
@@ -124,7 +125,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
 
   const characterScene = new CharacterScene(game, textRenderer, imageFactory);
   const shrineMenuRenderer = new ShrineMenuRenderer(game, textRenderer, imageFactory);
-  const viewportRenderer = new GameScreenViewportRenderer(
+  const viewportRenderer = new GameSceneViewportRenderer(
     game,
     imageFactory,
     shrineMenuRenderer
@@ -137,16 +138,14 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
     textRenderer,
     soundController
   });
-  const gameScene = new GameScene(
+  const gameSceneRenderer = new GameSceneRenderer(
     game,
-    gameController,
-    mapController,
     textRenderer,
     viewportRenderer,
     hudRenderer,
-    topMenuRenderer,
-    soundController
+    topMenuRenderer
   );
+  const gameScene = new GameScene(game, gameController, gameSceneRenderer);
   const gameOverScene = new GameOverScene(imageFactory, textRenderer, game);
   const helpScene = new HelpScene(game, textRenderer, imageFactory);
   const inventoryScene = new InventoryScene(game, textRenderer, imageFactory);
