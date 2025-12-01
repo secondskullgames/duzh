@@ -13,7 +13,7 @@ import { GameController } from '@main/controllers/GameController';
 import { Game } from '@main/core/Game';
 import { ShrineMenuState, ShrineOption } from '@main/core/state/ShrineMenuState';
 import { TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
-import { GameSceneRenderer } from '@main/graphics/renderers/GameSceneRenderer.ts';
+import { GameSceneRenderer } from '@main/graphics/renderers/GameSceneRenderer';
 import TopMenuRenderer, { TopMenuIcon } from '@main/graphics/renderers/TopMenuRenderer';
 import { arrowKeyToDirection, directionToArrowKey } from '@main/input/inputMappers';
 import { ClickCommand, KeyCommand, ModifierKey } from '@main/input/inputTypes';
@@ -237,6 +237,6 @@ export class GameScene implements Scene {
   };
 
   render = async (graphics: Graphics) => {
-    this.renderer.render(graphics);
+    await this.renderer.render(graphics);
   };
 }

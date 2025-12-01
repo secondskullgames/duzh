@@ -42,7 +42,7 @@ import { GameController } from './controllers/GameController';
 import { DebugController } from './core/DebugController';
 import { GameStateImpl } from './core/GameState';
 import { FontFactory } from './graphics/Fonts';
-import { GameSceneRenderer } from './graphics/renderers/GameSceneRenderer.ts';
+import { GameSceneRenderer } from './graphics/renderers/GameSceneRenderer';
 import { MapControllerImpl } from './maps/MapController';
 import { MapHydrator } from './maps/MapHydrator';
 
