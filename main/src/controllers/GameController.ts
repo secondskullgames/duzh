@@ -89,6 +89,9 @@ export class GameController {
       playerController.queueOrder(order);
       await engine.playTurn(game);
     } else {
+      if (!queuedAbility) {
+        playerUnit.setDirection(direction);
+      }
       this.soundController.playSound('blocked');
     }
   };
