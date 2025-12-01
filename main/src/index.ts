@@ -47,6 +47,7 @@ import { MapHydrator } from './maps/MapHydrator';
 import { InventorySceneRenderer } from './graphics/renderers/InventorySceneRenderer';
 import { TitleSceneRenderer } from './graphics/renderers/TitleSceneRenderer';
 import { VictorySceneRenderer } from './graphics/renderers/VictorySceneRenderer';
+import { HelpSceneRenderer } from './graphics/renderers/HelpSceneRenderer';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -154,7 +155,8 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
     imageFactory,
     textRenderer
   );
-  const helpScene = new HelpScene(game, textRenderer, imageFactory);
+  const helpSceneRenderer = new HelpSceneRenderer(game, textRenderer, imageFactory);
+  const helpScene = new HelpScene(game, helpSceneRenderer);
   const inventorySceneRenderer = new InventorySceneRenderer({
     game,
     imageFactory,

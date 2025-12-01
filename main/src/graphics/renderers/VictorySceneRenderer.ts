@@ -7,14 +7,11 @@ import { FontName } from '@main/graphics/Fonts';
 import { InterfaceColors } from '@main/graphics/InterfaceColors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { TextRenderer } from '@main/graphics/TextRenderer';
-import { SceneName } from '@main/scenes/SceneName';
 import { Renderer } from './Renderer';
 
 const BACKGROUND_FILENAME = 'victory2';
 
 export class VictorySceneRenderer implements Renderer {
-  readonly name = SceneName.VICTORY;
-
   constructor(
     private readonly game: Game,
     private readonly textRenderer: TextRenderer,
