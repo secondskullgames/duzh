@@ -1,6 +1,5 @@
 import { Feature } from '@duzh/features';
 import { Coordinates, Direction } from '@duzh/geometry';
-import { ImageFactory } from '@duzh/graphics/images';
 import { TileType } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { AbilityName } from '@main/abilities/AbilityName';
@@ -8,7 +7,6 @@ import { UnitAbility } from '@main/abilities/UnitAbility';
 import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
 import { pickupItem } from '@main/actions/pickupItem';
 import { Game } from '@main/core/Game';
-import { TextRenderer } from '@main/graphics/TextRenderer';
 import { Key, ModifierKey } from '@main/input/inputTypes';
 import { MapController } from '@main/maps/MapController';
 import { getItem, getShrine } from '@main/maps/MapUtils';
@@ -21,21 +19,15 @@ import { isMobileDevice } from '@main/utils/dom';
 
 type Props = Readonly<{
   mapController: MapController;
-  imageFactory: ImageFactory;
-  textRenderer: TextRenderer;
   soundController: SoundController;
 }>;
 
 export class GameController {
   private readonly mapController: MapController;
-  private readonly imageFactory: ImageFactory;
-  private readonly textRenderer: TextRenderer;
   private readonly soundController: SoundController;
 
   constructor(props: Props) {
     this.mapController = props.mapController;
-    this.imageFactory = props.imageFactory;
-    this.textRenderer = props.textRenderer;
     this.soundController = props.soundController;
   }
 
@@ -274,9 +266,17 @@ export class GameController {
     await engine.playTurn(game);
   };
 
-  handleShowInventory = async (game: Game) => {
+  handleShowInventoryScene = async (game: Game) => {
     const { inventoryController, state } = game;
     inventoryController.prepareInventoryScreen(game);
     state.setScene(SceneName.INVENTORY);
+  };
+
+  handleShowMapScene = async (game: Game) => {
+    game.state.setScene(SceneName.MAP);
+  };
+
+  handleShowCharacterScene = async (game: Game) => {
+    game.state.setScene(SceneName.CHARACTER);
   };
 }

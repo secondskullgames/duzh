@@ -45,7 +45,13 @@ export class GameScene implements Scene {
 
     if (isArrowKey(key)) {
       const direction = arrowKeyToDirection(key);
-      await gameController.handleDirectionAction(direction, this.game);
+      if (modifiers.includes(ModifierKey.SHIFT)) {
+        await gameController.handleShiftDirectionAction(direction, this.game);
+      } else if (modifiers.includes(ModifierKey.ALT)) {
+        await gameController.handleAltDirectionAction(direction, this.game);
+      } else {
+        await gameController.handleDirectionAction(direction, this.game);
+      }
     } else if (isNumberKey(key)) {
       await gameController.handleAbilityKey(key, this.game);
     } else if (isModifierKey(key)) {
@@ -53,11 +59,11 @@ export class GameScene implements Scene {
     } else if (key === 'SPACEBAR') {
       await gameController.handlePassTurn(this.game);
     } else if (key === 'TAB') {
-      await gameController.handleShowInventory(this.game);
+      await gameController.handleShowInventoryScene(this.game);
     } else if (key === 'M') {
-      state.setScene(SceneName.MAP);
+      await gameController.handleShowMapScene(this.game);
     } else if (key === 'C') {
-      state.setScene(SceneName.CHARACTER);
+      await gameController.handleShowCharacterScene(this.game);
     } else if (key === 'ENTER') {
       if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
