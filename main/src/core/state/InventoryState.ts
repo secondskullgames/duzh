@@ -1,9 +1,8 @@
 import InventoryItem from '../../items/InventoryItem';
 import Unit from '../../units/Unit';
 import Equipment from '../../equipment/Equipment';
-import { EquipmentSlot, ItemCategory } from '@duzh/models';
+import { ItemCategory } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
-import { sortBy } from '@duzh/utils/arrays';
 
 export enum InventoryCategory {
   EQUIPMENT = 'EQUIPMENT',
@@ -18,16 +17,6 @@ export const displayableItemCategories: ItemCategory[] = [
   ItemCategory.ARMOR,
   ItemCategory.POTION,
   ItemCategory.SCROLL
-];
-
-const orderedEquipmentSlots: EquipmentSlot[] = [
-  EquipmentSlot.MELEE_WEAPON,
-  EquipmentSlot.RANGED_WEAPON,
-  EquipmentSlot.CHEST,
-  EquipmentSlot.HEAD,
-  EquipmentSlot.SHIELD,
-  EquipmentSlot.LEGS,
-  EquipmentSlot.CLOAK
 ];
 
 export class InventoryState {
@@ -65,8 +54,7 @@ export class InventoryState {
           this.selectedItemCategory = null;
           this.selectedItem = null;
           this.selectedCategory = InventoryCategory.EQUIPMENT;
-          this.selectedEquipment =
-            this._sortBySlot(playerUnit.getEquipment().getAll())[0] ?? null;
+          this.selectedEquipment = playerUnit.getEquipment().getAll()[0] ?? null;
         }
         break;
       }
@@ -94,8 +82,7 @@ export class InventoryState {
           this.selectedItemCategory = null;
           this.selectedItem = null;
           this.selectedCategory = InventoryCategory.EQUIPMENT;
-          this.selectedEquipment =
-            this._sortBySlot(playerUnit.getEquipment().getAll())[0] ?? null;
+          this.selectedEquipment = playerUnit.getEquipment().getAll()[0] ?? null;
         }
         break;
       }
@@ -109,7 +96,7 @@ export class InventoryState {
   nextItem = (playerUnit: Unit) => {
     switch (this.selectedCategory) {
       case InventoryCategory.EQUIPMENT: {
-        const equipment = this._sortBySlot(playerUnit.getEquipment().getAll());
+        const equipment = playerUnit.getEquipment().getAll();
         if (this.selectedEquipment) {
           const index = equipment.indexOf(this.selectedEquipment);
           this.selectedEquipment = equipment[(index + 1) % equipment.length];
@@ -133,7 +120,7 @@ export class InventoryState {
   previousItem = (playerUnit: Unit) => {
     switch (this.selectedCategory) {
       case InventoryCategory.EQUIPMENT: {
-        const equipment = this._sortBySlot(playerUnit.getEquipment().getAll());
+        const equipment = playerUnit.getEquipment().getAll();
         if (this.selectedEquipment) {
           const index = equipment.indexOf(this.selectedEquipment);
           this.selectedEquipment =
@@ -188,8 +175,4 @@ export class InventoryState {
     return playerUnit.getInventory().get(category);
   };
   getSelectedEquipment = (): Equipment | null => this.selectedEquipment;
-
-  private _sortBySlot = (equipment: Equipment[]): Equipment[] => {
-    return sortBy(equipment, e => orderedEquipmentSlots.indexOf(e.slot));
-  };
 }
