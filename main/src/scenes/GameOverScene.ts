@@ -8,11 +8,11 @@ import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { Pixel } from '@duzh/geometry';
 import { ClickCommand, KeyCommand, ModifierKey } from '@main/input/inputTypes';
 import { toggleFullScreen } from '@main/utils/dom';
-import { showTitleScreen } from '@main/actions/showTitleScreen';
 import { formatTimestamp } from '@main/utils/time';
 import { Game } from '@main/core/Game';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { InterfaceColors } from '@main/graphics/InterfaceColors';
+import { GameController } from '../controllers/GameController';
 
 const BACKGROUND_FILENAME = 'gameover';
 
@@ -20,9 +20,10 @@ export class GameOverScene implements Scene {
   readonly name = SceneName.GAME_OVER;
 
   constructor(
+    private readonly game: Game,
+    private readonly gameController: GameController,
     private readonly imageFactory: ImageFactory,
-    private readonly textRenderer: TextRenderer,
-    private readonly game: Game
+    private readonly textRenderer: TextRenderer
   ) {}
 
   render = async (graphics: Graphics): Promise<void> => {
@@ -82,7 +83,7 @@ export class GameOverScene implements Scene {
         if (modifiers.includes(ModifierKey.ALT)) {
           await toggleFullScreen();
         } else {
-          await showTitleScreen(this.game);
+          await this.gameController.showTitleScene(this.game);
         }
         break;
     }
@@ -92,6 +93,6 @@ export class GameOverScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    await showTitleScreen(this.game);
+    await this.gameController.showTitleScene(this.game);
   };
 }

@@ -1,7 +1,7 @@
-import { ShrineMenuState, ShrineOption } from '@main/core/state/ShrineMenuState';
-import { Game } from '@main/core/Game';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { randChoice, sample } from '@duzh/utils/random';
+import { Game } from '@main/core/Game';
+import { ShrineMenuState, ShrineOption } from '@main/core/state/ShrineMenuState';
 
 export class ShrineController {
   prepareShrineMenu = (game: Game): ShrineMenuState => {
@@ -81,5 +81,25 @@ export class ShrineController {
     return new ShrineMenuState({
       options
     });
+  };
+
+  selectPreviousOption = (game: Game) => {
+    const { state } = game;
+    const shrineMenuState = checkNotNull(state.getShrineMenuState());
+    shrineMenuState.selectPreviousOption();
+  };
+
+  selectNextOption = (game: Game) => {
+    const { state } = game;
+    const shrineMenuState = checkNotNull(state.getShrineMenuState());
+    shrineMenuState.selectNextOption();
+  };
+
+  chooseSelectedOption = async (game: Game) => {
+    const { state } = game;
+    const shrineMenuState = checkNotNull(state.getShrineMenuState());
+    const selectedOption = shrineMenuState.getSelectedOption();
+    await selectedOption.onUse(game);
+    state.setShrineMenuState(null);
   };
 }

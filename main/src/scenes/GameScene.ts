@@ -1,64 +1,41 @@
-import { Feature } from '@duzh/features';
 import {
   Coordinates,
-  Direction,
   isAdjacent,
   offsetsToDirection,
   Pixel,
   pointAt,
   Rect
 } from '@duzh/geometry';
-import { Color, Graphics } from '@duzh/graphics';
-import { TileType } from '@duzh/models';
+import { Graphics } from '@duzh/graphics';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { AbilityName } from '@main/abilities/AbilityName';
-import { UnitAbility } from '@main/abilities/UnitAbility';
-import { getMoveOrAttackOrder } from '@main/actions/getMoveOrAttackOrder';
-import { pickupItem } from '@main/actions/pickupItem';
+import { GameController } from '@main/controllers/GameController';
 import { Game } from '@main/core/Game';
 import { ShrineMenuState, ShrineOption } from '@main/core/state/ShrineMenuState';
-import { LINE_HEIGHT, TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
-import { FontName } from '@main/graphics/Fonts';
-import { InterfaceColors } from '@main/graphics/InterfaceColors';
-import { Renderer } from '@main/graphics/renderers/Renderer';
+import { TILE_HEIGHT, TILE_WIDTH } from '@main/graphics/constants';
+import { GameSceneRenderer } from '@main/graphics/renderers/GameSceneRenderer';
 import TopMenuRenderer, { TopMenuIcon } from '@main/graphics/renderers/TopMenuRenderer';
-import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
-import { TextRenderer } from '@main/graphics/TextRenderer';
-import { getDirection } from '@main/input/inputMappers';
-import {
-  ArrowKey,
-  ClickCommand,
-  Key,
-  KeyCommand,
-  ModifierKey
-} from '@main/input/inputTypes';
+import { arrowKeyToDirection, directionToArrowKey } from '@main/input/inputMappers';
+import { ClickCommand, KeyCommand, ModifierKey } from '@main/input/inputTypes';
 import { isArrowKey, isModifierKey, isNumberKey } from '@main/input/InputUtils';
-import { MapController } from '@main/maps/MapController';
-import { getItem, getShrine } from '@main/maps/MapUtils';
+import { getShrine } from '@main/maps/MapUtils';
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import { SoundController } from '@main/sounds/SoundController';
-import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
-import { AbilityOrder } from '@main/units/orders/AbilityOrder';
-import { UnitOrder } from '@main/units/orders/UnitOrder';
 import Unit from '@main/units/Unit';
-import { isMobileDevice, toggleFullScreen } from '@main/utils/dom';
+import { toggleFullScreen } from '@main/utils/dom';
 
 export class GameScene implements Scene {
   readonly name = SceneName.GAME;
 
   constructor(
     private readonly game: Game,
-    private readonly mapController: MapController,
-    private readonly textRenderer: TextRenderer,
-    private readonly viewportRenderer: Renderer,
-    private readonly hudRenderer: Renderer,
-    private readonly topMenuRenderer: Renderer,
-    private readonly soundController: SoundController
+    private readonly gameController: GameController,
+    private readonly renderer: GameSceneRenderer
   ) {}
 
   handleKeyDown = async (command: KeyCommand) => {
-    const { state, inventoryController } = this.game;
+    const { gameController } = this;
+    const { state } = this.game;
     const { key, modifiers } = command;
 
     if (state.isShowingShrineMenu()) {
@@ -67,26 +44,31 @@ export class GameScene implements Scene {
     }
 
     if (isArrowKey(key)) {
-      await this._handleArrowKey(key as ArrowKey, modifiers);
+      const direction = arrowKeyToDirection(key);
+      if (modifiers.includes(ModifierKey.SHIFT)) {
+        await gameController.handleShiftDirectionAction(direction, this.game);
+      } else if (modifiers.includes(ModifierKey.ALT)) {
+        await gameController.handleAltDirectionAction(direction, this.game);
+      } else {
+        await gameController.handleDirectionAction(direction, this.game);
+      }
     } else if (isNumberKey(key)) {
-      await this._handleAbilityKey(key);
+      await gameController.handleAbilityKey(key, this.game);
     } else if (isModifierKey(key)) {
-      await this._handleModifierKeyDown(key as ModifierKey);
+      await gameController.handleModifierKeyDown(key as ModifierKey, this.game);
     } else if (key === 'SPACEBAR') {
-      this.soundController.playSound('footstep');
-      await this.game.engine.playTurn(this.game);
+      await gameController.passTurn(this.game);
     } else if (key === 'TAB') {
-      inventoryController.prepareInventoryScreen(this.game);
-      state.setScene(SceneName.INVENTORY);
+      await gameController.showInventoryScene(this.game);
     } else if (key === 'M') {
-      state.setScene(SceneName.MAP);
+      await gameController.showMapScene(this.game);
     } else if (key === 'C') {
-      state.setScene(SceneName.CHARACTER);
+      await gameController.showCharacterScene(this.game);
     } else if (key === 'ENTER') {
       if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();
       } else {
-        await this._handleEnter();
+        await this.gameController.handleEnter(this.game);
       }
     } else if (key === 'F1') {
       state.setScene(SceneName.HELP);
@@ -96,203 +78,24 @@ export class GameScene implements Scene {
   handleKeyUp = async (command: KeyCommand) => {
     const { key } = command;
     if (isModifierKey(key)) {
-      await this._handleModifierKeyUp(key as ModifierKey);
-    }
-  };
-
-  private _handleArrowKey = async (key: ArrowKey, modifiers: ModifierKey[]) => {
-    const { state } = this.game;
-    const playerUnit = state.getPlayerUnit();
-    const direction = getDirection(key);
-    const coordinates = Coordinates.plusDirection(playerUnit.getCoordinates(), direction);
-
-    let order: UnitOrder | null = null;
-    if (modifiers.includes(ModifierKey.SHIFT)) {
-      // TODO need to centralize this logic
-      const possibleAbilities = [
-        AbilityName.SHOOT_ARROW,
-        AbilityName.SHOOT_FIREBOLT,
-        AbilityName.SHOOT_FROSTBOLT
-      ];
-      for (const abilityName of possibleAbilities) {
-        if (playerUnit.hasAbility(abilityName)) {
-          const ability = playerUnit.getAbilityForName(abilityName);
-          const coordinates = Coordinates.plusDirection(
-            playerUnit.getCoordinates(),
-            direction
-          );
-          if (ability.isEnabled(playerUnit) && ability.isLegal(playerUnit, coordinates)) {
-            order = AbilityOrder.create({ direction, ability });
-          }
-        }
-      }
-    } else if (
-      modifiers.includes(ModifierKey.ALT) &&
-      Feature.isEnabled(Feature.ALT_STRAFE)
-    ) {
-      if (playerUnit.hasAbility(AbilityName.STRAFE)) {
-        const ability = playerUnit.getAbilityForName(AbilityName.STRAFE);
-        if (ability.isEnabled(playerUnit) && ability.isLegal(playerUnit, coordinates)) {
-          order = AbilityOrder.create({ direction, ability });
-        }
-      }
-    } else if (
-      modifiers.includes(ModifierKey.ALT) &&
-      Feature.isEnabled(Feature.ALT_DASH)
-    ) {
-      if (playerUnit.hasAbility(AbilityName.DASH)) {
-        const ability = playerUnit.getAbilityForName(AbilityName.DASH);
-        if (ability.isEnabled(playerUnit) && ability.isLegal(playerUnit, coordinates)) {
-          order = AbilityOrder.create({ direction, ability });
-        }
-      }
-    } else {
-      const ability = state.getQueuedAbility();
-      state.setQueuedAbility(null);
-      if (ability) {
-        if (ability.isEnabled(playerUnit) && ability.isLegal(playerUnit, coordinates)) {
-          order = AbilityOrder.create({ ability, direction });
-        }
-      } else {
-        order = getMoveOrAttackOrder(playerUnit, direction);
-      }
-    }
-
-    if (order) {
-      const playerController = playerUnit.getController() as PlayerUnitController;
-      playerController.queueOrder(order);
-      await this.game.engine.playTurn(this.game);
-    } else {
-      this.soundController.playSound('blocked');
-    }
-  };
-
-  private _handleAbilityKey = async (hotkey: Key) => {
-    const { state } = this.game;
-    const playerUnit = state.getPlayerUnit();
-    const playerUnitClass = checkNotNull(playerUnit.getPlayerUnitClass());
-    const ability = playerUnitClass.getAbilityForHotkey(hotkey, playerUnit);
-    if (ability) {
-      await this._handleAbility(ability);
-    }
-  };
-
-  private _handleAbility = async (ability: UnitAbility) => {
-    const { state } = this.game;
-    const playerUnit = state.getPlayerUnit();
-    if (ability.isEnabled(playerUnit)) {
-      if (state.getQueuedAbility() === ability) {
-        state.setQueuedAbility(null);
-      } else {
-        state.setQueuedAbility(ability);
-      }
-    }
-  };
-
-  private _handleEnter = async () => {
-    const { mapController } = this;
-    const { state } = this.game;
-    const playerUnit = state.getPlayerUnit();
-    const map = playerUnit.getMap();
-    const coordinates = playerUnit.getCoordinates();
-    const nextCoordinates = Coordinates.plusDirection(
-      coordinates,
-      playerUnit.getDirection()
-    );
-    const item = getItem(map, coordinates);
-    const shrine = map.contains(nextCoordinates) ? getShrine(map, nextCoordinates) : null;
-    if (item) {
-      pickupItem(playerUnit, item, this.game);
-      map.removeObject(item);
-      await this.game.engine.playTurn(this.game);
-    } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_DOWN) {
-      this.soundController.playSound('descend_stairs');
-      await mapController.loadNextMap(this.game);
-    } else if (map.getTile(coordinates).getTileType() === TileType.STAIRS_UP) {
-      this.soundController.playSound('descend_stairs'); // TODO
-      await mapController.loadPreviousMap(this.game);
-    } else if (shrine) {
-      shrine.use(this.game);
-    } else {
-      // this is mostly a hack to support clicks
-      this.soundController.playSound('footstep');
-      await this.game.engine.playTurn(this.game);
-    }
-  };
-
-  private _handleModifierKeyDown = async (key: ModifierKey) => {
-    const { state } = this.game;
-    const playerUnit = state.getPlayerUnit();
-    switch (key) {
-      case ModifierKey.SHIFT: {
-        for (const abilityName of [
-          AbilityName.SHOOT_ARROW,
-          // TODO why not SHOOT_FIREBOLT?
-          AbilityName.SHOOT_FROSTBOLT
-        ]) {
-          if (playerUnit.hasAbility(abilityName)) {
-            const ability = playerUnit.getAbilityForName(abilityName);
-            if (ability?.isEnabled(playerUnit)) {
-              state.setQueuedAbility(ability);
-            }
-          }
-        }
-        break;
-      }
-      case ModifierKey.ALT: {
-        const ability = playerUnit.getAbilityForName(AbilityName.DASH);
-        if (ability?.isEnabled(playerUnit)) {
-          state.setQueuedAbility(ability);
-        }
-        break;
-      }
-    }
-  };
-
-  private _handleModifierKeyUp = async (key: ModifierKey) => {
-    const { state } = this.game;
-    switch (key) {
-      case ModifierKey.SHIFT: {
-        const queuedAbility = state.getQueuedAbility();
-        if (queuedAbility) {
-          // TODO need to centralize this logic
-          const possibleAbilities = [
-            AbilityName.SHOOT_ARROW,
-            AbilityName.SHOOT_FIREBOLT,
-            AbilityName.SHOOT_FROSTBOLT
-          ];
-          if (possibleAbilities.includes(queuedAbility.name)) {
-            state.setQueuedAbility(null);
-          }
-        }
-        break;
-      }
-      case ModifierKey.ALT: {
-        if (state.getQueuedAbility()?.name === AbilityName.DASH) {
-          state.setQueuedAbility(null);
-        }
-        break;
-      }
+      await this.gameController.handleModifierKeyUp(key as ModifierKey, this.game);
     }
   };
 
   private _handleKeyDownInShrineMenu = async (command: KeyCommand) => {
-    const { state } = this.game;
-    const shrineMenuState = checkNotNull(state.getShrineMenuState());
+    const { shrineController } = this.game;
     switch (command.key) {
       case 'UP':
-        shrineMenuState.selectPreviousOption();
+        shrineController.selectPreviousOption(this.game);
         break;
       case 'DOWN':
-        shrineMenuState.selectNextOption();
+        shrineController.selectNextOption(this.game);
         break;
       case 'ENTER':
         if (command.modifiers.includes(ModifierKey.ALT)) {
           await toggleFullScreen();
         } else {
-          const selectedOption = shrineMenuState.getSelectedOption();
-          await selectedOption.onUse(this.game);
-          state.setShrineMenuState(null);
+          await shrineController.chooseSelectedOption(this.game);
         }
     }
   };
@@ -305,7 +108,7 @@ export class GameScene implements Scene {
     for (const [abilityName, rect] of abilityRects) {
       if (Rect.containsPoint(rect, pixel)) {
         const ability = playerUnit.getAbilityForName(abilityName);
-        await this._handleAbility(ability);
+        await this.gameController.handleAbility(ability, this.game);
         return;
       }
     }
@@ -361,21 +164,14 @@ export class GameScene implements Scene {
         return 'ENTER';
       }
       const direction = offsetsToDirection({ dx, dy });
-      switch (direction) {
-        case Direction.N:
-          return 'UP';
-        case Direction.S:
-          return 'DOWN';
-        case Direction.W:
-          return 'LEFT';
-        case Direction.E:
-          return 'RIGHT';
-      }
+      return directionToArrowKey(direction);
     })();
+
     if (key === 'ENTER') {
-      await this._handleEnter();
+      await this.gameController.handleEnter(this.game);
     } else if (isArrowKey(key)) {
-      await this._handleArrowKey(key as ArrowKey, []);
+      const direction = arrowKeyToDirection(key);
+      await this.gameController.handleDirectionAction(direction, this.game);
     }
   };
 
@@ -447,82 +243,6 @@ export class GameScene implements Scene {
   };
 
   render = async (graphics: Graphics) => {
-    const { state } = this.game;
-    graphics.fillRect(
-      {
-        left: 0,
-        top: 0,
-        width: graphics.getWidth(),
-        height: graphics.getHeight()
-      },
-      InterfaceColors.BLACK
-    );
-
-    await this.viewportRenderer.render(graphics);
-    await this.hudRenderer.render(graphics);
-    await this._renderTicker(graphics);
-
-    if (isMobileDevice()) {
-      await this.topMenuRenderer.render(graphics);
-    }
-
-    if (Feature.isEnabled(Feature.BUSY_INDICATOR)) {
-      if (state.isTurnInProgress()) {
-        this._drawTurnProgressIndicator(graphics);
-      }
-    }
-  };
-
-  private _renderTicker = async (graphics: Graphics) => {
-    const { state, ticker } = this.game;
-    const messages = ticker.getRecentMessages(state.getTurn());
-
-    const left = 0;
-    const top = 0;
-
-    for (let i = 0; i < messages.length; i++) {
-      const y = top + LINE_HEIGHT * i;
-      graphics.fillRect(
-        { left, top: y, width: graphics.getWidth(), height: LINE_HEIGHT },
-        InterfaceColors.BLACK
-      );
-      this._drawText(
-        messages[i],
-        FontName.APPLE_II,
-        { x: left, y: y + 2 },
-        InterfaceColors.WHITE,
-        Alignment.LEFT,
-        graphics
-      );
-    }
-  };
-
-  private _drawTurnProgressIndicator = (graphics: Graphics) => {
-    const { state } = this.game;
-    if (state.isTurnInProgress()) {
-      const width = 20;
-      const height = 20;
-      const left = graphics.getWidth() - width;
-      const top = 0;
-      const rect = { left, top, width, height };
-      graphics.fillRect(rect, InterfaceColors.DARK_GRAY);
-    }
-  };
-
-  private _drawText = (
-    text: string,
-    fontName: FontName,
-    pixel: Pixel,
-    color: Color,
-    textAlign: Alignment,
-    graphics: Graphics
-  ) => {
-    const imageData = this.textRenderer.renderText({
-      text,
-      fontName,
-      color,
-      backgroundColor: InterfaceColors.BLACK
-    });
-    drawAligned(imageData, graphics, pixel, textAlign);
+    await this.renderer.render(graphics);
   };
 }

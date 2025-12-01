@@ -11,7 +11,7 @@ import { EngineImpl } from '@main/core/Engine';
 import { Game } from '@main/core/Game';
 import { GameConfig } from '@main/core/GameConfig';
 import Ticker from '@main/core/Ticker';
-import GameScreenViewportRenderer from '@main/graphics/renderers/GameScreenViewportRenderer';
+import GameSceneViewportRenderer from '@main/graphics/renderers/GameScreenViewportRenderer';
 import HUDRenderer from '@main/graphics/renderers/HUDRenderer';
 import { ShrineMenuRenderer } from '@main/graphics/renderers/ShrineMenuRenderer';
 import TopMenuRenderer from '@main/graphics/renderers/TopMenuRenderer';
@@ -37,12 +37,17 @@ import { SoundController } from '@main/sounds/SoundController';
 import TileFactory from '@main/tiles/TileFactory';
 import UnitFactory from '@main/units/UnitFactory';
 import { createCanvas, enterFullScreen, isMobileDevice } from '@main/utils/dom';
-import { showTitleScreen } from './actions/showTitleScreen';
+import { GameController } from './controllers/GameController';
 import { DebugController } from './core/DebugController';
 import { GameStateImpl } from './core/GameState';
 import { FontFactory } from './graphics/Fonts';
+import { GameSceneRenderer } from './graphics/renderers/GameSceneRenderer';
 import { MapControllerImpl } from './maps/MapController';
 import { MapHydrator } from './maps/MapHydrator';
+import { InventorySceneRenderer } from './graphics/renderers/InventorySceneRenderer';
+import { TitleSceneRenderer } from './graphics/renderers/TitleSceneRenderer';
+import { VictorySceneRenderer } from './graphics/renderers/VictorySceneRenderer';
+import { HelpSceneRenderer } from './graphics/renderers/HelpSceneRenderer';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -60,6 +65,7 @@ type GameContainer = Readonly<{
   inputHandler: InputHandler;
   debugController: DebugController;
   scenes: Record<SceneName, Scene>;
+  gameController: GameController;
 }>;
 
 const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => {
@@ -123,28 +129,45 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
 
   const characterScene = new CharacterScene(game, textRenderer, imageFactory);
   const shrineMenuRenderer = new ShrineMenuRenderer(game, textRenderer, imageFactory);
-  const viewportRenderer = new GameScreenViewportRenderer(
+  const viewportRenderer = new GameSceneViewportRenderer(
     game,
     imageFactory,
     shrineMenuRenderer
   );
   const hudRenderer = new HUDRenderer(game, textRenderer, imageFactory);
   const topMenuRenderer = new TopMenuRenderer(imageFactory);
-  const gameScene = new GameScene(
-    game,
+  const gameController = new GameController({
     mapController,
+    soundController,
+    musicController
+  });
+  const gameSceneRenderer = new GameSceneRenderer(
+    game,
     textRenderer,
     viewportRenderer,
     hudRenderer,
-    topMenuRenderer,
-    soundController
+    topMenuRenderer
   );
-  const gameOverScene = new GameOverScene(imageFactory, textRenderer, game);
-  const helpScene = new HelpScene(game, textRenderer, imageFactory);
-  const inventoryScene = new InventoryScene(game, textRenderer, imageFactory);
+  const gameScene = new GameScene(game, gameController, gameSceneRenderer);
+  const gameOverScene = new GameOverScene(
+    game,
+    gameController,
+    imageFactory,
+    textRenderer
+  );
+  const helpSceneRenderer = new HelpSceneRenderer(game, textRenderer, imageFactory);
+  const helpScene = new HelpScene(game, helpSceneRenderer);
+  const inventorySceneRenderer = new InventorySceneRenderer({
+    game,
+    imageFactory,
+    textRenderer
+  });
+  const inventoryScene = new InventoryScene(game, inventorySceneRenderer);
   const mapScene = new MapScene(game);
-  const titleScene = new TitleScene(game, mapController, imageFactory, textRenderer);
-  const victoryScene = new VictoryScene(textRenderer, imageFactory, game);
+  const titleSceneRenderer = new TitleSceneRenderer(imageFactory, textRenderer);
+  const titleScene = new TitleScene(game, gameController, titleSceneRenderer);
+  const victorySceneRenderer = new VictorySceneRenderer(game, textRenderer, imageFactory);
+  const victoryScene = new VictoryScene(game, gameController, victorySceneRenderer);
 
   const scenes = {
     [SceneName.CHARACTER]: characterScene,
@@ -163,13 +186,14 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
     game,
     debugController,
     inputHandler,
-    scenes
+    scenes,
+    gameController
   };
 };
 
 const init = async ({ rootElement, gameConfig }: Props) => {
   const container = await setupContainer({ rootElement, gameConfig });
-  const { game, inputHandler, scenes } = container;
+  const { game, inputHandler, scenes, gameController } = container;
   const canvas = createCanvas({
     width: gameConfig.screenWidth,
     height: gameConfig.screenHeight
@@ -202,7 +226,7 @@ const init = async ({ rootElement, gameConfig }: Props) => {
 
   inputHandler.addEventListener(canvas);
 
-  await showTitleScreen(game);
+  await gameController.showTitleScene(game);
   setInterval(async () => {
     const currentScene = state.getCurrentScene();
     if (currentScene) {
