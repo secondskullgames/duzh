@@ -45,6 +45,7 @@ import { FontFactory } from './graphics/Fonts';
 import { GameSceneRenderer } from './graphics/renderers/GameSceneRenderer';
 import { MapControllerImpl } from './maps/MapController';
 import { MapHydrator } from './maps/MapHydrator';
+import { InventorySceneRenderer } from './graphics/renderers/InventorySceneRenderer';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -134,8 +135,6 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
   const topMenuRenderer = new TopMenuRenderer(imageFactory);
   const gameController = new GameController({
     mapController,
-    imageFactory,
-    textRenderer,
     soundController
   });
   const gameSceneRenderer = new GameSceneRenderer(
@@ -148,7 +147,12 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
   const gameScene = new GameScene(game, gameController, gameSceneRenderer);
   const gameOverScene = new GameOverScene(imageFactory, textRenderer, game);
   const helpScene = new HelpScene(game, textRenderer, imageFactory);
-  const inventoryScene = new InventoryScene(game, textRenderer, imageFactory);
+  const inventorySceneRenderer = new InventorySceneRenderer({
+    game,
+    imageFactory,
+    textRenderer
+  });
+  const inventoryScene = new InventoryScene(game, inventorySceneRenderer);
   const mapScene = new MapScene(game);
   const titleScene = new TitleScene(game, gameController, imageFactory, textRenderer);
   const victoryScene = new VictoryScene(textRenderer, imageFactory, game);
