@@ -75,7 +75,7 @@ export const mapToKeyCommand = (e: KeyboardEvent): KeyCommand | null => {
   return null;
 };
 
-export const getDirection = (key: ArrowKey): Direction => {
+export const arrowKeyToDirection = (key: ArrowKey): Direction => {
   switch (key) {
     case 'UP':
       return Direction.N;
@@ -85,6 +85,19 @@ export const getDirection = (key: ArrowKey): Direction => {
       return Direction.W;
     case 'RIGHT':
       return Direction.E;
+  }
+};
+
+export const directionToArrowKey = (direction: Direction): ArrowKey => {
+  switch (direction) {
+    case Direction.N:
+      return 'UP';
+    case Direction.S:
+      return 'DOWN';
+    case Direction.W:
+      return 'LEFT';
+    case Direction.E:
+      return 'RIGHT';
   }
 };
 

@@ -38,6 +38,7 @@ import TileFactory from '@main/tiles/TileFactory';
 import UnitFactory from '@main/units/UnitFactory';
 import { createCanvas, enterFullScreen, isMobileDevice } from '@main/utils/dom';
 import { showTitleScreen } from './actions/showTitleScreen';
+import { GameController } from './controllers/GameController';
 import { DebugController } from './core/DebugController';
 import { GameStateImpl } from './core/GameState';
 import { FontFactory } from './graphics/Fonts';
@@ -130,8 +131,15 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
   );
   const hudRenderer = new HUDRenderer(game, textRenderer, imageFactory);
   const topMenuRenderer = new TopMenuRenderer(imageFactory);
+  const gameController = new GameController({
+    mapController,
+    imageFactory,
+    textRenderer,
+    soundController
+  });
   const gameScene = new GameScene(
     game,
+    gameController,
     mapController,
     textRenderer,
     viewportRenderer,
@@ -143,7 +151,7 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
   const helpScene = new HelpScene(game, textRenderer, imageFactory);
   const inventoryScene = new InventoryScene(game, textRenderer, imageFactory);
   const mapScene = new MapScene(game);
-  const titleScene = new TitleScene(game, mapController, imageFactory, textRenderer);
+  const titleScene = new TitleScene(game, gameController, imageFactory, textRenderer);
   const victoryScene = new VictoryScene(textRenderer, imageFactory, game);
 
   const scenes = {

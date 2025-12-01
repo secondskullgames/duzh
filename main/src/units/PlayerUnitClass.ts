@@ -1,7 +1,7 @@
-import Unit from './Unit';
 import { AbilityName } from '@main/abilities/AbilityName';
-import { Key, NumberKey } from '@main/input/inputTypes';
 import { UnitAbility } from '@main/abilities/UnitAbility';
+import { Key, NumberKey } from '@main/input/inputTypes';
+import Unit from './Unit';
 
 /**
  * "Class" in the sense of, like, a D&D class
@@ -12,7 +12,7 @@ export interface PlayerUnitClass {
   readonly meleeDamagePerLevel: number;
   readonly maxLevel: number;
   getCumulativeKillsToNextLevel: (currentLevel: number) => number | null;
-  getHotkeyForAbility: (ability: UnitAbility, unit: Unit) => string | null;
+  getHotkeyForAbility: (ability: UnitAbility, unit: Unit) => Key | null;
   getAbilityForHotkey: (hotkey: Key, unit: Unit) => UnitAbility | null;
   getNumberedAbilities: (unit: Unit) => UnitAbility[];
   getRightAlignedAbilities: (unit: Unit) => UnitAbility[];
@@ -45,7 +45,7 @@ class DefaultClass implements PlayerUnitClass {
   readonly meleeDamagePerLevel = 0;
   readonly maxLevel = 10;
 
-  getHotkeyForAbility = (ability: UnitAbility, unit: Unit): string | null => {
+  getHotkeyForAbility = (ability: UnitAbility, unit: Unit): Key | null => {
     switch (ability.name) {
       case AbilityName.DASH:
       case AbilityName.SHOOT_ARROW:

@@ -1,17 +1,16 @@
-import { Feature } from '@duzh/features';
 import { Pixel } from '@duzh/geometry';
 import { Color, Graphics } from '@duzh/graphics';
 import { ImageFactory } from '@duzh/graphics/images';
+import { GameController } from '@main/controllers/GameController';
 import { Game } from '@main/core/Game';
 import { FontName } from '@main/graphics/Fonts';
 import { InterfaceColors } from '@main/graphics/InterfaceColors';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { TextRenderer } from '@main/graphics/TextRenderer';
 import { ClickCommand, KeyCommand, ModifierKey } from '@main/input/inputTypes';
-import { MapController } from '@main/maps/MapController';
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
-import { isMobileDevice, toggleFullScreen } from '@main/utils/dom';
+import { toggleFullScreen } from '@main/utils/dom';
 
 const TITLE_FILENAME = 'title2';
 
@@ -20,40 +19,10 @@ export class TitleScene implements Scene {
 
   constructor(
     private readonly game: Game,
-    private readonly mapController: MapController,
+    private readonly gameController: GameController,
     private readonly imageFactory: ImageFactory,
     private readonly textRenderer: TextRenderer
   ) {}
-
-  private _handleStartGame = async () => {
-    const { game, mapController } = this;
-    const { state, ticker } = game;
-    if (Feature.isEnabled(Feature.DEBUG_LEVEL)) {
-      await mapController.loadDebugMap(game);
-    } else {
-      await mapController.loadFirstMap(game);
-    }
-    state.startGameTimer();
-    state.setScene(SceneName.GAME);
-    ticker.log('Welcome to the Dungeons of Duzh!', { turn: state.getTurn() });
-    if (Feature.isEnabled(Feature.GOD_MODE)) {
-      const playerUnit = state.getPlayerUnit();
-      game.ticker.log('You are a god! Use your power wisely.', { turn: state.getTurn() });
-      const sword = await game.itemFactory.createEquipment('god_sword');
-      sword.attach(playerUnit);
-      playerUnit.getEquipment().add(sword);
-      const armor = await game.itemFactory.createEquipment('god_armor');
-      armor.attach(playerUnit);
-      playerUnit.getEquipment().add(armor);
-      // gods don't need instructions
-    } else if (isMobileDevice()) {
-      ticker.log('Press the ? icon in the upper-right for instructions.', {
-        turn: state.getTurn()
-      });
-    } else {
-      ticker.log('Press F1 for instructions.', { turn: state.getTurn() });
-    }
-  };
 
   handleKeyDown = async (command: KeyCommand) => {
     const { key, modifiers } = command;
@@ -63,7 +32,7 @@ export class TitleScene implements Scene {
         if (modifiers.includes(ModifierKey.ALT)) {
           await toggleFullScreen();
         } else {
-          await this._handleStartGame();
+          await this.gameController.handleStartGame(this.game);
         }
         break;
     }
@@ -73,7 +42,7 @@ export class TitleScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    await this._handleStartGame();
+    await this.gameController.handleStartGame(this.game);
   };
 
   render = async (graphics: Graphics): Promise<void> => {
