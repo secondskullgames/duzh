@@ -25,7 +25,6 @@ export class CustomOscillator {
         nextStartTime += ms / 1000;
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const runtime = samples.map(([freq, ms]) => ms).reduce((a, b) => a + b);
       this.delegate.start();
 

@@ -181,12 +181,10 @@ export class BlobMapGenerator extends AbstractMapGenerator {
       [-1, 2],
       [1, 2]
     ]) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const a = { x, y };
       const b = { x: x + dx, y };
       const c = { x, y: y + dy / 2 };
       const d = { x: x + dx, y: y + dy / 2 };
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const e = { x, y: y + dy };
       const f = { x: x + dx, y: y + dy };
       if (f.x < 0 || f.x >= width || f.y < 0 || f.y >= height) {

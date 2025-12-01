@@ -50,7 +50,6 @@ export default class Equipment {
     this._unit = unit;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   unattach = (_unit: Unit) => {
     this._unit = null;
   };

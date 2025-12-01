@@ -261,7 +261,6 @@ const main = async () => {
 main().catch(e => {
   console.error(e);
   if (Feature.isEnabled(Feature.ALERT_ON_ERROR)) {
-    // eslint-disable-next-line no-alert
     alert(e);
   }
 });

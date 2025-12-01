@@ -2,6 +2,7 @@ import { AbilityName } from '@main/abilities/AbilityName';
 import { UnitAbility } from '@main/abilities/UnitAbility';
 import { Key, NumberKey } from '@main/input/inputTypes';
 import Unit from './Unit';
+import { getNumberKeyValue, isNumberKey } from '../input/InputUtils';
 
 /**
  * "Class" in the sense of, like, a D&D class
@@ -66,8 +67,8 @@ class DefaultClass implements PlayerUnitClass {
   };
 
   getAbilityForHotkey = (hotkey: Key, unit: Unit): UnitAbility | null => {
-    if (hotkey.match(/^\d$/)) {
-      const index = parseInt(hotkey);
+    if (isNumberKey(hotkey)) {
+      const index = getNumberKeyValue(hotkey);
       return unit.getAbilities().filter(ability => !ability.innate)[index - 1];
     } else if (hotkey === 'ALT') {
       return (

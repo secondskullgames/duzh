@@ -91,7 +91,6 @@ export class GameOverScene implements Scene {
 
   handleKeyUp = async () => {};
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
     await this.gameController.showTitleScene(this.game);
   };

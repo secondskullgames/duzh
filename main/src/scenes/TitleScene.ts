@@ -32,7 +32,6 @@ export class TitleScene implements Scene {
 
   handleKeyUp = async () => {};
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
     await this.gameController.handleStartGame(this.game);
   };

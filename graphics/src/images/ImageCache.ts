@@ -32,10 +32,7 @@ const _stringify = (key: CacheKey): string => {
   const stringifiedPaletteSwaps =
     paletteSwaps
       ?.entries()
-      .sort(
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        comparing(([src, _]) => src.rgb.r * 256 * 256 + src.rgb.g * 256 + src.rgb.b)
-      )
+      .sort(comparing(([src, _]) => src.rgb.r * 256 * 256 + src.rgb.g * 256 + src.rgb.b))
       .map(([src, dest]) => `${src.hex}:${dest.hex}`)
       .join(',') ?? 'null';
   const effectNames = effects?.map(effect => effect.name).join(',') ?? 'null';
