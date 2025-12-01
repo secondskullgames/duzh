@@ -15,15 +15,11 @@ type Params = Readonly<{
 }>;
 
 export class ImageFactory {
-  private readonly rawCache: Record<string, ImageData | null> = {};
-
-  constructor(
-    private readonly imageLoader: ImageLoader,
-    private readonly cache: ImageCache
-  ) {}
+  private readonly cache = new ImageCache();
+  constructor(private readonly imageLoader: ImageLoader) {}
 
   getImage = async (params: Params): Promise<Image> => {
-    const { cache, rawCache } = this;
+    const { cache } = this;
 
     let filenames: string[];
     if (params.filenames) {
@@ -42,13 +38,7 @@ export class ImageFactory {
         return cached;
       }
 
-      let imageData: ImageData | null;
-      if (rawCache[filename]) {
-        imageData = rawCache[filename];
-      } else {
-        imageData = await this.imageLoader.loadImage(filename);
-        rawCache[filename] = imageData;
-      }
+      let imageData = await this.imageLoader.loadImageData(filename);
       if (imageData) {
         if (transparentColor) {
           imageData = applyTransparentColor(imageData, transparentColor);

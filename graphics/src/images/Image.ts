@@ -2,6 +2,7 @@ import { Pixel } from '@duzh/geometry';
 import { RGB } from '../RGB.js';
 
 export type Image = Readonly<{
+  imageData: ImageData;
   bitmap: ImageBitmap;
   width: number;
   height: number;
@@ -24,6 +25,7 @@ export namespace Image {
     };
 
     return {
+      imageData,
       bitmap,
       filename: filename ?? null,
       width: imageData.width,

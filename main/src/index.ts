@@ -1,7 +1,7 @@
 import { MusicPlayer, SoundPlayer } from '@duzh/audio';
 import { Feature } from '@duzh/features';
 import { FontBundle, Graphics } from '@duzh/graphics';
-import { ImageCache, ImageFactory, ImageLoader } from '@duzh/graphics/images';
+import { ImageFactory, ImageLoader } from '@duzh/graphics/images';
 import { GeneratedMapFactory, MapObjectFactory, PredefinedMapFactory } from '@duzh/maps';
 import { AssetBundleSchema, ImageBundleSchema } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
@@ -65,7 +65,7 @@ type GameContainer = Readonly<{
 const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => {
   const { assetBundle, imageBundle } = gameConfig;
   const imageLoader = new ImageLoader(imageBundle);
-  const imageFactory = new ImageFactory(imageLoader, new ImageCache());
+  const imageFactory = new ImageFactory(imageLoader);
   const fontFactory = new FontFactory(imageFactory);
   const fontBundle = await fontFactory.loadFonts();
   const textRenderer = new TextRenderer(gameConfig, fontBundle);
