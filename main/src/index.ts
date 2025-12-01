@@ -37,7 +37,6 @@ import { SoundController } from '@main/sounds/SoundController';
 import TileFactory from '@main/tiles/TileFactory';
 import UnitFactory from '@main/units/UnitFactory';
 import { createCanvas, enterFullScreen, isMobileDevice } from '@main/utils/dom';
-import { showTitleScreen } from './actions/showTitleScreen';
 import { GameController } from './controllers/GameController';
 import { DebugController } from './core/DebugController';
 import { GameStateImpl } from './core/GameState';
@@ -46,6 +45,7 @@ import { GameSceneRenderer } from './graphics/renderers/GameSceneRenderer';
 import { MapControllerImpl } from './maps/MapController';
 import { MapHydrator } from './maps/MapHydrator';
 import { InventorySceneRenderer } from './graphics/renderers/InventorySceneRenderer';
+import { TitleSceneRenderer } from './graphics/renderers/TitleSceneRenderer';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -63,6 +63,7 @@ type GameContainer = Readonly<{
   inputHandler: InputHandler;
   debugController: DebugController;
   scenes: Record<SceneName, Scene>;
+  gameController: GameController;
 }>;
 
 const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => {
@@ -135,7 +136,8 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
   const topMenuRenderer = new TopMenuRenderer(imageFactory);
   const gameController = new GameController({
     mapController,
-    soundController
+    soundController,
+    musicController
   });
   const gameSceneRenderer = new GameSceneRenderer(
     game,
@@ -145,7 +147,12 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
     topMenuRenderer
   );
   const gameScene = new GameScene(game, gameController, gameSceneRenderer);
-  const gameOverScene = new GameOverScene(imageFactory, textRenderer, game);
+  const gameOverScene = new GameOverScene(
+    game,
+    gameController,
+    imageFactory,
+    textRenderer
+  );
   const helpScene = new HelpScene(game, textRenderer, imageFactory);
   const inventorySceneRenderer = new InventorySceneRenderer({
     game,
@@ -154,8 +161,9 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
   });
   const inventoryScene = new InventoryScene(game, inventorySceneRenderer);
   const mapScene = new MapScene(game);
-  const titleScene = new TitleScene(game, gameController, imageFactory, textRenderer);
-  const victoryScene = new VictoryScene(textRenderer, imageFactory, game);
+  const titleSceneRenderer = new TitleSceneRenderer(imageFactory, textRenderer);
+  const titleScene = new TitleScene(game, gameController, titleSceneRenderer);
+  const victoryScene = new VictoryScene(game, gameController, textRenderer, imageFactory);
 
   const scenes = {
     [SceneName.CHARACTER]: characterScene,
@@ -174,13 +182,14 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
     game,
     debugController,
     inputHandler,
-    scenes
+    scenes,
+    gameController
   };
 };
 
 const init = async ({ rootElement, gameConfig }: Props) => {
   const container = await setupContainer({ rootElement, gameConfig });
-  const { game, inputHandler, scenes } = container;
+  const { game, inputHandler, scenes, gameController } = container;
   const canvas = createCanvas({
     width: gameConfig.screenWidth,
     height: gameConfig.screenHeight
@@ -213,7 +222,7 @@ const init = async ({ rootElement, gameConfig }: Props) => {
 
   inputHandler.addEventListener(canvas);
 
-  await showTitleScreen(game);
+  await gameController.showTitleScene(game);
   setInterval(async () => {
     const currentScene = state.getCurrentScene();
     if (currentScene) {

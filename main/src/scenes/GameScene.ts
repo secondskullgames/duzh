@@ -57,13 +57,13 @@ export class GameScene implements Scene {
     } else if (isModifierKey(key)) {
       await gameController.handleModifierKeyDown(key as ModifierKey, this.game);
     } else if (key === 'SPACEBAR') {
-      await gameController.handlePassTurn(this.game);
+      await gameController.passTurn(this.game);
     } else if (key === 'TAB') {
-      await gameController.handleShowInventoryScene(this.game);
+      await gameController.showInventoryScene(this.game);
     } else if (key === 'M') {
-      await gameController.handleShowMapScene(this.game);
+      await gameController.showMapScene(this.game);
     } else if (key === 'C') {
-      await gameController.handleShowCharacterScene(this.game);
+      await gameController.showCharacterScene(this.game);
     } else if (key === 'ENTER') {
       if (modifiers.includes(ModifierKey.ALT)) {
         await toggleFullScreen();

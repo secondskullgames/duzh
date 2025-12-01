@@ -4,7 +4,6 @@ import { ImageFactory } from '@duzh/graphics/images';
 import { ClickCommand, KeyCommand, ModifierKey } from '@main/input/inputTypes';
 import { toggleFullScreen } from '@main/utils/dom';
 import { formatTimestamp } from '@main/utils/time';
-import { showTitleScreen } from '@main/actions/showTitleScreen';
 import { Game } from '@main/core/Game';
 import { FontName } from '@main/graphics/Fonts';
 import { InterfaceColors } from '@main/graphics/InterfaceColors';
@@ -12,6 +11,7 @@ import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';
 import { TextRenderer } from '@main/graphics/TextRenderer';
 import { Scene } from '@main/scenes/Scene';
 import { SceneName } from '@main/scenes/SceneName';
+import { GameController } from '../controllers/GameController';
 
 const BACKGROUND_FILENAME = 'victory2';
 
@@ -19,9 +19,10 @@ export class VictoryScene implements Scene {
   readonly name = SceneName.VICTORY;
 
   constructor(
+    private readonly game: Game,
+    private readonly gameController: GameController,
     private readonly textRenderer: TextRenderer,
-    private readonly imageFactory: ImageFactory,
-    private readonly game: Game
+    private readonly imageFactory: ImageFactory
   ) {}
 
   render = async (graphics: Graphics): Promise<void> => {
@@ -79,7 +80,7 @@ export class VictoryScene implements Scene {
         if (modifiers.includes(ModifierKey.ALT)) {
           await toggleFullScreen();
         } else {
-          await showTitleScreen(this.game);
+          await this.gameController.showTitleScene(this.game);
         }
         break;
       case 'ESCAPE':
@@ -91,6 +92,6 @@ export class VictoryScene implements Scene {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
-    await showTitleScreen(this.game);
+    await this.gameController.showTitleScene(this.game);
   };
 }

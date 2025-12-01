@@ -16,19 +16,23 @@ import PlayerUnitController from '@main/units/controllers/PlayerUnitController';
 import { AbilityOrder } from '@main/units/orders/AbilityOrder';
 import { UnitOrder } from '@main/units/orders/UnitOrder';
 import { isMobileDevice } from '@main/utils/dom';
+import { MusicController } from '../sounds/MusicController';
 
 type Props = Readonly<{
   mapController: MapController;
   soundController: SoundController;
+  musicController: MusicController;
 }>;
 
 export class GameController {
   private readonly mapController: MapController;
   private readonly soundController: SoundController;
+  private readonly musicController: MusicController;
 
   constructor(props: Props) {
     this.mapController = props.mapController;
     this.soundController = props.soundController;
+    this.musicController = props.musicController;
   }
 
   handleStartGame = async (game: Game) => {
@@ -260,23 +264,36 @@ export class GameController {
     }
   };
 
-  handlePassTurn = async (game: Game) => {
+  passTurn = async (game: Game) => {
     const { engine } = game;
     this.soundController.playSound('footstep');
     await engine.playTurn(game);
   };
 
-  handleShowInventoryScene = async (game: Game) => {
+  showInventoryScene = async (game: Game) => {
     const { inventoryController, state } = game;
     inventoryController.prepareInventoryScreen(game);
     state.setScene(SceneName.INVENTORY);
   };
 
-  handleShowMapScene = async (game: Game) => {
+  showMapScene = async (game: Game) => {
     game.state.setScene(SceneName.MAP);
   };
 
-  handleShowCharacterScene = async (game: Game) => {
+  showCharacterScene = async (game: Game) => {
     game.state.setScene(SceneName.CHARACTER);
+  };
+
+  /**
+   * Fully reset the game and show the title screen.
+   */
+  showTitleScene = async (game: Game) => {
+    const { musicController } = this;
+    const { state } = game;
+    state.reset();
+    state.setScene(SceneName.TITLE);
+    if (Feature.isEnabled(Feature.TITLE_MUSIC)) {
+      musicController.playMusic('evil');
+    }
   };
 }
