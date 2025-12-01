@@ -1,8 +1,7 @@
 import { readFile } from 'fs/promises';
 import { glob } from 'glob';
-import { AssetBundle } from '@duzh/models';
-import { z } from 'zod';
 import {
+  AssetBundle,
   ConsumableItemModelSchema,
   DynamicSpriteModelSchema,
   EquipmentModelSchema,
@@ -15,6 +14,7 @@ import {
   TileSetModelSchema,
   UnitModelSchema
 } from '@duzh/models';
+import { z } from 'zod';
 import { mkdirSync } from 'fs';
 import { writeFileSync } from 'node:fs';
 

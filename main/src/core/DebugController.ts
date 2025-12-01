@@ -39,8 +39,6 @@ export class DebugController {
   awardEquipment = async () => {
     const { itemFactory } = this;
     const { soundController, state, ticker } = this.game;
-
-    // eslint-disable-next-line no-alert
     const id = prompt('Enter a valid equipment_id')!;
     const item = await itemFactory.createInventoryEquipment(id);
     const playerUnit = state.getPlayerUnit();
@@ -52,8 +50,6 @@ export class DebugController {
   awardItem = async () => {
     const { itemFactory } = this;
     const { soundController, state, ticker } = this.game;
-
-    // eslint-disable-next-line no-alert
     const id = prompt('Enter a valid item_id')!;
     const item = await itemFactory.createInventoryItem(id);
     const playerUnit = state.getPlayerUnit();

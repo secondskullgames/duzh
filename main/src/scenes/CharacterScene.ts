@@ -45,7 +45,6 @@ export class CharacterScene implements Scene {
 
   handleKeyUp = async () => {};
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleClick = async (_: ClickCommand) => {
     const { state } = this.game;
     state.setScene(SceneName.GAME);

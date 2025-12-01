@@ -1,8 +1,5 @@
-import { Scene } from '@main/scenes/Scene';
-import { SceneName } from '@main/scenes/SceneName';
-import { ClickCommand, KeyCommand, ModifierKey } from '@main/input/inputTypes';
 import { Color, Graphics } from '@duzh/graphics';
-import { isMobileDevice, toggleFullScreen } from '@main/utils/dom';
+import { isMobileDevice } from '@main/utils/dom';
 import { FontName } from '@main/graphics/Fonts';
 import { Pixel } from '@duzh/geometry';
 import { Alignment, drawAligned } from '@main/graphics/RenderingUtils';

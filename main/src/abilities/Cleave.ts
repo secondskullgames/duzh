@@ -33,7 +33,6 @@ export class Cleave implements UnitAbility {
     unit.getMana() >= this.manaCost ||
     unit.getEffects().getDuration(StatusEffect.OVERDRIVE) > 0;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isLegal = (unit: Unit, coordinates: Coordinates) => {
     return _getTargetUnits(unit).length > 0;
   };

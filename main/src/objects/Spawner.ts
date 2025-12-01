@@ -62,7 +62,6 @@ export default class Spawner extends GameObject {
     this._isBlocking = isBlocking;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   playTurnAction = async (game: Game) => {
     if (this._state === SpawnerState.DEAD) {
       return;

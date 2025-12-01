@@ -45,7 +45,6 @@ export class Grid<T> {
     this.array[y][x] = item;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   remove = (coordinates: Coordinates, item: T) => {
     checkArgument(this.contains(coordinates));
     const { x, y } = coordinates;
