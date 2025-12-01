@@ -46,6 +46,7 @@ import { MapControllerImpl } from './maps/MapController';
 import { MapHydrator } from './maps/MapHydrator';
 import { InventorySceneRenderer } from './graphics/renderers/InventorySceneRenderer';
 import { TitleSceneRenderer } from './graphics/renderers/TitleSceneRenderer';
+import { VictorySceneRenderer } from './graphics/renderers/VictorySceneRenderer';
 
 type Props = Readonly<{
   rootElement: HTMLElement;
@@ -163,7 +164,8 @@ const setupContainer = async ({ gameConfig }: Props): Promise<GameContainer> => 
   const mapScene = new MapScene(game);
   const titleSceneRenderer = new TitleSceneRenderer(imageFactory, textRenderer);
   const titleScene = new TitleScene(game, gameController, titleSceneRenderer);
-  const victoryScene = new VictoryScene(game, gameController, textRenderer, imageFactory);
+  const victorySceneRenderer = new VictorySceneRenderer(game, textRenderer, imageFactory);
+  const victoryScene = new VictoryScene(game, gameController, victorySceneRenderer);
 
   const scenes = {
     [SceneName.CHARACTER]: characterScene,
