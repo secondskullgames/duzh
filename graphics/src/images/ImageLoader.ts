@@ -28,11 +28,11 @@ export class ImageLoader {
     this._errorListener = null;
   }
 
-  loadImage = async (filename: string): Promise<ImageData | null> => {
-    return checkNotNull(this.loadImageOptional(filename));
+  loadImageData = async (filename: string): Promise<ImageData> => {
+    return checkNotNull(await this.loadImageDataOptional(filename));
   };
 
-  loadImageOptional = async (filename: string): Promise<ImageData | null> => {
+  loadImageDataOptional = async (filename: string): Promise<ImageData | null> => {
     const imageDataUrl = this.imageBundle[`${filename}.png`];
     if (!imageDataUrl) {
       return null;
@@ -47,7 +47,7 @@ export class ImageLoader {
     }
     return new Promise((resolve, reject) => {
       this._listener = () => {
-        resolve(this.createImageData(img));
+        resolve(this._createImageData(img));
       };
       img.addEventListener('load', this._listener);
       this._errorListener = () => {
@@ -58,7 +58,7 @@ export class ImageLoader {
     });
   };
 
-  createImageData = (img: HTMLImageElement): ImageData => {
+  private _createImageData = (img: HTMLImageElement): ImageData => {
     const { context } = this;
     context.drawImage(img, 0, 0);
     return context.getImageData(0, 0, img.width, img.height);
