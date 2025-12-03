@@ -2,47 +2,47 @@ import { readFile } from 'fs/promises';
 import { glob } from 'glob';
 import {
   AssetBundle,
-  ConsumableItemModelSchema,
-  DynamicSpriteModelSchema,
-  EquipmentModelSchema,
-  GeneratedMapModelSchema,
-  MapSpecSchema,
-  MusicModelSchema,
-  PredefinedMapModelSchema,
-  SoundEffectSchema,
-  StaticSpriteModelSchema,
-  TileSetModelSchema,
-  UnitModelSchema
+  ConsumableItemModel,
+  DynamicSpriteModel,
+  EquipmentModel,
+  GeneratedMapModel,
+  MapSpec,
+  MusicModel,
+  PredefinedMapModel,
+  SoundEffect,
+  StaticSpriteModel,
+  TileSetModel,
+  UnitModel
 } from '@duzh/models';
 import { z } from 'zod';
 import { mkdirSync } from 'fs';
 import { writeFileSync } from 'node:fs';
 
 export const buildAssetBundle = async (): Promise<AssetBundle> => {
-  const equipment = await loadAssets('./data/equipment/**/*.json', EquipmentModelSchema);
-  const items = await loadAssets('./data/items/**/*.json', ConsumableItemModelSchema);
+  const equipment = await loadAssets('./data/equipment/**/*.json', EquipmentModel);
+  const items = await loadAssets('./data/items/**/*.json', ConsumableItemModel);
   const predefinedMaps = await loadAssets(
     './data/maps/predefined/**/*.json',
-    PredefinedMapModelSchema
+    PredefinedMapModel
   );
   const generatedMaps = await loadAssets(
     './data/maps/generated/**/*.json',
-    GeneratedMapModelSchema
+    GeneratedMapModel
   );
   const dynamicSprites = [
-    ...(await loadAssets('./data/sprites/units/**/*.json', DynamicSpriteModelSchema)),
-    ...(await loadAssets('./data/sprites/equipment/**/*.json', DynamicSpriteModelSchema))
+    ...(await loadAssets('./data/sprites/units/**/*.json', DynamicSpriteModel)),
+    ...(await loadAssets('./data/sprites/equipment/**/*.json', DynamicSpriteModel))
   ];
   const staticSprites = await loadAssets(
     './data/sprites/static/**/*.json',
-    StaticSpriteModelSchema
+    StaticSpriteModel
   );
-  const tileSets = await loadAssets('./data/tilesets/**/*.json', TileSetModelSchema);
-  const units = await loadAssets('./data/units/**/*.json', UnitModelSchema);
-  const music = await loadAssets('./data/music/**/*.json', MusicModelSchema);
-  const sounds = await loadAssets('./data/sounds/**/*.json', SoundEffectSchema);
+  const tileSets = await loadAssets('./data/tilesets/**/*.json', TileSetModel);
+  const units = await loadAssets('./data/units/**/*.json', UnitModel);
+  const music = await loadAssets('./data/music/**/*.json', MusicModel);
+  const sounds = await loadAssets('./data/sounds/**/*.json', SoundEffect);
   const colors = await loadAsset('./data/colors.json', z.record(z.string(), z.string()));
-  const maps = await loadAsset('./data/maps.json', z.array(MapSpecSchema));
+  const maps = await loadAsset('./data/maps.json', z.array(MapSpec));
 
   return {
     equipment: mapById(equipment),

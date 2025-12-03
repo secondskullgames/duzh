@@ -12,13 +12,13 @@ export enum EquipmentSlot {
   CLOAK = 'CLOAK'
 }
 
-export const EquipmentCategorySchema = z.union([
+export const EquipmentCategory = z.union([
   z.literal(ItemCategory.ARMOR),
   z.literal(ItemCategory.WEAPON)
 ]);
-export type EquipmentCategory = z.infer<typeof EquipmentCategorySchema>;
+export type EquipmentCategory = z.infer<typeof EquipmentCategory>;
 
-export const EquipmentStatsSchema = z.object({
+export const EquipmentStats = z.object({
   /**
    * The ratio of damage blocked by this item
    */
@@ -31,10 +31,10 @@ export const EquipmentStatsSchema = z.object({
   damage: z.number().optional()
 });
 
-export const EquipmentModelSchema = z.object({
+export const EquipmentModel = z.object({
   id: z.string(),
   name: z.string(),
-  itemCategory: EquipmentCategorySchema,
+  itemCategory: EquipmentCategory,
   level: z.number().optional().nullable(),
   mapIcon: z.string(),
   paletteSwaps: z.record(z.string(), z.string()),
@@ -46,7 +46,7 @@ export const EquipmentModelSchema = z.object({
   script: z.string().optional(),
   slot: z.enum(EquipmentSlot),
   sprite: z.string(),
-  stats: EquipmentStatsSchema,
+  stats: EquipmentStats,
   tooltip: z.string().optional()
 });
-export type EquipmentModel = z.infer<typeof EquipmentModelSchema>;
+export type EquipmentModel = z.infer<typeof EquipmentModel>;

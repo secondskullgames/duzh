@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const FogOfWarParamsSchema = z.object({
+export const FogOfWarParams = z.object({
   enabled: z.boolean(),
   radius: z.number().optional(),
   spawnEnemies: z.boolean().optional(),
@@ -8,4 +8,4 @@ export const FogOfWarParamsSchema = z.object({
   spawnRate: z.number().optional(),
   maxSpawnedUnits: z.number().optional()
 });
-export type FogOfWarParams = z.infer<typeof FogOfWarParamsSchema>;
+export type FogOfWarParams = z.infer<typeof FogOfWarParams>;

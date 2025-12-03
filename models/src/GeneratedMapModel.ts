@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FogOfWarParamsSchema } from './FogOfWarParams.js';
+import { FogOfWarParams } from './FogOfWarParams.js';
 
 export enum Algorithm {
   ROOMS_AND_CORRIDORS = 'ROOMS_AND_CORRIDORS',
@@ -8,13 +8,13 @@ export enum Algorithm {
   BLOB = 'BLOB',
   RANDOM = 'RANDOM'
 }
-export const RangeSchema = z.object({
+export const Range = z.object({
   min: z.number(),
   max: z.number()
 });
-export type Range = z.infer<typeof RangeSchema>;
+export type Range = z.infer<typeof Range>;
 
-export const GeneratedMapModelSchema = z.object({
+export const GeneratedMapModel = z.object({
   id: z.string(),
   levelNumber: z.number(),
   algorithm: z.enum(Algorithm),
@@ -32,8 +32,8 @@ export const GeneratedMapModelSchema = z.object({
     min: z.number(),
     max: z.number()
   }),
-  items: RangeSchema,
+  items: Range,
   shrines: z.number(),
-  fogOfWar: FogOfWarParamsSchema
+  fogOfWar: FogOfWarParams
 });
-export type GeneratedMapModel = z.infer<typeof GeneratedMapModelSchema>;
+export type GeneratedMapModel = z.infer<typeof GeneratedMapModel>;

@@ -10,5 +10,3 @@ export enum TileType {
   STAIRS_DOWN = 'STAIRS_DOWN',
   STAIRS_UP = 'STAIRS_UP'
 }
-
-export const TileTypeSchema = z.enum(TileType);

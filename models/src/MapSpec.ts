@@ -5,8 +5,8 @@ export enum MapType {
   GENERATED = 'generated'
 }
 
-export const MapSpecSchema = z.object({
+export const MapSpec = z.object({
   id: z.string(),
   type: z.enum(MapType)
 });
-export type MapSpec = z.infer<typeof MapSpecSchema>;
+export type MapSpec = z.infer<typeof MapSpec>;

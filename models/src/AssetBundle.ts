@@ -1,32 +1,32 @@
 import { z } from 'zod';
-import { EquipmentModelSchema } from './EquipmentModel.js';
-import { ConsumableItemModelSchema } from './ConsumableItemModel.js';
-import { PredefinedMapModelSchema } from './PredefinedMapModel.js';
-import { GeneratedMapModelSchema } from './GeneratedMapModel.js';
-import { StaticSpriteModelSchema } from './StaticSpriteModel.js';
-import { DynamicSpriteModelSchema } from './DynamicSpriteModel.js';
-import { TileSetModelSchema } from './TileSetModel.js';
-import { UnitModelSchema } from './UnitModel.js';
-import { MusicModelSchema, SoundEffectSchema } from './SoundModels.js';
-import { MapSpecSchema } from './MapSpec.js';
+import { EquipmentModel } from './EquipmentModel.js';
+import { ConsumableItemModel } from './ConsumableItemModel.js';
+import { PredefinedMapModel } from './PredefinedMapModel.js';
+import { GeneratedMapModel } from './GeneratedMapModel.js';
+import { StaticSpriteModel } from './StaticSpriteModel.js';
+import { DynamicSpriteModel } from './DynamicSpriteModel.js';
+import { TileSetModel } from './TileSetModel.js';
+import { UnitModel } from './UnitModel.js';
+import { MusicModel, SoundEffect } from './SoundModels.js';
+import { MapSpec } from './MapSpec.js';
 
 const idMap = <S extends z.ZodSchema>(schema: S): z.ZodRecord<z.ZodString, S> => {
   return z.record(z.string(), schema);
 };
 
-export const AssetBundleSchema = z.object({
-  equipment: idMap(EquipmentModelSchema),
-  items: idMap(ConsumableItemModelSchema),
-  predefinedMaps: idMap(PredefinedMapModelSchema),
-  generatedMaps: idMap(GeneratedMapModelSchema),
-  staticSprites: idMap(StaticSpriteModelSchema),
-  dynamicSprites: idMap(DynamicSpriteModelSchema),
-  tileSets: idMap(TileSetModelSchema),
-  units: idMap(UnitModelSchema),
-  sounds: idMap(SoundEffectSchema),
-  music: idMap(MusicModelSchema),
+export const AssetBundle = z.object({
+  equipment: idMap(EquipmentModel),
+  items: idMap(ConsumableItemModel),
+  predefinedMaps: idMap(PredefinedMapModel),
+  generatedMaps: idMap(GeneratedMapModel),
+  staticSprites: idMap(StaticSpriteModel),
+  dynamicSprites: idMap(DynamicSpriteModel),
+  tileSets: idMap(TileSetModel),
+  units: idMap(UnitModel),
+  sounds: idMap(SoundEffect),
+  music: idMap(MusicModel),
   colors: idMap(z.string()),
-  maps: z.array(MapSpecSchema)
+  maps: z.array(MapSpec)
 });
 
-export type AssetBundle = z.infer<typeof AssetBundleSchema>;
+export type AssetBundle = z.infer<typeof AssetBundle>;

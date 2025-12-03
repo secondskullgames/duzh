@@ -1,34 +1,34 @@
 import { z } from 'zod';
 
 /** frequency (Hz), duration (ms) */
-export const SampleSchema = z.array(z.number()).length(2);
+export const Sample = z.array(z.number()).length(2);
 
-export type Sample = z.infer<typeof SampleSchema>;
+export type Sample = z.infer<typeof Sample>;
 
-export const FigureSchema = z.array(SampleSchema);
-export type Figure = z.infer<typeof FigureSchema>;
+export const Figure = z.array(Sample);
+export type Figure = z.infer<typeof Figure>;
 
-export const MusicModelSchema = z.object({
+export const MusicModel = z.object({
   id: z.string(),
-  voices: z.array(FigureSchema)
+  voices: z.array(Figure)
 });
-export type MusicModel = z.infer<typeof MusicModelSchema>;
+export type MusicModel = z.infer<typeof MusicModel>;
 
-export const SoundEffectSchema = z.object({
+export const SoundEffect = z.object({
   id: z.string(),
-  samples: z.array(SampleSchema)
+  samples: z.array(Sample)
 });
-export type SoundEffect = z.infer<typeof SoundEffectSchema>;
+export type SoundEffect = z.infer<typeof SoundEffect>;
 
-export const SuiteSchema = z.object({
+export const Suite = z.object({
   length: z.number(),
   sections: z.record(
     z.string(),
     z.object({
-      bass: z.array(FigureSchema).optional(),
-      lead: z.array(FigureSchema).optional()
+      bass: z.array(Figure).optional(),
+      lead: z.array(Figure).optional()
     })
   )
 });
 
-export type Suite = z.infer<typeof SuiteSchema>;
+export type Suite = z.infer<typeof Suite>;
