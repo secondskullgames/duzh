@@ -3,7 +3,7 @@ import { Feature } from '@duzh/features';
 import { FontBundle, Graphics } from '@duzh/graphics';
 import { ImageFactory, ImageLoader } from '@duzh/graphics/images';
 import { GeneratedMapFactory, MapObjectFactory, PredefinedMapFactory } from '@duzh/maps';
-import { AssetBundleSchema, ImageBundleSchema } from '@duzh/models';
+import { AssetBundle, ImageBundle } from '@duzh/models';
 import { checkNotNull } from '@duzh/utils/preconditions';
 import { InventoryController } from '@main/controllers/InventoryController';
 import { ShrineController } from '@main/controllers/ShrineController';
@@ -242,10 +242,10 @@ const init = async ({ rootElement, gameConfig }: Props) => {
 
 const main = async () => {
   const rootElement = checkNotNull(document.getElementById('container'));
-  const assetBundle = AssetBundleSchema.parse(
+  const assetBundle = AssetBundle.parse(
     (await import('@duzh/assets/assets.json')).default
   );
-  const imageBundle = ImageBundleSchema.parse(
+  const imageBundle = ImageBundle.parse(
     (await import('@duzh/assets/images.json')).default
   );
   const gameConfig: GameConfig = {

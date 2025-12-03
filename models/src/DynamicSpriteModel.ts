@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const DynamicSpriteAnimationSchema = z.object({
+export const DynamicSpriteAnimationModel = z.object({
   frames: z.array(
     z.object({
       activity: z.string(),
@@ -9,20 +9,20 @@ export const DynamicSpriteAnimationSchema = z.object({
   ),
   pattern: z.string().optional()
 });
-export type DynamicSpriteAnimation = z.infer<typeof DynamicSpriteAnimationSchema>;
+export type DynamicSpriteAnimationModel = z.infer<typeof DynamicSpriteAnimationModel>;
 
-export const DynamicSpriteOffsetsSchema = z.object({
+export const DynamicSpriteOffsetsModel = z.object({
   dx: z.number(),
   dy: z.number()
 });
-export type DynamicSpriteOffsets = z.infer<typeof DynamicSpriteOffsetsSchema>;
+export type DynamicSpriteOffsetsModel = z.infer<typeof DynamicSpriteOffsetsModel>;
 
-export const DynamicSpriteModelSchema = z.object({
-  animations: z.record(z.string(), DynamicSpriteAnimationSchema),
+export const DynamicSpriteModel = z.object({
+  animations: z.record(z.string(), DynamicSpriteAnimationModel),
   id: z.string(),
-  offsets: DynamicSpriteOffsetsSchema,
+  offsets: DynamicSpriteOffsetsModel,
   pattern: z.string().optional(),
   patterns: z.array(z.string()).optional(),
   transparentColor: z.string().optional()
 });
-export type DynamicSpriteModel = z.infer<typeof DynamicSpriteModelSchema>;
+export type DynamicSpriteModel = z.infer<typeof DynamicSpriteModel>;

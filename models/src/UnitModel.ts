@@ -10,7 +10,7 @@ export enum UnitType {
   WIZARD = 'WIZARD'
 }
 
-export const AIParametersSchema = z.object({
+export const AIParameters = z.object({
   /**
    * between 0 and 1
    */
@@ -31,9 +31,9 @@ export const AIParametersSchema = z.object({
   fleeThreshold: z.number()
 });
 
-export type AIParameters = z.infer<typeof AIParametersSchema>;
+export type AIParameters = z.infer<typeof AIParameters>;
 
-export const UnitModelSchema = z.object({
+export const UnitModel = z.object({
   /**
    * Expected to match the filename
    */
@@ -43,7 +43,7 @@ export const UnitModelSchema = z.object({
    */
   name: z.string(),
   abilities: z.array(z.string()),
-  aiParameters: AIParametersSchema.optional(),
+  aiParameters: AIParameters.optional(),
   equipment: z.array(z.string()).optional(),
   meleeDamage: z.number(),
   rangedDamage: z.number(),
@@ -58,4 +58,4 @@ export const UnitModelSchema = z.object({
    */
   experience: z.number().optional()
 });
-export type UnitModel = z.infer<typeof UnitModelSchema>;
+export type UnitModel = z.infer<typeof UnitModel>;

@@ -8,7 +8,7 @@ export enum ConsumableType {
   SCROLL = 'scroll'
 }
 
-export const ConsumableItemModelSchema = z.object({
+export const ConsumableItemModel = z.object({
   id: z.string(),
   name: z.string(),
   level: z.number().optional().nullable(),
@@ -23,4 +23,4 @@ export const ConsumableItemModelSchema = z.object({
   tooltip: z.string().optional()
 });
 
-export type ConsumableItemModel = z.infer<typeof ConsumableItemModelSchema>;
+export type ConsumableItemModel = z.infer<typeof ConsumableItemModel>;
