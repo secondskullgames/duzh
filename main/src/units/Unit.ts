@@ -26,7 +26,7 @@ import { calculateTotalIncomingDamage } from './UnitUtils';
  * Regenerate this raw amount of health each turn
  * (can be decimal)
  */
-const STARTING_LIFE_PER_TURN = 0.5;
+const STARTING_LIFE_PER_TURN = 0;
 /**
  * Regenerate this raw amount of mana each turn
  * (can be decimal)

@@ -3,8 +3,8 @@
   "levelNumber": 6,
   "algorithm": "DEFAULT",
   "tileSet": "catacomb",
-  "width": 32,
-  "height": 32,
+  "width": 30,
+  "height": 30,
   "enemies": {
     "types": [
       {

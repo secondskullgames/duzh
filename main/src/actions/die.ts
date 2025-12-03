@@ -7,8 +7,8 @@ import Unit from '@main/units/Unit';
 import { gameOver } from './gameOver';
 
 // TODO this should be enemy-specific? add loot tables
-const ITEM_DROP_CHANCE = 0.05;
-const GLOBE_DROP_CHANCE = 0.2;
+const ITEM_DROP_CHANCE = 0.1;
+const GLOBE_DROP_CHANCE = 0.25;
 const HEALTH_GLOBE_DROP_CHANCE = 0.9;
 const MANA_GLOBE_DROP_CHANCE = 0;
 const VISION_GLOBE_DROP_CHANCE = 0.1;

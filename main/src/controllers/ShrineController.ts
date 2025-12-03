@@ -31,16 +31,6 @@ export class ShrineController {
           }
         }
       ],
-      lifePerTurn: [
-        {
-          label: '+0.5 Life Per Turn',
-          onUse: async (game: Game) => {
-            playerUnit.increaseLifePerTurn(0.5);
-            // TODO
-            game.soundController.playSound('use_potion');
-          }
-        }
-      ],
       manaPerTurn: [
         {
           label: '+0.5 Mana Per Turn',

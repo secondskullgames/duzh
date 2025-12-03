@@ -3,8 +3,8 @@
   "levelNumber": 10,
   "algorithm": "PATH",
   "tileSet": "dungeon_cga",
-  "width": 40,
-  "height": 40,
+  "width": 30,
+  "height": 30,
   "enemies": {
     "types": [
       {
@@ -28,8 +28,8 @@
         "chance": 0.1
       }
     ],
-    "min": 14,
-    "max": 16
+    "min": 10,
+    "max": 12
   },
   "items": {
     "min": 1,
@@ -38,7 +38,7 @@
   "shrines": 1,
   "fogOfWar": {
     "enabled": true,
-    "radius": 2,
+    "radius": 3,
     "spawnEnemies": true,
     "spawnedUnitClass": "black_snake_spawn",
     "spawnRate": 0.05,

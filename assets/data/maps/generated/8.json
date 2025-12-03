@@ -3,8 +3,8 @@
   "levelNumber": 8,
   "algorithm": "DEFAULT",
   "tileSet": "cave_red",
-  "width": 36,
-  "height": 36,
+  "width": 30,
+  "height": 30,
   "enemies": {
     "types": [
       {
@@ -24,7 +24,7 @@
         "chance": 0.2
       }
     ],
-    "min": 11,
+    "min": 10,
     "max": 12
   },
   "items": {

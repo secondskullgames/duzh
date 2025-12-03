@@ -2,7 +2,7 @@
   "id": "vision_scroll",
   "name": "Scroll of Vision",
   "level": 2,
-  "rarity": 4,
+  "rarity": 3,
   "mapSprite": "map_scroll",
   "type": "scroll",
   "params": {
