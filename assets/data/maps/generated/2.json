@@ -4,7 +4,7 @@
   "algorithm": "PATH",
   "tileSet": "kroz",
   "width": 24,
-  "height": 24,
+  "height": 20,
   "enemies": {
     "types": [
       {

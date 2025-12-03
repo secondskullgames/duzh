@@ -3,8 +3,8 @@
   "levelNumber": 9,
   "algorithm": "BLOB",
   "tileSet": "cave_blue",
-  "width": 38,
-  "height": 38,
+  "width": 32,
+  "height": 24,
   "enemies": {
     "types": [
       {
@@ -24,8 +24,8 @@
         "chance": 0.25
       }
     ],
-    "min": 12,
-    "max": 14
+    "min": 10,
+    "max": 12
   },
   "items": {
     "min": 1,
