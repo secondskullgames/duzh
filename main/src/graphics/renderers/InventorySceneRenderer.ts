@@ -11,6 +11,9 @@ import { LINE_HEIGHT } from '../constants';
 import { Game } from '../../core/Game';
 import { TextRenderer } from '../TextRenderer';
 import { ImageFactory } from '@duzh/graphics/images';
+import { EquipmentSlot } from '@duzh/models';
+import Equipment from '../../equipment/Equipment';
+import { sortBy } from '@duzh/utils/arrays';
 
 const INVENTORY_LEFT = 0;
 const INVENTORY_TOP = 0;
@@ -93,23 +96,14 @@ export class InventorySceneRenderer implements Renderer {
       Alignment.CENTER,
       graphics
     );
-    this._drawText(
-      'INVENTORY',
-      FontName.APPLE_II,
-      { x: (this.inventoryWidth * 3) / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
-      inventory.getSelectedCategory() === InventoryCategory.ITEMS
-        ? InterfaceColors.YELLOW
-        : InterfaceColors.WHITE,
-      Alignment.CENTER,
-      graphics
-    );
 
     // draw equipment items
     // for now, just display them all in one list
 
     let y = INVENTORY_TOP + 64;
     const playerUnit = state.getPlayerUnit();
-    for (const equipment of playerUnit.getEquipment().getAll()) {
+    const orderedEquipment = this._sortBySlot(playerUnit.getEquipment().getAll());
+    for (const equipment of orderedEquipment) {
       const text = `${getSlotName(equipment.slot)} - ${equipment.getName()}`;
       this._drawText(
         text,
@@ -132,6 +126,17 @@ export class InventorySceneRenderer implements Renderer {
     const categoryWidth = 60;
     const xOffset = 4;
     const itemsLeft = (this.inventoryWidth + INVENTORY_MARGIN) / 2;
+
+    this._drawText(
+      'INVENTORY',
+      FontName.APPLE_II,
+      { x: (this.inventoryWidth * 3) / 4, y: INVENTORY_TOP + INVENTORY_MARGIN },
+      inventory.getSelectedCategory() === InventoryCategory.ITEMS
+        ? InterfaceColors.YELLOW
+        : InterfaceColors.WHITE,
+      Alignment.CENTER,
+      graphics
+    );
 
     for (let i = 0; i < inventoryCategories.length; i++) {
       const x = itemsLeft + i * categoryWidth + categoryWidth / 2 + xOffset;
@@ -229,5 +234,19 @@ export class InventorySceneRenderer implements Renderer {
         }
       }
     }
+  };
+
+  private readonly orderedEquipmentSlots: EquipmentSlot[] = [
+    EquipmentSlot.MELEE_WEAPON,
+    EquipmentSlot.RANGED_WEAPON,
+    EquipmentSlot.CHEST,
+    EquipmentSlot.HEAD,
+    EquipmentSlot.SHIELD,
+    EquipmentSlot.LEGS,
+    EquipmentSlot.CLOAK
+  ];
+
+  private _sortBySlot = (equipment: Equipment[]): Equipment[] => {
+    return sortBy(equipment, e => this.orderedEquipmentSlots.indexOf(e.slot));
   };
 }
