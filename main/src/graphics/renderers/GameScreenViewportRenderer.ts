@@ -13,6 +13,8 @@ import Unit from '../../units/Unit';
 import { TILE_HEIGHT, TILE_WIDTH } from '../constants';
 import Sprite from '../sprites/Sprite';
 import { Renderer } from './Renderer';
+import { EquipmentSlot } from '@duzh/models';
+import { sortBy } from '@duzh/utils/arrays';
 
 const SHADOW_FILENAME = 'shadow';
 
@@ -120,7 +122,9 @@ export default class GameSceneViewportRenderer implements Renderer {
   private _renderUnit = (unit: Unit, coordinates: Coordinates, graphics: Graphics) => {
     const behindEquipment: Equipment[] = [];
     const aheadEquipment: Equipment[] = [];
-    for (const equipment of unit.getEquipment().getAll()) {
+
+    const orderedEquipment = this._sortBySlot(unit.getEquipment().getAll());
+    for (const equipment of orderedEquipment) {
       const drawBehind = equipment.drawBehind();
       if (drawBehind) {
         behindEquipment.push(equipment);
@@ -198,5 +202,20 @@ export default class GameSceneViewportRenderer implements Renderer {
 
   private _renderShrineMenu = async (graphics: Graphics) => {
     await this.shrineMenuRenderer.render(graphics);
+  };
+
+  /** in back-to-front order */
+  private readonly orderedEquipmentSlots: EquipmentSlot[] = [
+    EquipmentSlot.LEGS,
+    EquipmentSlot.CHEST,
+    EquipmentSlot.CLOAK,
+    EquipmentSlot.HEAD,
+    EquipmentSlot.MELEE_WEAPON,
+    EquipmentSlot.SHIELD,
+    EquipmentSlot.RANGED_WEAPON
+  ];
+
+  private _sortBySlot = (equipment: Equipment[]): Equipment[] => {
+    return sortBy(equipment, e => this.orderedEquipmentSlots.indexOf(e.slot));
   };
 }
