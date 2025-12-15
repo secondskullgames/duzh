@@ -14,9 +14,9 @@
     "PLAYER_SHINS": "BLACK",
     "PLAYER_FEET": "BLACK"
   },
-  "life": 35,
+  "life": 2,
   "mana": 10,
-  "meleeDamage": 4,
+  "meleeDamage": 2,
   "rangedDamage": 0,
   "equipment": ["green_chain_mail", "green_cone_hat", "iron_sword"],
   "aiParameters": {

@@ -14,9 +14,9 @@
     "PLAYER_SHINS": "DARK_BROWN",
     "PLAYER_FEET": "DARK_BROWN"
   },
-  "meleeDamage": 2,
-  "rangedDamage": 2,
-  "life": 35,
+  "meleeDamage": 1,
+  "rangedDamage": 1,
+  "life": 2,
   "mana": 6,
   "equipment": [
     "bronze_sword",

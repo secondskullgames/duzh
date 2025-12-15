@@ -8,9 +8,9 @@
     "DARK_GREEN": "DARK_RED",
     "YELLOW": "DARK_RED"
   },
-  "life": 12,
+  "life": 1,
   "mana": 0,
-  "meleeDamage": 7,
+  "meleeDamage": 1,
   "rangedDamage": 0,
   "aiParameters": {
     "speed": 0.9,

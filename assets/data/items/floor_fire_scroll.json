@@ -7,6 +7,6 @@
   "type": "scroll",
   "params": {
     "spell": "floor_fire",
-    "damage": "40"
+    "damage": "5"
   }
 }

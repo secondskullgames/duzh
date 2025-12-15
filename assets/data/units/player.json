@@ -18,9 +18,10 @@
     "PLAYER_SHOULDERS": "DARK_GREEN",
     "PLAYER_THIGHS": "DARK_BROWN"
   },
-  "meleeDamage": 4,
-  "rangedDamage": 2,
-  "life": 50,
+  "meleeDamage": 1,
+  "rangedDamage": 1,
+  "life": 5,
   "mana": 10,
-  "abilities": ["ATTACK", "DASH"]
+  "abilities": ["ATTACK", "DASH"],
+  "equipment": ["bronze_sword", "short_bow"]
 }

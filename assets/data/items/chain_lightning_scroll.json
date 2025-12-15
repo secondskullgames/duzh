@@ -7,7 +7,7 @@
   "type": "scroll",
   "params": {
     "spell": "chain_lightning",
-    "damage": "30"
+    "damage": "5"
   },
   "paletteSwaps": {
     "DARK_RED": "WHITE"

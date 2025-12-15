@@ -8,8 +8,8 @@
   "paletteSwaps": {
     "DARK_GRAY": "CYAN"
   },
-  "rarity": 5,
-  "level": 7,
+  "rarity": null,
+  "level": null,
   "stats": {},
   "ability": "SHOOT_FROSTBOLT",
   "tooltip": "Freezes enemies"

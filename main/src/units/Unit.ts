@@ -26,7 +26,7 @@ import { calculateTotalIncomingDamage } from './UnitUtils';
  * Regenerate this raw amount of health each turn
  * (can be decimal)
  */
-const STARTING_LIFE_PER_TURN = 0.5;
+const STARTING_LIFE_PER_TURN = 0;
 /**
  * Regenerate this raw amount of mana each turn
  * (can be decimal)
@@ -411,7 +411,7 @@ export default class Unit implements Entity {
     for (const effect of this.effects.getEffects()) {
       switch (effect) {
         case StatusEffect.BURNING:
-          await dealDamage(2, { targetUnit: this });
+          await dealDamage(1, { targetUnit: this });
           if (this.life <= 0) {
             await die(this, game);
           }

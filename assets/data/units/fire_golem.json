@@ -12,9 +12,9 @@
     "DARK_RED": "DARK_RED",
     "TEAL": "YELLOW"
   },
-  "meleeDamage": 12,
+  "meleeDamage": 3,
   "rangedDamage": 0,
-  "life": 50,
+  "life": 3,
   "mana": 10,
   "aiParameters": {
     "speed": 0.8,

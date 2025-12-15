@@ -4,9 +4,9 @@
   "type": "ELEMENTAL",
   "sprite": "blob",
   "paletteSwaps": {},
-  "life": 50,
+  "life": 4,
   "mana": 15,
-  "meleeDamage": 8,
+  "meleeDamage": 2,
   "rangedDamage": 0,
   "aiParameters": {
     "speed": 0.6,

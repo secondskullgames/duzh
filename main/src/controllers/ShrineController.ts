@@ -23,19 +23,9 @@ export class ShrineController {
       ],
       life: [
         {
-          label: '+10 Life',
+          label: '+1 Life',
           onUse: async (game: Game) => {
-            playerUnit.increaseMaxLife(10);
-            // TODO
-            game.soundController.playSound('use_potion');
-          }
-        }
-      ],
-      lifePerTurn: [
-        {
-          label: '+0.5 Life Per Turn',
-          onUse: async (game: Game) => {
-            playerUnit.increaseLifePerTurn(0.5);
+            playerUnit.increaseMaxLife(1);
             // TODO
             game.soundController.playSound('use_potion');
           }
@@ -46,26 +36,6 @@ export class ShrineController {
           label: '+0.5 Mana Per Turn',
           onUse: async (game: Game) => {
             playerUnit.increaseManaPerTurn(0.5);
-            // TODO
-            game.soundController.playSound('use_potion');
-          }
-        }
-      ],
-      meleeDamage: [
-        {
-          label: '+1 Melee Damage',
-          onUse: async (game: Game) => {
-            playerUnit.increaseMeleeDamage(1);
-            // TODO
-            game.soundController.playSound('use_potion');
-          }
-        }
-      ],
-      missileDamage: [
-        {
-          label: '+2 Missile Damage',
-          onUse: async (game: Game) => {
-            playerUnit.increaseRangedDamage(2);
             // TODO
             game.soundController.playSound('use_potion');
           }

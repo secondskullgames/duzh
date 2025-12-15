@@ -9,9 +9,9 @@
     "GRAY_128": "CYAN",
     "GRAY_192": "GRAY_192"
   },
-  "rarity": 5,
-  "level": 8,
+  "rarity": null,
+  "level": null,
   "stats": {
-    "damage": 8
+    "damage": 0
   }
 }

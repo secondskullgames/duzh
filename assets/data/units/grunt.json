@@ -14,9 +14,9 @@
     "PLAYER_FEET": "DARK_BROWN",
     "PLAYER_FACE": "LIGHT_GRAY"
   },
-  "meleeDamage": 3,
+  "meleeDamage": 1,
   "rangedDamage": 0,
-  "life": 25,
+  "life": 2,
   "mana": 0,
   "equipment": ["bronze_chain_mail", "iron_helmet", "bronze_sword"],
   "aiParameters": {

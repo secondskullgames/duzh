@@ -12,9 +12,9 @@
     "GREEN_255": "GRAY_192",
     "YELLOW": "GRAY_192"
   },
-  "life": 30,
+  "life": 5,
   "mana": 0,
-  "meleeDamage": 20,
+  "meleeDamage": 5,
   "rangedDamage": 0,
   "aiParameters": {
     "speed": 1,

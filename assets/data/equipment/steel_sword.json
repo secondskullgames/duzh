@@ -9,9 +9,9 @@
     "DARK_GRAY": "DARK_GRAY",
     "LIGHT_GRAY": "LIGHT_GRAY"
   },
-  "rarity": 3,
-  "level": 6,
+  "rarity": null,
+  "level": null,
   "stats": {
-    "damage": 6
+    "damage": 0
   }
 }

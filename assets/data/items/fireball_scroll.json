@@ -7,7 +7,7 @@
   "type": "scroll",
   "params": {
     "spell": "fireball",
-    "damage": "50"
+    "damage": "5"
   },
   "paletteSwaps": {
     "DARK_RED": "RED"

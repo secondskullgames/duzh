@@ -4,9 +4,9 @@
   "type": "ANIMAL",
   "sprite": "beetle",
   "paletteSwaps": {},
-  "life": 30,
+  "life": 1,
   "mana": 6,
-  "meleeDamage": 8,
+  "meleeDamage": 1,
   "rangedDamage": 0,
   "aiParameters": {
     "speed": 0.9,

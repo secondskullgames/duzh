@@ -9,7 +9,7 @@
   "rarity": 1,
   "level": 2,
   "stats": {
-    "damage": 8
+    "damage": 0
   },
   "ability": "SHOOT_ARROW"
 }

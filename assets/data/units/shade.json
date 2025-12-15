@@ -4,9 +4,9 @@
   "type": "GHOST",
   "sprite": "shade",
   "paletteSwaps": {},
-  "life": 5,
+  "life": 1,
   "mana": 0,
-  "meleeDamage": 5,
+  "meleeDamage": 1,
   "rangedDamage": 0,
   "aiParameters": {
     "speed": 0.8,

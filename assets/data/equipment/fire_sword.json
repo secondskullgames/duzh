@@ -13,7 +13,7 @@
   "rarity": 5,
   "level": 7,
   "stats": {
-    "damage": 6
+    "damage": 1
   },
   "script": "fire_sword",
   "tooltip": "A sword that burns with the power of fire."

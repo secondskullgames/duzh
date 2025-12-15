@@ -8,8 +8,8 @@
   "paletteSwaps": {
     "DARK_GRAY": "RED"
   },
-  "rarity": 5,
-  "level": 7,
+  "rarity": null,
+  "level": null,
   "stats": {},
   "ability": "SHOOT_FIREBOLT",
   "tooltip": "Burns enemies"
