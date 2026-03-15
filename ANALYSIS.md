@@ -78,6 +78,54 @@ player-first turn order and does no error recovery if a unit's turn throws — t
 acknowledging this as a "super hack." Single-map / single-player assumptions are fine for the
 current design but will need addressing if the game adds any multi-zone mechanics.
 
+### Animation architecture
+
+Animations are driven by mutating unit state and blocking on `sleep()`. The pattern, visible
+in `attackUnit` and `shootFirebolt`, is always the same:
+
+1. Mutate unit state — `unit.setActivity(Activity.ATTACKING, 1, direction)`,
+   `target.getEffects().addEffect(StatusEffect.DAMAGED, 1)`, add a projectile to the map
+2. `await sleep(N)` — hold the turn open while the render loop picks up the new state
+3. Apply domain effects — deal damage, call `die()`
+4. `await sleep(N)` again
+5. Reset unit state — `setActivity(Activity.STANDING, ...)`, remove the projectile
+
+`UnitSprite` is passive and actually fine: it is bound to a `Unit` at construction and reads
+`activity`, `direction`, and `frameNumber` each render tick to compute the sprite frame key.
+The rendering side is a clean observer of unit state.
+
+The problem is the sequencing. Turn processing is async not because domain logic requires it
+but because animation timing does. A full turn cannot resolve until every animation in it has
+played to completion, which means:
+
+- AI turns take exactly as long wall-clock time as player turns
+- Domain effects (damage, death) are interleaved with `await sleep()` calls, so it is
+  impossible to advance game state without also running animations
+- `shootFirebolt` animates projectile movement by adding a projectile to the map, sleeping
+  50ms, removing it, and repeating per tile — the domain and presentation are completely
+  tangled
+
+### Actions layer
+
+`main/src/actions/` is a flat pile of 25 async functions covering combat, movement, death,
+item drops, level-up, and map events. The standalone-function shape is fine, but two
+structural problems run through most of them:
+
+**`Game` as a service locator.** Every action accepts a `Game` parameter and extracts
+whatever it needs from inside (`soundController`, `state`, `ticker`, `objectFactory`, etc.).
+The actual dependencies of each function are invisible at the call site and only discoverable
+by reading the body. Testing any action in isolation requires constructing a mock of the
+entire `Game` bag — plus mocking transitive calls, since actions call each other
+(`attackUnit` → `die` → `gameOver`, `recordKill` → `levelUp`) as module-level imports.
+
+**Domain logic and presentation are fused.** `attackUnit` interleaves damage calculation
+with `sleep()` animation delays, `setActivity` calls, sound playback, and log messages. The
+question "does combat produce the right damage?" cannot be answered without also dealing with
+timers and sound. This pattern appears across `die`, `walk`, `moveUnit`, and others.
+
+A few actions are genuinely clean (`dealDamage`, `updateRevealedTiles`) but they are the
+exception.
+
 ### Tests
 
 The test suite is sparse. The `NormalAttack` test is disabled with a comment saying the
@@ -112,12 +160,6 @@ After loading the asset bundle, walk all models and validate that every referenc
 bundle. Fail fast at startup rather than at runtime mid-game. This is one pass over the data
 and could live in `buildAssetBundle.ts` or a dedicated validator.
 
-### Remove the maps → graphics dependency
-
-Audit what in `maps/` actually imports from `@duzh/graphics` and either move it to `main/`
-or replace it with the appropriate lower-level dependency (`@duzh/models`, `@duzh/geometry`).
-The dependency should not exist.
-
 ### Scene stack
 
 Replace the single `previousScene` in `GameState` with a proper stack. This is a small
@@ -134,6 +176,39 @@ Extract distinct responsibilities from `GameState`:
 
 `GameState` could then compose these rather than implementing everything itself.
 
+### Animation queue (high value, high effort)
+
+Replace the `sleep()`-driven animation model with an animation queue. Domain actions run to
+completion immediately, emitting animation events as a side channel. The render loop drains
+the queue, playing timed animations at whatever speed the presentation layer chooses. Unit
+state changes (damage taken, death, movement) happen at domain speed; the visual
+representation catches up asynchronously.
+
+The passive `UnitSprite` / `DynamicSprite` observer pattern is already correct — it is the
+action side that needs to change. The concrete steps would be:
+
+1. Strip `sleep()` calls and `setActivity` calls out of actions; actions become synchronous
+   or near-synchronous
+2. Define an animation event type (e.g. `AttackAnimation`, `ProjectileAnimation`,
+   `DeathAnimation`) emitted by actions
+3. Have the render loop consume events and play them at its own pace
+
+This also fixes the turn-speed coupling: AI turns would resolve instantly with no perceptible
+delay, which would allow for future features like turn replays or fast-forward mode.
+
+### Separate domain logic from presentation in actions (high value, high effort)
+
+The two structural problems in the actions layer have a common fix: separate what happens
+from how it is presented. Domain functions would compute and apply state changes and return
+a result; a presentation layer would consume that result to play sounds, run animations, and
+write log messages. Domain functions would declare their actual dependencies rather than
+taking `Game`. This would make the core game logic testable without mocking timers, sound
+controllers, or log sinks.
+
+This is a significant refactor — the `sleep()` calls in `attackUnit` are the sharpest
+expression of the problem and the hardest to untangle — but the payoff is that combat,
+movement, and death logic become straightforwardly unit-testable.
+
 ### A few targeted tests
 
 Rather than pursuing coverage broadly, three test areas would give the most confidence:
@@ -148,9 +223,11 @@ Rather than pursuing coverage broadly, three test areas would give the most conf
 | Area | Verdict |
 |------|---------|
 | Zod models | Good foundation, inconsistently applied |
-| Monorepo structure | Good; one spurious dependency to clean up |
+| Monorepo structure | Good |
 | Homebrew renderer | Right for current scope; will struggle if UI grows significantly |
 | GameState | Too large; should be split |
 | Engine | Simple and readable; assumptions too narrow |
 | Item system | Switch-driven; should be schema-driven like units |
+| Animation | `sleep()`-driven; domain and presentation serialized through the turn loop |
+| Actions layer | `Game` service locator + fused presentation make logic untestable |
 | Tests | Insufficient; a few targeted tests would meaningfully improve confidence |
