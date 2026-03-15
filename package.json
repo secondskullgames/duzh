@@ -23,5 +23,13 @@
     "test:watch": "vitest --watch",
     "test:coverage": "pnpm run -r test:coverage",
     "electron": "cd electron && export npm_config_user_agent=npm && npm i && npm run make && npx electron ."
+  },
+  "pnpm": {
+    "overrides": {
+      "@isaacs/brace-expansion@<=5.0.0": ">=5.0.1",
+      "minimatch@>=10.0.0 <10.2.1": ">=10.2.1",
+      "rollup@>=4.0.0 <4.59.0": ">=4.59.0",
+      "minimatch@>=10.0.0 <10.2.3": ">=10.2.3"
+    }
   }
 }
