@@ -45,3 +45,13 @@ Run the game as an Electron app:
 ```
 pnpm electron
 ```
+
+Run tests:
+```
+pnpm test
+```
+
+Run linter/formatter:
+```
+pnpm lint
+```
