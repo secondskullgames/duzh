@@ -29,7 +29,7 @@ catalogs:
   vite:
     'vite': '^7.3.5'
   vitest:
-    'vitest': '^4.0.10'
+    'vitest': '^4.1.0'
     '@vitest/coverage-v8': '^4.0.10'
   zod:
     'zod': '^4.0.5'
